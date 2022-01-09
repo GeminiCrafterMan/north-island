@@ -127,6 +127,11 @@ SampleList:
 	sample $00A0, Bongo, Stop, LowBongo	; 90 - Low Bongo
 	sample $0080, Bongo, Stop, FloorBongo	; 91 - Floor Bongo
 
+	sample $0100, SnareS3, Stop			; 92 - Snare
+	sample $0100, KickS3, Stop			; 97 - Kick
+	sample $0100, CrashCymbal, Stop			; 99 - Crash Cymbal
+	sample $0100, ComeOn, Stop			; B5 - Come On
+
 	sample $0100, SEGA, Stop		; 92 - SEGA
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -257,7 +262,7 @@ SWFR_Stop:	asdata Z80E_Read*(MaxPitch/$100), $00
 ; ---------------------------------------------------------------------------
 
 	incSWF	Kick, Snare, Clap, Tom, Timpani, Bongo
-	incSWF	Scratch, SEGA
+	incSWF	Scratch, SnareS3, KickS3, CrashCymbal, ComeOn, SEGA
 	even
 
 	listing on			; continue source listing
