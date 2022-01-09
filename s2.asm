@@ -18,7 +18,7 @@
 ; ASSEMBLY OPTIONS:
 ;
 ; special options for various AMPS related additions
-customAMPS =		1		; set to 1 to enable features
+customAMPS =		0		; set to 1 to enable features
 
     ifndef gameRevision
 gameRevision =		1
@@ -31,9 +31,6 @@ padToPowerOfTwo =	0
 ;
 allOptimizations =	1
 ;	| If 1, enables all optimizations
-;
-skipChecksumCheck =	0
-;	| If 1, disables the unnecessary (and slow) bootup checksum calculation
 ;
 zeroOffsetOptimization = 1
 ;	| If 1, makes a handful of zero-offset instructions smaller
@@ -149,8 +146,8 @@ Vectors:
 Header:
 	dc.b "SEGA GENESIS    " ; Console name
 	dc.b "(C)SEGA 1992.SEP" ; Copyright holder and release date (generally year)
-	dc.b "SONIC THE HEDGEHOG 2 WITH AMPS                  " ; Domestic name
-	dc.b "SONIC THE HEDGEHOG 2 WITH AMPS                  " ; International name
+	dc.b "SONIC THE HEDGEHOG 2                            " ; Domestic name
+	dc.b "SONIC THE HEDGEHOG 2                            " ; International name
     if gameRevision=0
 	dc.b "GM 00001051-00"   ; Version (REV00)
     elseif gameRevision=1
@@ -377,6 +374,7 @@ GameClrRAM:
 	move.l	d7,(a6)+
 	dbf	d6,GameClrRAM			; clear RAM ($0000-$FDFF)
 
+	jsr		(InitDMAQueue).l
 	bsr.w	VDPSetupGame
 	jsr	LoadDualPCM			; load Dual PCM
 	bsr.w	JoypadInit
@@ -403,23 +401,6 @@ GameMode_2PLevelSelect:	bra.w	LevelSelectMenu2P	; 2P level select mode
 GameMode_EndingSequence:bra.w	JmpTo_EndingSequence	; End sequence mode
 GameMode_OptionsMenu:	bra.w	OptionsMenu		; Options mode
 GameMode_LevelSelect:	bra.w	LevelSelectMenu		; Level select mode
-; ===========================================================================
-    if skipChecksumCheck=0	; checksum error code
-; loc_3CE:
-ChecksumError:
-	move.l	d1,-(sp)
-	bsr.w	VDPSetupGame
-	move.l	(sp)+,d1
-	move.l	#vdpComm($0000,CRAM,WRITE),(VDP_control_port).l ; set VDP to CRAM write
-	moveq	#$3F,d7
-; loc_3E2:
-Checksum_Red:
-	move.w	#$E,(VDP_data_port).l ; fill palette with red
-	dbf	d7,Checksum_Red	; repeat $3F more times
-; loc_3EE:
-ChecksumFailed_Loop:
-	bra.s	ChecksumFailed_Loop
-    endif
 ; ===========================================================================
 ; loc_3F0:
 LevelSelectMenu2P: ;;
@@ -1134,7 +1115,6 @@ VDP_ClrCRAM:
 	dbf	d7,VDP_ClrCRAM	; clear	the CRAM
 
 	clr.l	(Vscroll_Factor).w
-	clr.l	(unk_F61A).w
 	move.l	d1,-(sp)
 
 	dmaFillVRAM 0,$0000,$10000	; fill entire VRAM with 0
@@ -1183,7 +1163,6 @@ ClearScreen:
 	dmaFillVRAM 0,VRAM_Plane_A_Name_Table_2P,VRAM_Plane_Table_Size
 +
 	clr.l	(Vscroll_Factor).w
-	clr.l	(unk_F61A).w
 
 	; Bug: These '+4's shouldn't be here; clearRAM accidentally clears an additional 4 bytes
 	clearRAM Sprite_Table,Sprite_Table_End+4
@@ -1315,99 +1294,10 @@ PlaneMapToVRAM_H80_SpecialStage:
 	rts
 ; End of function PlaneMapToVRAM_H80_SpecialStage
 
-
 ; ---------------------------------------------------------------------------
-; Subroutine for queueing VDP commands (seems to only queue transfers to VRAM),
-; to be issued the next time ProcessDMAQueue is called.
-; Can be called a maximum of 18 times before the buffer needs to be cleared
-; by issuing the commands (this subroutine DOES check for overflow)
+; Ultra DMA Queue by Flamewing
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; sub_144E: DMA_68KtoVRAM: QueueCopyToVRAM: QueueVDPCommand: Add_To_DMA_Queue:
-QueueDMATransfer:
-	movea.l	(VDP_Command_Buffer_Slot).w,a1
-	cmpa.w	#VDP_Command_Buffer_Slot,a1
-	beq.s	QueueDMATransfer_Done ; return if there's no more room in the buffer
-
-	; piece together some VDP commands and store them for later...
-	move.w	#$9300,d0 ; command to specify DMA transfer length & $00FF
-	move.b	d3,d0
-	move.w	d0,(a1)+ ; store command
-
-	move.w	#$9400,d0 ; command to specify DMA transfer length & $FF00
-	lsr.w	#8,d3
-	move.b	d3,d0
-	move.w	d0,(a1)+ ; store command
-
-	move.w	#$9500,d0 ; command to specify source address & $0001FE
-	lsr.l	#1,d1
-	move.b	d1,d0
-	move.w	d0,(a1)+ ; store command
-
-	move.w	#$9600,d0 ; command to specify source address & $01FE00
-	lsr.l	#8,d1
-	move.b	d1,d0
-	move.w	d0,(a1)+ ; store command
-
-	move.w	#$9700,d0 ; command to specify source address & $FE0000
-	lsr.l	#8,d1
-	;andi.b	#$7F,d1		; this instruction safely allows source to be in RAM; S3K added this
-	move.b	d1,d0
-	move.w	d0,(a1)+ ; store command
-
-	andi.l	#$FFFF,d2 ; command to specify destination address and begin DMA
-	lsl.l	#2,d2
-	lsr.w	#2,d2
-	swap	d2
-	ori.l	#vdpComm($0000,VRAM,DMA),d2 ; set bits to specify VRAM transfer
-	move.l	d2,(a1)+ ; store command
-
-	move.l	a1,(VDP_Command_Buffer_Slot).w ; set the next free slot address
-	cmpa.w	#VDP_Command_Buffer_Slot,a1
-	beq.s	QueueDMATransfer_Done ; return if there's no more room in the buffer
-	move.w	#0,(a1) ; put a stop token at the end of the used part of the buffer
-; return_14AA:
-QueueDMATransfer_Done:
-	rts
-; End of function QueueDMATransfer
-
-
-; ---------------------------------------------------------------------------
-; Subroutine for issuing all VDP commands that were queued
-; (by earlier calls to QueueDMATransfer)
-; Resets the queue when it's done
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; sub_14AC: CopyToVRAM: IssueVDPCommands: Process_DMA: Process_DMA_Queue:
-ProcessDMAQueue:
-	lea	(VDP_control_port).l,a5
-	lea	(VDP_Command_Buffer).w,a1
-; loc_14B6:
-ProcessDMAQueue_Loop:
-	move.w	(a1)+,d0
-	beq.s	ProcessDMAQueue_Done ; branch if we reached a stop token
-	; issue a set of VDP commands...
-	move.w	d0,(a5)		; transfer length
-	move.w	(a1)+,(a5)	; transfer length
-	move.w	(a1)+,(a5)	; source address
-	move.w	(a1)+,(a5)	; source address
-	move.w	(a1)+,(a5)	; source address
-	move.w	(a1)+,(a5)	; destination
-	move.w	(a1)+,(a5)	; destination
-	cmpa.w	#VDP_Command_Buffer_Slot,a1
-	bne.s	ProcessDMAQueue_Loop ; loop if we haven't reached the end of the buffer
-; loc_14CE:
-ProcessDMAQueue_Done:
-	move.w	#0,(VDP_Command_Buffer).w
-	move.l	#VDP_Command_Buffer,(VDP_Command_Buffer_Slot).w
-	rts
-; End of function ProcessDMAQueue
-
-
+	include	"misc/DMA-Queue.asm"
 
 ; ---------------------------------------------------------------------------
 ; START OF NEMESIS DECOMPRESSOR
@@ -2183,9 +2073,6 @@ KosDec:
 	nop
     endif
 
-
-
-
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_19DC:
@@ -2196,7 +2083,8 @@ PalCycle_Load:
 	move.b	(Current_Zone).w,d0	; use level number as index into palette cycles
 	add.w	d0,d0			; (multiply by element size = 2 bytes)
 	move.w	PalCycle(pc,d0.w),d0	; load animated palettes offset index into d0
-	jmp	PalCycle(pc,d0.w)	; jump to PalCycle + offset index
+	jsr	PalCycle(pc,d0.w)	; jump to PalCycle + offset index
+	jmp		updateWaterShift
 ; ---------------------------------------------------------------------------
 	rts
 ; End of function PalCycle_Load
@@ -2331,10 +2219,6 @@ PalCycle_HPZ:
 	bcc.s	+
 	move.w	#6,(PalCycle_Frame).w
 +	lea	(Normal_palette_line4+$12).w,a1
-	move.l	(a0,d0.w),(a1)+
-	move.l	4(a0,d0.w),(a1)
-	lea	(CyclingPal_HPZUnderwater).l,a0
-	lea	(Underwater_palette_line4+$12).w,a1
 	move.l	(a0,d0.w),(a1)+
 	move.l	4(a0,d0.w),(a1)
 +	rts
@@ -2544,9 +2428,6 @@ CyclingPal_MTZ3:
 ; word_1F56:
 CyclingPal_HPZWater:
 	BINCLUDE "art/palettes/HPZ Water Cycle.bin"; Hidden Palace Water Cycle
-; word_1F66:
-CyclingPal_HPZUnderwater:
-	BINCLUDE "art/palettes/HPZ Underwater Cycle.bin"; Hidden Palace Underwater Cycle
 ; word_1F76:
 CyclingPal_Oil:
 	BINCLUDE "art/palettes/OOZ Oil.bin"; Oil Ocean Oil palette
@@ -2594,6 +2475,7 @@ CyclingPal_WFZ2:
 	BINCLUDE "art/palettes/WFZ Cycle 2.bin"; Wing Fortress Flashing Light Cycle 2
 ; ----------------------------------------------------------------------------
 
+	include	"misc/DynaWater.asm"
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
@@ -2645,16 +2527,6 @@ PalCycle_SuperSonic_revert:	; runs the fade in transition backwards
 	lea	(Normal_palette+4).w,a1
 	move.l	(a0,d0.w),(a1)+
 	move.l	4(a0,d0.w),(a1)
-	; underwater palettes (*)
-	lea	(CyclingPal_CPZUWTransformation).l,a0
-	cmpi.b	#chemical_plant_zone,(Current_Zone).w
-	beq.s	+
-	cmpi.b	#aquatic_ruin_zone,(Current_Zone).w
-	bne.s	-	; rts
-	lea	(CyclingPal_ARZUWTransformation).l,a0
-+	lea	(Underwater_palette+4).w,a1
-	move.l	(a0,d0.w),(a1)+
-	move.l	4(a0,d0.w),(a1)
 	rts
 ; ===========================================================================
 ; loc_21E6:
@@ -2675,16 +2547,6 @@ PalCycle_SuperSonic_normal:
 	lea	(Normal_palette+4).w,a1
 	move.l	(a0,d0.w),(a1)+
 	move.l	4(a0,d0.w),(a1)
-	; underwater palettes
-	lea	(CyclingPal_CPZUWTransformation).l,a0
-	cmpi.b	#chemical_plant_zone,(Current_Zone).w
-	beq.s	+
-	cmpi.b	#aquatic_ruin_zone,(Current_Zone).w
-	bne.w	-	; rts
-	lea	(CyclingPal_ARZUWTransformation).l,a0
-+	lea	(Underwater_palette+4).w,a1
-	move.l	(a0,d0.w),(a1)+
-	move.l	4(a0,d0.w),(a1)
 	rts
 ; End of function PalCycle_SuperSonic
 
@@ -2695,18 +2557,6 @@ PalCycle_SuperSonic_normal:
 ; Pal_2246:
 CyclingPal_SSTransformation:
 	BINCLUDE	"art/palettes/Super Sonic transformation.bin"
-;----------------------------------------------------------------------------
-;Palette for transformation to Super Sonic while underwater in CPZ
-;----------------------------------------------------------------------------
-; Pal_22C6:
-CyclingPal_CPZUWTransformation:
-	BINCLUDE	"art/palettes/CPZWater SS transformation.bin"
-;----------------------------------------------------------------------------
-;Palette for transformation to Super Sonic while underwater in ARZ
-;----------------------------------------------------------------------------
-; Pal_2346:
-CyclingPal_ARZUWTransformation:
-	BINCLUDE	"art/palettes/ARZWater SS transformation.bin"
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to fade in from black
@@ -3191,9 +3041,6 @@ PalPtr_CPZ:	palptr Pal_CPZ,   1
 PalPtr_DEZ:	palptr Pal_DEZ,   1
 PalPtr_ARZ:	palptr Pal_ARZ,   1
 PalPtr_SCZ:	palptr Pal_SCZ,   1
-PalPtr_HPZ_U:	palptr Pal_HPZ_U, 0
-PalPtr_CPZ_U:	palptr Pal_CPZ_U, 0
-PalPtr_ARZ_U:	palptr Pal_ARZ_U, 0
 PalPtr_SS:	palptr Pal_SS,    0
 PalPtr_MCZ_B:	palptr Pal_MCZ_B, 1
 PalPtr_CNZ_B:	palptr Pal_CNZ_B, 1
@@ -3234,15 +3081,12 @@ Pal_MTZ:   palette MTZ.bin ; Metropolis Zone palette
 Pal_WFZ:   palette WFZ.bin ; Wing Fortress Zone palette
 Pal_HTZ:   palette HTZ.bin ; Hill Top Zone palette
 Pal_HPZ:   palette HPZ.bin ; Hidden Palace Zone palette
-Pal_HPZ_U: palette HPZ underwater.bin ; Hidden Palace Zone underwater palette
 Pal_OOZ:   palette OOZ.bin ; Oil Ocean Zone palette
 Pal_MCZ:   palette MCZ.bin ; Mystic Cave Zone palette
 Pal_CNZ:   palette CNZ.bin ; Casino Night Zone palette
 Pal_CPZ:   palette CPZ.bin ; Chemical Plant Zone palette
-Pal_CPZ_U: palette CPZ underwater.bin ; Chemical Plant Zone underwater palette
 Pal_DEZ:   palette DEZ.bin ; Death Egg Zone palette
 Pal_ARZ:   palette ARZ.bin ; Aquatic Ruin Zone palette
-Pal_ARZ_U: palette ARZ underwater.bin ; Aquatic Ruin Zone underwater palette
 Pal_SCZ:   palette SCZ.bin ; Sky Chase Zone palette
 Pal_MCZ_B: palette MCZ Boss.bin ; Mystic Cave Zone boss palette
 Pal_CNZ_B: palette CNZ Boss.bin ; Casino Night Zone boss palette
@@ -3519,86 +3363,6 @@ Sega_WaitEnd:
 	bra.s	Sega_WaitEnd		; we go to title screen when checksum check is done
 
 DoChecksum:
-    if skipChecksumCheck=0	; checksum code
-	move.l	ROMEndLoc.w,a6			; load ROM end address to a6
-	sub.w	#56-1,a6			; this will trip the detection before ROM ends (in case it would happen mid-transfer)
-	move.l	ChecksumAddr.w,a5		; load the check address to a5
-
-	cmp.l	a5,a6				; check if checksum is done
-	blo.w	ChecksumEndChk			; if yes, skip this
-	move.w	ChecksumValue.w,d0		; copy the last checksum value to d0
-	move.w	#(127840/268)-(55000/268)-1,d1	; load a fairly safe estimate for the maximum number of loops per frame. If you get lag, just increase the 55000 to a higher number (check will take longer!)
-
-.loop						; 268 cycles per loop
-	movem.l	(a5)+,d2-a4			; laod 44 ($2C) bytes from ROM
-	add.w	d2,d0				; add low words to d0
-	swap	d2				; swap to high word
-	add.w	d2,d0				; add high words to d0
-
-	add.w	d3,d0
-	swap	d3
-	add.w	d3,d0
-
-	add.w	d4,d0
-	swap	d4
-	add.w	d4,d0
-
-	add.w	d5,d0
-	swap	d5
-	add.w	d5,d0
-
-	add.w	d6,d0
-	swap	d6
-	add.w	d6,d0
-
-	add.w	d7,d0
-	swap	d7
-	add.w	d7,d0
-
-	move.l	a0,d2
-	add.w	d2,d0
-	swap	d2
-	add.w	d2,d0
-
-	move.l	a1,d2
-	add.w	d2,d0
-	swap	d2
-	add.w	d2,d0
-
-	move.l	a2,d2
-	add.w	d2,d0
-	swap	d2
-	add.w	d2,d0
-
-	move.l	a3,d2
-	add.w	d2,d0
-	swap	d2
-	add.w	d2,d0
-
-	move.l	a4,d2
-	add.w	d2,d0
-	swap	d2
-	add.w	d2,d0
-
-	cmp.l	a5,a6				; check if we have passed the address
-	dblo	d1,.loop			; if not, go back to loop, but only if we havent looped too many times
-
-	move.l	a5,ChecksumAddr.w		; save the check address from a5
-	move.w	d0,ChecksumValue.w		; save as the new checksum value
-
-	cmp.l	a5,a6				; check if we have passed the address (again)
-	bhi.s	Sega_GotoTitle.rts		; if not, exit
-	move.l	ROMEndLoc.w,a6			; load ROM end address to a6
-
-.end
-	add.w	(a5)+,d0			; add remaining words to d0
-	cmp.l	a5,a6				; check if we have passed the final address
-	bhi.s	.end				; if not, go back to loop
-
-	cmp.w	Checksum.w,d0			; check if the checksum matches
-	beq.s	ChecksumEndChk			; if yes, we are golden
-	jmp	ChecksumError(pc)		; we have a checksum error
-    endif
 
 ChecksumEndChk:
 	tst.w	(Demo_Time_left).w
@@ -4145,8 +3909,7 @@ Level_InitWater:
 	move.w	#$8C87,(a6)			; H res 40 cells, double res interlace
 +
 	move.w	(Hint_counter_reserve).w,(a6)
-	clr.w	(VDP_Command_Buffer).w
-	move.l	#VDP_Command_Buffer,(VDP_Command_Buffer_Slot).w
+	ResetDMAQueue
 	tst.b	(Water_flag).w	; does level have water?
 	beq.s	Level_LoadPal	; if not, branch
 	move.w	#$8014,(a6)	; H-INT enabled
@@ -4172,16 +3935,10 @@ Level_LoadPal:
 	bsr.w	PalLoad_Now	; load Sonic's palette line
 	tst.b	(Water_flag).w	; does level have water?
 	beq.s	Level_GetBgm	; if not, branch
-	moveq	#PalID_HPZ_U,d0	; palette number $15
-	cmpi.b	#hidden_palace_zone,(Current_Zone).w
-	beq.s	Level_WaterPal ; branch if level is HPZ
-	moveq	#PalID_CPZ_U,d0	; palette number $16
-	cmpi.b	#chemical_plant_zone,(Current_Zone).w
-	beq.s	Level_WaterPal ; branch if level is CPZ
-	moveq	#PalID_ARZ_U,d0	; palette number $17
+
 ; loc_409E:
 Level_WaterPal:
-	bsr.w	PalLoad_Water_Now	; load underwater palette (with d0)
+	jsr		loadWaterShift
 	tst.b	(Last_star_pole_hit).w ; is it the start of the level?
 	beq.s	Level_GetBgm	; if yes, branch
 	move.b	(Saved_Water_move).w,(Water_fullscreen_flag).w
@@ -4325,16 +4082,8 @@ Level_FromCheckpoint:
 	move.w	#$1FE,(Demo_Time_left).w
 +
 	tst.b	(Water_flag).w
-	beq.s	++
-	moveq	#PalID_HPZ_U,d0
-	cmpi.b	#hidden_palace_zone,(Current_Zone).w
 	beq.s	+
-	moveq	#PalID_CPZ_U,d0
-	cmpi.b	#chemical_plant_zone,(Current_Zone).w
-	beq.s	+
-	moveq	#PalID_ARZ_U,d0
-+
-	bsr.w	PalLoad_Water_ForFade
+	jsr		updateWaterShiftForFade
 +
 	move.w	#-1,(TitleCard_ZoneName+titlecard_leaveflag).w
 	move.b	#$E,(TitleCard_Left+routine).w	; make the left part move offscreen
@@ -5799,6 +5548,7 @@ SpecialStage:
 	move.w	(VDP_Reg1_val).w,d0
 	andi.b	#$BF,d0
 	move.w	d0,(VDP_control_port).l
+	ResetDMAQueue
 
 ; /------------------------------------------------------------------------\
 ; | We're gonna zero-fill a bunch of VRAM regions. This was done by macro, |
@@ -5811,7 +5561,6 @@ SpecialStage:
 	dmaFillVRAM 0,VRAM_SS_Horiz_Scroll_Table,VRAM_SS_Horiz_Scroll_Table_Size  ; clear Horizontal scroll table
 
 	clr.l	(Vscroll_Factor).w
-	clr.l	(unk_F61A).w
 	clr.b	(SpecialStage_Started).w
 
 ; /------------------------------------------------------------------------\
@@ -5824,8 +5573,7 @@ SpecialStage:
 	clearRAM SS_Sprite_Table_Input,SS_Sprite_Table_Input_End
 	clearRAM SS_Object_RAM,SS_Object_RAM_End
 
-	clr.w	(VDP_Command_Buffer).w
-	move.l	#VDP_Command_Buffer,(VDP_Command_Buffer_Slot).w
+	ResetDMAQueue
 	bsr.w	ClearPLC
 
 	move	#$2300,sr
@@ -5976,8 +5724,7 @@ SpecialStage:
 	move.w	#$8C81,(a6)		; H res 40 cells, no interlace, S/H disabled
 	bsr.w	ClearScreen
 	jsrto	(Hud_Base).l, JmpTo_Hud_Base
-	clr.w	(VDP_Command_Buffer).w
-	move.l	#VDP_Command_Buffer,(VDP_Command_Buffer_Slot).w
+	ResetDMAQueue
 	move	#$2300,sr
 	moveq	#PalID_Result,d0
 	bsr.w	PalLoad_Now
@@ -9868,8 +9615,7 @@ TwoPlayerResults:
 	moveq	#$27,d1
 	moveq	#$1B,d2
 	jsrto	(PlaneMapToVRAM_H40).l, PlaneMapToVRAM_H40
-	clr.w	(VDP_Command_Buffer).w
-	move.l	#VDP_Command_Buffer,(VDP_Command_Buffer_Slot).w
+	ResetDMAQueue
 	clr.b	(Level_started_flag).w
 	clr.w	(Anim_Counters).w
 	lea	(Anim_SonicMilesBG).l,a2
@@ -10862,8 +10608,7 @@ MenuScreen:
 	clearRAM Object_RAM,Object_RAM_End
 
 	; load background + graphics of font/LevSelPics
-	clr.w	(VDP_Command_Buffer).w
-	move.l	#VDP_Command_Buffer,(VDP_Command_Buffer_Slot).w
+	ResetDMAQueue
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_FontStuff),VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_FontStuff).l,a0
 	bsr.w	NemDec
@@ -12064,7 +11809,6 @@ EndingSequence:
 
 	dmaFillVRAM 0,VRAM_Plane_A_Name_Table,VRAM_Plane_Table_Size ; clear Plane A pattern name table
 	clr.l	(Vscroll_Factor).w
-	clr.l	(unk_F61A).w
 
 	lea	(VDP_control_port).l,a6
 	move.w	#$8B03,(a6)		; EXT-INT disabled, V scroll by screen, H scroll by line
@@ -23037,16 +22781,16 @@ Ani_Ring:	offsetTable
 ; -------------------------------------------------------------------------------
 ; sprite mappings
 ; -------------------------------------------------------------------------------
-Obj_Ring_MapUnc_12382:	BINCLUDE "mappings/sprite/Obj_LostRings_a.bin"
+Obj_Ring_MapUnc_12382:	BINCLUDE "mappings/sprite/Obj_Rings_a.bin"
 
 ; -------------------------------------------------------------------------------
 ; Unused sprite mappings
 ; -------------------------------------------------------------------------------
-Obj_LostRings_MapUnc_123E6:	BINCLUDE "mappings/sprite/Obj_LostRings_b.bin"
+Obj_LostRings_MapUnc_123E6:	BINCLUDE "mappings/sprite/Obj_BigRing.bin"
 ; -------------------------------------------------------------------------------
 ; Unused sprite mappings
 ; -------------------------------------------------------------------------------
-Obj_LostRings_MapUnc_124E6:	BINCLUDE "mappings/sprite/Obj_LostRings_c.bin"
+Obj_LostRings_MapUnc_124E6:	BINCLUDE "mappings/sprite/Obj_BigRing_Flash.bin"
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -29120,7 +28864,7 @@ RingsManager_Setup:
 ; -------------------------------------------------------------------------------
 
 ; off_1736A:
-MapUnc_Rings:	BINCLUDE "mappings/sprite/Rings.bin"
+MapUnc_Rings:	BINCLUDE "mappings/sprite/Obj_Rings_b.bin"
     if ~~removeJmpTos
 	align 4
     endif
@@ -35049,8 +34793,6 @@ SAnim_WalkRun:
     endif
 	add.w	d2,d2
 +
-	tst.b	(Super_Sonic_flag).w
-	bne.s	SAnim_Super
 	lea	(SonAni_Run).l,a1	; use running animation
 	cmpi.w	#$600,d2		; is Sonic at running speed?
 	bhs.s	+			; use running animation
@@ -35081,53 +34823,6 @@ SAnim_WalkRun:
 	addq.b	#1,anim_frame(a0)		; modify frame number
 
 return_1B4AC:
-	rts
-; ===========================================================================
-; loc_1B4AE:
-SAnim_Super:
-	lea	(SupSonAni_Run).l,a1	; use fast animation
-	cmpi.w	#$800,d2		; is Sonic moving fast?
-	bhs.s	SAnim_SuperRun		; if yes, branch
-	lea	(SupSonAni_Walk).l,a1	; use slower animation
-	add.b	d0,d0
-	add.b	d0,d0
-	bra.s	SAnim_SuperWalk
-; ---------------------------------------------------------------------------
-; loc_1B4C6:
-SAnim_SuperRun:
-	lsr.b	#1,d0
-; loc_1B4C8:
-SAnim_SuperWalk:
-	move.b	d0,d3
-	moveq	#0,d1
-	move.b	anim_frame(a0),d1
-	move.b	1(a1,d1.w),d0
-	cmpi.b	#-1,d0
-	bne.s	+
-	move.b	#0,anim_frame(a0)
-	move.b	1(a1),d0
-+
-	move.b	d0,mapping_frame(a0)
-	add.b	d3,mapping_frame(a0)
-	move.b	(Timer_frames+1).w,d1
-	andi.b	#3,d1
-	bne.s	+
-	cmpi.b	#$B5,mapping_frame(a0)
-	bhs.s	+
-	addi.b	#$20,mapping_frame(a0)
-+
-	subq.b	#1,anim_frame_duration(a0)
-	bpl.s	return_1B51E
-	neg.w	d2
-	addi.w	#$800,d2
-	bpl.s	+
-	moveq	#0,d2
-+
-	lsr.w	#8,d2
-	move.b	d2,anim_frame_duration(a0)
-	addq.b	#1,anim_frame(a0)
-
-return_1B51E:
 	rts
 ; ===========================================================================
 ; loc_1B520:
@@ -35208,9 +34903,6 @@ SAnim_Push:
 	lsr.w	#6,d2
 	move.b	d2,anim_frame_duration(a0)
 	lea	(SonAni_Push).l,a1
-	tst.b	(Super_Sonic_flag).w
-	beq.s	+
-	lea	(SupSonAni_Push).l,a1
 +
 	move.b	status(a0),d1
 	andi.b	#1,d1
@@ -35219,218 +34911,78 @@ SAnim_Push:
 	bra.w	SAnim_Do2
 ; ===========================================================================
 
-; ---------------------------------------------------------------------------
-; Animation script - Sonic
-; ---------------------------------------------------------------------------
-; off_1B618:
-SonicAniData:			offsetTable
-SonAni_Walk_ptr:		offsetTableEntry.w SonAni_Walk		;  0 ;   0
-SonAni_Run_ptr:			offsetTableEntry.w SonAni_Run		;  1 ;   1
-SonAni_Roll_ptr:		offsetTableEntry.w SonAni_Roll		;  2 ;   2
-SonAni_Roll2_ptr:		offsetTableEntry.w SonAni_Roll2		;  3 ;   3
-SonAni_Push_ptr:		offsetTableEntry.w SonAni_Push		;  4 ;   4
-SonAni_Wait_ptr:		offsetTableEntry.w SonAni_Wait		;  5 ;   5
-SonAni_Balance_ptr:		offsetTableEntry.w SonAni_Balance	;  6 ;   6
-SonAni_LookUp_ptr:		offsetTableEntry.w SonAni_LookUp	;  7 ;   7
-SonAni_Duck_ptr:		offsetTableEntry.w SonAni_Duck		;  8 ;   8
-SonAni_Spindash_ptr:		offsetTableEntry.w SonAni_Spindash	;  9 ;   9
-SonAni_Blink_ptr:		offsetTableEntry.w SonAni_Blink		; 10 ;  $A
-SonAni_GetUp_ptr:		offsetTableEntry.w SonAni_GetUp		; 11 ;  $B
-SonAni_Balance2_ptr:		offsetTableEntry.w SonAni_Balance2	; 12 ;  $C
-SonAni_Stop_ptr:		offsetTableEntry.w SonAni_Stop		; 13 ;  $D
-SonAni_Float_ptr:		offsetTableEntry.w SonAni_Float		; 14 ;  $E
-SonAni_Float2_ptr:		offsetTableEntry.w SonAni_Float2	; 15 ;  $F
-SonAni_Spring_ptr:		offsetTableEntry.w SonAni_Spring	; 16 ; $10
-SonAni_Hang_ptr:		offsetTableEntry.w SonAni_Hang		; 17 ; $11
-SonAni_Dash2_ptr:		offsetTableEntry.w SonAni_Dash2		; 18 ; $12
-SonAni_Dash3_ptr:		offsetTableEntry.w SonAni_Dash3		; 19 ; $13
-SonAni_Hang2_ptr:		offsetTableEntry.w SonAni_Hang2		; 20 ; $14
-SonAni_Bubble_ptr:		offsetTableEntry.w SonAni_Bubble	; 21 ; $15
-SonAni_DeathBW_ptr:		offsetTableEntry.w SonAni_DeathBW	; 22 ; $16
-SonAni_Drown_ptr:		offsetTableEntry.w SonAni_Drown		; 23 ; $17
-SonAni_Death_ptr:		offsetTableEntry.w SonAni_Death		; 24 ; $18
-SonAni_Hurt_ptr:		offsetTableEntry.w SonAni_Hurt		; 25 ; $19
-SonAni_Hurt2_ptr:		offsetTableEntry.w SonAni_Hurt		; 26 ; $1A
-SonAni_Slide_ptr:		offsetTableEntry.w SonAni_Slide		; 27 ; $1B
-SonAni_Blank_ptr:		offsetTableEntry.w SonAni_Blank		; 28 ; $1C
-SonAni_Balance3_ptr:		offsetTableEntry.w SonAni_Balance3	; 29 ; $1D
-SonAni_Balance4_ptr:		offsetTableEntry.w SonAni_Balance4	; 30 ; $1E
-SupSonAni_Transform_ptr:	offsetTableEntry.w SupSonAni_Transform	; 31 ; $1F
-SonAni_Lying_ptr:		offsetTableEntry.w SonAni_Lying		; 32 ; $20
-SonAni_LieDown_ptr:		offsetTableEntry.w SonAni_LieDown	; 33 ; $21
-
-SonAni_Walk:	dc.b $FF, $F,$10,$11,$12,$13,$14, $D, $E,$FF
-	rev02even
-SonAni_Run:	dc.b $FF,$2D,$2E,$2F,$30,$FF,$FF,$FF,$FF,$FF
-	rev02even
-SonAni_Roll:	dc.b $FE,$3D,$41,$3E,$41,$3F,$41,$40,$41,$FF
-	rev02even
-SonAni_Roll2:	dc.b $FE,$3D,$41,$3E,$41,$3F,$41,$40,$41,$FF
-	rev02even
-SonAni_Push:	dc.b $FD,$48,$49,$4A,$4B,$FF,$FF,$FF,$FF,$FF
-	rev02even
-SonAni_Wait:
-	dc.b   5,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1
-	dc.b   1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  2
-	dc.b   3,  3,  3,  3,  3,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5
-	dc.b   5,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5,  5,  6,  6,  6
-	dc.b   6,  6,  6,  6,  6,  6,  6,  4,  4,  4,  5,  5,  5,  4,  4,  4
-	dc.b   5,  5,  5,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5,  5,  6
-	dc.b   6,  6,  6,  6,  6,  6,  6,  6,  6,  4,  4,  4,  5,  5,  5,  4
-	dc.b   4,  4,  5,  5,  5,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5
-	dc.b   5,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  4,  4,  4,  5,  5
-	dc.b   5,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5,  5,  4,  4,  4
-	dc.b   5,  5,  5,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  7,  8,  8
-	dc.b   8,  9,  9,  9,$FE,  6
-	rev02even
-SonAni_Balance:	dc.b   9,$CC,$CD,$CE,$CD,$FF
-	rev02even
-SonAni_LookUp:	dc.b   5, $B, $C,$FE,  1
-	rev02even
-SonAni_Duck:	dc.b   5,$4C,$4D,$FE,  1
-	rev02even
-SonAni_Spindash:dc.b   0,$42,$43,$42,$44,$42,$45,$42,$46,$42,$47,$FF
-	rev02even
-SonAni_Blink:	dc.b   1,  2,$FD,  0
-	rev02even
-SonAni_GetUp:	dc.b   3, $A,$FD,  0
-	rev02even
-SonAni_Balance2:dc.b   3,$C8,$C9,$CA,$CB,$FF
-	rev02even
-SonAni_Stop:	dc.b   5,$D2,$D3,$D4,$D5,$FD,  0 ; halt/skidding animation
-	rev02even
-SonAni_Float:	dc.b   7,$54,$59,$FF
-	rev02even
-SonAni_Float2:	dc.b   7,$54,$55,$56,$57,$58,$FF
-	rev02even
-SonAni_Spring:	dc.b $2F,$5B,$FD,  0
-	rev02even
-SonAni_Hang:	dc.b   1,$50,$51,$FF
-	rev02even
-SonAni_Dash2:	dc.b  $F,$43,$43,$43,$FE,  1
-	rev02even
-SonAni_Dash3:	dc.b  $F,$43,$44,$FE,  1
-	rev02even
-SonAni_Hang2:	dc.b $13,$6B,$6C,$FF
-	rev02even
-SonAni_Bubble:	dc.b  $B,$5A,$5A,$11,$12,$FD,  0 ; breathe
-	rev02even
-SonAni_DeathBW:	dc.b $20,$5E,$FF
-	rev02even
-SonAni_Drown:	dc.b $20,$5D,$FF
-	rev02even
-SonAni_Death:	dc.b $20,$5C,$FF
-	rev02even
-SonAni_Hurt:	dc.b $40,$4E,$FF
-	rev02even
-SonAni_Slide:	dc.b   9,$4E,$4F,$FF
-	rev02even
-SonAni_Blank:	dc.b $77,  0,$FD,  0
-	rev02even
-SonAni_Balance3:dc.b $13,$D0,$D1,$FF
-	rev02even
-SonAni_Balance4:dc.b   3,$CF,$C8,$C9,$CA,$CB,$FE,  4
-	rev02even
-SonAni_Lying:	dc.b   9,  8,  9,$FF
-	rev02even
-SonAni_LieDown:	dc.b   3,  7,$FD,  0
-	even
+	include	"animations/Sonic.asm"
 
 ; ---------------------------------------------------------------------------
-; Animation script - Super Sonic
-; (many of these point to the data above this)
-; ---------------------------------------------------------------------------
-SuperSonicAniData: offsetTable
-	offsetTableEntry.w SupSonAni_Walk	;  0 ;   0
-	offsetTableEntry.w SupSonAni_Run	;  1 ;   1
-	offsetTableEntry.w SonAni_Roll		;  2 ;   2
-	offsetTableEntry.w SonAni_Roll2		;  3 ;   3
-	offsetTableEntry.w SupSonAni_Push	;  4 ;   4
-	offsetTableEntry.w SupSonAni_Stand	;  5 ;   5
-	offsetTableEntry.w SupSonAni_Balance	;  6 ;   6
-	offsetTableEntry.w SonAni_LookUp	;  7 ;   7
-	offsetTableEntry.w SupSonAni_Duck	;  8 ;   8
-	offsetTableEntry.w SonAni_Spindash	;  9 ;   9
-	offsetTableEntry.w SonAni_Blink		; 10 ;  $A
-	offsetTableEntry.w SonAni_GetUp		; 11 ;  $B
-	offsetTableEntry.w SonAni_Balance2	; 12 ;  $C
-	offsetTableEntry.w SonAni_Stop		; 13 ;  $D
-	offsetTableEntry.w SonAni_Float		; 14 ;  $E
-	offsetTableEntry.w SonAni_Float2	; 15 ;  $F
-	offsetTableEntry.w SonAni_Spring	; 16 ; $10
-	offsetTableEntry.w SonAni_Hang		; 17 ; $11
-	offsetTableEntry.w SonAni_Dash2		; 18 ; $12
-	offsetTableEntry.w SonAni_Dash3		; 19 ; $13
-	offsetTableEntry.w SonAni_Hang2		; 20 ; $14
-	offsetTableEntry.w SonAni_Bubble	; 21 ; $15
-	offsetTableEntry.w SonAni_DeathBW	; 22 ; $16
-	offsetTableEntry.w SonAni_Drown		; 23 ; $17
-	offsetTableEntry.w SonAni_Death		; 24 ; $18
-	offsetTableEntry.w SonAni_Hurt		; 25 ; $19
-	offsetTableEntry.w SonAni_Hurt		; 26 ; $1A
-	offsetTableEntry.w SonAni_Slide		; 27 ; $1B
-	offsetTableEntry.w SonAni_Blank		; 28 ; $1C
-	offsetTableEntry.w SonAni_Balance3	; 29 ; $1D
-	offsetTableEntry.w SonAni_Balance4	; 30 ; $1E
-	offsetTableEntry.w SupSonAni_Transform	; 31 ; $1F
-
-SupSonAni_Walk:		dc.b $FF,$77,$78,$79,$7A,$7B,$7C,$75,$76,$FF
-	rev02even
-SupSonAni_Run:		dc.b $FF,$B5,$B9,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	rev02even
-SupSonAni_Push:		dc.b $FD,$BD,$BE,$BF,$C0,$FF,$FF,$FF,$FF,$FF
-	rev02even
-SupSonAni_Stand:	dc.b   7,$72,$73,$74,$73,$FF
-	rev02even
-SupSonAni_Balance:	dc.b   9,$C2,$C3,$C4,$C3,$C5,$C6,$C7,$C6,$FF
-	rev02even
-SupSonAni_Duck:		dc.b   5,$C1,$FF
-	rev02even
-SupSonAni_Transform:	dc.b   2,$6D,$6D,$6E,$6E,$6F,$70,$71,$70,$71,$70,$71,$70,$71,$FD,  0
-	even
-
-; ---------------------------------------------------------------------------
-; Sonic pattern loading subroutine
+; Sonic	graphics loading subroutine
 ; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
+; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
-; loc_1B848:
+
 LoadSonicDynPLC:
+		moveq	#0,d0
+		move.b	mapping_frame(a0),d0	; load frame number
 
-	moveq	#0,d0
-	move.b	mapping_frame(a0),d0	; load frame number
-; loc_1B84E:
 LoadSonicDynPLC_Part2:
-	cmp.b	(Sonic_LastLoadedDPLC).w,d0
-	beq.s	return_1B89A
-	move.b	d0,(Sonic_LastLoadedDPLC).w
-	lea	(MapRUnc_Sonic).l,a2
-	add.w	d0,d0
-	adda.w	(a2,d0.w),a2
-	move.w	(a2)+,d5
-	subq.w	#1,d5
-	bmi.s	return_1B89A
-	move.w	#tiles_to_bytes(ArtTile_ArtUnc_Sonic),d4
-; loc_1B86E:
-SPLC_ReadEntry:
-	moveq	#0,d1
-	move.w	(a2)+,d1
-	move.w	d1,d3
-	lsr.w	#8,d3
-	andi.w	#$F0,d3
-	addi.w	#$10,d3
-	andi.w	#$FFF,d1
-	lsl.l	#5,d1
-	addi.l	#ArtUnc_Sonic,d1
-	move.w	d4,d2
-	add.w	d3,d4
-	add.w	d3,d4
-	jsr	(QueueDMATransfer).l
-	dbf	d5,SPLC_ReadEntry	; repeat for number of entries
+		bsr.w	LoadSonicMap
+		cmp.b	(Sonic_LastLoadedDPLC).w,d0
+		beq.s	.nochange
+		move.b	d0,(Sonic_LastLoadedDPLC).w
+		tst.b	(Super_Sonic_flag).w
+		bne.s	.superplc
+		lea	(MapRUnc_Sonic).l,a2
+		bra.s	.cont
+	.superplc:
+		lea	(MapRUnc_SuperSonic).l,a2
+	.cont:
+		add.w	d0,d0
+		adda.w	(a2,d0.w),a2
+		move.w	(a2)+,d5
+		subq.w	#1,d5
+		bmi.s	.nochange
+	move.w	#tiles_to_bytes(ArtTile_ArtUnc_Sonic),d4	; Temporary
+		tst.b	(Super_Sonic_flag).w
+		bne.s	.superart
+		move.l	#ArtUnc_Sonic,d6
+		bra.s	.readentry
+	.superart:
+		move.l	#ArtUnc_SuperSonic,d6
 
-return_1B89A:
-	rts
+    .readentry:
+		moveq	#0,d1
+		move.w	(a2)+,d1
+		move.w	d1,d3
+		lsr.w	#8,d3
+		andi.w	#$F0,d3
+		addi.w	#$10,d3
+		andi.w	#$FFF,d1
+		lsl.l	#5,d1
+		add.l	d6,d1
+		move.w	d4,d2
+		add.w	d3,d4
+		add.w	d3,d4
+		jsr	(QueueDMATransfer).l
+		dbf	d5,.readentry	; repeat for number of entries
+
+    .nochange:
+		rts	
+; End of function Sonic_LoadGfx
+
+LoadSonicMap:
+		tst.b	(Super_Sonic_flag).w
+		bne.s	.super
+	.normal:
+		cmpi.l	#MapUnc_Sonic,(MainCharacter+mappings).w
+		beq.s	.skip
+		move.l	#MapUnc_Sonic,(MainCharacter+mappings).w
+		bra.s	.skip
+	.super:
+		cmpi.l	#MapUnc_SuperSonic,(MainCharacter+mappings).w
+		beq.s	.skip
+		move.l	#MapUnc_SuperSonic,(MainCharacter+mappings).w
+	.skip:
+		rts
 ; ===========================================================================
 
 JmpTo_KillCharacter ; JmpTo
@@ -37957,116 +37509,7 @@ loc_1D006:
 	rts
 ; ===========================================================================
 
-; ---------------------------------------------------------------------------
-; Animation script - Tails
-; ---------------------------------------------------------------------------
-; off_1D038:
-TailsAniData:		offsetTable
-TailsAni_Walk_ptr:	offsetTableEntry.w TailsAni_Walk	;  0 ;   0
-TailsAni_Run_ptr:	offsetTableEntry.w TailsAni_Run		;  1 ;   1
-TailsAni_Roll_ptr:	offsetTableEntry.w TailsAni_Roll	;  2 ;   2
-TailsAni_Roll2_ptr:	offsetTableEntry.w TailsAni_Roll2	;  3 ;   3
-TailsAni_Push_ptr:	offsetTableEntry.w TailsAni_Push	;  4 ;   4
-TailsAni_Wait_ptr:	offsetTableEntry.w TailsAni_Wait	;  5 ;   5
-TailsAni_Balance_ptr:	offsetTableEntry.w TailsAni_Balance	;  6 ;   6
-TailsAni_LookUp_ptr:	offsetTableEntry.w TailsAni_LookUp	;  7 ;   7
-TailsAni_Duck_ptr:	offsetTableEntry.w TailsAni_Duck	;  8 ;   8
-TailsAni_Spindash_ptr:	offsetTableEntry.w TailsAni_Spindash	;  9 ;   9
-TailsAni_Dummy1_ptr:	offsetTableEntry.w TailsAni_Dummy1	; 10 ;  $A
-TailsAni_Dummy2_ptr:	offsetTableEntry.w TailsAni_Dummy2	; 11 ;  $B
-TailsAni_Dummy3_ptr:	offsetTableEntry.w TailsAni_Dummy3	; 12 ;  $C
-TailsAni_Stop_ptr:	offsetTableEntry.w TailsAni_Stop	; 13 ;  $D
-TailsAni_Float_ptr:	offsetTableEntry.w TailsAni_Float	; 14 ;  $E
-TailsAni_Float2_ptr:	offsetTableEntry.w TailsAni_Float2	; 15 ;  $F
-TailsAni_Spring_ptr:	offsetTableEntry.w TailsAni_Spring	; 16 ; $10
-TailsAni_Hang_ptr:	offsetTableEntry.w TailsAni_Hang	; 17 ; $11
-TailsAni_Blink_ptr:	offsetTableEntry.w TailsAni_Blink	; 18 ; $12
-TailsAni_Blink2_ptr:	offsetTableEntry.w TailsAni_Blink2	; 19 ; $13
-TailsAni_Hang2_ptr:	offsetTableEntry.w TailsAni_Hang2	; 20 ; $14
-TailsAni_Bubble_ptr:	offsetTableEntry.w TailsAni_Bubble	; 21 ; $15
-TailsAni_DeathBW_ptr:	offsetTableEntry.w TailsAni_DeathBW	; 22 ; $16
-TailsAni_Drown_ptr:	offsetTableEntry.w TailsAni_Drown	; 23 ; $17
-TailsAni_Death_ptr:	offsetTableEntry.w TailsAni_Death	; 24 ; $18
-TailsAni_Hurt_ptr:	offsetTableEntry.w TailsAni_Hurt	; 25 ; $19
-TailsAni_Hurt2_ptr:	offsetTableEntry.w TailsAni_Hurt2	; 26 ; $1A
-TailsAni_Slide_ptr:	offsetTableEntry.w TailsAni_Slide	; 27 ; $1B
-TailsAni_Blank_ptr:	offsetTableEntry.w TailsAni_Blank	; 28 ; $1C
-TailsAni_Dummy4_ptr:	offsetTableEntry.w TailsAni_Dummy4	; 29 ; $1D
-TailsAni_Dummy5_ptr:	offsetTableEntry.w TailsAni_Dummy5	; 30 ; $1E
-TailsAni_HaulAss_ptr:	offsetTableEntry.w TailsAni_HaulAss	; 31 ; $1F
-TailsAni_Fly_ptr:	offsetTableEntry.w TailsAni_Fly		; 32 ; $20
-
-TailsAni_Walk:	dc.b $FF,$10,$11,$12,$13,$14,$15, $E, $F,$FF
-	rev02even
-TailsAni_Run:	dc.b $FF,$2E,$2F,$30,$31,$FF,$FF,$FF,$FF,$FF
-	rev02even
-TailsAni_Roll:	dc.b   1,$48,$47,$46,$FF
-	rev02even
-TailsAni_Roll2:	dc.b   1,$48,$47,$46,$FF
-	rev02even
-TailsAni_Push:	dc.b $FD,$63,$64,$65,$66,$FF,$FF,$FF,$FF,$FF
-	rev02even
-TailsAni_Wait:	dc.b   7,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  3,  2,  1,  1,  1
-		dc.b   1,  1,  1,  1,  1,  3,  2,  1,  1,  1,  1,  1,  1,  1,  1,  1
-		dc.b   5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5
-		dc.b   6,  7,  8,  7,  8,  7,  8,  7,  8,  7,  8,  6,$FE,$1C
-	rev02even
-TailsAni_Balance:	dc.b   9,$69,$69,$6A,$6A,$69,$69,$6A,$6A,$69,$69,$6A,$6A,$69,$69,$6A
-			dc.b $6A,$69,$69,$6A,$6A,$69,$6A,$FF
-	rev02even
-TailsAni_LookUp:	dc.b $3F,  4,$FF
-	rev02even
-TailsAni_Duck:		dc.b $3F,$5B,$FF
-	rev02even
-TailsAni_Spindash:	dc.b   0,$60,$61,$62,$FF
-	rev02even
-TailsAni_Dummy1:	dc.b $3F,$82,$FF
-	rev02even
-TailsAni_Dummy2:	dc.b   7,  8,  8,  9,$FD,  5
-	rev02even
-TailsAni_Dummy3:	dc.b   7,  9,$FD,  5
-	rev02even
-TailsAni_Stop:		dc.b   7,$67,$68,$67,$68,$FD,  0
-	rev02even
-TailsAni_Float:		dc.b   9,$6E,$73,$FF
-	rev02even
-TailsAni_Float2:	dc.b   9,$6E,$6F,$70,$71,$72,$FF
-	rev02even
-TailsAni_Spring:	dc.b   3,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$FD,  0
-	rev02even
-TailsAni_Hang:		dc.b   5,$6C,$6D,$FF
-	rev02even
-TailsAni_Blink:		dc.b  $F,  1,  2,  3,$FE,  1
-	rev02even
-TailsAni_Blink2:	dc.b  $F,  1,  2,$FE,  1
-	rev02even
-TailsAni_Hang2:		dc.b $13,$85,$86,$FF
-	rev02even
-TailsAni_Bubble:	dc.b  $B,$74,$74,$12,$13,$FD,  0
-	rev02even
-TailsAni_DeathBW:	dc.b $20,$5D,$FF
-	rev02even
-TailsAni_Drown:		dc.b $2F,$5D,$FF
-	rev02even
-TailsAni_Death:		dc.b   3,$5D,$FF
-	rev02even
-TailsAni_Hurt:		dc.b   3,$5D,$FF
-	rev02even
-TailsAni_Hurt2:		dc.b   3,$5C,$FF
-	rev02even
-TailsAni_Slide:		dc.b   9,$6B,$5C,$FF
-	rev02even
-TailsAni_Blank:		dc.b $77,  0,$FD,  0
-	rev02even
-TailsAni_Dummy4:	dc.b   3,  1,  2,  3,  4,  5,  6,  7,  8,$FF
-	rev02even
-TailsAni_Dummy5:	dc.b   3,  1,  2,  3,  4,  5,  6,  7,  8,$FF
-	rev02even
-TailsAni_HaulAss:	dc.b $FF,$32,$33,$FF
-			dc.b $FF,$FF,$FF,$FF,$FF,$FF
-	rev02even
-TailsAni_Fly:		dc.b   1,$5E,$5F,$FF
-	even
+	include	"animations/Tails.asm"
 
 ; ===========================================================================
 
@@ -38081,16 +37524,33 @@ LoadTailsTailsDynPLC:
 	moveq	#0,d0
 	move.b	mapping_frame(a0),d0
 	cmp.b	(TailsTails_LastLoadedDPLC).w,d0
-	beq.s	return_1D1FE
+	beq.s	.return
 	move.b	d0,(TailsTails_LastLoadedDPLC).w
-	lea	(MapRUnc_Tails).l,a2
+	lea	(MapRUnc_TailsTails).l,a2
 	add.w	d0,d0
 	adda.w	(a2,d0.w),a2
 	move.w	(a2)+,d5
 	subq.w	#1,d5
-	bmi.s	return_1D1FE
+	bmi.s	.return
 	move.w	#tiles_to_bytes(ArtTile_ArtUnc_Tails_Tails),d4
-	bra.s	TPLC_ReadEntry
+
+.readentry:
+	moveq	#0,d1
+	move.w	(a2)+,d1
+	move.w	d1,d3
+	lsr.w	#8,d3
+	andi.w	#$F0,d3
+	addi.w	#$10,d3
+	andi.w	#$FFF,d1
+	lsl.l	#5,d1
+	addi.l	#ArtUnc_TailsTails,d1
+	move.w	d4,d2
+	add.w	d3,d4
+	add.w	d3,d4
+	jsr	(QueueDMATransfer).l
+	dbf	d5,.readentry	; repeat for number of entries
+.return:
+	rts
 
 ; ---------------------------------------------------------------------------
 ; Tails pattern loading subroutine
@@ -38115,21 +37575,21 @@ LoadTailsDynPLC_Part2:
 	bmi.s	return_1D1FE
 	move.w	#tiles_to_bytes(ArtTile_ArtUnc_Tails),d4
 ; loc_1D1D2:
-TPLC_ReadEntry:
-	moveq	#0,d1
-	move.w	(a2)+,d1
-	move.w	d1,d3
-	lsr.w	#8,d3
-	andi.w	#$F0,d3
-	addi.w	#$10,d3
-	andi.w	#$FFF,d1
-	lsl.l	#5,d1
-	addi.l	#ArtUnc_Tails,d1
-	move.w	d4,d2
-	add.w	d3,d4
-	add.w	d3,d4
-	jsr	(QueueDMATransfer).l
-	dbf	d5,TPLC_ReadEntry	; repeat for number of entries
+    .readentry:
+		moveq	#0,d1
+		move.w	(a2)+,d1
+		move.w	d1,d3
+		lsr.w	#8,d3
+		andi.w	#$F0,d3
+		addi.w	#$10,d3
+		andi.w	#$FFF,d1
+		lsl.l	#5,d1
+		addi.l	#ArtUnc_Tails,d1
+		move.w	d4,d2
+		add.w	d3,d4
+		add.w	d3,d4
+		jsr	(QueueDMATransfer).l
+		dbf	d5,.readentry	; repeat for number of entries
 
 return_1D1FE:
 	rts
@@ -38155,7 +37615,7 @@ Obj_TailsTails_parent_prev_anim = objoff_30
 ; loc_1D212
 Obj_TailsTails_Init:
 	addq.b	#2,routine(a0) ; => Obj_TailsTails_Main
-	move.l	#MapUnc_Tails,mappings(a0)
+	move.l	#MapUnc_TailsTails,mappings(a0)
 	move.w	#make_art_tile(ArtTile_ArtUnc_Tails_Tails,0,0),art_tile(a0)
 	bsr.w	Adjust2PArtPointer
 	move.w	#prio(2),priority(a0)
@@ -38223,45 +37683,7 @@ Obj_TailsTailsAniSelection:
 	dc.b	0	; TailsAni_Fly		->
 	even
 
-; ---------------------------------------------------------------------------
-; Animation script - Tails' tails
-; ---------------------------------------------------------------------------
-; off_1D2C0:
-Obj_TailsTailsAniData:	offsetTable
-		offsetTableEntry.w Obj_TailsTailsAni_Blank	;  0
-		offsetTableEntry.w Obj_TailsTailsAni_Swish	;  1
-		offsetTableEntry.w Obj_TailsTailsAni_Flick	;  2
-		offsetTableEntry.w Obj_TailsTailsAni_Directional	;  3
-		offsetTableEntry.w Obj_TailsTailsAni_DownLeft	;  4
-		offsetTableEntry.w Obj_TailsTailsAni_Down	;  5
-		offsetTableEntry.w Obj_TailsTailsAni_DownRight	;  6
-		offsetTableEntry.w Obj_TailsTailsAni_Spindash	;  7
-		offsetTableEntry.w Obj_TailsTailsAni_Skidding	;  8
-		offsetTableEntry.w Obj_TailsTailsAni_Pushing	;  9
-		offsetTableEntry.w Obj_TailsTailsAni_Hanging	; $A
-
-Obj_TailsTailsAni_Blank:		dc.b $20,  0,$FF
-	rev02even
-Obj_TailsTailsAni_Swish:		dc.b   7,  9, $A, $B, $C, $D,$FF
-	rev02even
-Obj_TailsTailsAni_Flick:		dc.b   3,  9, $A, $B, $C, $D,$FD,  1
-	rev02even
-Obj_TailsTailsAni_Directional:	dc.b $FC,$49,$4A,$4B,$4C,$FF ; Tails is moving right
-	rev02even
-Obj_TailsTailsAni_DownLeft:	dc.b   3,$4D,$4E,$4F,$50,$FF ; Tails is moving up-right
-	rev02even
-Obj_TailsTailsAni_Down:		dc.b   3,$51,$52,$53,$54,$FF ; Tails is moving up
-	rev02even
-Obj_TailsTailsAni_DownRight:	dc.b   3,$55,$56,$57,$58,$FF ; Tails is moving up-left
-	rev02even
-Obj_TailsTailsAni_Spindash:	dc.b   2,$81,$82,$83,$84,$FF
-	rev02even
-Obj_TailsTailsAni_Skidding:	dc.b   2,$87,$88,$89,$8A,$FF
-	rev02even
-Obj_TailsTailsAni_Pushing:	dc.b   9,$87,$88,$89,$8A,$FF
-	rev02even
-Obj_TailsTailsAni_Hanging:	dc.b   9,$81,$82,$83,$84,$FF
-	even
+	include	"animations/Tails's Tails.asm"
 
 ; ===========================================================================
 
@@ -86605,29 +86027,27 @@ ArtUnc_Waterfall1:	BINCLUDE	"art/uncompressed/ARZ waterfall patterns - 1.bin"
 ArtUnc_Waterfall2:	BINCLUDE	"art/uncompressed/ARZ waterfall patterns - 2.bin"
 ArtUnc_Waterfall3:	BINCLUDE	"art/uncompressed/ARZ waterfall patterns - 3.bin"
 ;---------------------------------------------------------------------------------------
-; Uncompressed art
-; Patterns for Sonic  ; ArtUnc_50000:
+; Sonic's shit
 ;---------------------------------------------------------------------------------------
 	align $20
 ArtUnc_Sonic:	BINCLUDE	"art/uncompressed/Sonic's art.bin"
+MapUnc_Sonic:	BINCLUDE	"mappings/sprite/Sonic.bin"
+MapRUnc_Sonic:	BINCLUDE	"mappings/spriteDPLC/Sonic.bin"
+	align $20
+ArtUnc_SuperSonic:	BINCLUDE	"art/uncompressed/Super Sonic's art.bin"
+MapUnc_SuperSonic:	BINCLUDE	"mappings/sprite/Super Sonic.bin"
+MapRUnc_SuperSonic:	BINCLUDE	"mappings/spriteDPLC/Super Sonic.bin"
 ;---------------------------------------------------------------------------------------
-; Uncompressed art
-; Patterns for Tails  ; ArtUnc_64320:
+; Tails's shit
 ;---------------------------------------------------------------------------------------
 	align $20
 ArtUnc_Tails:	BINCLUDE	"art/uncompressed/Tails's art.bin"
-;--------------------------------------------------------------------------------------
-; Sprite Mappings
-; Sonic			; MapUnc_6FBE0: SprTbl_Sonic:
-;--------------------------------------------------------------------------------------
-Mapunc_Sonic:	BINCLUDE	"mappings/sprite/Sonic.bin"
-;--------------------------------------------------------------------------------------
-; Sprite Dynamic Pattern Reloading
-; Sonic DPLCs   		; MapRUnc_714E0:
-;--------------------------------------------------------------------------------------
-; WARNING: the build script needs editing if you rename this label
-;          or if you move Sonic's running frame to somewhere else than frame $2D
-MapRUnc_Sonic:	BINCLUDE	"mappings/spriteDPLC/Sonic.bin"
+MapUnc_Tails:	BINCLUDE	"mappings/sprite/Tails.bin"
+MapRUnc_Tails:	BINCLUDE	"mappings/spriteDPLC/Tails.bin"
+	align $20
+ArtUnc_TailsTails:	BINCLUDE	"art/uncompressed/Tails's tails's art.bin"
+MapUnc_TailsTails:	BINCLUDE	"mappings/sprite/Tails's tails.bin"
+MapRUnc_TailsTails:	BINCLUDE	"mappings/spriteDPLC/Tails's tails.bin"
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Shield			; ArtNem_71D8E:
@@ -86647,16 +86067,6 @@ ArtUnc_SplashAndDust:	BINCLUDE	"art/uncompressed/Splash and skid dust.bin"
 ; Supersonic stars		; ArtNem_7393C:
 ArtNem_SuperSonic_stars:	BINCLUDE	"art/nemesis/Super Sonic stars.bin"
 	even
-;--------------------------------------------------------------------------------------
-; Sprite Mappings
-; Tails			; MapUnc_739E2:
-;--------------------------------------------------------------------------------------
-MapUnc_Tails:	BINCLUDE	"mappings/sprite/Tails.bin"
-;--------------------------------------------------------------------------------------
-; Sprite Dynamic Pattern Reloading
-; Tails DPLCs	; MapRUnc_7446C:
-;--------------------------------------------------------------------------------------
-MapRUnc_Tails:	BINCLUDE	"mappings/spriteDPLC/Tails.bin"
 ;-------------------------------------------------------------------------------------
 ; Nemesis compressed art (127 blocks)
 ; "SEGA" Patterns	; ArtNem_74876:
@@ -87092,7 +86502,7 @@ ArtNem_CNZFlipper:	BINCLUDE	"art/nemesis/Flippers.bin"
 ; Nemesis compressed art (16 blocks)
 ; Large moving platform from CPZ	; ArtNem_82216:
 	even
-ArtNem_CPZElevator:	BINCLUDE	"art/nemesis/Large moving platform from CNZ.bin"
+ArtNem_CPZElevator:	BINCLUDE	"art/nemesis/Large moving platform from CPZ.bin"
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Top of water in HPZ and CPZ	; ArtNem_82364:

@@ -4,7 +4,7 @@
 ; ---------------------------------------------------------------------------
 ; size variables - you'll get an informational error if you need to change these...
 ; they are all in units of bytes
-Size_of_Snd_driver_guess =	$808	; approximate post-compressed size of the Z80 sound driver
+Size_of_Snd_driver_guess =	$80A	; approximate post-compressed size of the Z80 sound driver
 Debug_Lagometer =	0		; set to 1 to enable on-screen lagometer. Seems to have an odd habit of breaking Special Stages....
 
 ; ---------------------------------------------------------------------------
@@ -418,9 +418,6 @@ PalID_CPZ =	id(PalPtr_CPZ) ; 11
 PalID_DEZ =	id(PalPtr_DEZ) ; 12
 PalID_ARZ =	id(PalPtr_ARZ) ; 13
 PalID_SCZ =	id(PalPtr_SCZ) ; 14
-PalID_HPZ_U =	id(PalPtr_HPZ_U) ; 15
-PalID_CPZ_U =	id(PalPtr_CPZ_U) ; 16
-PalID_ARZ_U =	id(PalPtr_ARZ_U) ; 17
 PalID_SS =	id(PalPtr_SS) ; 18
 PalID_MCZ_B =	id(PalPtr_MCZ_B) ; 19
 PalID_CNZ_B =	id(PalPtr_CNZ_B) ; 1A
@@ -861,7 +858,7 @@ Demo_Time_left:			ds.w 1		; 2 bytes
 Vscroll_Factor:
 Vscroll_Factor_FG:		ds.w 1
 Vscroll_Factor_BG:		ds.w 1
-unk_F61A:			ds.l 1		; Only ever cleared, never used
+waterValues:			ds.l 1		; used to be unk_F61A
 Vscroll_Factor_P2:
 Vscroll_Factor_P2_FG:		ds.w 1
 Vscroll_Factor_P2_BG:		ds.w 1
