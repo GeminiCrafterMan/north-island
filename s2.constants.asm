@@ -181,6 +181,14 @@ sub9_y_pos		ds.w 1
 			ds.b 1		; unused
 sub9_mapframe		ds.b 1
 next_subspr		= 6
+
+; Animation flags
+afEnd:		equ $FF	; return to beginning of animation
+afBack:		equ $FE	; go back (specified number) bytes
+afChange:	equ $FD	; run specified animation
+afRoutine:	equ $FC	; increment routine counter
+afReset:	equ $FB	; reset animation and 2nd object routine counter
+af2ndRoutine:	equ $FA	; increment 2nd routine counter
 ; ---------------------------------------------------------------------------
 ; property of all objects:
 
@@ -558,6 +566,8 @@ AniIDSonAni_Balance4		= id(SonAni_Balance4_ptr)		; 30 ; $1E
 AniIDSupSonAni_Transform	= id(SupSonAni_Transform_ptr)	; 31 ; $1F
 AniIDSonAni_Lying			= id(SonAni_Lying_ptr)			; 32 ; $20
 AniIDSonAni_LieDown			= id(SonAni_LieDown_ptr)		; 33 ; $21
+AniIDSonAni_AirRoll			= id(SonAni_AirRoll_ptr)		; 34 ; $22
+AniIDSonAni_Fall			= id(SonAni_Fall_ptr)			; 35 ; $23
 
 
 offset :=	TailsAniData

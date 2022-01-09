@@ -32934,6 +32934,13 @@ return_1A2DE:
 ; Called if Sonic is airborne, but not in a ball (thus, probably not jumping)
 ; loc_1A2E0: Obj_Sonic_MdJump
 Obj_Sonic_MdAir:
+	cmpi.b	#AniIDSonAni_Spring,anim(a0)
+	bne.s	+
+	tst.b	y_vel(a0)
+	blt.s	+
+	move.b	#AniIDSonAni_Fall,anim(a0)
++
+	bsr.w	SonicKnux_AirRoll
 	bsr.w	Sonic_JumpHeight
 	bsr.w	Sonic_ChgJumpDir
 	bsr.w	Sonic_LevelBound
@@ -33794,6 +33801,33 @@ Sonic_RollJump:
 	rts
 ; End of function Sonic_Jump
 
+SonicKnux_AirRoll:
+	btst	#1,status(a0)	; is Sonic in the air?
+	beq.s	.nope	; if not, branch
+	move.b	(Ctrl_1_Held_Logical).w,d0
+	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0 ; is a jump button pressed?
+	beq.s	.nope	; if not, branch
+	move.b	#AniIDSonAni_AirRoll,anim(a0)	; use "rolling"	animation
+	bset	#2,status(a0)	; force Sonic to roll
+	sfx		sfx_AirRoll
+
+.nope:
+	rts
+; End of function Sonic_AirRoll
+
+Tails_AirRoll:
+	btst	#1,status(a0)	; is Tails in the air?
+	beq.s	.nope	; if not, branch
+	move.b	(Ctrl_2_Held_Logical).w,d0
+	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0 ; is a jump button pressed?
+	beq.s	.nope	; if not, branch
+	move.b	#AniIDTailsAni_Roll,anim(a0)	; use "rolling"	animation
+	bset	#2,status(a0)	; force Tails to roll
+	sfx		sfx_AirRoll
+
+.nope:
+	rts
+; End of function Tails_AirRoll
 
 ; ---------------------------------------------------------------------------
 ; Subroutine letting Sonic control the height of the jump
@@ -34836,7 +34870,7 @@ SAnim_Tumble:
 	andi.b	#$FC,render_flags(a0)
 	addi.b	#$B,d0
 	divu.w	#$16,d0
-	addi.b	#$5F,d0
+	addi.b	#frS_Tumble1,d0
 	move.b	d0,mapping_frame(a0)
 	move.b	#0,anim_frame_duration(a0)
 	rts
@@ -34858,7 +34892,7 @@ loc_1B566:
 
 loc_1B572:
 	divu.w	#$16,d0
-	addi.b	#$5F,d0
+	addi.b	#frS_Tumble1,d0
 	move.b	d0,mapping_frame(a0)
 	move.b	#0,anim_frame_duration(a0)
 	rts
@@ -35737,6 +35771,8 @@ Obj_Tails_MdNormal:
 ; Called if Tails is airborne, but not in a ball (thus, probably not jumping)
 ; loc_1C032: Obj_Tails_MdJump
 Obj_Tails_MdAir:
+	; Add the thing here later
+	bsr.w	Tails_AirRoll
 	bsr.w	Tails_JumpHeight
 	bsr.w	Tails_ChgJumpDir
 	bsr.w	Tails_LevelBound
@@ -75225,15 +75261,15 @@ Obj_Tornado_Animate_Pilot:
 	jmpto	(LoadTailsDynPLC_Part2).l, JmpTo_LoadTailsDynPLC_Part2
 ; ===========================================================================
 ; byte_3AF9C:
-Sonic_pilot_frames: ; spunch here later
-	dc.b $2D
-	dc.b $2E	; 1
-	dc.b $2F	; 2
-	dc.b $30	; 3
+Sonic_pilot_frames:
+	dc.b frS_Run11
+	dc.b frS_Run12	; 1
+	dc.b frS_Run13	; 2
+	dc.b frS_Run14	; 3
 Sonic_pilot_frames_end:
 
 ; byte_3AFA0:
-Tails_pilot_frames:	; spanch later
+Tails_pilot_frames: ; spunch here later
 	dc.b $10
 	dc.b $10	; 1
 	dc.b $10	; 2

@@ -37,82 +37,88 @@ SonAni_Balance4_ptr:		offsetTableEntry.w SonAni_Balance4	; 30 ; $1E
 SupSonAni_Transform_ptr:	offsetTableEntry.w SupSonAni_Transform	; 31 ; $1F
 SonAni_Lying_ptr:		offsetTableEntry.w SonAni_Lying		; 32 ; $20
 SonAni_LieDown_ptr:		offsetTableEntry.w SonAni_LieDown	; 33 ; $21
+SonAni_AirRoll_ptr:		offsetTableEntry.w SonAni_AirRoll	; 34 ; $22
+SonAni_Fall_ptr:		offsetTableEntry.w SonAni_Fall	; 34 ; $22
 
-SonAni_Walk:	dc.b $FF, $F,$10,$11,$12,$13,$14, $D, $E,$FF
+SonAni_Walk:	dc.b $FF, frS_Walk13,frS_Walk14,frS_Walk15,frS_Walk16,frS_Walk17,frS_Walk18, frS_Walk11, frS_Walk12,afEnd
 	rev02even
-SonAni_Run:	dc.b $FF,$2D,$2E,$2F,$30,$FF,$FF,$FF,$FF,$FF
+SonAni_Run:		dc.b $FF,frS_Run11,frS_Run12,frS_Run13,frS_Run14,afEnd,afEnd,afEnd,afEnd,afEnd
 	rev02even
-SonAni_Roll:	dc.b $FE,$3D,$41,$3E,$41,$3F,$41,$40,$41,$FF
+SonAni_Roll:	dc.b $FE,frS_Roll1,frS_Roll5,frS_Roll2,frS_Roll5,frS_Roll3,frS_Roll5,frS_Roll4,frS_Roll5,afEnd
 	rev02even
-SonAni_Roll2:	dc.b $FE,$3D,$41,$3E,$41,$3F,$41,$40,$41,$FF
+SonAni_Roll2:	dc.b $FE,frS_Roll1,frS_Roll5,frS_Roll2,frS_Roll5,frS_Roll3,frS_Roll5,frS_Roll4,frS_Roll5,afEnd
 	rev02even
-SonAni_Push:	dc.b $FD,$48,$49,$4A,$4B,$FF,$FF,$FF,$FF,$FF
+SonAni_Push:	dc.b $FD,frS_Push1,frS_Push2,frS_Push3,frS_Push4,afEnd,afEnd,afEnd,afEnd,afEnd
 	rev02even
 SonAni_Wait:
-	dc.b   5,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1
-	dc.b   1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  2
-	dc.b   3,  3,  3,  3,  3,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5
-	dc.b   5,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5,  5,  6,  6,  6
-	dc.b   6,  6,  6,  6,  6,  6,  6,  4,  4,  4,  5,  5,  5,  4,  4,  4
-	dc.b   5,  5,  5,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5,  5,  6
-	dc.b   6,  6,  6,  6,  6,  6,  6,  6,  6,  4,  4,  4,  5,  5,  5,  4
-	dc.b   4,  4,  5,  5,  5,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5
-	dc.b   5,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  4,  4,  4,  5,  5
-	dc.b   5,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5,  5,  4,  4,  4
-	dc.b   5,  5,  5,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  7,  8,  8
-	dc.b   8,  9,  9,  9,$FE,  6
+	dc.b   5,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1
+	dc.b   frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle1,  frS_Idle2
+	dc.b   frS_Idle3,  frS_Idle3,  frS_Idle3,  frS_Idle3,  frS_Idle3,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5
+	dc.b   frS_Idle5,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle6,  frS_Idle6,  frS_Idle6
+	dc.b   frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle4,  frS_Idle4,  frS_Idle4
+	dc.b   frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle6
+	dc.b   frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle4
+	dc.b   frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5
+	dc.b   frS_Idle5,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5
+	dc.b   frS_Idle5,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle4,  frS_Idle4,  frS_Idle4,  frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle4,  frS_Idle4,  frS_Idle4
+	dc.b   frS_Idle5,  frS_Idle5,  frS_Idle5,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle6,  frS_Idle7,  frS_Idle8,  frS_Idle8
+	dc.b   frS_Idle8,  frS_Idle9,  frS_Idle9,  frS_Idle9,afBack,  6
 	rev02even
-SonAni_Balance:	dc.b   9,$CC,$CD,$CE,$CD,$FF
+SonAni_Balance:	dc.b   9,frS_BalanceA1,frS_BalanceA2,frS_BalanceA3,frS_BalanceA2,afEnd
 	rev02even
-SonAni_LookUp:	dc.b   5, $B, $C,$FE,  1
+SonAni_LookUp:	dc.b   5, frS_LookUp1, frS_LookUp2,afBack,  1
 	rev02even
-SonAni_Duck:	dc.b   5,$4C,$4D,$FE,  1
+SonAni_Duck:	dc.b   5,frS_Duck1,frS_Duck2,afBack,  1
 	rev02even
-SonAni_Spindash:dc.b   0,$42,$43,$42,$44,$42,$45,$42,$46,$42,$47,$FF
+SonAni_Spindash:dc.b   0,frS_SpDsh1,frS_SpDsh2,frS_SpDsh1,frS_SpDsh3,frS_SpDsh1,frS_SpDsh4,frS_SpDsh1,frS_SpDsh5,frS_SpDsh1,frS_SpDsh6,afEnd
 	rev02even
-SonAni_Blink:	dc.b   1,  2,$FD,  0
+SonAni_Blink:	dc.b   1,  frS_Idle2,afChange,  0
 	rev02even
-SonAni_GetUp:	dc.b   3, $A,$FD,  0
+SonAni_GetUp:	dc.b   3, frS_IdleA,afChange,  0
 	rev02even
-SonAni_Balance2:dc.b   3,$C8,$C9,$CA,$CB,$FF
+SonAni_Balance2:dc.b   3,frS_BalanceB1,frS_BalanceB2,frS_BalanceB3,frS_BalanceB4,afEnd
 	rev02even
-SonAni_Stop:	dc.b   5,$D2,$D3,$D4,$D5,$FD,  0 ; halt/skidding animation
+SonAni_Stop:	dc.b   5,frS_Skid1,frS_Skid2,frS_Skid3,frS_SkidT,afChange,  0 ; halt/skidding animation
 	rev02even
-SonAni_Float:	dc.b   7,$54,$59,$FF
+SonAni_Float:	dc.b   7,frS_Float1,frS_FloatB,afEnd
 	rev02even
-SonAni_Float2:	dc.b   7,$54,$55,$56,$57,$58,$FF
+SonAni_Float2:	dc.b   7,frS_Float1,frS_Float2,frS_Float3,frS_Float4,frS_Float5,afEnd
 	rev02even
-SonAni_Spring:	dc.b $2F,$5B,$FD,  0
+SonAni_Spring:	dc.b $2F,frS_Spring,afEnd	; spring > falling via code in MdNormal
 	rev02even
-SonAni_Hang:	dc.b   1,$50,$51,$FF
+SonAni_Hang:	dc.b   1,frS_Cling1,frS_Cling2,afEnd
 	rev02even
-SonAni_Dash2:	dc.b  $F,$43,$43,$43,$FE,  1
+SonAni_Dash2:	dc.b  $F,frS_SpDsh2,frS_SpDsh2,frS_SpDsh2,afBack,  1
 	rev02even
-SonAni_Dash3:	dc.b  $F,$43,$44,$FE,  1
+SonAni_Dash3:	dc.b  $F,frS_SpDsh2,frS_SpDsh3,afBack,  1
 	rev02even
-SonAni_Hang2:	dc.b $13,$6B,$6C,$FF
+SonAni_Hang2:	dc.b $13,frS_Hang1,frS_Hang2,afEnd
 	rev02even
-SonAni_Bubble:	dc.b  $B,$5A,$5A,$11,$12,$FD,  0 ; breathe
+SonAni_Bubble:	dc.b  $B,frS_Bubble,frS_Bubble,frS_Walk15,frS_Walk16,afChange,  0 ; breathe
 	rev02even
-SonAni_DeathBW:	dc.b $20,$5E,$FF
+SonAni_DeathBW:	dc.b $20,frS_Burnt,afEnd
 	rev02even
-SonAni_Drown:	dc.b $20,$5D,$FF
+SonAni_Drown:	dc.b $20,frS_Drown,afEnd
 	rev02even
-SonAni_Death:	dc.b $20,$5C,$FF
+SonAni_Death:	dc.b $20,frS_Death,afEnd
 	rev02even
-SonAni_Hurt:	dc.b $40,$4E,$FF
+SonAni_Hurt:	dc.b $40,frS_Hurt,afEnd
 	rev02even
-SonAni_Slide:	dc.b   9,$4E,$4F,$FF
+SonAni_Slide:	dc.b   9,frS_Hurt,frS_Slide,afEnd
 	rev02even
-SonAni_Blank:	dc.b $77,  0,$FD,  0
+SonAni_Blank:	dc.b $77,  frS_Null,afChange,  0
 	rev02even
-SonAni_Balance3:dc.b $13,$D0,$D1,$FF
+SonAni_Balance3:dc.b $13,frS_BalanceC1,frS_BalanceC2,afEnd
 	rev02even
-SonAni_Balance4:dc.b   3,$CF,$C8,$C9,$CA,$CB,$FE,  4
+SonAni_Balance4:dc.b   3,frS_BalanceT1,frS_BalanceB1,frS_BalanceB2,frS_BalanceB3,frS_BalanceB4,afBack,  4
 	rev02even
-SonAni_Lying:	dc.b   9,  8,  9,$FF
+SonAni_Lying:	dc.b   9,  frS_Idle8,  frS_Idle9,afEnd
 	rev02even
-SonAni_LieDown:	dc.b   3,  7,$FD,  0
+SonAni_LieDown:	dc.b   3,  frS_Idle7,afChange,  0
+	rev02even
+SonAni_AirRoll:	dc.b   2,  frS_AirRoll,afChange, 2	; transition to rolling
+	rev02even
+SonAni_Fall:	dc.b	2,	frS_Fall1, frS_Fall2,afEnd
 	even
 
 ; ---------------------------------------------------------------------------
@@ -152,8 +158,151 @@ SuperSonicAniData: offsetTable
 	offsetTableEntry.w SonAni_Balance3	; 29 ; $1D
 	offsetTableEntry.w SonAni_Balance4	; 30 ; $1E
 	offsetTableEntry.w SupSonAni_Transform	; 31 ; $1F
+	offsetTableEntry.w SonAni_Lying		; 32 ; $20
+	offsetTableEntry.w SonAni_LieDown	; 33 ; $21
+	offsetTableEntry.w SonAni_AirRoll	; 34 ; $22
+	offsetTableEntry.w SupSonAni_Fall	; 34 ; $22
 
-SupSonAni_Stand:	dc.b   7,1,2,3,2,$FF
+SupSonAni_Stand:	dc.b   7,	frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
+					dc.b		frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
+					dc.b		frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
+					dc.b		frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
+					dc.b		frS_Idle4,	frS_Idle5,	frS_Idle6,	frS_Idle5,	frS_Idle6,	frS_Idle5,	frS_Idle6,	frS_Idle5,	frS_Idle6,	frS_Idle5,	frS_Idle6,	frS_Idle5,	frS_Idle4
+					dc.b		frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
+					dc.b		frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
+					dc.b		frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
+					dc.b		frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
+					dc.b		frS_Idle4,	frS_Idle5,	frS_Idle6,	frS_Idle5,	frS_Idle6,	frS_Idle5,	frS_Idle6,	frS_Idle5,	frS_Idle6,	frS_Idle5,	frS_Idle6,	frS_Idle5,	frS_Idle4
+					dc.b		frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
+					dc.b		frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
+					dc.b		frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
+					dc.b		frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
+					dc.b		frS_Idle4,	frS_Idle5,	frS_Idle6,	frS_Idle7,	frS_Idle8,	frS_Idle5,	frS_Idle6,	frS_Idle7,	frS_Idle8,	frS_Idle5,	frS_Idle6,	frS_Idle5,	frS_Idle4,afEnd
 	rev02even
-SupSonAni_Transform:	dc.b   2,$6D,$6D,$6E,$6E,$6F,$70,$71,$70,$71,$70,$71,$70,$71,$FD,  0
+SupSonAni_Fall:		dc.b	2,	frS_Fall1, frS_Fall2,afBack, 1	; Alternate falling animation because I couldn't find a copy of the other in a Super state.
 	even
+SupSonAni_Transform:	dc.b   2,frS_Transform1,frS_Transform1,frS_Transform2,frS_Transform2,frS_Transform3,frS_Transform4,frS_Transform5,frS_Transform4,frS_Transform5,frS_Transform4,frS_Transform5,frS_Transform4,frS_Transform5,afChange,  0
+	even
+
+; Frame IDs
+	phase 0 ; Reset ds.b value to 0
+
+frS_Null	ds.b 1	; 0
+
+frS_Idle1	ds.b 1
+frS_Idle2	ds.b 1
+frS_Idle3	ds.b 1
+frS_Idle4	ds.b 1
+frS_Idle5	ds.b 1
+frS_Idle6	ds.b 1
+frS_Idle7	ds.b 1
+frS_Idle8	ds.b 1
+frS_Idle9	ds.b 1
+frS_IdleA	ds.b 1
+; Look up
+frS_LookUp1	ds.b 1
+frS_LookUp2	ds.b 1
+; Walk
+frS_Walk11	ds.b 1
+frS_Walk12	ds.b 1
+frS_Walk13	ds.b 1
+frS_Walk14	ds.b 1
+frS_Walk15	ds.b 1
+frS_Walk16	ds.b 1
+frS_Walk17	ds.b 1
+frS_Walk18	ds.b 1
+; don't care about these, define them for the sake of keeping the number up
+frS_Walk2X	ds.b 8
+frS_Walk3X	ds.b 8
+frS_Walk4X	ds.b 8
+; fest
+frS_Run11	ds.b 1	; this,
+frS_Run12	ds.b 1
+frS_Run13	ds.b 1	; and this... are the same in Super
+frS_Run14	ds.b 1
+; don't care about these, define them for the sake of keeping the number up
+frS_Run2X	ds.b 4
+frS_Run3X	ds.b 4
+frS_Run4X	ds.b 4
+; speeeeeeeeeeeeEEEEEEEEEEEN
+frS_Roll1	ds.b 1
+frS_Roll2	ds.b 1
+frS_Roll3	ds.b 1
+frS_Roll4	ds.b 1
+frS_Roll5	ds.b 1
+; dash
+frS_SpDsh1	ds.b 1
+frS_SpDsh2	ds.b 1
+frS_SpDsh3	ds.b 1
+frS_SpDsh4	ds.b 1
+frS_SpDsh5	ds.b 1
+frS_SpDsh6	ds.b 1
+; poosh
+frS_Push1	ds.b 1
+frS_Push2	ds.b 1
+frS_Push3	ds.b 1
+frS_Push4	ds.b 1
+; ducc
+frS_Duck1	ds.b 1
+frS_Duck2	ds.b 1
+; hurt and slide
+frS_Hurt	ds.b 1
+frS_Slide	ds.b 1
+; cling
+frS_Cling1	ds.b 1
+frS_Cling2	ds.b 1
+; float
+frS_Float1	ds.b 1
+frS_Float2	ds.b 1
+frS_Float3	ds.b 1
+frS_Float4	ds.b 1
+frS_Float5	ds.b 1
+frS_FloatB	ds.b 1
+; bubble bobble nes
+frS_Bubble	ds.b 1
+; boing
+frS_Spring	ds.b 1
+; ded
+frS_Death	ds.b 1
+frS_Drown	ds.b 1
+frS_Burnt	ds.b 1
+; tumble
+frS_Tumble1	ds.b 1
+frS_TumbleX	ds.b 11	; entirely unnecessary
+; hang from vine/tails
+frS_Hang1	ds.b 1
+frS_Hang2	ds.b 1
+; What a useless transformation. You changed your hair, so what?
+frS_Transform1	ds.b 1
+frS_Transform2	ds.b 1
+frS_Transform3	ds.b 1
+frS_Transform4	ds.b 1
+frS_Transform5	ds.b 1
+; Balance B
+frS_BalanceB1	ds.b 1
+frS_BalanceB2	ds.b 1
+frS_BalanceB3	ds.b 1
+frS_BalanceB4	ds.b 1
+; Balance A
+frS_BalanceA1	ds.b 1
+frS_BalanceA2	ds.b 1
+frS_BalanceA3	ds.b 1
+; Balance Turn
+frS_BalanceT1	ds.b 1
+; Balance C
+frS_BalanceC1	ds.b 1
+frS_BalanceC2	ds.b 1
+; Skid and turn
+frS_Skid1	ds.b 1
+frS_Skid2	ds.b 1
+frS_Skid3	ds.b 1
+frS_SkidT	ds.b 1
+; Placeholder
+frS_Derp	ds.b 1
+; Air roll (singular frame)
+frS_AirRoll	ds.b 1
+; Fall
+frS_Fall1	ds.b 1
+frS_Fall2	ds.b 1
+	even
+	dephase
