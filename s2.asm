@@ -34923,9 +34923,9 @@ SAnim_Push:
 LoadSonicDynPLC:
 		moveq	#0,d0
 		move.b	mapping_frame(a0),d0	; load frame number
+		bsr.w	LoadSonicMap
 
 LoadSonicDynPLC_Part2:
-		bsr.w	LoadSonicMap
 		cmp.b	(Sonic_LastLoadedDPLC).w,d0
 		beq.s	.nochange
 		move.b	d0,(Sonic_LastLoadedDPLC).w
@@ -34973,14 +34973,14 @@ LoadSonicMap:
 		tst.b	(Super_Sonic_flag).w
 		bne.s	.super
 	.normal:
-		cmpi.l	#MapUnc_Sonic,(MainCharacter+mappings).w
+		cmpi.l	#MapUnc_Sonic,mappings(a0)
 		beq.s	.skip
-		move.l	#MapUnc_Sonic,(MainCharacter+mappings).w
+		move.l	#MapUnc_Sonic,mappings(a0)
 		bra.s	.skip
 	.super:
-		cmpi.l	#MapUnc_SuperSonic,(MainCharacter+mappings).w
+		cmpi.l	#MapUnc_SuperSonic,mappings(a0)
 		beq.s	.skip
-		move.l	#MapUnc_SuperSonic,(MainCharacter+mappings).w
+		move.l	#MapUnc_SuperSonic,mappings(a0)
 	.skip:
 		rts
 ; ===========================================================================
@@ -37521,36 +37521,68 @@ loc_1D006:
 
 ; loc_1D184:
 LoadTailsTailsDynPLC:
-	moveq	#0,d0
-	move.b	mapping_frame(a0),d0
-	cmp.b	(TailsTails_LastLoadedDPLC).w,d0
-	beq.s	.return
-	move.b	d0,(TailsTails_LastLoadedDPLC).w
-	lea	(MapRUnc_TailsTails).l,a2
-	add.w	d0,d0
-	adda.w	(a2,d0.w),a2
-	move.w	(a2)+,d5
-	subq.w	#1,d5
-	bmi.s	.return
-	move.w	#tiles_to_bytes(ArtTile_ArtUnc_Tails_Tails),d4
+		moveq	#0,d0
+		move.b	mapping_frame(a0),d0	; load frame number
+		bsr.w	LoadTailsTailsMap
 
-.readentry:
-	moveq	#0,d1
-	move.w	(a2)+,d1
-	move.w	d1,d3
-	lsr.w	#8,d3
-	andi.w	#$F0,d3
-	addi.w	#$10,d3
-	andi.w	#$FFF,d1
-	lsl.l	#5,d1
-	addi.l	#ArtUnc_TailsTails,d1
-	move.w	d4,d2
-	add.w	d3,d4
-	add.w	d3,d4
-	jsr	(QueueDMATransfer).l
-	dbf	d5,.readentry	; repeat for number of entries
-.return:
-	rts
+LoadTailsTailsDynPLC_Part2:
+		cmp.b	(TailsTails_LastLoadedDPLC).w,d0
+		beq.s	.nochange
+		move.b	d0,(TailsTails_LastLoadedDPLC).w
+;		tst.b	(Super_Sonic_flag).w
+;		bne.s	.superplc
+		lea	(MapRUnc_TailsTails).l,a2
+;		bra.s	.cont
+;	.superplc:
+;		lea	(MapRUnc_SuperTailsTails).l,a2
+;	.cont:
+		add.w	d0,d0
+		adda.w	(a2,d0.w),a2
+		move.w	(a2)+,d5
+		subq.w	#1,d5
+		bmi.s	.nochange
+		move.w	#tiles_to_bytes(ArtTile_ArtUnc_Tails_Tails),d4	; Temporary
+;		tst.b	(Super_Sonic_flag).w
+;		bne.s	.superart
+		move.l	#ArtUnc_TailsTails,d6
+;		bra.s	.readentry
+;	.superart:
+;		move.l	#ArtUnc_SuperTailsTails,d6
+
+	.readentry:
+		moveq	#0,d1
+		move.w	(a2)+,d1
+		move.w	d1,d3
+		lsr.w	#8,d3
+		andi.w	#$F0,d3
+		addi.w	#$10,d3
+		andi.w	#$FFF,d1
+		lsl.l	#5,d1
+		add.l	d6,d1
+		move.w	d4,d2
+		add.w	d3,d4
+		add.w	d3,d4
+		jsr	(QueueDMATransfer).l
+		dbf	d5,.readentry	; repeat for number of entries
+
+	.nochange:
+		rts	
+; End of function TailsTails_LoadGfx
+
+LoadTailsTailsMap:
+;		tst.b	(Super_Sonic_flag).w
+;		bne.s	.super
+;	.normal:
+		cmpi.l	#MapUnc_TailsTails,mappings(a0)
+		beq.s	.skip
+		move.l	#MapUnc_TailsTails,mappings(a0)
+;		bra.s	.skip
+;	.super:
+;		cmpi.l	#MapUnc_SuperTailsTails,mappings(a0)
+;		beq.s	.skip
+;		move.l	#MapUnc_SuperTailsTails,mappings(a0)
+	.skip:
+		rts
 
 ; ---------------------------------------------------------------------------
 ; Tails pattern loading subroutine
@@ -37560,22 +37592,35 @@ LoadTailsTailsDynPLC:
 
 ; loc_1D1AC:
 LoadTailsDynPLC:
-	moveq	#0,d0
-	move.b	mapping_frame(a0),d0	; load frame number
-; loc_1D1B2:
+		moveq	#0,d0
+		move.b	mapping_frame(a0),d0	; load frame number
+		bsr.w	LoadTailsMap
+
 LoadTailsDynPLC_Part2:
-	cmp.b	(Tails_LastLoadedDPLC).w,d0
-	beq.s	return_1D1FE
-	move.b	d0,(Tails_LastLoadedDPLC).w
-	lea	(MapRUnc_Tails).l,a2
-	add.w	d0,d0
-	adda.w	(a2,d0.w),a2
-	move.w	(a2)+,d5
-	subq.w	#1,d5
-	bmi.s	return_1D1FE
-	move.w	#tiles_to_bytes(ArtTile_ArtUnc_Tails),d4
-; loc_1D1D2:
-    .readentry:
+		cmp.b	(Tails_LastLoadedDPLC).w,d0
+		beq.s	.nochange
+		move.b	d0,(Tails_LastLoadedDPLC).w
+;		tst.b	(Super_Sonic_flag).w
+;		bne.s	.superplc
+		lea	(MapRUnc_Tails).l,a2
+;		bra.s	.cont
+;	.superplc:
+;		lea	(MapRUnc_SuperTails).l,a2
+;	.cont:
+		add.w	d0,d0
+		adda.w	(a2,d0.w),a2
+		move.w	(a2)+,d5
+		subq.w	#1,d5
+		bmi.s	.nochange
+		move.w	#tiles_to_bytes(ArtTile_ArtUnc_Tails),d4	; Temporary
+;		tst.b	(Super_Sonic_flag).w
+;		bne.s	.superart
+		move.l	#ArtUnc_Tails,d6
+;		bra.s	.readentry
+;	.superart:
+;		move.l	#ArtUnc_SuperTails,d6
+
+	.readentry:
 		moveq	#0,d1
 		move.w	(a2)+,d1
 		move.w	d1,d3
@@ -37584,15 +37629,31 @@ LoadTailsDynPLC_Part2:
 		addi.w	#$10,d3
 		andi.w	#$FFF,d1
 		lsl.l	#5,d1
-		addi.l	#ArtUnc_Tails,d1
+		add.l	d6,d1
 		move.w	d4,d2
 		add.w	d3,d4
 		add.w	d3,d4
 		jsr	(QueueDMATransfer).l
 		dbf	d5,.readentry	; repeat for number of entries
 
-return_1D1FE:
-	rts
+	.nochange:
+		rts	
+; End of function Tails_LoadGfx
+
+LoadTailsMap:
+;		tst.b	(Super_Sonic_flag).w
+;		bne.s	.super
+;	.normal:
+		cmpi.l	#MapUnc_Tails,mappings(a0)
+		beq.s	.skip
+		move.l	#MapUnc_Tails,mappings(a0)
+;		bra.s	.skip
+;	.super:
+;		cmpi.l	#MapUnc_SuperTails,mappings(a0)
+;		beq.s	.skip
+;		move.l	#MapUnc_SuperTails,mappings(a0)
+	.skip:
+		rts
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 05 - Tails' tails
@@ -75164,7 +75225,7 @@ Obj_Tornado_Animate_Pilot:
 	jmpto	(LoadTailsDynPLC_Part2).l, JmpTo_LoadTailsDynPLC_Part2
 ; ===========================================================================
 ; byte_3AF9C:
-Sonic_pilot_frames:
+Sonic_pilot_frames: ; spunch here later
 	dc.b $2D
 	dc.b $2E	; 1
 	dc.b $2F	; 2
@@ -75172,7 +75233,7 @@ Sonic_pilot_frames:
 Sonic_pilot_frames_end:
 
 ; byte_3AFA0:
-Tails_pilot_frames:
+Tails_pilot_frames:	; spanch later
 	dc.b $10
 	dc.b $10	; 1
 	dc.b $10	; 2
