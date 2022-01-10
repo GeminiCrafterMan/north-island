@@ -31277,7 +31277,7 @@ Tails_AirRoll:
 	move.b	(Ctrl_2_Held_Logical).w,d0
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0 ; is a jump button pressed?
 	beq.s	.nope	; if not, branch
-	move.b	#AniIDTailsAni_Roll,anim(a0)	; use "rolling"	animation
+	move.b	#AniIDTailsAni_AirRoll,anim(a0)	; use "rolling"	animation
 	bset	#2,status(a0)	; force Tails to roll
 	sfx		sfx_AirRoll
 
@@ -33205,7 +33205,12 @@ Obj_Tails_MdNormal:
 ; Called if Tails is airborne, but not in a ball (thus, probably not jumping)
 ; loc_1C032: Obj_Tails_MdJump
 Obj_Tails_MdAir:
-	; Add the thing here later
+	cmpi.b	#AniIDTailsAni_Spring,anim(a0)
+	bne.s	+
+	tst.b	y_vel(a0)
+	blt.s	+
+	move.b	#AniIDTailsAni_Fall,anim(a0)
++
 	bsr.w	Tails_AirRoll
 	bsr.w	Tails_JumpHeight
 	bsr.w	Tails_ChgJumpDir
@@ -34860,10 +34865,11 @@ TAnim_Tumble:
 	move.b	status(a0),d2
 	andi.b	#1,d2
 	bne.s	TAnim_Tumble_Left
+
 	andi.b	#$FC,render_flags(a0)
 	addi.b	#$B,d0
 	divu.w	#$16,d0
-	addi.b	#$75,d0
+	addi.b	#frT_Tumble1,d0
 	move.b	d0,mapping_frame(a0)
 	move.b	#0,anim_frame_duration(a0)
 	rts
@@ -34883,7 +34889,7 @@ TAnim_Tumble_Left:
 	addi.b	#$8F,d0
 +
 	divu.w	#$16,d0
-	addi.b	#$75,d0
+	addi.b	#frT_Tumble1,d0
 	move.b	d0,mapping_frame(a0)
 	move.b	#0,anim_frame_duration(a0)
 	rts
@@ -35198,6 +35204,8 @@ Obj_TailsTailsAniSelection:
 	dc.b	0,0	; TailsAni_Dummy4,5	->
 	dc.b	0	; TailsAni_HaulAss	->
 	dc.b	0	; TailsAni_Fly		->
+	dc.b	3	; TailsAni_AirRoll	-> Directional
+	dc.b	0	; TailsAni_Fall		-> Nothing
 	even
 
 	include	"animations/Tails's Tails.asm"

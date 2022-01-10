@@ -13,9 +13,9 @@ TailsAni_Balance_ptr:	offsetTableEntry.w TailsAni_Balance	;  6 ;   6
 TailsAni_LookUp_ptr:	offsetTableEntry.w TailsAni_LookUp	;  7 ;   7
 TailsAni_Duck_ptr:	offsetTableEntry.w TailsAni_Duck	;  8 ;   8
 TailsAni_Spindash_ptr:	offsetTableEntry.w TailsAni_Spindash	;  9 ;   9
-TailsAni_Dummy1_ptr:	offsetTableEntry.w TailsAni_Dummy1	; 10 ;  $A
-TailsAni_Dummy2_ptr:	offsetTableEntry.w TailsAni_Dummy2	; 11 ;  $B
-TailsAni_Dummy3_ptr:	offsetTableEntry.w TailsAni_Dummy3	; 12 ;  $C
+TailsAni_Dummy1_ptr:	offsetTableEntry.w TailsAni_Dummy	; 10 ;  $A
+TailsAni_Dummy2_ptr:	offsetTableEntry.w TailsAni_Dummy	; 11 ;  $B
+TailsAni_Dummy3_ptr:	offsetTableEntry.w TailsAni_Dummy	; 12 ;  $C
 TailsAni_Stop_ptr:	offsetTableEntry.w TailsAni_Stop	; 13 ;  $D
 TailsAni_Float_ptr:	offsetTableEntry.w TailsAni_Float	; 14 ;  $E
 TailsAni_Float2_ptr:	offsetTableEntry.w TailsAni_Float2	; 15 ;  $F
@@ -32,79 +32,183 @@ TailsAni_Hurt_ptr:	offsetTableEntry.w TailsAni_Hurt	; 25 ; $19
 TailsAni_Hurt2_ptr:	offsetTableEntry.w TailsAni_Hurt2	; 26 ; $1A
 TailsAni_Slide_ptr:	offsetTableEntry.w TailsAni_Slide	; 27 ; $1B
 TailsAni_Blank_ptr:	offsetTableEntry.w TailsAni_Blank	; 28 ; $1C
-TailsAni_Dummy4_ptr:	offsetTableEntry.w TailsAni_Dummy4	; 29 ; $1D
-TailsAni_Dummy5_ptr:	offsetTableEntry.w TailsAni_Dummy5	; 30 ; $1E
+TailsAni_Dummy4_ptr:	offsetTableEntry.w TailsAni_Dummy	; 29 ; $1D
+TailsAni_Dummy5_ptr:	offsetTableEntry.w TailsAni_Dummy	; 30 ; $1E
 TailsAni_HaulAss_ptr:	offsetTableEntry.w TailsAni_HaulAss	; 31 ; $1F
 TailsAni_Fly_ptr:	offsetTableEntry.w TailsAni_Fly		; 32 ; $20
+TailsAni_AirRoll_ptr:	offsetTableEntry.w TailsAni_AirRoll	; 33 ; $21
+TailsAni_Fall_ptr:	offsetTableEntry.w TailsAni_Fall	; 34 ; $22
 
-TailsAni_Walk:	dc.b $FF,$10,$11,$12,$13,$14,$15, $E, $F,$FF
+TailsAni_Walk:	dc.b $FF,frT_Walk13,frT_Walk14,frT_Walk15,frT_Walk16,frT_Walk17,frT_Walk18, frT_Walk11, frT_Walk12,afEnd
 	rev02even
-TailsAni_Run:	dc.b $FF,$2E,$2F,$30,$31,$FF,$FF,$FF,$FF,$FF
+TailsAni_Run:	dc.b $FF,frT_Run11,frT_Run12,frT_Run13,frT_Run14,afEnd,afEnd,afEnd,afEnd,afEnd
 	rev02even
-TailsAni_Roll:	dc.b   1,$48,$47,$46,$FF
+TailsAni_Roll:	dc.b   1,frT_Roll3,frT_Roll2,frT_Roll1,afEnd
 	rev02even
-TailsAni_Roll2:	dc.b   1,$48,$47,$46,$FF
+TailsAni_Roll2:	dc.b   1,frT_Roll3,frT_Roll2,frT_Roll1,afEnd
 	rev02even
-TailsAni_Push:	dc.b $FD,$63,$64,$65,$66,$FF,$FF,$FF,$FF,$FF
+TailsAni_Push:	dc.b $FD,frT_Push1,frT_Push2,frT_Push3,frT_Push4,afEnd,afEnd,afEnd,afEnd,afEnd
 	rev02even
-TailsAni_Wait:	dc.b   7,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  3,  2,  1,  1,  1
-		dc.b   1,  1,  1,  1,  1,  3,  2,  1,  1,  1,  1,  1,  1,  1,  1,  1
-		dc.b   5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5
-		dc.b   6,  7,  8,  7,  8,  7,  8,  7,  8,  7,  8,  6,$FE,$1C
+TailsAni_Wait:	dc.b   7,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle3,  frT_Idle2,  frT_Idle1,  frT_Idle1,  frT_Idle1
+		dc.b   frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle3,  frT_Idle2,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1,  frT_Idle1
+		dc.b   frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4,  frT_Idle4
+		dc.b   frT_Idle5,  frT_Idle6,  frT_Idle7,  frT_Idle6,  frT_Idle7,  frT_Idle6,  frT_Idle7,  frT_Idle6,  frT_Idle7,  frT_Idle6,  frT_Idle7,  frT_Idle5,afBack,$1C
 	rev02even
-TailsAni_Balance:	dc.b   9,$69,$69,$6A,$6A,$69,$69,$6A,$6A,$69,$69,$6A,$6A,$69,$69,$6A
-			dc.b $6A,$69,$69,$6A,$6A,$69,$6A,$FF
+TailsAni_Balance:	dc.b   13,frT_Balance1,frT_Balance2,afEnd
 	rev02even
-TailsAni_LookUp:	dc.b $3F,  4,$FF
+TailsAni_LookUp:	dc.b 5, frT_LookUp1, frT_LookUp2,afBack,  1
 	rev02even
-TailsAni_Duck:		dc.b $3F,$5B,$FF
+TailsAni_Duck:		dc.b 5,frT_Duck1,frT_Duck2,afBack,  1
 	rev02even
-TailsAni_Spindash:	dc.b   0,$60,$61,$62,$FF
+TailsAni_Spindash:	dc.b   0,frT_SpDsh1,frT_SpDsh2,frT_SpDsh3,afEnd
 	rev02even
-TailsAni_Dummy1:	dc.b $3F,$82,$FF
+TailsAni_Dummy:		dc.b $3F,frT_Choke,afEnd
 	rev02even
-TailsAni_Dummy2:	dc.b   7,  8,  8,  9,$FD,  5
+TailsAni_Stop:		dc.b   7,frT_Skid1,frT_Skid2,frT_Skid1,frT_Skid2,afChange,  0
 	rev02even
-TailsAni_Dummy3:	dc.b   7,  9,$FD,  5
+TailsAni_Float:		dc.b   9,frT_Float1,frT_FloatB,afEnd
 	rev02even
-TailsAni_Stop:		dc.b   7,$67,$68,$67,$68,$FD,  0
+TailsAni_Float2:	dc.b   9,frT_Float1,frT_Float2,frT_Float3,frT_Float4,frT_Float5,afEnd
 	rev02even
-TailsAni_Float:		dc.b   9,$6E,$73,$FF
+TailsAni_Spring:	dc.b   3,frT_Spring1,frT_Spring2,afEnd
 	rev02even
-TailsAni_Float2:	dc.b   9,$6E,$6F,$70,$71,$72,$FF
+TailsAni_Hang:		dc.b   5,frT_Cling1,frT_Cling2,afEnd
 	rev02even
-TailsAni_Spring:	dc.b   3,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$FD,  0
+TailsAni_Blink:		dc.b  $F,  frT_Idle1,  frT_Idle2,  frT_Idle3,afBack,  1
 	rev02even
-TailsAni_Hang:		dc.b   5,$6C,$6D,$FF
+TailsAni_Blink2:	dc.b  $F,  frT_Idle1,  frT_Idle2,afBack,  1
 	rev02even
-TailsAni_Blink:		dc.b  $F,  1,  2,  3,$FE,  1
+TailsAni_Hang2:		dc.b $13,frT_Hang1,frT_Hang2,afEnd
 	rev02even
-TailsAni_Blink2:	dc.b  $F,  1,  2,$FE,  1
+TailsAni_Bubble:	dc.b  $B,frT_Bubble,frT_Bubble,frT_Walk15,frT_Walk16,afChange,  0 ; breathe
 	rev02even
-TailsAni_Hang2:		dc.b $13,$85,$86,$FF
+TailsAni_DeathBW:	dc.b $20,frT_Burnt,afEnd
 	rev02even
-TailsAni_Bubble:	dc.b  $B,$74,$74,$12,$13,$FD,  0
+TailsAni_Drown:		dc.b $2F,frT_Drown,afEnd
 	rev02even
-TailsAni_DeathBW:	dc.b $20,$5D,$FF
+TailsAni_Death:		dc.b   3,frT_Death,afEnd
 	rev02even
-TailsAni_Drown:		dc.b $2F,$5D,$FF
+TailsAni_Hurt:		dc.b   3,frT_Death,afEnd
 	rev02even
-TailsAni_Death:		dc.b   3,$5D,$FF
+TailsAni_Hurt2:		dc.b   3,frT_Hurt,afEnd
 	rev02even
-TailsAni_Hurt:		dc.b   3,$5D,$FF
+TailsAni_Slide:		dc.b   9,frT_Slide,frT_Hurt,afEnd
 	rev02even
-TailsAni_Hurt2:		dc.b   3,$5C,$FF
+TailsAni_Blank:		dc.b $77,  frT_Null,afChange,  0
 	rev02even
-TailsAni_Slide:		dc.b   9,$6B,$5C,$FF
+TailsAni_HaulAss:	dc.b $FF,frT_Mach11,frT_Mach12,afEnd,afEnd,afEnd,afEnd,afEnd,afEnd,afEnd
 	rev02even
-TailsAni_Blank:		dc.b $77,  0,$FD,  0
+TailsAni_Fly:		dc.b   1,frT_Fly1,frT_Fly2,afEnd
 	rev02even
-TailsAni_Dummy4:	dc.b   3,  1,  2,  3,  4,  5,  6,  7,  8,$FF
+TailsAni_AirRoll:	dc.b   0,  frT_AirRoll1,  frT_AirRoll2,  frT_AirRoll3,afChange, 2	; transition to rolling
 	rev02even
-TailsAni_Dummy5:	dc.b   3,  1,  2,  3,  4,  5,  6,  7,  8,$FF
-	rev02even
-TailsAni_HaulAss:	dc.b $FF,$32,$33,$FF
-			dc.b $FF,$FF,$FF,$FF,$FF,$FF
-	rev02even
-TailsAni_Fly:		dc.b   1,$5E,$5F,$FF
+TailsAni_Fall:	dc.b	2,	frT_FallT,	frT_Fall1, frT_Fall2,afBack, 2
 	even
+
+; Frame IDs
+	phase 0 ; Reset ds.b value to 0
+
+frT_Null	ds.b 1	; 0
+
+frT_Idle1	ds.b 1
+frT_Idle2	ds.b 1
+frT_Idle3	ds.b 1
+frT_Idle4	ds.b 1
+frT_Idle5	ds.b 1
+frT_Idle6	ds.b 1
+frT_Idle7	ds.b 1
+; Look up
+frT_LookUp1	ds.b 1
+frT_LookUp2	ds.b 1
+; Walk
+frT_Walk11	ds.b 1
+frT_Walk12	ds.b 1
+frT_Walk13	ds.b 1
+frT_Walk14	ds.b 1
+frT_Walk15	ds.b 1
+frT_Walk16	ds.b 1
+frT_Walk17	ds.b 1
+frT_Walk18	ds.b 1
+; don't care about these, define them for the sake of keeping the number up
+frT_Walk2X	ds.b 8
+frT_Walk3X	ds.b 8
+frT_Walk4X	ds.b 8
+; fest
+frT_Run11	ds.b 1	; this,
+frT_Run12	ds.b 1
+frT_Run13	ds.b 1	; and this... are the same in Super
+frT_Run14	ds.b 1
+frT_Mach11	ds.b 1
+frT_Mach12	ds.b 1
+; don't care about these, define them for the sake of keeping the number up
+frT_Run2X	ds.b 4
+frT_Mach2X	ds.b 2
+frT_Run3X	ds.b 4
+frT_Mach3X	ds.b 2
+frT_Run4X	ds.b 4
+frT_Mach4X	ds.b 2
+; speeeeeeeeeeeeEEEEEEEEEEEN
+frT_Roll1	ds.b 1
+frT_Roll2	ds.b 1
+frT_Roll3	ds.b 1
+; boing
+frT_Spring1	ds.b 1
+frT_Spring2	ds.b 1
+; ducc
+frT_Duck1	ds.b 1
+frT_Duck2	ds.b 1
+; hurt and slide
+frT_Hurt	ds.b 1
+frT_Slide	ds.b 1
+; ded
+frT_Death	ds.b 1
+frT_Drown	ds.b 1
+frT_Burnt	ds.b 1
+; flight
+frT_Fly1	ds.b 1
+frT_Fly2	ds.b 1
+; dash
+frT_SpDsh1	ds.b 1
+frT_SpDsh2	ds.b 1
+frT_SpDsh3	ds.b 1
+; poosh
+frT_Push1	ds.b 1
+frT_Push2	ds.b 1
+frT_Push3	ds.b 1
+frT_Push4	ds.b 1
+; Skid and turn
+frT_Skid1	ds.b 1
+frT_Skid2	ds.b 1
+; Balance
+frT_Balance1	ds.b 1
+frT_Balance2	ds.b 1
+; cling
+frT_Cling1	ds.b 1
+frT_Cling2	ds.b 1
+; float
+frT_Float1	ds.b 1
+frT_Float2	ds.b 1
+frT_Float3	ds.b 1
+frT_Float4	ds.b 1
+frT_Float5	ds.b 1
+frT_FloatB	ds.b 1
+; bubble bobble nes
+frT_Bubble	ds.b 1
+; tumble
+frT_Tumble1	ds.b 1
+frT_TumbleX	ds.b 11	; entirely unnecessary
+; hang from vine
+frT_Hang1	ds.b 1
+frT_Hang2	ds.b 1
+; Placeholder
+frT_Choke	ds.b 1
+; Air roll
+frT_AirRoll1	ds.b 1
+frT_AirRoll2	ds.b 1
+frT_AirRoll3	ds.b 1
+; Fall
+frT_FallT	ds.b 1
+frT_Fall1	ds.b 1
+frT_Fall2	ds.b 1
+	even
+	dephase

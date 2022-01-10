@@ -607,6 +607,8 @@ AniIDTailsAni_Dummy4		= id(TailsAni_Dummy4_ptr)		; 29 ; $1D
 AniIDTailsAni_Dummy5		= id(TailsAni_Dummy5_ptr)		; 30 ; $1E
 AniIDTailsAni_HaulAss		= id(TailsAni_HaulAss_ptr)		; 31 ; $1F
 AniIDTailsAni_Fly			= id(TailsAni_Fly_ptr)			; 32 ; $20
+AniIDTailsAni_AirRoll		= id(TailsAni_AirRoll_ptr)		; 33 ; $21
+AniIDTailsAni_Fall			= id(TailsAni_Fall_ptr)			; 34 ; $22
 
 
 ; Other sizes
