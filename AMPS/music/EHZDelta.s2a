@@ -1,18 +1,18 @@
-EmeraldHill_Header:
+EmeraldHillDelta_Header:
 ; Emerald Hill remix by DeltaWooloo, originally created for SHIMA.
 	sHeaderInit						; Z80 offset is $1380
 	sHeaderTempo	$01, $62
 	sHeaderCh	$05, $03
-	sHeaderDAC	EmeraldHill_DAC1
-	sHeaderDAC	EmeraldHill_DAC2
-	sHeaderFM	EmeraldHill_FM1, $01, $0E
-	sHeaderFM	EmeraldHill_FM2, $01, $16
-	sHeaderFM	EmeraldHill_FM3, $01, $16
-	sHeaderFM	EmeraldHill_FM4, $01, $20
-	sHeaderFM	EmeraldHill_FM5, $01, $25
-	sHeaderPSG	EmeraldHill_PSG1, $DC+$0C+$01, $20, $00, v03
-	sHeaderPSG	EmeraldHill_PSG2, $DC+$0C+$01, $20, $00, v01
-	sHeaderPSG	EmeraldHill_PSG3, $00, $10+$01, $00, v02
+	sHeaderDAC	EmeraldHillDelta_DAC1
+	sHeaderDAC	EmeraldHillDelta_DAC2
+	sHeaderFM	EmeraldHillDelta_FM1, $01, $0E
+	sHeaderFM	EmeraldHillDelta_FM2, $01, $16
+	sHeaderFM	EmeraldHillDelta_FM3, $01, $16
+	sHeaderFM	EmeraldHillDelta_FM4, $01, $20
+	sHeaderFM	EmeraldHillDelta_FM5, $01, $25
+	sHeaderPSG	EmeraldHillDelta_PSG1, $DC+$0C+$01, $20, $00, v03
+	sHeaderPSG	EmeraldHillDelta_PSG2, $DC+$0C+$01, $20, $00, v01
+	sHeaderPSG	EmeraldHillDelta_PSG3, $00, $10+$01, $00, v02
 
 	; Patch $00
 	; $07
@@ -185,7 +185,7 @@ EmeraldHill_Header:
 	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1A, $10, $00, $00
 
-EmeraldHill_FM5:
+EmeraldHillDelta_FM5:
 	dc.b nRst, $20
 	sVoice		$00
 	saVol		$F8
@@ -195,16 +195,16 @@ EmeraldHill_FM5:
 	dc.b nBb5
 	saVol		$08
 
-EmeraldHill_Jump4:
+EmeraldHillDelta_Jump4:
 	saVol		$F8
 	sPan		spCenter
 	sModAMPS	$31, $01, $04, $04
 	sVoice		$01
 
-EmeraldHill_Loop3:
+EmeraldHillDelta_Loop3:
 	dc.b nG5, $20, sHold, $20, nA5, sHold, $20, nF5
 	dc.b sHold, $20, nE5, sHold, $20
-	sLoop		$00, $04, EmeraldHill_Loop3
+	sLoop		$00, $04, EmeraldHillDelta_Loop3
 	sVoice		$02
 	saVol		$FC
 	sPan		spLeft
@@ -217,14 +217,14 @@ EmeraldHill_Loop3:
 	dc.b nG4, $04, nRst, $08, nA4, $20, sHold, $14
 	dc.b sHold, $20, sHold, $0C, nRst, $14
 	saVol		$06
-	sJump		EmeraldHill_Jump4
+	sJump		EmeraldHillDelta_Jump4
 
-EmeraldHill_FM2:
+EmeraldHillDelta_FM2:
 	sVoice		$03
 	dc.b nD5, $08, nRst, $04, nE5, $20, sHold, $14
 	dc.b nC5, $20, nD5
 
-EmeraldHill_Jump1:
+EmeraldHillDelta_Jump1:
 	sVoice		$03
 	dc.b nRst, $08, nG5, $04, nRst, nA5, nRst, nG5
 	dc.b nRst, nC6, nRst, nC6, nRst, nD6, nE6, nRst
@@ -273,15 +273,15 @@ EmeraldHill_Jump1:
 	dc.b nA4
 	saTranspose	$F4
 	saVol		$FA
-	sJump		EmeraldHill_Jump1
+	sJump		EmeraldHillDelta_Jump1
 
-EmeraldHill_FM3:
+EmeraldHillDelta_FM3:
 	sVoice		$03
 	ssDetune	$01
 	dc.b nF5, $08, nRst, $04, nG5, $20, sHold, $14
 	dc.b nE5, $20, nF5
 
-EmeraldHill_Jump2:
+EmeraldHillDelta_Jump2:
 	ssDetune	$03
 	sVoice		$03
 	sPan		spLeft
@@ -359,25 +359,25 @@ EmeraldHill_Jump2:
 	ssDetune	$01
 	dc.b nD6, $04, nC6, nRst, nA5, $20, sHold, $14
 	dc.b sHold, $20, sHold, $0C, nRst, $14
-	sJump		EmeraldHill_Jump2
+	sJump		EmeraldHillDelta_Jump2
 
-EmeraldHill_FM4:
+EmeraldHillDelta_FM4:
 	sVoice		$03
 	saVol		$F8
 	dc.b nF4, $08, nRst, $04, nG4, $20, sHold, $14
 	dc.b nE4, $20, nF4
 	saVol		$04
 
-EmeraldHill_Jump3:
+EmeraldHillDelta_Jump3:
 	sPan		spCenter
 	sVoice		$08
 	sModAMPS	$03, $01, $FE, $04
 	saTranspose	$0C
 
-EmeraldHill_Loop2:
+EmeraldHillDelta_Loop2:
 	dc.b nE5, $20, sHold, $20, nFs5, sHold, $20, nD5
 	dc.b sHold, $20, nC5, sHold, $20
-	sLoop		$00, $04, EmeraldHill_Loop2
+	sLoop		$00, $04, EmeraldHillDelta_Loop2
 	saTranspose	$F4
 	sModOff
 	sVoice		$02
@@ -391,16 +391,16 @@ EmeraldHill_Loop2:
 	dc.b nD4, $04, nRst, $08, nE4, $20, sHold, $14
 	dc.b sHold, $20, sHold, $0C, nRst, $14
 	saVol		$FC
-	sJump		EmeraldHill_Jump3
+	sJump		EmeraldHillDelta_Jump3
 
-EmeraldHill_FM1:
+EmeraldHillDelta_FM1:
 	sVoice		$07
 	dc.b nBb2, $0C, nC3, $20, sHold, $08, nG3, $04
 	dc.b nE3, nC3, nA2, $08, nA3, $04, nA3, nA2
 	dc.b $08, nA3, $04, nA3, nBb2, $08, nBb3, $04
 	dc.b nBb3, nBb2, $08, nBb3, $04, nBb3
 
-EmeraldHill_Loop1:
+EmeraldHillDelta_Loop1:
 	dc.b nC3, $08, nC4, $04, nRst, nC4, $08, nG3
 	dc.b nD4, $0C, nC4, $08, nG3, $04, nA3, nC4
 	dc.b nD3, $08, nD4, $04, nRst, nD4, $08, nA3
@@ -410,7 +410,7 @@ EmeraldHill_Loop1:
 	dc.b nA2, $08, nA3, $04, nA2, nB2, $08, nB3
 	dc.b $04, nB2, nC3, $08, nC4, $04, nC3, nA2
 	dc.b $08, nA3, $04, nA2
-	sLoop		$00, $04, EmeraldHill_Loop1
+	sLoop		$00, $04, EmeraldHillDelta_Loop1
 	dc.b nF3, $08, nF4, nC3, nC4, nF3, nF4, nC3
 	dc.b nC4, nE3, nE4, nB2, nB3, nE3, nE4, nB2
 	dc.b nB3, nE3, nE4, nB2, nB3, nAb2, nAb3, nE2
@@ -420,20 +420,20 @@ EmeraldHill_Loop1:
 	dc.b nB3, nG2, $04, nG2, nRst, nA2, $20, sHold
 	dc.b $14, $04, $08, $04, nB2, $08, nC3, nD3
 	dc.b nC3, nB2, $04, nA2, $0C
-	sJump		EmeraldHill_Loop1
+	sJump		EmeraldHillDelta_Loop1
 
-EmeraldHill_PSG1:
+EmeraldHillDelta_PSG1:
 	dc.b nRst, $20, nRst, nRst, nRst
 
-EmeraldHill_Jump5:
+EmeraldHillDelta_Jump5:
 	saTranspose	$0C
 	sVolEnv		v01
 	saVol		$10
 
-EmeraldHill_Loop4:
+EmeraldHillDelta_Loop4:
 	dc.b nG5, $20, sHold, $20, nA5, sHold, $20, nF5
 	dc.b sHold, $20, nE5, sHold, $20
-	sLoop		$00, $04, EmeraldHill_Loop4
+	sLoop		$00, $04, EmeraldHillDelta_Loop4
 	dc.b nRst, $20, nRst
 	sVolEnv		v08
 	saVol		-$08
@@ -461,20 +461,20 @@ EmeraldHill_Loop4:
 	saVol		-$30
 	saTranspose	$F4
 	dc.b nRst, $20, nRst, nRst, nRst
-	sJump		EmeraldHill_Jump5
+	sJump		EmeraldHillDelta_Jump5
 
-EmeraldHill_PSG2:
+EmeraldHillDelta_PSG2:
 	dc.b nRst, $20, nRst, nRst, nRst
 
-EmeraldHill_Jump6:
+EmeraldHillDelta_Jump6:
 	saVol		$18
 	sVolEnv		v01
 	ssDetune	$00
 
-EmeraldHill_Loop5:
+EmeraldHillDelta_Loop5:
 	dc.b nE5, $20, sHold, $20, nFs5, sHold, $20, nD5
 	dc.b sHold, $20, nC5, sHold, $20
-	sLoop		$00, $04, EmeraldHill_Loop5
+	sLoop		$00, $04, EmeraldHillDelta_Loop5
 	sModOff
 	saVol		-$18
 	dc.b nRst, $20, nRst
@@ -501,28 +501,28 @@ EmeraldHill_Loop5:
 	dc.b nB5, $02, nRst, $02
 	saVol		-$30
 	dc.b nRst, $20, nRst, nRst, nRst
-	sJump		EmeraldHill_Jump6
+	sJump		EmeraldHillDelta_Jump6
 
-EmeraldHill_PSG3:
+EmeraldHillDelta_PSG3:
 	sNoisePSG	snWhitePSG3
 	sVolEnv		v02
 	dc.b nRst, $08, nHiHat, $10, nHiHat, nHiHat, nHiHat, $08
 	dc.b nRst, $20, nRst
 
-EmeraldHill_Loop6:
+EmeraldHillDelta_Loop6:
 	dc.b nHiHat, $08, $04, nHiHat, nHiHat, $08, $04, nHiHat
 	dc.b nHiHat, $08, $04, nHiHat, nHiHat, $08, $04, nHiHat
-	sLoop		$00, $07, EmeraldHill_Loop6
+	sLoop		$00, $07, EmeraldHillDelta_Loop6
 	dc.b nHiHat, $08, $04, nHiHat, nHiHat, $08, $04, nHiHat
 	dc.b nHiHat, $08, $04, nHiHat, nHiHat, $08
 	sVolEnv		v03
 	dc.b nHiHat
 	sVolEnv		v02
 
-EmeraldHill_Loop7:
+EmeraldHillDelta_Loop7:
 	dc.b nHiHat, $08, $04, nHiHat, nHiHat, $08, $04, nHiHat
 	dc.b nHiHat, $08, $04, nHiHat, nHiHat, $08, $04, nHiHat
-	sLoop		$00, $07, EmeraldHill_Loop7
+	sLoop		$00, $07, EmeraldHillDelta_Loop7
 	dc.b nHiHat, $08, $04, nHiHat, nHiHat, $08, $04, nHiHat
 	dc.b nHiHat, $08, $04, nHiHat
 	sVolEnv		v03
@@ -530,11 +530,11 @@ EmeraldHill_Loop7:
 	sVolEnv		v02
 	dc.b nHiHat, $04, nHiHat
 
-EmeraldHill_Loop8:
+EmeraldHillDelta_Loop8:
 	dc.b nHiHat, $08, $04, nHiHat, nHiHat, $08, $04, nHiHat
 	dc.b nHiHat, $08, $04, nHiHat, nHiHat, $08, nHiHat, $04
 	dc.b nHiHat
-	sLoop		$00, $03, EmeraldHill_Loop8
+	sLoop		$00, $03, EmeraldHillDelta_Loop8
 	dc.b nHiHat, $08, $04, nHiHat, nHiHat, $08, $04, nHiHat
 	dc.b nHiHat, $08, $04, nHiHat
 	sVolEnv		v03
@@ -556,47 +556,47 @@ EmeraldHill_Loop8:
 	sVolEnv		v01
 	dc.b nHiHat, $10, nHiHat, nHiHat, nHiHat
 	sVolEnv		v02
-	sJump		EmeraldHill_Loop6
+	sJump		EmeraldHillDelta_Loop6
 
-EmeraldHill_DAC2:
+EmeraldHillDelta_DAC2:
 	dc.b dKickS3, $0C, $20, sHold, $14, $04, dMidTom, $08
 	dc.b dFloorTom, $04, dMidTom, $08, dMidTom, dMidTom, dKick, dFloorTom
 	dc.b $01, dComeOn, $0F
 
-EmeraldHill_Loop9:
+EmeraldHillDelta_Loop9:
 	dc.b dCrashCymbal, $10, dSnareS3, dKick, dSnareS3
-	sJump	EmeraldHill_Loop9_2
+	sJump	EmeraldHillDelta_Loop9_2
 
-EmeraldHill_Loop9_2:	
+EmeraldHillDelta_Loop9_2:	
 	dc.b dKick, $10, dSnareS3, dKick, dSnareS3
-	sLoop		$00, $06, EmeraldHill_Loop9_2
+	sLoop		$00, $06, EmeraldHillDelta_Loop9_2
 	dc.b dKick, $10, dSnareS3, dKick, $08, dSnareS3, $10, $04
 	dc.b dSnareS3
 
-EmeraldHill_Loop10:
+EmeraldHillDelta_Loop10:
 	dc.b dCrashCymbal, $10, dSnareS3, dKick, dSnareS3
-	sJump	EmeraldHill_Loop10_2
+	sJump	EmeraldHillDelta_Loop10_2
 
-EmeraldHill_Loop10_2:	
+EmeraldHillDelta_Loop10_2:	
 	dc.b dKick, $10, dSnareS3, dKick, dSnareS3
-	sLoop		$00, $02, EmeraldHill_Loop10_2
+	sLoop		$00, $02, EmeraldHillDelta_Loop10_2
 	dc.b dKick, $10, dSnareS3, dKick, $08, dSnareS3, $10, $08
 
-EmeraldHill_Loop11:
+EmeraldHillDelta_Loop11:
 	dc.b dKick, $10, dSnareS3, dKick, dSnareS3
-	sLoop		$00, $03, EmeraldHill_Loop11
+	sLoop		$00, $03, EmeraldHillDelta_Loop11
 	dc.b dKick, $10, dSnareS3, dKick, dSnareS3, $08, $04, dSnareS3
 	dc.b dCrashCymbal, $10, dSnareS3, dKick, dSnareS3, dKick, dSnareS3, dKick
 	dc.b $08, dSnareS3, dSnareS3, $10
 
-EmeraldHill_Loop12:
+EmeraldHillDelta_Loop12:
 	dc.b dKick, $10, dSnareS3, dKick, dSnareS3
-	sLoop		$00, $03, EmeraldHill_Loop12
+	sLoop		$00, $03, EmeraldHillDelta_Loop12
 	dc.b dKick, $10, dSnareS3, dKick, $08, dSnareS3, dSnareS3, $10
 	dc.b dKick, $0C, dSnareS3, $20, nRst, $04, dSnareS3, $10
 	dc.b dKick, $04, dMidTom, $08, $04, dSnareS3, $08, dMidTom
 	dc.b dKick, dFloorTom, dFloorTom, $01, dComeOn, $0F
-	sJump		EmeraldHill_Loop9
+	sJump		EmeraldHillDelta_Loop9
 
-EmeraldHill_DAC1:
+EmeraldHillDelta_DAC1:
 	sStop

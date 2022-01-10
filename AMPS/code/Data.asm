@@ -60,7 +60,7 @@
 __mus :=	MusOff
 
 MusicIndex:
-	ptrMusic EHZ, $20, CPZ, $12, ARZ, $20, CNZ, $20, HTZ, $20, MCZ, $20
+	ptrMusic EHZ, $20, EHZDelta, $20, CPZ, $12, ARZ, $20, CNZ, $20, HTZ, $20, MCZ, $20
 	ptrMusic OOZ, $20, MTZ, $16, SCZ, $20, WFZ, $20, DEZ, $20, HPZ, $20
 	ptrMusic EHZ2P, $20, CNZ2P, $20, MCZ2P, $14
 	ptrMusic SS, $00, Options, $00, Results2P, $00, Invincibility, $18
