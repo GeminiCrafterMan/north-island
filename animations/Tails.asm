@@ -100,7 +100,7 @@ TailsAni_HaulAss:	dc.b $FF,frT_Mach11,frT_Mach12,afEnd,afEnd,afEnd,afEnd,afEnd,a
 	rev02even
 TailsAni_Fly:		dc.b   1,frT_Fly1,frT_Fly2,afEnd
 	rev02even
-TailsAni_AirRoll:	dc.b   0,  frT_AirRoll1,  frT_AirRoll2,  frT_AirRoll3,afChange, 2	; transition to rolling
+TailsAni_AirRoll:	dc.b   1,  frT_AirRoll1,  frT_AirRoll2,  frT_AirRoll3,afChange, 2	; transition to rolling
 	rev02even
 TailsAni_Fall:	dc.b	2,	frT_FallT,	frT_Fall1, frT_Fall2,afBack, 2
 	even

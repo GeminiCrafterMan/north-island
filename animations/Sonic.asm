@@ -116,7 +116,7 @@ SonAni_Lying:	dc.b   9,  frS_Idle8,  frS_Idle9,afEnd
 	rev02even
 SonAni_LieDown:	dc.b   3,  frS_Idle7,afChange,  0
 	rev02even
-SonAni_AirRoll:	dc.b   2,  frS_AirRoll,afChange, 2	; transition to rolling
+SonAni_AirRoll:	dc.b   5,  frS_AirRoll,afChange, 2	; transition to rolling
 	rev02even
 SonAni_Fall:	dc.b	2,	frS_Fall1, frS_Fall2,afEnd
 	even

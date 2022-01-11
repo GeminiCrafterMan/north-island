@@ -32404,6 +32404,7 @@ Obj_Tails_Init_Continued:
 	move.w	top_solid_bit(a0),(Saved_Solid_bits_2P).w
 	move.b	#0,flips_remaining(a0)
 	move.b	#4,flip_speed(a0)
+	move.b	#0,(Super_Sonic_flag).w
 	move.b	#$1E,air_left(a0)
 	move.w	#0,(Tails_CPU_routine).w	; set AI state to TailsCPU_Init
 	move.w	#0,(Tails_control_counter).w
