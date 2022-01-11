@@ -35049,12 +35049,12 @@ Obj_TailsTails_Main:
 	bsr.w	LoadTailsTailsDynPLC
 	movea.w	parent(a0),a1			; Move Tails' register to a1
 	move.w	invulnerable_time(a1),d0	; Move Tails' invulnerable time to d0
-	beq.s	.display			; Is invulnerable_time 0?  If so, always display his tails
+	beq.s	.display2			; Is invulnerable_time 0?  If so, always display his tails
 	addq.w	#1,d0				; Make d0 the same as old invulnerable_time's d0
 	lsr.w	#3,d0				; Shift bits to the right 3 times
 	bcc.s	.return				; If the Carry bit is not set, branch and do not display Tails' tails
 
-.display:
+.display2:
 	jmp	(DisplaySprite).l               ; Display Tails' tails
 .return:
 	rts
