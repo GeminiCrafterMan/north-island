@@ -4,6 +4,26 @@
     "node": "f51522af-1cdb-4304-a922-65eb7b3a3211",
     "objects": [
         {
+            "uuid": "7fffcbca-c48a-45c7-a02e-83bce4dd71a2",
+            "format": "Sonic 2.js",
+            "name": "big sonk",
+            "palettes": [],
+            "art": {
+                "path": "",
+                "compression": "Uncompressed",
+                "offset": 0
+            },
+            "mappings": {
+                "path": "mappings/sprite/Obj_SegaHideTM.bin",
+                "label": ""
+            },
+            "dplcs": {
+                "enabled": false,
+                "path": "",
+                "label": ""
+            }
+        },
+        {
             "name": "Common",
             "children": [
                 {

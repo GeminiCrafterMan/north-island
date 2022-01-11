@@ -10998,15 +10998,19 @@ CheckCheats:	; This is called from 2 places: the options screen and the level se
 +
 	rts
 ; ===========================================================================
-level_select_cheat:	dc.b $19, $65,   9, $17,   0	; 17th September 1965, Yuji Naka's birthdate
+;level_select_cheat:	dc.b $19, $65,   9, $17,   0	; 17th September 1965, Yuji Naka's birthdate
+level_select_cheat:	dc.b 1,   0
 	rev02even
 ; byte_97B7
-continues_cheat:	dc.b   1,   1,   2,   4,   0	; 24th November, Sonic 2's release date in the EU and US: "Sonic 2sday"
+;continues_cheat:	dc.b   1,   1,   2,   4,   0	; 24th November, Sonic 2's release date in the EU and US: "Sonic 2sday"
+continues_cheat:	dc.b   2,   0
 	rev02even
-debug_cheat:		dc.b   1,   9,   9,   2,   1,   1,   2,   4,   0	; 24th November 1992, Sonic 2's release date in the EU and US: "Sonic 2sday"
+;debug_cheat:		dc.b   1,   9,   9,   2,   1,   1,   2,   4,   0	; 24th November 1992, Sonic 2's release date in the EU and US: "Sonic 2sday"
+debug_cheat:		dc.b   3,   0
 	rev02even
 ; byte_97C5
-super_sonic_cheat:	dc.b   4,   1,   2,   6,   0	; Book of Genesis, 41:26
+;super_sonic_cheat:	dc.b   4,   1,   2,   6,   0	; Book of Genesis, 41:26
+super_sonic_cheat:	dc.b   4,   0
 	rev02even
 
 	; set the character set for menu text
@@ -21614,7 +21618,7 @@ Obj_MonitorContents_Types:	offsetTable
 		offsetTableEntry.w super_shoes		; 5 - Speed Shoes
 		offsetTableEntry.w shield_monitor	; 6 - Shield
 		offsetTableEntry.w invincible_monitor	; 7 - Invincibility
-		offsetTableEntry.w teleport_monitor	; 8 - Teleport
+		offsetTableEntry.w super_monitor	; 8 - Super
 		offsetTableEntry.w qmark_monitor	; 9 - Question mark
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -21776,168 +21780,33 @@ invincible_monitor:
 ; swaps both players around
 ; ---------------------------------------------------------------------------
 ;loc_12AA6:
-teleport_monitor:
+super_monitor:
 	addq.w	#1,(a2)
-	cmpi.b	#6,(MainCharacter+routine).w	; is player 1 dead or respawning?
-	bhs.s	+				; if yes, branch
-	cmpi.b	#6,(Sidekick+routine).w		; is player 2 dead or respawning?
-	blo.s	swap_players			; if not, branch
-+	; can't teleport if either player is dead
+	addi.w	#50,(Ring_count).w
+	move.b	#1,(Super_Sonic_palette).w
+	move.b	#$F,(Palette_timer).w
+	move.b	#1,(Super_Sonic_flag).w
+	move.b	#$81,obj_control(a1)
+	move.b	#AniIDSupSonAni_Transform,anim(a1)			; use transformation animation
+	move.l	#Obj_SuperSonicStars,(SuperSonicStars+id).w ; load Obj_SuperSonicStars (super sonic stars object) at $FFFFD040
+	cmpi.w	#2,(Player_mode).w
+	bne.s	.Sonic
+.Tails:
+	move.w	#$A00,(Tails_top_speed).w
+	move.w	#$30,(Tails_acceleration).w
+	move.w	#$100,(Tails_deceleration).w
+	bra.s	.Cont
+.Sonic:
+	move.w	#$A00,(Sonic_top_speed).w
+	move.w	#$30,(Sonic_acceleration).w
+	move.w	#$100,(Sonic_deceleration).w
+.Cont:
+	move.w	#0,invincibility_time(a1)
+	bset	#status_sec_isInvincible,status_secondary(a1)	; make Sonic invincible
+	sfx	sfx_Transform				; Play transformation sound effect.
+	music	mus_SuperSonic				; load the Super Sonic song and return
 	rts
 
-; ---------------------------------------------------------------------------
-; Routine to make both players swap positions
-; and handle anything else that needs to be done
-; ---------------------------------------------------------------------------
-swap_players:
-	lea	(teleport_swap_table).l,a3
-	moveq	#(teleport_swap_table_end-teleport_swap_table)/6-1,d2	; amount of entries in table - 1
-
-process_swap_table:
-	movea.w	(a3)+,a1	; address for main character
-	movea.w	(a3)+,a2	; address for sidekick
-	move.w	(a3)+,d1	; amount of word length data to be swapped
-
--	; swap data between the main character and the sidekick d1 times
-	move.w	(a1),d0
-	move.w	(a2),(a1)+
-	move.w	d0,(a2)+
-	dbf	d1,-
-
-	dbf	d2,process_swap_table	; process remaining entries in the list
-
-	move.b	#1,(MainCharacter+next_anim).w
-	move.b	#1,(Sidekick+next_anim).w
-    if gameRevision>0
-	move.b	#0,(MainCharacter+mapping_frame).w
-	move.b	#0,(Sidekick+mapping_frame).w
-    endif
-	move.b	#-1,(Sonic_LastLoadedDPLC).w
-	move.b	#-1,(Tails_LastLoadedDPLC).w
-	move.b	#-1,(TailsTails_LastLoadedDPLC).w
-	lea	(unk_F786).w,a1
-	lea	(unk_F789).w,a2
-
-	moveq	#2,d1
--	move.b	(a1),d0
-	move.b	(a2),(a1)+
-	move.b	d0,(a2)+
-	dbf	d1,-
-
-	subi.w	#$180,(Camera_Y_pos).w
-	subi.w	#$180,(Camera_Y_pos_P2).w
-	move.w	(MainCharacter+art_tile).w,d0
-	andi.w	#drawing_mask,(MainCharacter+art_tile).w
-	tst.w	(Sidekick+art_tile).w
-	bpl.s	+
-	ori.w	#high_priority,(MainCharacter+art_tile).w
-+
-	andi.w	#drawing_mask,(Sidekick+art_tile).w
-	tst.w	d0
-	bpl.s	+
-	ori.w	#high_priority,(Sidekick+art_tile).w
-+
-	move.b	#1,(Camera_Max_Y_Pos_Changing).w
-	lea	(Dynamic_Object_RAM).w,a1
-	moveq	#(Dynamic_Object_RAM_End-Dynamic_Object_RAM)/object_size-1,d1
-
-; process objects:
-swap_loop_objects:
-	cmpi.l	#Obj_PinballMode,id(a1) ; is it Obj_PinballMode (pinball mode switcher)?
-	beq.s	+ ; if yes, branch
-	cmpi.l	#Obj_PlaneSwitcher,id(a1) ; is it Obj_PlaneSwitcher (collision plane switcher)?
-	bne.s	++ ; if not, branch further
-
-+
-	move.b	objoff_34(a1),d0
-	move.b	objoff_35(a1),objoff_34(a1)
-	move.b	d0,objoff_35(a1)
-
-+
-	cmpi.l	#Obj_PointPokey,id(a1) ; is it Obj_PointPokey (CNZ point giver)?
-	bne.s	+ ; if not, branch
-	move.l	objoff_30(a1),d0
-	move.l	objoff_34(a1),objoff_30(a1)
-	move.l	d0,objoff_34(a1)
-
-+
-	cmpi.l	#Obj_LauncherSpring,id(a1) ; is it Obj_LauncherSpring (CNZ pressure spring)?
-	bne.s	+ ; if not, branch
-	move.b	objoff_36(a1),d0
-	move.b	objoff_37(a1),objoff_36(a1)
-	move.b	d0,objoff_37(a1)
-
-+
-	lea	next_object(a1),a1 ; look at next object ; a1=object
-	dbf	d1,swap_loop_objects ; loop
-
-
-	lea	(MainCharacter).w,a1 ; a1=character
-	move.l	#Obj_Shield,(Sonic_Shield+id).w ; load Obj_Shield (shield) at $FFFFD180
-	move.w	a1,(Sonic_Shield+parent).w
-	move.l	#Obj_InvincibilityStars,(Sonic_InvincibilityStars+id).w ; load Obj_InvincibilityStars (invincibility stars) at $FFFFD200
-	move.w	a1,(Sonic_InvincibilityStars+parent).w
-	btst	#2,status(a1)	; is Sonic spinning?
-	bne.s	+		; if yes, branch
-	move.b	#$13,y_radius(a1)	; set to standing height
-	move.b	#9,x_radius(a1)
-+
-	btst	#3,status(a1)	; is Sonic on an object?
-	beq.s	+		; if not, branch
-	moveq	#0,d0
-	move.w	interact(a1),a2
-	bclr	#4,status(a2)
-	bset	#3,status(a2)
-
-+
-	lea	(Sidekick).w,a1 ; a1=character
-	move.l	#Obj_Shield,(Tails_Shield+id).w ; load Obj_Shield (shield) at $FFFFD1C0
-	move.w	a1,(Tails_Shield+parent).w
-	move.l	#Obj_InvincibilityStars,(Tails_InvincibilityStars+id).w ; load Obj_InvincibilityStars (invincibility) at $FFFFD300
-	move.w	a1,(Tails_InvincibilityStars+parent).w
-	btst	#2,status(a1)	; is Tails spinning?
-	bne.s	+		; if yes, branch
-	move.b	#$F,y_radius(a1)	; set to standing height
-	move.b	#9,x_radius(a1)
-
-+
-	btst	#3,status(a1)	; is Tails on an object?
-	beq.s	+		; if not, branch
-	moveq	#0,d0
-	move.w	interact(a1),a2
-	bclr	#3,status(a2)
-	bset	#4,status(a2)
-
-+
-	move.b	#$40,(Teleport_timer).w
-	move.b	#1,(Teleport_flag).w
-	sfx	sfx_Swap
-	rts
-; ===========================================================================
-; Table listing all the addresses for players 1 and 2 that need to be swapped
-; when a teleport monitor is destroyed
-;byte_12C52:
-teleport_swap_table:
-	dc.w MainCharacter+x_pos,	Sidekick+x_pos,			$1B
-	dc.w Camera_X_pos_last,		Camera_X_pos_last_P2,		  0
-	dc.w Obj_respawn_index,		Obj_respawn_index_P2,		  0
-	dc.w Obj_load_addr_right,	Obj_load_addr_2,		  3
-	dc.w Sonic_top_speed,		Tails_top_speed,		  2
-	dc.w Ring_start_addr_RAM,	Ring_start_addr_RAM_P2,		  0
-	dc.w Ring_start_addr_ROM,	Ring_start_addr_ROM_P2,		  3
-	dc.w CNZ_Visible_bumpers_start,	CNZ_Visible_bumpers_start_P2,	  3
-	dc.w Camera_X_pos,		Camera_X_pos_P2,		 $F
-	dc.w Camera_X_pos_coarse,	Camera_X_pos_coarse_P2,		  0
-	dc.w Camera_Min_X_pos,		Tails_Min_X_pos,		  3
-	dc.w Horiz_scroll_delay_val,	Horiz_scroll_delay_val_P2,	  1
-	dc.w Camera_Y_pos_bias,		Camera_Y_pos_bias_P2,		  0
-	dc.w Horiz_block_crossed_flag,	Horiz_block_crossed_flag_P2,	  3
-	dc.w Scroll_flags,		Scroll_flags_P2,		  3
-	dc.w Camera_RAM_copy,		Camera_P2_copy,			 $F
-	dc.w Scroll_flags_copy,		Scroll_flags_copy_P2,		  3
-	dc.w Camera_X_pos_diff,		Camera_X_pos_diff_P2,		  1
-	dc.w Sonic_Pos_Record_Buf,	Tails_Pos_Record_Buf,		$7F
-teleport_swap_table_end:
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; '?' Monitor
@@ -35159,8 +35028,12 @@ Obj_TailsTails_Main:
 +
 	moveq	#0,d0
 	move.b	anim(a2),d0
-	btst	#5,status(a2)
-	beq.s	+
+	btst	#5,status(a2)		; is Tails about to push against something?
+	beq.s	+			; if not, branch
+	cmpi.b	#frT_Push1,mapping_frame(a2)	; Is Tails in his pushing animation yet?
+	blo.s	+			; If not yet, branch, and do not set tails' tail pushing animation
+	cmpi.b	#frT_Push4,mapping_frame(a2)	; ''
+	bhi.s	+			; ''
 	moveq	#4,d0
 +
 	; This is here so Obj_TailsTailsAni_Flick works
@@ -35174,7 +35047,16 @@ Obj_TailsTails_Main:
 	lea	(Obj_TailsTailsAniData).l,a1
 	bsr.w	Tails_Animate_Part2
 	bsr.w	LoadTailsTailsDynPLC
-	jsr	(DisplaySprite).l
+	movea.w	parent(a0),a1			; Move Tails' register to a1
+	move.w	invulnerable_time(a1),d0	; Move Tails' invulnerable time to d0
+	beq.s	.display			; Is invulnerable_time 0?  If so, always display his tails
+	addq.w	#1,d0				; Make d0 the same as old invulnerable_time's d0
+	lsr.w	#3,d0				; Shift bits to the right 3 times
+	bcc.s	.return				; If the Carry bit is not set, branch and do not display Tails' tails
+
+.display:
+	jmp	(DisplaySprite).l               ; Display Tails' tails
+.return:
 	rts
 ; ===========================================================================
 ; animation master script table for the tails
@@ -35186,7 +35068,7 @@ Obj_TailsTailsAniSelection:
 	dc.b	3	; TailsAni_Roll2	-> Directional
 	dc.b	9	; TailsAni_Push		-> Pushing
 	dc.b	1	; TailsAni_Wait		-> Swish
-	dc.b	0	; TailsAni_Balance	-> Blank
+	dc.b	9	; TailsAni_Balance	-> Pushing
 	dc.b	2	; TailsAni_LookUp	-> Flick
 	dc.b	1	; TailsAni_Duck		-> Swish
 	dc.b	7	; TailsAni_Spindash	-> Spindash
