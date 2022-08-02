@@ -2,11 +2,11 @@
 
 REM // make sure we can write to the file s2built.bin
 REM // also make a backup to s2built.prev.bin
-IF NOT EXIST s2built.md goto LABLNOCOPY
-IF EXIST s2built.prev.md del s2built.prev.md
-IF EXIST s2built.prev.md goto LABLNOCOPY
-move /Y s2built.md s2built.prev.md > NUL
-IF EXIST s2built.md goto LABLERROR3
+IF NOT EXIST s2built.gen goto LABLNOCOPY
+IF EXIST s2built.prev.gen del s2built.prev.gen
+IF EXIST s2built.prev.gen goto LABLNOCOPY
+move /Y s2built.gen s2built.prev.gen > NUL
+IF EXIST s2built.gen goto LABLERROR3
 
 :LABLNOCOPY
 REM // delete some intermediate assembler output just in case
@@ -62,17 +62,17 @@ REM // if there were errors, there won't be any s2.p output
 IF NOT EXIST s2.p goto LABLERROR5
 
 REM // combine the assembler output into a rom
-"win32/s2p2bin" %s2p2bin_args% s2.p s2built.md s2.h
+"win32/s2p2bin" %s2p2bin_args% s2.p s2built.gen s2.h
 
 REM // fix some pointers and things that are impossible to fix from the assembler without un-splitting their data
-"win32/fixpointer" s2.h s2built.md   off_3A294 MapRUnc_Sonic $2D 0 4   word_728C_user Obj_EndingController_MapUnc_7240 2 2 1
+"win32/fixpointer" s2.h s2built.gen   off_3A294 MapRUnc_Sonic $2D 0 4   word_728C_user Obj_EndingController_MapUnc_7240 2 2 1
 
 REM // done -- pause if we seem to have failed, then exit
-IF NOT EXIST s2built.md pause & exit /b
-"ErrorDebugger/ConvSym.exe" s2.lst s2built.md -input as_lst -a
+IF NOT EXIST s2built.gen pause & exit /b
+"ErrorDebugger/ConvSym.exe" s2.lst s2built.gen -input as_lst -a
 
 REM REM // fix the rom header (checksum)
-"win32/fixheader" s2built.md
+"win32/fixheader" s2built.gen
 
 REM // if there were errors/warnings, a log file is produced
 IF EXIST s2.log goto LABLERROR4
@@ -97,7 +97,7 @@ pause
 exit /b
 
 :LABLERROR3
-echo Failed to build because write access to s2built.md was denied.
+echo Failed to build because write access to s2built.gen was denied.
 pause
 
 exit /b

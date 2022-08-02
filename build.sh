@@ -1,1 +1,0 @@
-wine cmd.exe /c build.bat

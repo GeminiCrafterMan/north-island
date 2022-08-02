@@ -31244,6 +31244,9 @@ return_1ABA4:
 
 ; loc_1ABA6:
 Sonic_Super:
+	lea	(MainCharacter).w,a1 ; a1=character ; a1=Sonic
+	cmpa.w	a1,a0
+	bne.w	return_1AC3C
 	tst.b	(Super_Sonic_flag).w	; Ignore all this code if not Super Sonic
 	beq.w	return_1AC3C
 	tst.b	(Update_HUD_timer).w
@@ -32448,6 +32451,7 @@ Obj_Tails_Control_Part2:
 	andi.w	#$7FF,y_pos(a0)                 ; perform wrapping of Sonic's y position
 +
 	bsr.s	Tails_Display
+	bsr.w	Sonic_Super
 	bsr.w	Tails_RecordPos
 	bsr.w	Tails_Water
 	move.b	(Primary_Angle).w,next_tilt(a0)
