@@ -3021,6 +3021,7 @@ PalPtr_SS3_2p:	palptr Pal_SS3_2p,3
 PalPtr_OOZ_B:	palptr Pal_OOZ_B, 1
 PalPtr_Menu:	palptr Pal_Menu,  0
 PalPtr_Result:	palptr Pal_Result,0
+PalPtr_Knux:palptr Pal_Knux, 0
 
 ; ----------------------------------------------------------------------------
 ; This macro defines Pal_ABC and Pal_ABC_End, so palptr can compute the size of
@@ -3068,6 +3069,7 @@ Pal_SS1_2p:palette Special Stage 1 2p.bin ; Special Stage 1 2p palette
 Pal_SS2_2p:palette Special Stage 2 2p.bin ; Special Stage 2 2p palette
 Pal_SS3_2p:palette Special Stage 3 2p.bin ; Special Stage 3 2p palette
 Pal_Result:palette Special Stage Results Screen.bin ; Special Stage Results Screen palette
+Pal_Knux:  palette Knuckles.bin,SonicAndTails2.bin	; Knuckles
 ; ===========================================================================
 
     if gameRevision<2
@@ -3846,6 +3848,10 @@ Level_InitWater:
 ; loc_407C:
 Level_LoadPal:
 	moveq	#PalID_BGND,d0
+	cmpi.w	#3,(Player_mode).w
+	blt.s	.notKnux
+	moveq	#PalID_Knux,d0
+.notKnux:
 	bsr.w	PalLoad_Now	; load Sonic's palette line
 	tst.b	(Water_flag).w	; does level have water?
 	beq.s	Level_GetBgm	; if not, branch
@@ -4151,9 +4157,17 @@ InitPlayers_Alone: ; either Sonic or Tails but not both
 ; ===========================================================================
 ; loc_44D0:
 InitPlayers_TailsAlone:
+	subq.w	#1,d0
+	bne.s	InitPlayers_KnuxAlone
+
 	move.l	#Obj_Tails,(MainCharacter+id).w ; load Obj_Tails Tails object at $FFFFB000
 	move.l	#Obj_SpindashDust,(Tails_Dust+id).w ; load Obj_Splash Tails' spindash dust/splash object at $FFFFD100
 	addi_.w	#4,(MainCharacter+y_pos).w
+	rts
+; ===========================================================================
+InitPlayers_KnuxAlone:
+	move.l	#Obj_Knuckles,(MainCharacter+id).w ; load Obj_Sonic Sonic object at $FFFFB000
+	move.l	#Obj_SpindashDust,(Sonic_Dust+id).w ; load Obj_Splash Sonic's spindash dust/splash object at $FFFFD100
 	rts
 ; End of function InitPlayers
 
@@ -10359,7 +10373,7 @@ OptionScreen_Controls:
 ; ===========================================================================
 ; word_917A:
 OptionScreen_Choices:
-	dc.l (3-1)<<24|(Player_option&$FFFFFF)
+	dc.l (4-1)<<24|(Player_option&$FFFFFF)
 	dc.l (2-1)<<24|(Two_player_items&$FFFFFF)	; Useless
 	dc.l (SFXlast-1)<<24|(Sound_test_sound&$FFFFFF)
 
@@ -10499,10 +10513,12 @@ off_92D2:
 	dc.l TextOptScr_SonicAndMiles
 	dc.l TextOptScr_SonicAlone
 	dc.l TextOptScr_MilesAlone
+	dc.l TextOptScr_KnuxAlone
 off_92DE:
 	dc.l TextOptScr_SonicAndTails
 	dc.l TextOptScr_SonicAlone
 	dc.l TextOptScr_TailsAlone
+	dc.l TextOptScr_KnuxAlone
 off_92EA:
 	dc.l TextOptScr_AllKindsItems
 	dc.l TextOptScr_TeleportOnly
@@ -11029,6 +11045,7 @@ TextOptScr_SonicAndTails:	menutxt	"SONIC AND TAILS"	; byte_97EC:
 TextOptScr_SonicAlone:		menutxt	"SONIC ALONE    "	; byte_97FC:
 TextOptScr_MilesAlone:		menutxt	"MILES ALONE    "	; byte_980C:
 TextOptScr_TailsAlone:		menutxt	"TAILS ALONE    "	; byte_981C:
+TextOptScr_KnuxAlone:		menutxt "KNUCKLES ALONE "
 TextOptScr_VsModeItems:		menutxt	"* VS MODE ITEMS *"	; byte_982C:
 TextOptScr_AllKindsItems:	menutxt	"ALL KINDS ITEMS"	; byte_983E:
 TextOptScr_TeleportOnly:	menutxt	"TELEPORT ONLY  "	; byte_984E:
@@ -21453,11 +21470,12 @@ BranchTo2_MarkObjGone
 SolidObject_Monitor_Sonic:
 	btst	d6,status(a0)			; is Sonic standing on the monitor?
 	bne.s	Obj_Monitor_ChkOverEdge		; if yes, branch
+	cmpi.l	#Obj_Knuckles,id(a1)
+	beq.s	SolidObject_Monitor_Knuckles
 	cmpi.b	#AniIDSonAni_Roll,anim(a1)		; is Sonic spinning?
 	bne.w	SolidObject_cont		; if not, branch
 	rts
 ; End of function SolidObject_Monitor_Sonic
-
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 ; sub_12768:
@@ -21466,6 +21484,18 @@ SolidObject_Monitor_Tails:
 	bne.s	Obj_Monitor_ChkOverEdge		; if yes, branch
 	bra.w	SolidObject_cont		; if not, branch
 ; End of function SolidObject_Monitor_Tails
+
+; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
+
+SolidObject_Monitor_Knuckles:
+	cmpi.b	#1,double_jump_flag(a1)
+	beq.s	+
+	cmpi.b	#3,double_jump_flag(a1)
+	beq.s	+
+	cmpi.b	#AniIDSonAni_Roll,anim(a1)
+	bne.w	SolidObject_cont
++	rts
+; End of function SolidObject_Monitor_Knuckles
 
 ; ---------------------------------------------------------------------------
 ; Checks if the player has walked over the edge of the monitor.
@@ -27664,7 +27694,7 @@ ObjPtr_Flipper:		dc.l Obj_Flipper		; $86 ; Flipper from CNZ
 ObjPtr_SSNumberOfRings:	dc.l Obj_SSNumberOfRings	; $87 ; Number of rings in Special Stage
 ObjPtr_SSTailsTails:	dc.l Obj_SSTailsTails		; $88 ; Tails' tails in Special Stage
 ObjPtr_ARZBoss:		dc.l Obj_ARZBoss		; $89 ; ARZ boss
-			dc.l Obj8A			; $8A ; Sonic Team Presents/Credits (seemingly unused leftover from S1)
+ObjPtr_Knuckles:		dc.l Obj_Knuckles	; $8A ; Knuckles the Echidna
 ObjPtr_WFZPalSwitcher:	dc.l Obj_WFZPalSwitcher		; $8B ; Cycling palette switcher from Wing Fortress Zone
 ObjPtr_Whisp:		dc.l Obj_Whisp			; $8C ; Whisp (blowfly badnik) from ARZ
 ObjPtr_GrounderInWall:	dc.l Obj_GrounderInWall		; $8D ; Grounder in wall, from ARZ
@@ -30249,7 +30279,7 @@ Obj_Sonic_MdNormal:
 	bsr.w	Sonic_LevelBound
 	jsr	(ObjectMove).l
 	bsr.w	AnglePos
-	bsr.w	Sonic_SlopeRepel
+	bsr.w	Player_SlopeRepel
 
 return_1A2DE:
 	rts
@@ -30292,7 +30322,7 @@ Obj_Sonic_MdRoll:
 	bsr.w	Sonic_LevelBound
 	jsr	(ObjectMove).l
 	bsr.w	AnglePos
-	bsr.w	Sonic_SlopeRepel
+	bsr.w	Player_SlopeRepel
 	rts
 ; End of subroutine Obj_Sonic_MdRoll
 ; ===========================================================================
@@ -31007,7 +31037,7 @@ Sonic_Boundary_Bottom:
 ; loc_1A9BA:
 Sonic_Boundary_Sides:
 	move.w	d0,x_pos(a0)
-	move.w	#0,2+x_pos(a0) ; subpixel x
+	move.w	#0,x_sub(a0) ; subpixel x
 	move.w	#0,x_vel(a0)
 	move.w	#0,inertia(a0)
 	bra.s	Sonic_Boundary_CheckBottom
@@ -31215,7 +31245,7 @@ Sonic_CheckGoSuper:
 	tst.b	(Update_HUD_timer).w	; has Sonic reached the end of the act?
 	beq.s	return_1ABA4		; if yes, branch
     endif
-
+Sonic_TurnSuper:
 	move.b	#1,(Super_Sonic_palette).w
 	move.b	#$F,(Palette_timer).w
 	move.b	#1,(Super_Sonic_flag).w
@@ -31494,37 +31524,37 @@ return_1AE06:
 ; End of function Sonic_RollRepel
 
 ; ---------------------------------------------------------------------------
-; Subroutine to push Sonic down a slope
+; Subroutine to push any player down a slope
 ; ---------------------------------------------------------------------------
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1AE08:
-Sonic_SlopeRepel:
+Player_SlopeRepel:
 	nop
 	tst.b	stick_to_convex(a0)
-	bne.s	return_1AE42
+	bne.s	.ret
 	tst.w	move_lock(a0)
-	bne.s	loc_1AE44
+	bne.s	.disableLock
 	move.b	angle(a0),d0
 	addi.b	#$20,d0
 	andi.b	#$C0,d0
-	beq.s	return_1AE42
+	beq.s	.ret
 	mvabs.w	inertia(a0),d0
 	cmpi.w	#$280,d0
-	bhs.s	return_1AE42
+	bhs.s	.ret
 	clr.w	inertia(a0)
 	bset	#1,status(a0)
 	move.w	#$1E,move_lock(a0)
 
-return_1AE42:
+.ret:
 	rts
 ; ===========================================================================
 
-loc_1AE44:
+.disableLock:
 	subq.w	#1,move_lock(a0)
 	rts
-; End of function Sonic_SlopeRepel
+; End of function Player_SlopeRepel
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to return Sonic's angle to 0 as he jumps
@@ -31638,7 +31668,7 @@ Sonic_DoLevelCollision:
 	add.w	d1,x_pos(a0)
 	move.w	#0,x_vel(a0) ; stop Sonic since he hit a wall
 +
-	bsr.w	Sonic_CheckFloor
+	bsr.w	Player_CheckFloor
 	tst.w	d1
 	bpl.s	return_1AF8A
 	move.b	y_vel(a0),d2
@@ -31697,7 +31727,7 @@ Sonic_HitLeftWall:
 ; ===========================================================================
 ; loc_1AFA6:
 Sonic_HitCeiling:
-	bsr.w	Sonic_CheckCeiling
+	bsr.w	Player_CheckCeiling
 	tst.w	d1
 	bpl.s	Sonic_HitFloor ; branch if distance is positive (not inside ceiling)
 	sub.w	d1,y_pos(a0)
@@ -31712,7 +31742,7 @@ return_1AFBE:
 Sonic_HitFloor:
 	tst.w	y_vel(a0)
 	bmi.s	return_1AFE6
-	bsr.w	Sonic_CheckFloor
+	bsr.w	Player_CheckFloor
 	tst.w	d1
 	bpl.s	return_1AFE6
 	add.w	d1,y_pos(a0)
@@ -31738,7 +31768,7 @@ Sonic_HitCeilingAndWalls:
 	add.w	d1,x_pos(a0)
 	move.w	#0,x_vel(a0)	; stop Sonic since he hit a wall
 +
-	bsr.w	Sonic_CheckCeiling
+	bsr.w	Player_CheckCeiling
 	tst.w	d1
 	bpl.s	return_1B042
 	sub.w	d1,y_pos(a0)
@@ -31774,7 +31804,7 @@ Sonic_HitRightWall:
 ; identical to Sonic_HitCeiling...
 ; loc_1B05E:
 Sonic_HitCeiling2:
-	bsr.w	Sonic_CheckCeiling
+	bsr.w	Player_CheckCeiling
 	tst.w	d1
 	bpl.s	Sonic_HitFloor2
 	sub.w	d1,y_pos(a0)
@@ -31790,7 +31820,7 @@ return_1B076:
 Sonic_HitFloor2:
 	tst.w	y_vel(a0)
 	bmi.s	return_1B09E
-	bsr.w	Sonic_CheckFloor
+	bsr.w	Player_CheckFloor
 	tst.w	d1
 	bpl.s	return_1B09E
 	add.w	d1,y_pos(a0)
@@ -31818,10 +31848,10 @@ Sonic_ResetOnFloor:
 	move.b	#AniIDSonAni_Walk,anim(a0)
 ; loc_1B0AC:
 Sonic_ResetOnFloor_Part2:
-	; some routines outside of Tails' code can call Sonic_ResetOnFloor_Part2
-	; when they mean to call Tails_ResetOnFloor_Part2, so fix that here
-	_cmpi.l	#Obj_Sonic,id(a0)	; is this object ID Sonic (Obj_Sonic)?
-	bne.w	Tails_ResetOnFloor_Part2	; if not, branch to the Tails version of this code
+	cmpi.l	#Obj_Tails,id(a0)	; is this object ID Tails?
+	beq.w	Tails_ResetOnFloor_Part2	; if so, branch to the Tails version of this code
+	cmpi.l	#Obj_Knuckles,id(a0); is this object ID Knuckles?
+	jeq		Knuckles_ResetOnFloor_Part2	; if so, branch to the Knuckles version of this code
 
 	btst	#2,status(a0)
 	beq.s	Sonic_ResetOnFloor_Part3
@@ -31991,6 +32021,29 @@ Obj_Sonic_ResetLevel:
 	bra.s	Obj_Sonic_Finished
 +
 	rts
+
+Obj_Knuckles_ResetLevel_Part2:	; I really don't know if this is necessary.
+		tst.w	($FFFFFFDC).w
+		beq.s	return_316F64
+		move.b	#0,(Scroll_lock).w
+		move.b	#$A,routine(a0)
+		move.w	(Saved_x_pos).w,x_pos(a0)
+		move.w	(Saved_y_pos).w,y_pos(a0)
+		move.w	(Saved_art_tile).w,art_tile(a0)
+		move.w	(Saved_Solid_bits).w,top_solid_bit(a0)
+		clr.w	(Ring_count).w
+		clr.b	(Extra_life_flags).w
+		move.b	#0,obj_control(a0)
+		move.b	#5,anim(a0)
+		move.w	#0,x_vel(a0)
+		move.w	#0,y_vel(a0)
+		move.w	#0,inertia(a0)
+		move.b	#2,status(a0)
+		move.w	#0,move_lock(a0)
+		move.w	#0,restart_countdown(a0)
+
+return_316F64:					  ; ...
+		rts
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Sonic when he's offscreen and waiting for the level to restart
@@ -33071,7 +33124,7 @@ Obj_Tails_MdNormal:
 	bsr.w	Tails_LevelBound
 	jsr	(ObjectMove).l
 	bsr.w	AnglePos
-	bsr.w	Tails_SlopeRepel
+	bsr.w	Player_SlopeRepel
 	rts
 ; End of subroutine Obj_Tails_MdNormal
 ; ===========================================================================
@@ -33111,7 +33164,7 @@ Obj_Tails_MdRoll:
 	bsr.w	Tails_LevelBound
 	jsr	(ObjectMove).l
 	bsr.w	AnglePos
-	bsr.w	Tails_SlopeRepel
+	bsr.w	Player_SlopeRepel
 	rts
 ; End of subroutine Obj_Tails_MdRoll
 ; ===========================================================================
@@ -33724,7 +33777,7 @@ Tails_Boundary_Bottom:
 ; loc_1C5A0:
 Tails_Boundary_Sides:
 	move.w	d0,x_pos(a0)
-	move.w	#0,2+x_pos(a0) ; subpixel x
+	move.w	#0,x_sub(a0) ; subpixel x
 	move.w	#0,x_vel(a0)
 	move.w	#0,inertia(a0)
 	bra.s	Tails_Boundary_CheckBottom
@@ -34065,39 +34118,6 @@ return_1C8B6:
 ; End of function Tails_RollRepel
 
 ; ---------------------------------------------------------------------------
-; Subroutine to push Tails down a slope
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1C8B8:
-Tails_SlopeRepel:
-	nop
-	tst.b	stick_to_convex(a0)
-	bne.s	return_1C8F2
-	tst.w	move_lock(a0)
-	bne.s	loc_1C8F4
-	move.b	angle(a0),d0
-	addi.b	#$20,d0
-	andi.b	#$C0,d0
-	beq.s	return_1C8F2
-	mvabs.w	inertia(a0),d0
-	cmpi.w	#$280,d0
-	bhs.s	return_1C8F2
-	clr.w	inertia(a0)
-	bset	#1,status(a0)
-	move.w	#$1E,move_lock(a0)
-
-return_1C8F2:
-	rts
-; ===========================================================================
-
-loc_1C8F4:
-	subq.w	#1,move_lock(a0)
-	rts
-; End of function Tails_SlopeRepel
-
-; ---------------------------------------------------------------------------
 ; Subroutine to return Tails' angle to 0 as he jumps
 ; ---------------------------------------------------------------------------
 
@@ -34209,7 +34229,7 @@ Tails_DoLevelCollision:
 	add.w	d1,x_pos(a0)
 	move.w	#0,x_vel(a0)	; stop Tails since he hit a wall
 +
-	bsr.w	Sonic_CheckFloor
+	bsr.w	Player_CheckFloor
 	tst.w	d1
 	bpl.s	return_1CA3A
 	move.b	y_vel(a0),d2
@@ -34268,7 +34288,7 @@ Tails_HitLeftWall:
 ; ===========================================================================
 ; loc_1CA56:
 Tails_HitCeiling:
-	bsr.w	Sonic_CheckCeiling
+	bsr.w	Player_CheckCeiling
 	tst.w	d1
 	bpl.s	Tails_HitFloor	; branch if distance is positive (not inside ceiling)
 	sub.w	d1,y_pos(a0)
@@ -34283,7 +34303,7 @@ return_1CA6E:
 Tails_HitFloor:
 	tst.w	y_vel(a0)
 	bmi.s	return_1CA96
-	bsr.w	Sonic_CheckFloor
+	bsr.w	Player_CheckFloor
 	tst.w	d1
 	bpl.s	return_1CA96
 	add.w	d1,y_pos(a0)
@@ -34309,7 +34329,7 @@ Tails_HitCeilingAndWalls:
 	add.w	d1,x_pos(a0)
 	move.w	#0,x_vel(a0)	; stop Tails since he hit a wall
 +
-	bsr.w	Sonic_CheckCeiling
+	bsr.w	Player_CheckCeiling
 	tst.w	d1
 	bpl.s	return_1CAF2
 	sub.w	d1,y_pos(a0)
@@ -34345,7 +34365,7 @@ Tails_HitRightWall:
 ; identical to Tails_HitCeiling...
 ; loc_1CB0E:
 Tails_HitCeiling2:
-	bsr.w	Sonic_CheckCeiling
+	bsr.w	Player_CheckCeiling
 	tst.w	d1
 	bpl.s	Tails_HitFloor2
 	sub.w	d1,y_pos(a0)
@@ -34361,7 +34381,7 @@ return_1CB26:
 Tails_HitFloor2:
 	tst.w	y_vel(a0)
 	bmi.s	return_1CB4E
-	bsr.w	Sonic_CheckFloor
+	bsr.w	Player_CheckFloor
 	tst.w	d1
 	bpl.s	return_1CB4E
 	add.w	d1,y_pos(a0)
@@ -35932,8 +35952,15 @@ BranchTo16_DeleteObject
 ; loc_1DE4A:
 Obj_Splash_CheckSkid:
 	movea.w	parent(a0),a2 ; a2=character
+	moveq	#$10,d1	; move Y offset to d1
 	cmpi.b	#AniIDSonAni_Stop,anim(a2)	; SonAni_Stop
 	beq.s	Obj_Splash_SkidDust
+	moveq	#6,d1	; move different Y offset to d1
+	cmpi.l	#Obj_Knuckles,id(a2)	; playing as Knux?
+	bne.s	.notKnux
+	cmpi.b	#3,double_jump_flag(a2)	; check for sliding
+	beq.s	Obj_Splash_SkidDust
+.notKnux:
 	move.b	#2,routine(a0)
 	move.b	#0,objoff_32(a0)
 	rts
@@ -35948,7 +35975,7 @@ Obj_Splash_SkidDust:
 	_move.l	id(a0),id(a1) ; load Obj_Splash
 	move.w	x_pos(a2),x_pos(a1)
 	move.w	y_pos(a2),y_pos(a1)
-	addi.w	#$10,y_pos(a1)
+	add.w	d1,y_pos(a1)
 	tst.b	objoff_34(a0)
 	beq.s	+
 	subi_.w	#4,y_pos(a1)
@@ -37137,7 +37164,7 @@ CalcRoomOverHead:
 	cmpi.b	#$40,d0
 	beq.w	CheckLeftCeilingDist
 	cmpi.b	#$80,d0
-	beq.w	Sonic_CheckCeiling
+	beq.w	Player_CheckCeiling
 	cmpi.b	#$C0,d0
 	beq.w	CheckRightCeilingDist
 
@@ -37150,7 +37177,7 @@ CalcRoomOverHead:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1EC4E: Sonic_HitFloor:
-Sonic_CheckFloor:
+Player_CheckFloor:
 	move.l	#Primary_Collision,(Collision_addr).w
 	cmpi.b	#$C,top_solid_bit(a0)
 	beq.s	+
@@ -37481,7 +37508,7 @@ ObjCheckRightWallDist:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1EF2E: Sonic_DontRunOnWalls: CheckCeilingDist:
-Sonic_CheckCeiling:
+Player_CheckCeiling:
 	move.w	y_pos(a0),d2
 	move.w	x_pos(a0),d3
 	moveq	#0,d0
@@ -37516,7 +37543,7 @@ Sonic_CheckCeiling:
 
 	move.b	#$80,d2
 	bra.w	loc_1ECC6
-; End of function Sonic_CheckCeiling
+; End of function Player_CheckCeiling
 
 ; ===========================================================================
 	; a bit of unused/dead code here
@@ -70590,7 +70617,7 @@ return_39CEE:
 
 loc_39CF0:
 	moveq	#100,d0
-	bsr.w	AddPoints
+	jsr		AddPoints
 	move.w	#$FF,objoff_32(a0)
 	move.b	#$C,routine(a0)
 	clr.b	collision_flags(a0)
@@ -77410,56 +77437,9 @@ JmpTo26_ObjectMove ; JmpTo
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 8A - Sonic Team Presents/Credits (leftover from S1) (seemingly unused)
+; Object 8A - Knuckles the Echidna
 ; ----------------------------------------------------------------------------
-; Sprite_3EAC8:
-Obj8A: ; (screen-space obj)
-	moveq	#0,d0
-	move.b	routine(a0),d0
-	move.w	Obj8A_Index(pc,d0.w),d1
-	jmp	Obj8A_Index(pc,d1.w)
-; ===========================================================================
-; off_3EAD6:
-Obj8A_Index:	offsetTable
-		offsetTableEntry.w Obj8A_Init
-		offsetTableEntry.w Obj8A_Display
-; ===========================================================================
-; loc_3EADA:
-Obj8A_Init:
-	addq.b	#2,routine(a0)
-	move.w	#$120,x_pixel(a0)
-	move.w	#$F0,y_pixel(a0)
-	move.l	#Obj8A_MapUnc_3EB4E,mappings(a0)
-	move.w	#make_art_tile($05A0,0,0),art_tile(a0)
-	move.w	(Ending_demo_number).w,d0
-	move.b	d0,mapping_frame(a0)
-	move.b	#0,render_flags(a0)
-	move.w	#prio(0),priority(a0)
-	cmpi.b	#GameModeID_TitleScreen,(Game_Mode).w	; title screen??
-	bne.s	Obj8A_Display	; if not, branch
-	move.w	#make_art_tile($0300,0,0),art_tile(a0)
-	move.b	#$A,mapping_frame(a0)
-	tst.b	(S1_hidden_credits_flag).w
-	beq.s	Obj8A_Display
-	cmpi.b	#button_down_mask|button_B_mask|button_C_mask|button_A_mask,(Ctrl_1_Held).w
-	bne.s	Obj8A_Display
-	move.w	#$EEE,(Target_palette_line3).w
-	move.w	#$880,(Target_palette_line3+2).w
-	jmp	(DeleteObject).l
-; ===========================================================================
-; JmpTo46_DisplaySprite
-Obj8A_Display:
-	jmp	(DisplaySprite).l
-; ===========================================================================
-; ----------------------------------------------------------------------------
-; sprite mappings (unused?)
-; ----------------------------------------------------------------------------
-Obj8A_MapUnc_3EB4E:	BINCLUDE "mappings/sprite/obj8A.bin"
-; ===========================================================================
-
-    if gameRevision<2
-	nop
-    endif
+	include	"objects/Players/Knuckles.asm"
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -77963,7 +77943,15 @@ loc_3F768:
 	cmpa.w	#MainCharacter,a0
 	bne.s	return_3F78A	; Don't want the fuzzy fucker breaking monitors, now do we?
 	cmpi.b	#AniIDSonAni_Roll,anim(a0)
+	beq.s	.breakMonitor
+	cmpi.l	#Obj_Knuckles,id(a0)
 	bne.s	return_3F78A
+	cmpi.b	#1,double_jump_flag(a0)
+	beq.s	.breakMonitor
+	cmpi.b	#3,double_jump_flag(a0)
+	bne.s	return_3F78A
+
+.breakMonitor:
 	neg.w	y_vel(a0)	; reverse Sonic's y-motion
 	move.b	#4,routine(a1)
 	move.w	a0,parent(a1)
@@ -77973,6 +77961,14 @@ return_3F78A:
 ; ===========================================================================
 ; loc_3F78C:
 Touch_Enemy:
+	cmpi.l	#Obj_Knuckles,id(a0)
+	bne.s	.notKnux
+	cmpi.b	#1,double_jump_flag(a0)
+	beq.s	+
+	cmpi.b	#3,double_jump_flag(a0)
+	beq.s	+
+
+.notKnux:
 	btst	#status_sec_isInvincible,status_secondary(a0)	; is Sonic invincible?
 	bne.s	+			; if yes, branch
 	cmpi.b	#AniIDSonAni_Spindash,anim(a0)
@@ -77984,6 +77980,14 @@ Touch_Enemy:
 	beq.s	Touch_Enemy_Part2
 	tst.b	boss_hitcount2(a1)
 	beq.s	return_3F7C6
+	cmpi.l	#Obj_Knuckles,id(a0)
+	bne.s	.notKnux2
+	cmpi.b	#1,double_jump_flag(a0)
+	bne.s	.notKnux2
+	move.b	#2,double_jump_flag(a0)
+	move.b	#$21,anim(a0)
+
+.notKnux2:
 	neg.w	x_vel(a0)
 	neg.w	y_vel(a0)
 	move.b	#0,collision_flags(a1)
@@ -80968,7 +80972,7 @@ return_41CB6:
 ; sub_41CB8:
 Debug_ResetPlayerStats:
 	move.b	d0,anim(a1)
-	move.w	d0,2+x_pos(a1) ; subpixel x
+	move.w	d0,x_sub(a1) ; subpixel x
 	move.w	d0,2+y_pos(a1) ; subpixel y
 	move.b	d0,obj_control(a1)
 	move.b	d0,spindash_flag(a1)
@@ -82856,6 +82860,14 @@ MapRUnc_Tails:	BINCLUDE	"mappings/spriteDPLC/Tails.bin"
 ArtUnc_TailsTails:	BINCLUDE	"art/uncompressed/Tails's tails's art.bin"
 MapUnc_TailsTails:	BINCLUDE	"mappings/sprite/Tails's tails.bin"
 MapRUnc_TailsTails:	BINCLUDE	"mappings/spriteDPLC/Tails's tails.bin"
+;--------------------------------------------------------------------------------------
+; Knuckles's shit
+;--------------------------------------------------------------------------------------
+	align $20
+ArtUnc_Knuckles:	BINCLUDE	"art/uncompressed/Knuckles's art.bin"
+MapUnc_Knuckles:	BINCLUDE	"mappings/sprite/Knuckles.bin"
+MapRUnc_Knuckles:	BINCLUDE	"mappings/spriteDPLC/Knuckles.bin"
+	align $20
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Shield			; ArtNem_71D8E:

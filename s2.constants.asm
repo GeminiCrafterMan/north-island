@@ -4,7 +4,7 @@
 ; ---------------------------------------------------------------------------
 ; size variables - you'll get an informational error if you need to change these...
 ; they are all in units of bytes
-Size_of_Snd_driver_guess =	$80A	; approximate post-compressed size of the Z80 sound driver
+Size_of_Snd_driver_guess =	$80D	; approximate post-compressed size of the Z80 sound driver
 Debug_Lagometer =	0		; set to 1 to enable on-screen lagometer. Seems to have an odd habit of breaking Special Stages....
 
 ; ---------------------------------------------------------------------------
@@ -43,7 +43,8 @@ x_radius		ds.b 1		; object's width / 2, often used for floor/wall collision
 flip_turned =		*		; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
 objoff_40 =		*
 objoff_41 =		*
-			ds.w 1		; this space is not used (aside from a couple of objects, due to lack of object RAM)
+double_jump_flag		ds.b 1	; double jump stuff
+double_jump_property	ds.b 1	; more stuff
 boss_sine_count =	*		;
 mapping_frame		ds.b 1		; the frame the object is currently intending to display
 anim_frame		ds.b 1		; offset into animation script. Yes, it has nothing to do with frames as such.
@@ -442,6 +443,7 @@ PalID_SS3_2p =	id(PalPtr_SS3_2p) ; 24
 PalID_OOZ_B =	id(PalPtr_OOZ_B) ; 25
 PalID_Menu =	id(PalPtr_Menu) ; 26
 PalID_Result =	id(PalPtr_Result) ; 27
+PalID_Knux =	id(PalPtr_Knux)
 
 ; PLC IDs
 offset :=	ArtLoadCues
@@ -958,7 +960,8 @@ Plc_Buffer_End:
 
 
 Misc_Variables:
-				ds.w 1		; unused
+Gliding_collision_flags:ds.b 1
+Disable_wall_grab:		ds.b 1
 
 ; extra variables for the second player (CPU) in 1-player mode
 Tails_control_counter:		ds.w 1		; how long until the CPU takes control
