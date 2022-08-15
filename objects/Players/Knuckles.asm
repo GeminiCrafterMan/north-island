@@ -500,7 +500,7 @@ loc_315A54:
 loc_315A76:
 		btst	#1,(Ctrl_1_Logical).w
 		beq.w	loc_315B04
-		cmp.b	#frK_Climb6,mapping_frame(a0)
+		cmp.b	#frK_Climb6+1,mapping_frame(a0)
 		bne.s	loc_315AA2
 		move.b	#frK_Climb1,mapping_frame(a0)
 		addq.w	#3,y_pos(a0)
@@ -589,7 +589,7 @@ return_315B94:
 
 Knuckles_ClimbUp:
 		move.b	#5,double_jump_flag(a0)		  ; Climb up to	the floor above	you
-		cmp.b	#frK_Climb6,mapping_frame(a0)
+		cmp.b	#frK_Climb6+1,mapping_frame(a0)
 		beq.s	return_315BAC
 		move.b	#0,double_jump_property(a0)
 		bsr.s	Knuckles_DoLedgeClimbingAnimation
@@ -646,7 +646,7 @@ Knuckles_ClimbLedge_Frames:
 	dc.b  frK_ClimbU2,    8,  -10,    6
 	dc.b  frK_ClimbU3,   -8,  -12,    6
 	dc.b  frK_Idle2,    8,   -5,    6
-Knuckles_ClimbLedge_Frames_End:
+Knuckles_ClimbLedge_Frames_End:	even
 
 ; =============== S U B	R O U T	I N E =======================================
 
