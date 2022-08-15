@@ -80646,7 +80646,7 @@ Hud_ClrBonusLoop:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; ---------------------------------------------------------------------------
-; Subroutine to load uncompressed lives counter patterns (Sonic)
+; Subroutine to load uncompressed lives counter patterns (Tails)
 ; ---------------------------------------------------------------------------
 
 ; sub_412D4:
@@ -80658,7 +80658,7 @@ Hud_Lives2:
 ; End of function Hud_Lives2
 
 ; ---------------------------------------------------------------------------
-; Subroutine to load uncompressed lives counter patterns (Tails)
+; Subroutine to load uncompressed lives counter patterns (Sonic)
 ; ---------------------------------------------------------------------------
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
@@ -80696,7 +80696,7 @@ loc_41314:
 	beq.s	Hud_ClrLives
 
 loc_41318:
-	lsl.w	#5,d2
+	lsl.w	#6,d2	; Setting this to #6 makes the number correct. Still cut in half though.
 	lea	(a1,d2.w),a3
     rept 8
 	move.l	(a3)+,(a6)
