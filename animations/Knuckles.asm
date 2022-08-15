@@ -127,6 +127,22 @@ KnucklesAni_Dummy:dc.b	  $7F, frK_PHold, afEnd
 
 frK_Null	ds.b 1	; 0
 
+; standing still
+frK_Idle1	ds.b 1
+frK_Idle2	ds.b 1
+frK_Idle3	ds.b 1
+frK_Idle4	ds.b 1
+frK_Idle5	ds.b 1
+frK_Idle6	ds.b 1
+frK_Idle7	ds.b 1
+frK_Idle8	ds.b 1
+frK_Idle9	ds.b 1
+frK_Idle10	ds.b 1
+frK_Idle11	ds.b 1
+frK_Idle12	ds.b 1
+; Look up
+frK_LookUp1	ds.b 1
+frK_LookUp2	ds.b 1
 ; Walk
 frK_Walk11	ds.b 1
 frK_Walk12	ds.b 1
@@ -152,18 +168,6 @@ frK_Run4X	ds.b 4
 ; tumble
 frK_Tumble1	ds.b 1
 frK_TumbleX	ds.b 11	; entirely unnecessary
-; stand tumble (unused)
-frK_StandTumble	ds.b 12
-; weird shit (unused)
-frK_WeirdShit	ds.b 12
-; rotato potato (unused except for idle1)
-frK_Rotato1	ds.b 1
-frK_Idle1	ds.b 1
-frK_RotatoX	ds.b 5
-; weird hanging shit (unused)
-frK_WeirdHang	ds.b 13
-; more dumb shit (unused)
-frK_DumbShit	ds.b 29
 ; spindash
 frK_SpDsh1	ds.b 1
 frK_SpDsh2	ds.b 1
@@ -176,15 +180,11 @@ frK_Slide	ds.b 1
 frK_Hurt	ds.b 1
 ; boing
 frK_Spring	ds.b 1
-; mgz (unused)
-frK_MGZPull	ds.b 1
-; hang from vine
+; hang from vine/wfz thing
 frK_Hang1	ds.b 1
 frK_Hang2	ds.b 1
 frK_Hang3	ds.b 1
 frK_Hang4	ds.b 1
-; shimmy (unused)
-frK_Shimmy	ds.b 2
 ; speeeeeeeeeeeeEEEEEEEEEEEN
 frK_Roll1	ds.b 1
 frK_Roll2	ds.b 1
@@ -224,8 +224,6 @@ frK_Win1	ds.b 1
 frK_Win2	ds.b 1
 frK_Win3	ds.b 1
 frK_Win4	ds.b 1
-; v-cling (unused)
-frK_VCling	ds.b 2
 ; climbing
 frK_Climb1	ds.b 1
 frK_Climb2	ds.b 1
@@ -259,26 +257,6 @@ frK_Push1	ds.b 1
 frK_Push2	ds.b 1
 frK_Push3	ds.b 1
 frK_Push4	ds.b 1
-; standing still
-frK_Idle2	ds.b 1
-frK_Idle3	ds.b 1
-frK_Idle4	ds.b 1
-; Look up
-frK_LookUp1	ds.b 1
-frK_LookUp2	ds.b 1
-; standing still, part 2
-frK_Idle5	ds.b 1
-frK_Idle6	ds.b 1
-frK_Idle7	ds.b 1
-frK_Idle8	ds.b 1
-frK_Idle9	ds.b 1
-frK_Idle10	ds.b 1
-frK_Idle11	ds.b 1
-frK_Idle12	ds.b 1
-; again, weird shit
-frK_Flippy	ds.b 5
-; hang spin
-frK_Spinny	ds.b 7
 ; transform
 frK_Transf1	ds.b 1
 frK_Transf2	ds.b 1
