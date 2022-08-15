@@ -134,9 +134,9 @@ frT_Walk2X	ds.b 8
 frT_Walk3X	ds.b 8
 frT_Walk4X	ds.b 8
 ; fest
-frT_Run11	ds.b 1	; this,
+frT_Run11	ds.b 1
 frT_Run12	ds.b 1
-frT_Run13	ds.b 1	; and this... are the same in Super
+frT_Run13	ds.b 1
 frT_Run14	ds.b 1
 frT_Mach11	ds.b 1
 frT_Mach12	ds.b 1

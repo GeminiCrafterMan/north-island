@@ -130,9 +130,9 @@ Obj_Knuckles_Modes:	dc.w Obj_Knuckles_MdNormal-Obj_Knuckles_Modes	  ; 0 ;	...
 Obj_Knuckles_MdNormal:
 		jsr		Sonic_CheckSpindash
 		bsr.w	Knuckles_Jump
-		bsr.w	Knuckles_SlopeResist
+		jsr	Sonic_SlopeResist
 		bsr.w	Knuckles_Move
-		bsr.w	Knuckles_Roll
+		jsr	Sonic_Roll
 		jsr	Sonic_LevelBound
 		jsr	ObjectMove		  ; AKA	SpeedToPos in Sonic 1
 		jsr	AnglePos
@@ -163,7 +163,7 @@ Obj_Knuckles_MdAir:
 		sub.w	#$28,y_vel(a0)
 
 loc_31569C:
-		bsr.w	Knuckles_JumpAngle
+		jsr	Sonic_JumpAngle
 		bsr.w	Knuckles_DoLevelCollision
 		rts
 ; ---------------------------------------------------------------------------
@@ -211,7 +211,7 @@ Knuckles_NormalGlide:
 		and.b	#$70,d0
 		bne.s	loc_31574C
 		move.b	#2,double_jump_flag(a0)
-		move.b	#$21,anim(a0)
+		move.b	#33,anim(a0)
 		bclr	#0,status(a0)
 		tst.w	x_vel(a0)
 		bpl.s	loc_315736
@@ -247,7 +247,7 @@ loc_315762:
 
 loc_315780:
 		move.b	#3,double_jump_flag(a0)
-		move.b	#$CC,mapping_frame(a0)
+		move.b	#frK_GlideL1,mapping_frame(a0)
 		move.b	#$7F,anim_frame_duration(a0)
 		move.b	#0,anim_frame(a0)
 		cmp.b	#$C,air_left(a0)
@@ -294,7 +294,7 @@ loc_315804:
 		move.w	#0,x_vel(a0)
 		move.w	#0,y_vel(a0)
 		move.b	#4,double_jump_flag(a0)
-		move.b	#$B7,mapping_frame(a0)
+		move.b	#frK_Climb1,mapping_frame(a0)
 		move.b	#$7F,anim_frame_duration(a0)
 		move.b	#0,anim_frame(a0)
 		move.b	#3,double_jump_property(a0)
@@ -334,7 +334,7 @@ loc_31586A:
 
 loc_31587A:
 		move.b	#2,double_jump_flag(a0)
-		move.b	#$21,anim(a0)
+		move.b	#33,anim(a0)
 		move.b	#$13,y_radius(a0)
 		move.b	#9,x_radius(a0)
 		bset	#1,(Gliding_collision_flags).w
@@ -369,7 +369,7 @@ loc_3158B2:
 loc_3158F0:
 		bsr.w	Knuckles_ResetOnFloor_Part2
 		move.w	#$F,move_lock(a0)
-		move.b	#$23,anim(a0)
+		move.b	#35,anim(a0)
 		sfx		sfx_GlideLand
 
 return_315900:
@@ -405,7 +405,7 @@ loc_315926:
 		add.w	d0,y_pos(a0)
 		bsr.w	Knuckles_ResetOnFloor_Part2
 		move.w	#$F,move_lock(a0)
-		move.b	#$22,anim(a0)
+		move.b	#34,anim(a0)
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -430,7 +430,7 @@ loc_315958:
 
 loc_315988:
 		move.b	#2,double_jump_flag(a0)
-		move.b	#$21,anim(a0)
+		move.b	#33,anim(a0)
 		move.b	#$13,y_radius(a0)
 		move.b	#9,x_radius(a0)
 		bset	#1,(Gliding_collision_flags).w
@@ -500,9 +500,9 @@ loc_315A54:
 loc_315A76:
 		btst	#1,(Ctrl_1_Logical).w
 		beq.w	loc_315B04
-		cmp.b	#$BD,mapping_frame(a0)
+		cmp.b	#frK_Climb6,mapping_frame(a0)
 		bne.s	loc_315AA2
-		move.b	#$B7,mapping_frame(a0)
+		move.b	#frK_Climb1,mapping_frame(a0)
 		addq.w	#3,y_pos(a0)
 		subq.w	#3,x_pos(a0)
 		btst	#0,status(a0)
@@ -528,7 +528,7 @@ loc_315AA2:
 		move.w	#0,x_vel(a0)
 		move.w	#0,y_vel(a0)
 		bsr.w	Knuckles_ResetOnFloor_Part2
-		move.b	#5,anim(a0)
+		move.b	#AniIDSonAni_Wait,anim(a0)
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -548,14 +548,14 @@ loc_315B04:
 		bpl.s	loc_315B30
 		move.b	#3,double_jump_property(a0)
 		add.b	mapping_frame(a0),d1
-		cmp.b	#$B7,d1
+		cmp.b	#frK_Climb1,d1
 		bcc.s	loc_315B22
-		move.b	#$BC,d1
+		move.b	#frK_Climb6,d1
 
 loc_315B22:
-		cmp.b	#$BC,d1
+		cmp.b	#frK_Climb6,d1
 		bls.s	loc_315B2C
-		move.b	#$B7,d1
+		move.b	#frK_Climb1,d1
 
 loc_315B2C:
 		move.b	d1,mapping_frame(a0)
@@ -579,7 +579,7 @@ loc_315B6A:
 		move.b	#1,jumping(a0)
 		move.b	#$E,y_radius(a0)
 		move.b	#7,x_radius(a0)
-		move.b	#2,anim(a0)
+		move.b	#AniIDSonAni_Roll,anim(a0)
 		bset	#2,status(a0)
 		move.b	#0,double_jump_flag(a0)
 
@@ -589,7 +589,7 @@ return_315B94:
 
 Knuckles_ClimbUp:
 		move.b	#5,double_jump_flag(a0)		  ; Climb up to	the floor above	you
-		cmp.b	#$BD,mapping_frame(a0)
+		cmp.b	#frK_Climb6,mapping_frame(a0)
 		beq.s	return_315BAC
 		move.b	#0,double_jump_property(a0)
 		bsr.s	Knuckles_DoLedgeClimbingAnimation
@@ -600,8 +600,9 @@ return_315BAC:
 
 loc_315BAE:
 		move.b	#2,double_jump_flag(a0)
-		move.w	#$2121,anim(a0)
-		move.b	#$CB,mapping_frame(a0)
+		move.b	#33,anim(a0)
+		move.b	#33,next_anim(a0)
+		move.b	#frK_GlideX2,mapping_frame(a0)
 		move.b	#7,anim_frame_duration(a0)
 		move.b	#1,anim_frame(a0)
 		move.b	#$13,y_radius(a0)
@@ -636,15 +637,15 @@ loc_315BF6:
 ; End of function Knuckles_DoLedgeClimbingAnimation
 
 ; ---------------------------------------------------------------------------
-; Strangely, the last frame uses frame $D2. It will never be seen, however,
+; Strangely, the last frame uses frame frK_Idle2. It will never be seen, however,
 ; because it is immediately overwritten by Knuckles' waiting animation.
 
 Knuckles_ClimbLedge_Frames:
 	; mapping_frame, x_pos, y_pos, anim_frame_timer
-	dc.b  $BD,    3,   -3,    6
-	dc.b  $BE,    8,  -10,    6
-	dc.b  $BF,   -8,  -12,    6
-	dc.b  $D2,    8,   -5,    6
+	dc.b  frK_ClimbU1,    3,   -3,    6
+	dc.b  frK_ClimbU2,    8,  -10,    6
+	dc.b  frK_ClimbU3,   -8,  -12,    6
+	dc.b  frK_Idle2,    8,   -5,    6
 Knuckles_ClimbLedge_Frames_End:
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -690,7 +691,7 @@ Knuckles_Climbing_Up:
 
 loc_315C70:
 		bsr.w	Knuckles_ResetOnFloor_Part2
-		move.b	#5,anim(a0)
+		move.b	#AniIDSonAni_Wait,anim(a0)
 
 return_315C7A:
 		rts
@@ -702,7 +703,8 @@ return_315C7A:
 sub_315C7C:
 		move.b	#$20,anim_frame_duration(a0)
 		move.b	#0,anim_frame(a0)
-		move.w	#$2020,anim(a0)
+		move.b	#32,anim(a0)
+		move.b	#32,next_anim(a0)
 		bclr	#5,status(a0)
 		bclr	#0,status(a0)
 		moveq	#0,d0
@@ -711,10 +713,10 @@ sub_315C7C:
 		lsr.w	#5,d0
 		move.b	RawAni_Knuckles_GlideTurn(pc,d0.w),d1
 		move.b	d1,mapping_frame(a0)
-		cmp.b	#$C4,d1
+		cmp.b	#frK_Glide5,d1
 		bne.s	return_315CC0
 		bset	#0,status(a0)
-		move.b	#$C0,mapping_frame(a0)
+		move.b	#frK_Glide1,mapping_frame(a0)
 
 return_315CC0:
 		rts
@@ -722,14 +724,14 @@ return_315CC0:
 
 ; ---------------------------------------------------------------------------
 RawAni_Knuckles_GlideTurn:
-		dc.b $C0
-		dc.b $C1
-		dc.b $C2
-		dc.b $C3
-		dc.b $C4
-		dc.b $C3
-		dc.b $C2
-		dc.b $C1
+		dc.b frK_Glide1
+		dc.b frK_Glide2
+		dc.b frK_Glide3
+		dc.b frK_Glide4
+		dc.b frK_Glide5
+		dc.b frK_Glide4
+		dc.b frK_Glide3
+		dc.b frK_Glide2
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -837,8 +839,8 @@ Obj_Knuckles_MdRoll:
 		bsr.w	Knuckles_Jump
 
 loc_315DA6:
-		bsr.w	Knuckles_RollRepel
-		bsr.w	Knuckles_RollSpeed
+		jsr	Sonic_RollRepel
+		jsr	Sonic_RollSpeed
 		jsr	Sonic_LevelBound
 		jsr	ObjectMove		  ; AKA	SpeedToPos in Sonic 1
 		jsr	AnglePos
@@ -856,7 +858,7 @@ Obj_Knuckles_MdJump:
 		sub.w	#$28,y_vel(a0)
 
 loc_315DE2:
-		bsr.w	Knuckles_JumpAngle
+		jsr	Sonic_JumpAngle
 		bsr.w	Knuckles_DoLevelCollision
 		rts
 
@@ -888,7 +890,7 @@ Obj_Knuckles_NotRight:
 		tst.w	inertia(a0)
 		bne.w	Obj_Knuckles_ResetScreen
 		bclr	#5,status(a0)
-		move.b	#5,anim(a0)
+		move.b	#AniIDSonAni_Wait,anim(a0)
 		btst	#3,status(a0)
 		beq.w	Knuckles_Balance
 		moveq	#0,d0
@@ -912,7 +914,7 @@ Obj_Knuckles_NotRight:
 Knuckles_BalanceOnObjRight:
 		btst	#0,status(a0)
 		bne.s	loc_315E9A
-		move.b	#6,anim(a0)
+		move.b	#AniIDSonAni_Balance,anim(a0)
 		bra.w	Obj_Knuckles_ResetScreen
 ; ---------------------------------------------------------------------------
 
@@ -920,14 +922,15 @@ loc_315E9A:
 		bclr	#0,status(a0)
 		move.b	#0,anim_frame_duration(a0)
 		move.b	#4,anim_frame(a0)
-		move.w	#$606,anim(a0)
+		move.b	#AniIDSonAni_Balance,anim(a0)
+		move.b	#AniIDSonAni_Balance,next_anim(a0)
 		bra.w	Obj_Knuckles_ResetScreen
 ; ---------------------------------------------------------------------------
 
 Knuckles_BalanceOnObjLeft:
 		btst	#0,status(a0)
 		beq.s	loc_315EC8
-		move.b	#6,anim(a0)
+		move.b	#AniIDSonAni_Balance,anim(a0)
 		bra.w	Obj_Knuckles_ResetScreen
 ; ---------------------------------------------------------------------------
 
@@ -935,7 +938,8 @@ loc_315EC8:
 		bset	#0,status(a0)
 		move.b	#0,anim_frame_duration(a0)
 		move.b	#4,anim_frame(a0)
-		move.w	#$606,anim(a0)
+		move.b	#AniIDSonAni_Balance,anim(a0)
+		move.b	#AniIDSonAni_Balance,next_anim(a0)
 		bra.w	Obj_Knuckles_ResetScreen
 ; ---------------------------------------------------------------------------
 
@@ -947,7 +951,7 @@ Knuckles_Balance:
 		bne.s	Knuckles_BalanceLeft
 		btst	#0,status(a0)
 		bne.s	loc_315F0C
-		move.b	#6,anim(a0)
+		move.b	#AniIDSonAni_Balance,anim(a0)
 		bra.w	Obj_Knuckles_ResetScreen
 ; ---------------------------------------------------------------------------
 
@@ -955,7 +959,8 @@ loc_315F0C:
 		bclr	#0,status(a0)
 		move.b	#0,anim_frame_duration(a0)
 		move.b	#4,anim_frame(a0)
-		move.w	#$606,anim(a0)
+		move.b	#AniIDSonAni_Balance,anim(a0)
+		move.b	#AniIDSonAni_Balance,next_anim(a0)
 		bra.w	Obj_Knuckles_ResetScreen
 ; ---------------------------------------------------------------------------
 
@@ -964,7 +969,7 @@ Knuckles_BalanceLeft:
 		bne.s	Knuckles_LookUp
 		btst	#0,status(a0)
 		beq.s	loc_315F42
-		move.b	#6,anim(a0)
+		move.b	#AniIDSonAni_Balance,anim(a0)
 		bra.w	Obj_Knuckles_ResetScreen
 ; ---------------------------------------------------------------------------
 
@@ -972,14 +977,15 @@ loc_315F42:
 		bset	#0,status(a0)
 		move.b	#0,anim_frame_duration(a0)
 		move.b	#4,anim_frame(a0)
-		move.w	#$606,anim(a0)
+		move.b	#AniIDSonAni_Balance,anim(a0)
+		move.b	#AniIDSonAni_Balance,next_anim(a0)
 		bra.w	Obj_Knuckles_ResetScreen
 ; ---------------------------------------------------------------------------
 
 Knuckles_LookUp:
 		btst	#0,(Ctrl_1_Logical).w
 		beq.s	Knuckles_Duck
-		move.b	#7,anim(a0)
+		move.b	#AniIDSonAni_LookUp,anim(a0)
 		addq.w	#1,(Sonic_Look_delay_counter).w
 		cmp.w	#$78,(Sonic_Look_delay_counter).w
 		bcs.s	Obj_Knuckles_ResetScreen_Part2
@@ -993,7 +999,7 @@ Knuckles_LookUp:
 Knuckles_Duck:
 		btst	#1,(Ctrl_1_Logical).w
 		beq.s	Obj_Knuckles_ResetScreen
-		move.b	#8,anim(a0)
+		move.b	#AniIDSonAni_Duck,anim(a0)
 		addq.w	#1,(Sonic_Look_delay_counter).w
 		cmp.w	#$78,(Sonic_Look_delay_counter).w
 		bcs.s	Obj_Knuckles_ResetScreen_Part2
@@ -1140,7 +1146,7 @@ loc_3160C4:
 
 loc_3160D6:
 		move.w	d0,inertia(a0)
-		move.b	#0,anim(a0)
+		move.b	#AniIDSonAni_Walk,anim(a0)
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -1157,7 +1163,7 @@ loc_3160EA:
 		bne.s	return_31612C
 		cmp.w	#$400,d0
 		blt.s	return_31612C
-		move.b	#$D,anim(a0)
+		move.b	#AniIDSonAni_Stop,anim(a0)
 		bclr	#0,status(a0)
 		sfx	sfx_Skid
 		cmp.b	#$C,air_left(a0)
@@ -1192,7 +1198,7 @@ loc_316148:
 
 loc_316156:
 		move.w	d0,inertia(a0)
-		move.b	#0,anim(a0)
+		move.b	#AniIDSonAni_Walk,anim(a0)
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -1209,7 +1215,7 @@ loc_31616A:
 		bne.s	return_3161AC
 		cmp.w	#$FC00,d0
 		bgt.s	return_3161AC
-		move.b	#$D,anim(a0)
+		move.b	#AniIDSonAni_Stop,anim(a0)
 		bset	#0,status(a0)
 		sfx	sfx_Skid
 		cmp.b	#$C,air_left(a0)
@@ -1220,150 +1226,6 @@ loc_31616A:
 return_3161AC:
 		rts
 ; End of function Knuckles_MoveRight
-
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_RollSpeed:
-		move.w	(Sonic_top_speed).w,d6
-		asl.w	#1,d6
-		move.w	(Sonic_acceleration).w,d5
-		asr.w	#1,d5
-		move.w	#$20,d4
-		tst.b	status_secondary(a0)
-		bmi.w	Obj_Knuckles_Roll_ResetScreen
-		tst.w	move_lock(a0)
-		bne.s	Knuckles_Apply_RollSpeed
-		btst	#2,(Ctrl_1_Logical).w
-		beq.s	loc_3161D8
-		bsr.w	Knuckles_RollLeft
-
-loc_3161D8:
-		btst	#3,(Ctrl_1_Logical).w
-		beq.s	Knuckles_Apply_RollSpeed
-		bsr.w	Knuckles_RollRight
-
-Knuckles_Apply_RollSpeed:
-		move.w	inertia(a0),d0
-		beq.s	Knuckles_CheckRollStop
-		bmi.s	Knuckles_ApplyRollSpeedLeft
-		sub.w	d5,d0
-		bcc.s	loc_3161F4
-		move.w	#0,d0
-
-loc_3161F4:
-		move.w	d0,inertia(a0)
-		bra.s	Knuckles_CheckRollStop
-; ---------------------------------------------------------------------------
-
-Knuckles_ApplyRollSpeedLeft:
-		add.w	d5,d0
-		bcc.s	loc_316202
-		move.w	#0,d0
-
-loc_316202:
-		move.w	d0,inertia(a0)
-
-Knuckles_CheckRollStop:
-		tst.w	inertia(a0)
-		bne.s	Obj_Knuckles_Roll_ResetScreen
-		tst.b	pinball_mode(a0)
-		bne.s	Knuckles_KeepRolling
-		bclr	#2,status(a0)
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
-		move.b	#5,anim(a0)
-		subq.w	#5,y_pos(a0)
-		bra.s	Obj_Knuckles_Roll_ResetScreen
-; ---------------------------------------------------------------------------
-; magically gives Knuckles an extra push if he's going to stop rolling where it's not allowed
-; (such	as in an S-curve in HTZ	or a stopper chamber in	CNZ)
-
-
-Knuckles_KeepRolling:
-		move.w	#$400,inertia(a0)
-		btst	#0,status(a0)
-		beq.s	Obj_Knuckles_Roll_ResetScreen
-		neg.w	inertia(a0)
-
-Obj_Knuckles_Roll_ResetScreen:
-		cmp.w	#$60,(Camera_Y_pos_bias).w
-		beq.s	Knuckles_SetRollSpeeds
-		bcc.s	loc_316250
-		addq.w	#4,(Camera_Y_pos_bias).w
-
-loc_316250:
-		subq.w	#2,(Camera_Y_pos_bias).w
-
-Knuckles_SetRollSpeeds:
-		move.b	angle(a0),d0
-		jsr	CalcSine
-		muls.w	inertia(a0),d0
-		asr.l	#8,d0
-		move.w	d0,y_vel(a0)
-		muls.w	inertia(a0),d1
-		asr.l	#8,d1
-		cmp.w	#$1000,d1
-		ble.s	loc_316278
-		move.w	#$1000,d1
-
-loc_316278:
-		cmp.w	#-$1000,d1
-		bge.s	loc_316282
-		move.w	#-$1000,d1
-
-loc_316282:
-		move.w	d1,x_vel(a0)
-		bra.w	Obj_Knuckles_CheckWallsOnGround
-; End of function Knuckles_RollSpeed
-
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_RollLeft:
-		move.w	inertia(a0),d0
-		beq.s	loc_316292
-		bpl.s	Knuckles_BrakeRollingRight
-
-loc_316292:
-		bset	#0,status(a0)
-		move.b	#2,anim(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_BrakeRollingRight:
-		sub.w	d4,d0
-		bcc.s	loc_3162A8
-		move.w	#-$80,d0
-
-loc_3162A8:
-		move.w	d0,inertia(a0)
-		rts
-; End of function Knuckles_RollLeft
-
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_RollRight:
-		move.w	inertia(a0),d0
-		bmi.s	Knuckles_BrakeRollingLeft
-		bclr	#0,status(a0)
-		move.b	#2,anim(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_BrakeRollingLeft:
-		add.w	d4,d0
-		bcc.s	loc_3162CA
-		move.w	#$80,d0
-
-loc_3162CA:
-		move.w	d0,inertia(a0)
-		rts
-; End of function Knuckles_RollRight
 
 ; ---------------------------------------------------------------------------
 ; Subroutine for moving	Knuckles left or right when he's in the air
@@ -1457,51 +1319,6 @@ return_316376:
 ; =============== S U B	R O U T	I N E =======================================
 
 
-Knuckles_Roll:
-		tst.b	status_secondary(a0)
-		bmi.s	Obj_Knuckles_NoRoll
-		move.w	inertia(a0),d0
-		bpl.s	loc_3163E6
-		neg.w	d0
-
-loc_3163E6:
-		cmp.w	#$80,d0
-		bcs.s	Obj_Knuckles_NoRoll
-		move.b	(Ctrl_1_Logical).w,d0
-		and.b	#$C,d0
-		bne.s	Obj_Knuckles_NoRoll
-		btst	#1,(Ctrl_1_Logical).w
-		bne.s	Obj_Knuckles_ChkRoll
-
-Obj_Knuckles_NoRoll:
-		rts
-; ---------------------------------------------------------------------------
-
-Obj_Knuckles_ChkRoll:
-		btst	#2,status(a0)
-		beq.s	Obj_Knuckles_DoRoll
-		rts
-; ---------------------------------------------------------------------------
-
-Obj_Knuckles_DoRoll:
-		bset	#2,status(a0)
-		move.b	#$E,y_radius(a0)
-		move.b	#7,x_radius(a0)
-		move.b	#2,anim(a0)
-		addq.w	#5,y_pos(a0)
-		sfx	sfx_Roll			; play rolling sound
-		tst.w	inertia(a0)
-		bne.s	return_31643C
-		move.w	#$200,inertia(a0)
-
-return_31643C:
-		rts
-; End of function Knuckles_Roll
-
-
-; =============== S U B	R O U T	I N E =======================================
-
-
 Knuckles_Jump:
 		move.b	(Ctrl_1_Press_Logical).w,d0
 		and.b	#$70,d0
@@ -1547,7 +1364,7 @@ loc_3164B2:
 		bne.s	Knuckles_RollJump
 		move.b	#$E,y_radius(a0)
 		move.b	#7,x_radius(a0)
-		move.b	#2,anim(a0)
+		move.b	#AniIDSonAni_Roll,anim(a0)
 		bset	#2,status(a0)
 		addq.w	#5,y_pos(a0)
 
@@ -1642,132 +1459,6 @@ loc_3165B4:
 return_3165D2:
 		rts
 ; End of function Knuckles_JumpHeight
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_SlopeResist:
-		move.b	angle(a0),d0
-		add.b	#$60,d0
-		cmp.b	#$C0,d0
-		bcc.s	return_316856
-		move.b	angle(a0),d0
-		jsr	CalcSine
-		muls.w	#$20,d0
-		asr.l	#8,d0
-		tst.w	inertia(a0)
-		beq.s	return_316856
-		bmi.s	loc_316852
-		tst.w	d0
-		beq.s	return_316850
-		add.w	d0,inertia(a0)
-
-return_316850:
-		rts
-; ---------------------------------------------------------------------------
-
-loc_316852:
-		add.w	d0,inertia(a0)
-
-return_316856:
-		rts
-; End of function Knuckles_SlopeResist
-
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_RollRepel:
-		move.b	angle(a0),d0
-		add.b	#$60,d0
-		cmp.b	#$C0,d0
-		bcc.s	return_316892
-		move.b	angle(a0),d0
-		jsr	CalcSine
-		muls.w	#$50,d0
-		asr.l	#8,d0
-		tst.w	inertia(a0)
-		bmi.s	loc_316888
-		tst.w	d0
-		bpl.s	loc_316882
-		asr.l	#2,d0
-
-loc_316882:
-		add.w	d0,inertia(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-loc_316888:
-		tst.w	d0
-		bmi.s	loc_31688E
-		asr.l	#2,d0
-
-loc_31688E:
-		add.w	d0,inertia(a0)
-
-return_316892:
-		rts
-; End of function Knuckles_RollRepel
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_JumpAngle:
-		move.b	angle(a0),d0
-		beq.s	Knuckles_JumpFlip
-		bpl.s	loc_3168E6
-		addq.b	#2,d0
-		bcc.s	BraTo_Knuckles_JumpAngleSet
-		moveq	#0,d0
-
-BraTo_Knuckles_JumpAngleSet:
-		bra.s	Knuckles_JumpAngleSet
-; ---------------------------------------------------------------------------
-
-loc_3168E6:
-		subq.b	#2,d0
-		bcc.s	Knuckles_JumpAngleSet
-		moveq	#0,d0
-
-Knuckles_JumpAngleSet:
-		move.b	d0,angle(a0)
-
-Knuckles_JumpFlip:
-		move.b	flip_angle(a0),d0
-		beq.s	return_316934
-		tst.w	inertia(a0)
-		bmi.s	Knuckles_JumpLeftFlip
-
-Knuckles_JumpRightFlip:
-		move.b	flip_speed(a0),d1
-		add.b	d1,d0
-		bcc.s	BraTo_Knuckles_JumpFlipSet
-		subq.b	#1,flips_remaining(a0)
-		bcc.s	BraTo_Knuckles_JumpFlipSet
-		move.b	#0,flips_remaining(a0)
-		moveq	#0,d0
-
-BraTo_Knuckles_JumpFlipSet:
-		bra.s	Knuckles_JumpFlipSet
-; ---------------------------------------------------------------------------
-
-Knuckles_JumpLeftFlip:
-		tst.b	flip_turned(a0)
-		bne.s	Knuckles_JumpRightFlip
-		move.b	flip_speed(a0),d1
-		sub.b	d1,d0
-		bcc.s	Knuckles_JumpFlipSet
-		subq.b	#1,flips_remaining(a0)
-		bcc.s	Knuckles_JumpFlipSet
-		move.b	#0,flips_remaining(a0)
-		moveq	#0,d0
-
-Knuckles_JumpFlipSet:
-		move.b	d0,flip_angle(a0)
-
-return_316934:
-		rts
-; End of function Knuckles_JumpAngle
 
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -2144,7 +1835,7 @@ return_316CD4:
 Knuckles_ResetOnFloor:
 		tst.b	pinball_mode(a0)
 		bne.s	Knuckles_ResetOnFloor_Part3
-		move.b	#0,anim(a0)
+		move.b	#AniIDSonAni_Walk,anim(a0)
 ; End of function Knuckles_ResetOnFloor
 
 
@@ -2152,13 +1843,13 @@ Knuckles_ResetOnFloor:
 
 
 Knuckles_ResetOnFloor_Part2:
-		move.b	y_radius(a0),d0
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
 		btst	#2,status(a0)
 		beq.s	Knuckles_ResetOnFloor_Part3
 		bclr	#2,status(a0)
-		move.b	#0,anim(a0)
+		move.b	y_radius(a0),d0
+		move.b	#$13,y_radius(a0)
+		move.b	#9,x_radius(a0)
+		move.b	#AniIDSonAni_Walk,anim(a0)
 		sub.b	#$13,d0
 		ext.w	d0
 		add.w	d0,y_pos(a0)
@@ -2174,13 +1865,13 @@ Knuckles_ResetOnFloor_Part3:
 		move.b	#0,flips_remaining(a0)
 		move.w	#0,(Sonic_Look_delay_counter).w
 		move.b	#0,double_jump_flag(a0)
-		cmp.b	#$20,anim(a0)
+		cmpi.b	#32,anim(a0)
 		bcc.s	loc_316D5C
-		cmp.b	#$14,anim(a0)
+		cmpi.b	#AniIDSonAni_Hang2,anim(a0)
 		bne.s	return_316D62
 
 loc_316D5C:
-		move.b	#0,anim(a0)
+		move.b	#AniIDSonAni_Walk,anim(a0)
 
 return_316D62:
 		rts
@@ -2243,7 +1934,7 @@ Knuckles_HurtStop:
 		move.w	d0,x_vel(a0)
 		move.w	d0,inertia(a0)
 		move.b	d0,obj_control(a0)
-		move.b	#0,anim(a0)
+		move.b	#AniIDSonAni_Walk,anim(a0)
 		subq.b	#2,routine(a0)
 		move.w	#$78,invulnerable_time(a0)
 		move.b	#0,pinball_mode(a0)
@@ -2349,8 +2040,8 @@ KAnim_Do2:
 		moveq	#0,d1
 		move.b	anim_frame(a0),d1
 		move.b	1(a1,d1.w),d0
-		cmp.b	#$FC,d0	; cmpi.b #$F0,d0
-		bcc.s	KAnim_End_FF ; bhs.s
+		cmpi.b	#$F0,d0
+		bhs.s	KAnim_End_FF
 
 KAnim_Next:
 		move.b	d0,mapping_frame(a0)
@@ -2474,7 +2165,7 @@ KAnim_Tumble:
 		and.b	#$FC,render_flags(a0)
 		add.b	#$B,d0
 		divu.w	#$16,d0
-		add.b	#$31,d0 ; frK_Tumble1
+		add.b	#frK_Tumble1,d0
 		move.b	d0,mapping_frame(a0)
 		move.b	#0,anim_frame_duration(a0)
 		rts
@@ -2496,7 +2187,7 @@ loc_31712C:
 
 loc_317138:
 		divu.w	#$16,d0
-		add.b	#$31,d0 ; frK_Tumble1
+		add.b	#frK_Tumble1,d0
 		move.b	d0,mapping_frame(a0)
 		move.b	#0,anim_frame_duration(a0)
 		rts

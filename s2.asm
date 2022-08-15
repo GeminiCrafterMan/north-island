@@ -31471,7 +31471,7 @@ Sonic_SlopeResist:
 	bmi.s	loc_1ADC6
 	tst.w	d0
 	beq.s	+
-	add.w	d0,inertia(a0)	; change Sonic's $14
+	add.w	d0,inertia(a0)	; change Sonic's inertia
 +
 	rts
 ; ---------------------------------------------------------------------------
