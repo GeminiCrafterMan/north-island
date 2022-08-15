@@ -41,10 +41,15 @@ KnucklesAniData:
 		dc.w KnucklesAni_HardFall-KnucklesAniData; 35
 		dc.w KnucklesAni_Badass-KnucklesAniData; 36
 KnucklesAni_Walk:dc.b $FF,  frK_Walk17,	frK_Walk18,  frK_Walk11,	frK_Walk12,  frK_Walk13,	frK_Walk14,  frK_Walk15,	frK_Walk16,afEnd
+	rev02even
 KnucklesAni_Run:dc.b $FF,frK_Run11,frK_Run12,frK_Run13,frK_Run14,afEnd,afEnd,afEnd,afEnd,afEnd
+	rev02even
 KnucklesAni_Roll:dc.b $FE,frK_Roll5,frK_Roll1,frK_Roll5,frK_Roll2,frK_Roll5,frK_Roll3,frK_Roll5,frK_Roll4,afEnd
+	rev02even
 KnucklesAni_Roll2:dc.b $FE,frK_Roll5,frK_Roll1,frK_Roll5,frK_Roll2,frK_Roll5,frK_Roll3,frK_Roll5,frK_Roll4,afEnd
+	rev02even
 KnucklesAni_Push:dc.b $FD,frK_Push1,frK_Push2,frK_Push3,frK_Push4,afEnd,afEnd,afEnd,afEnd,afEnd
+	rev02even
 KnucklesAni_Wait:dc.b	5,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1
 		dc.b frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1
 		dc.b frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1
@@ -57,38 +62,63 @@ KnucklesAni_Wait:dc.b	5,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Id
 		dc.b frK_Idle8,frK_Idle9,frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9,frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9,frK_Idle6,frK_Idle7,frK_Idle8
 		dc.b frK_Idle9,frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9,frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9,frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9
 		dc.b frK_Idle10,frK_Idle11,frK_Idle10,frK_Idle11,frK_Idle12,frK_Idle12,frK_Idle6,frK_Idle5,afEnd
+	rev02even
 KnucklesAni_Balance:dc.b   3,frK_Balance1,frK_Balance1,frK_Balance2,frK_Balance2,frK_Balance3,frK_Balance3,frK_Balance4,frK_Balance4,frK_Balance5,frK_Balance5,frK_Balance6,frK_Balance6
 		dc.b frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7
 		dc.b frK_Balance7,frK_Balance7,frK_Balance8,frK_Balance8,frK_Balance8,frK_Balance9,frK_Balance9,frK_Balance9,frK_Balance10,frK_Balance10,frK_Balance11,frK_Balance11,frK_Balance12
 		dc.b frK_Balance12,afBack,  6
+	rev02even
 KnucklesAni_LookUp:dc.b	  5,frK_LookUp1,frK_LookUp2,afBack,  1
+	rev02even
 KnucklesAni_Duck:dc.b	5,frK_Duck1,frK_Duck2,afBack,	1
+	rev02even
 KnucklesAni_Spindash:dc.b   0,frK_SpDsh1,frK_SpDsh2,frK_SpDsh1,frK_SpDsh3,frK_SpDsh1,frK_SpDsh4,frK_SpDsh1,frK_SpDsh5,frK_SpDsh1,frK_SpDsh6,afEnd
+	rev02even
 KnucklesAni_Balance2:dc.b   3,frK_Balance3,frK_Balance3,frK_Balance4,frK_Balance4,frK_Balance5,frK_Balance5,frK_Balance6,frK_Balance6,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7
 		dc.b frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance7,frK_Balance8,frK_Balance8
 		dc.b frK_Balance8,frK_Balance9,frK_Balance9,frK_Balance9,frK_Balance10,frK_Balance10,frK_Balance11,frK_Balance11,frK_Balance12,frK_Balance12,afBack, 6
+	rev02even
 KnucklesAni_Stop:dc.b	3,frK_Skid1,frK_Skid2,frK_Balance1,frK_Balance2,afChange,	0
+	rev02even
 KnucklesAni_Float:dc.b	 7,frK_Glide1,afEnd
+	rev02even
 KnucklesAni_Float2:dc.b	  5,frK_Glide1,frK_Glide2,frK_Glide3,frK_Glide4,frK_Glide5,frK_Glide6,frK_Glide7,frK_Glide8,frK_Glide9,frK_Glide10,afEnd
-KnucklesAni_Spring:dc.b	$2F,frK_Spring,afChange,  0
+	rev02even
+KnucklesAni_Spring:dc.b	$2F,frK_Spring,afEnd
+	rev02even
 KnucklesAni_Hang:dc.b	1,frK_Cling1,frK_Cling2,afEnd
+	rev02even
 KnucklesAni_WFZHang:dc.b $13,frK_Hang2,afEnd
+	rev02even
 KnucklesAni_Bubble:dc.b	 $B,frK_Bubble,frK_Bubble,  frK_Walk13,  frK_Walk14,afChange,  0
+	rev02even
 KnucklesAni_DeathBW:dc.b $20,frK_Burnt,afEnd
+	rev02even
 KnucklesAni_Drown:dc.b $20,frK_Drown,afEnd
+	rev02even
 KnucklesAni_Death:dc.b $20,frK_Death,afEnd
+	rev02even
 KnucklesAni_Slide:dc.b   9,frK_Slide,afEnd
+	rev02even
 KnucklesAni_Hurt:dc.b $40,frK_Hurt,afEnd
+	rev02even
 KnucklesAni_Blank:dc.b $77,  frK_Null,afEnd
+	rev02even
 KnucklesAni_Gliding:dc.b $1F,frK_Glide1,afEnd
+	rev02even
 KnucklesAni_FallFromGlide:dc.b	 7,frK_GlideX1,frK_GlideX2,afBack,	 1
+	rev02even
 KnucklesAni_GetUp:dc.b	$F,frK_GlideL2,afChange,  0
+	rev02even
 KnucklesAni_HardFall:dc.b  $F,frK_Duck2,afChange,	0
+	rev02even
 KnucklesAni_Badass:dc.b	  5,frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9,frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9,frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9
 		dc.b frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9,frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9,frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9,frK_Idle6
 		dc.b frK_Idle7,frK_Idle8,frK_Idle9,frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9,frK_Idle10,frK_Idle11,frK_Idle10,frK_Idle11,frK_Idle12,frK_Idle12
 		dc.b afEnd
+	rev02even
 KnucklesAni_Transform:dc.b   2,frK_Transf1,frK_Transf1,frK_Transf2,frK_Transf3,frK_Transf4,frK_Transf3,frK_Transf4,frK_Transf3,frK_Transf4,frK_Transf3,frK_Transf2, afChange,  0
+	rev02even
 KnucklesAni_Dummy:dc.b	  $7F, frK_PHold, afEnd
 	rev02even
 

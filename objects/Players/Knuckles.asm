@@ -1843,12 +1843,12 @@ Knuckles_ResetOnFloor:
 
 
 Knuckles_ResetOnFloor_Part2:
-		btst	#2,status(a0)
-		beq.s	Knuckles_ResetOnFloor_Part3
-		bclr	#2,status(a0)
 		move.b	y_radius(a0),d0
 		move.b	#$13,y_radius(a0)
 		move.b	#9,x_radius(a0)
+		btst	#2,status(a0)
+		beq.s	Knuckles_ResetOnFloor_Part3
+		bclr	#2,status(a0)
 		move.b	#AniIDSonAni_Walk,anim(a0)
 		sub.b	#$13,d0
 		ext.w	d0
