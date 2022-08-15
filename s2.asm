@@ -3775,14 +3775,13 @@ Level:
 	moveq	#PLCID_Std2,d0
 	bsr.w	LoadPLC
 	bsr.w	Level_SetPlayerMode
-	moveq	#PLCID_Miles1up,d0
+	moveq	#PLCID_Tails1up,d0
 	cmpi.w	#2,(Player_mode).w
-	bne.s	Level_ClrRam
-	addq.w	#PLCID_MilesLife-PLCID_Miles1up,d0
-+
-	tst.b	(Graphics_Flags).w
-	bpl.s	+
-	addq.w	#PLCID_Tails1up-PLCID_Miles1up,d0
+	blt.s	Level_ClrRam
+	moveq	#PLCID_TailsLife,d0
+	cmpi.w	#3,(Player_mode).w
+	bne.s	+
+	moveq	#PLCID_KnucklesLife,d0
 +
 	bsr.w	LoadPLC
 ; loc_3F48:
@@ -81487,8 +81486,8 @@ cur_zone_str := "\{cur_zone_id}"
 ; dword_42594: MainLoadBlocks: saArtPtrs:
 LevelArtPointers:
 	levartptrs PLCID_Ehz1,     PLCID_Ehz2,      PalID_EHZ,  ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   0 ; EHZ  ; EMERALD HILL ZONE
-	levartptrs PLCID_Miles1up, PLCID_MilesLife, PalID_EHZ2, ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   1 ; LEV1 ; LEVEL 1 (UNUSED)
-	levartptrs PLCID_Tails1up, PLCID_TailsLife, PalID_WZ,   ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   2 ; LEV2 ; LEVEL 2 (UNUSED)
+	levartptrs PLCID_Tails1up, PLCID_TailsLife, PalID_EHZ2, ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   1 ; LEV1 ; LEVEL 1 (UNUSED)
+	levartptrs PLCID_Tails1up, PLCID_TailsLife, PalID_WZ,   ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   2 ; WZ	 ; WOOD ZONE (UNUSED)
 	levartptrs PLCID_Unused1,  PLCID_Unused2,   PalID_EHZ3, ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   3 ; LEV3 ; LEVEL 3 (UNUSED)
 	levartptrs PLCID_Mtz1,     PLCID_Mtz2,      PalID_MTZ,  ArtKos_MTZ, BM16_MTZ, BM128_MTZ ;   4 ; MTZ  ; METROPOLIS ZONE ACTS 1 & 2
 	levartptrs PLCID_Mtz1,     PLCID_Mtz2,      PalID_MTZ,  ArtKos_MTZ, BM16_MTZ, BM128_MTZ ;   5 ; MTZ3 ; METROPOLIS ZONE ACT 3
@@ -81551,10 +81550,10 @@ PLCptr_StdWtr:		offsetTableEntry.w PlrList_StdWtr		; 2
 PLCptr_GameOver:	offsetTableEntry.w PlrList_GameOver		; 3
 PLCptr_Ehz1:		offsetTableEntry.w PlrList_Ehz1			; 4
 PLCptr_Ehz2:		offsetTableEntry.w PlrList_Ehz2			; 5
-PLCptr_Miles1up:	offsetTableEntry.w PlrList_Miles1up		; 6
-PLCptr_MilesLife:	offsetTableEntry.w PlrList_MilesLifeCounter	; 7
-PLCptr_Tails1up:	offsetTableEntry.w PlrList_Tails1up		; 8
-PLCptr_TailsLife:	offsetTableEntry.w PlrList_TailsLifeCounter	; 9
+PLCptr_Tails1up:	offsetTableEntry.w PlrList_Tails1up		; 6
+PLCptr_TailsLife:	offsetTableEntry.w PlrList_TailsLifeCounter	; 7
+PLCptr_Knuckles1up:	offsetTableEntry.w PlrList_Knuckles1up		; 8
+PLCptr_KnucklesLife:offsetTableEntry.w PlrList_KnucklesLifeCounter	; 9
 PLCptr_Unused1:		offsetTableEntry.w PlrList_Mtz1			; 10
 PLCptr_Unused2:		offsetTableEntry.w PlrList_Mtz1			; 11
 PLCptr_Mtz1:		offsetTableEntry.w PlrList_Mtz1			; 12
@@ -81689,32 +81688,32 @@ PlrList_Ehz2: plrlistheader
 PlrList_Ehz2_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
-; Miles 1up patch
-;---------------------------------------------------------------------------------------
-PlrList_Miles1up: plrlistheader
-	plreq ArtTile_ArtUnc_2p_life_counter, ArtUnc_MilesLife
-PlrList_Miles1up_End
-;---------------------------------------------------------------------------------------
-; Pattern load queue
-; Miles life counter
-;---------------------------------------------------------------------------------------
-PlrList_MilesLifeCounter: plrlistheader
-	plreq ArtTile_ArtNem_life_counter, ArtUnc_MilesLife
-PlrList_MilesLifeCounter_End
-;---------------------------------------------------------------------------------------
-; Pattern load queue
 ; Tails 1up patch
 ;---------------------------------------------------------------------------------------
 PlrList_Tails1up: plrlistheader
-	plreq ArtTile_ArtUnc_2p_life_counter, ArtNem_TailsLife
+	plreq ArtTile_ArtUnc_2p_life_counter, ArtNem_Tails_life_counter
 PlrList_Tails1up_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; Tails life counter
 ;---------------------------------------------------------------------------------------
 PlrList_TailsLifeCounter: plrlistheader
-	plreq ArtTile_ArtNem_life_counter, ArtNem_TailsLife
+	plreq ArtTile_ArtNem_life_counter, ArtNem_Tails_life_counter
 PlrList_TailsLifeCounter_End
+;---------------------------------------------------------------------------------------
+; Pattern load queue
+; Knuckles 1up patch
+;---------------------------------------------------------------------------------------
+PlrList_Knuckles1up: plrlistheader
+	plreq ArtTile_ArtUnc_2p_life_counter, ArtNem_Knuckles_life_counter
+PlrList_Knuckles1up_End
+;---------------------------------------------------------------------------------------
+; Pattern load queue
+; Knuckles life counter
+;---------------------------------------------------------------------------------------
+PlrList_KnucklesLifeCounter: plrlistheader
+	plreq ArtTile_ArtNem_life_counter, ArtNem_Knuckles_life_counter
+PlrList_KnucklesLifeCounter_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
 ; Metropolis Zone primary
@@ -82961,7 +82960,17 @@ ArtNem_HUD:	BINCLUDE	"art/nemesis/HUD.bin"
 ; Nemesis compressed art (12 blocks)
 ; Sonic lives counter		ArtNem_79346:
 	even
-ArtNem_Sonic_life_counter:	BINCLUDE	"art/nemesis/Sonic lives counter.bin"
+ArtNem_Sonic_life_counter:	BINCLUDE	"art/nemesis/HUD - Sonic Lives.bin"
+;---------------------------------------------------------------------------------------
+; Nemesis compressed art (12 blocks)
+; Tails life counter		; ArtNem_7C20C:
+	even
+ArtNem_Tails_life_counter:	BINCLUDE	"art/nemesis/HUD - Tails Lives.bin"
+;---------------------------------------------------------------------------------------
+; Nemesis compressed art (12 blocks)
+; Knuckles life counter
+	even
+ArtNem_Knuckles_life_counter:	BINCLUDE	"art/nemesis/HUD - Knuckles Lives.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (14 blocks)
 ; Ring				ArtNem_7945C:
@@ -83034,11 +83043,6 @@ ArtNem_Game_Over:	BINCLUDE	"art/nemesis/Game and Time Over text.bin"
 	even
 ArtNem_Explosion:	BINCLUDE	"art/nemesis/Explosion.bin"
 ;---------------------------------------------------------------------------------------
-; Nemesis compressed art (12 blocks)
-; Miles life counter	; ArtNem_7B946:
-	even
-ArtUnc_MilesLife:	BINCLUDE	"art/nemesis/Miles life counter.bin"
-;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (49 blocks)
 ; Egg prison		; ArtNem_7BA32:
 	even
@@ -83053,11 +83057,6 @@ ArtNem_ContinueTails:	BINCLUDE	"art/nemesis/Tails on continue screen.bin"
 ; Sonic extra continue icon	; ArtNem_7C0AA:
 	even
 ArtNem_MiniSonic:	BINCLUDE	"art/nemesis/Sonic continue.bin"
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (12 blocks)
-; Tails life counter		; ArtNem_7C20C:
-	even
-ArtNem_TailsLife:	BINCLUDE	"art/nemesis/Tails life counter.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Tails extra continue icon	; ArtNem_7C2F2:
