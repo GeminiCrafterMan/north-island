@@ -517,6 +517,7 @@ PLCID_Tornado =		id(PLCptr_Tornado) ; 3F
 PLCID_Capsule =		id(PLCptr_Capsule) ; 40
 PLCID_Explosion =	id(PLCptr_Explosion) ; 41
 PLCID_ResultsTails =	id(PLCptr_ResultsTails) ; 42
+PLCID_ResultsKnuckles = id(PLCptr_ResultsKnuckles)
 
 ; 2P VS results screens
 offset := TwoPlayerResultsPointers

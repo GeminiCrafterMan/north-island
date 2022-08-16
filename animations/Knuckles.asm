@@ -50,10 +50,19 @@ KnucklesAni_Roll2:dc.b $FE,frK_Roll5,frK_Roll1,frK_Roll5,frK_Roll2,frK_Roll5,frK
 	rev02even
 KnucklesAni_Push:dc.b $FD,frK_Push1,frK_Push2,frK_Push3,frK_Push4,afEnd,afEnd,afEnd,afEnd,afEnd
 	rev02even
-KnucklesAni_Wait:dc.b	5,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1
+KnucklesAni_Wait:dc.b	5
+		dc.b frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1
 		dc.b frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1
 		dc.b frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1
-		dc.b frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle2
+		dc.b frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1
+		dc.b frK_IdleB1,frK_IdleB2,frK_IdleB3,frK_IdleB4,frK_IdleB5,frK_IdleB1,frK_IdleB2,frK_IdleB3,frK_IdleB4,frK_IdleB5,frK_IdleB1
+
+		dc.b frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1
+		dc.b frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1
+		dc.b frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1
+		dc.b frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1,frK_Idle1
+
+		dc.b frK_Idle4,frK_Idle4,frK_Idle4,frK_Idle4,frK_Idle4,frK_Idle4,frK_Idle4,frK_Idle4,frK_Idle4,frK_Idle2
 		dc.b frK_Idle2,frK_Idle2,frK_Idle3,frK_Idle3,frK_Idle3,frK_Idle2,frK_Idle2,frK_Idle2,frK_Idle3,frK_Idle3,frK_Idle3,frK_Idle2,frK_Idle2
 		dc.b frK_Idle2,frK_Idle3,frK_Idle3,frK_Idle3,frK_Idle2,frK_Idle2,frK_Idle2,frK_Idle3,frK_Idle3,frK_Idle3,frK_Idle2,frK_Idle2,frK_Idle2
 		dc.b frK_Idle3,frK_Idle3,frK_Idle3,frK_Idle2,frK_Idle2,frK_Idle2,frK_Idle3,frK_Idle3,frK_Idle3,frK_Idle2,frK_Idle2,frK_Idle2,frK_Idle3
@@ -129,6 +138,11 @@ frK_Null	ds.b 1	; 0
 
 ; standing still
 frK_Idle1	ds.b 1
+frK_IdleB1	ds.b 1
+frK_IdleB2	ds.b 1
+frK_IdleB3	ds.b 1
+frK_IdleB4	ds.b 1
+frK_IdleB5	ds.b 1
 frK_Idle2	ds.b 1
 frK_Idle3	ds.b 1
 frK_Idle4	ds.b 1
