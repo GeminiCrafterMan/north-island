@@ -264,5 +264,8 @@ frK_Transf3	ds.b 1
 frK_Transf4	ds.b 1
 ; Placeholder
 frK_PHold	ds.b 1
+; climb down
+frK_ClimbD1	ds.b 1
+frK_ClimbD2	ds.b 1
 	even
 	dephase

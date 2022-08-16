@@ -855,10 +855,10 @@ Underwater_palette_line4:	ds.b palette_line_size
 DrvMem:				ds.b $4C0	; memory used by AMPS
 
 Game_Mode:			ds.w 1		; 1 byte ; see GameModesArray (master level trigger, Mstr_Lvl_Trigger)
-Ctrl_1_Logical:					; 2 bytes
+Ctrl_1_Logical:					; 2 bytes	; v_jpadX2
 Ctrl_1_Held_Logical:		ds.b 1		; 1 byte
 Ctrl_1_Press_Logical:		ds.b 1		; 1 byte
-Ctrl_1:						; 2 bytes
+Ctrl_1:						; 2 bytes		; v_jpadX1
 Ctrl_1_Held:			ds.b 1		; 1 byte ; (pressed and held were switched around before)
 Ctrl_1_Press:			ds.b 1		; 1 byte
 Ctrl_2:						; 2 bytes
@@ -2034,8 +2034,8 @@ ArtTile_HUD_Minutes                   = ArtTile_ArtNem_HUD + $28
 ArtTile_HUD_Seconds                   = ArtTile_HUD_Minutes + 4
 ArtTile_ArtUnc_2p_life_counter        = ArtTile_ArtNem_HUD + $2A
 ArtTile_ArtUnc_2p_life_counter_lives  = ArtTile_ArtUnc_2p_life_counter + 9
-ArtTile_ArtNem_life_counter           = ArtTile_ArtNem_HUD + $10A
-ArtTile_ArtNem_life_counter_lives     = ArtTile_ArtNem_life_counter + 9
+ArtTile_ArtNem_life_counter           = ArtTile_ArtNem_HUD + $10C
+ArtTile_ArtNem_life_counter_lives     = ArtTile_ArtNem_life_counter + $26
 
 ; ---------------------------------------------------------------------------
 ; 2p-mode HUD.

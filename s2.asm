@@ -30641,9 +30641,11 @@ Obj_Sonic_CheckWallsOnGround:
 	cmpi.b	#$80,d0
 	beq.s	loc_1A6A2
 	add.w	d1,x_vel(a0)
-	bset	#5,status(a0)
 	move.w	#0,inertia(a0)
-	rts
+	btst	#0,status(a0)
+	bne.s	.ret
+	bset	#5,status(a0)
+.ret:	rts
 ; ---------------------------------------------------------------------------
 loc_1A6A2:
 	sub.w	d1,y_vel(a0)
@@ -30651,9 +30653,11 @@ loc_1A6A2:
 ; ---------------------------------------------------------------------------
 loc_1A6A8:
 	sub.w	d1,x_vel(a0)
-	bset	#5,status(a0)
 	move.w	#0,inertia(a0)
-	rts
+	btst	#0,status(a0)
+	beq.s	.ret
+	bset	#5,status(a0)
+.ret:	rts
 ; ---------------------------------------------------------------------------
 loc_1A6BA:
 	add.w	d1,y_vel(a0)
@@ -38568,8 +38572,11 @@ loc_1FB0C:
 	bclr	#4,status(a1)
 	btst	#2,status(a1)
 	beq.w	loc_1FBB8
+	cmpi.l	#Obj_Knuckles,id(a1)
+	beq.s	.skip
 	cmpi.b	#1,(a1)
 	bne.s	loc_1FBA8
+.skip:
 	bclr	#2,status(a1)
 	move.b	#$13,y_radius(a1)
 	move.b	#9,x_radius(a1)
@@ -80671,7 +80678,7 @@ Hud_Lives:
 
 loc_412EE:
 	lea_	Hud_10,a2
-	moveq	#1,d6
+	moveq	#1,d6	; 2 puts it into low color mode.
 	moveq	#0,d4
 	lea	Art_LivesNums(pc),a1
 ; loc_412FA:
@@ -80698,7 +80705,7 @@ loc_41314:
 loc_41318:
 	lsl.w	#6,d2	; Setting this to #6 makes the number correct. Still cut in half though.
 	lea	(a1,d2.w),a3
-    rept 8
+    rept 16
 	move.l	(a3)+,(a6)
     endm
 

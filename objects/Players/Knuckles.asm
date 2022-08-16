@@ -4,23 +4,24 @@ Obj_Knuckles:
 
 		tst.w	(Debug_placement_mode).w
 		beq.s	Obj_Knuckles_Normal
-		jmp	DebugMode
+		jmp		DebugMode
 ; ---------------------------------------------------------------------------
 
 Obj_Knuckles_Normal:
 		moveq	#0,d0
 		move.b	routine(a0),d0
 		move.w	Obj_Knuckles_Index(pc,d0.w),d1
-		jmp	Obj_Knuckles_Index(pc,d1.w)
+		jmp		Obj_Knuckles_Index(pc,d1.w)
 ; End of function Obj_Knuckles
 
 ; ---------------------------------------------------------------------------
-Obj_Knuckles_Index:	dc.w Obj_Knuckles_Init-Obj_Knuckles_Index	  ; 0 ;	...
-		dc.w Obj_Knuckles_Control-Obj_Knuckles_Index	  ; 1
-		dc.w Obj_Knuckles_Hurt-Obj_Knuckles_Index	  ; 2
-		dc.w Obj_Knuckles_Dead-Obj_Knuckles_Index	  ; 3
-		dc.w Obj_Knuckles_Gone-Obj_Knuckles_Index	  ; 4
-		dc.w Obj_Knuckles_Respawning-Obj_Knuckles_Index ; 5
+Obj_Knuckles_Index:
+		dc.w	Obj_Knuckles_Init-Obj_Knuckles_Index	  ; 0 ;	...
+		dc.w	Obj_Knuckles_Control-Obj_Knuckles_Index	  ; 1
+		dc.w	Obj_Knuckles_Hurt-Obj_Knuckles_Index	  ; 2
+		dc.w	Obj_Knuckles_Dead-Obj_Knuckles_Index	  ; 3
+		dc.w	Obj_Knuckles_Gone-Obj_Knuckles_Index	  ; 4
+		dc.w	Obj_Knuckles_Respawning-Obj_Knuckles_Index ; 5
 ; ---------------------------------------------------------------------------
 
 Obj_Knuckles_Init:
@@ -36,7 +37,7 @@ Obj_Knuckles_Init:
 		move.w	#$80,(Sonic_deceleration).w
 		tst.b	(Last_star_pole_hit).w
 		bne.s	Obj_Knuckles_Init_Continued
-		; only happens when not starting at a checkpoint:
+	; only happens when not starting at a checkpoint:
 		move.w	#make_art_tile(ArtTile_ArtUnc_Sonic,0,0),art_tile(a0)
 		move.b	#$C,top_solid_bit(a0)
 		move.b	#$D,lrb_solid_bit(a0)
@@ -55,7 +56,7 @@ Obj_Knuckles_Init_Continued:
 		move.w	#0,(Sonic_Pos_Record_Index).w
 
 		move.w	#$3F,d2
--		jsr	Sonic_RecordPos
+-		jsr		Sonic_RecordPos
 		subq.w	#4,a1
 		move.l	#0,(a1)
 		dbf	d2,-
@@ -66,7 +67,7 @@ Obj_Knuckles_Init_Continued:
 Obj_Knuckles_Control:
 		tst.w	(Debug_mode_flag).w
 		beq.s	loc_315422
-		btst	#4,(Ctrl_1_Press).w
+		btst	#button_B,(Ctrl_1_Press).w
 		beq.s	loc_315422
 		move.w	#1,(Debug_placement_mode).w
 		clr.b	(Control_Locked).w
@@ -76,7 +77,7 @@ Obj_Knuckles_Control:
 loc_315422:
 		tst.b	(Control_Locked).w
 		bne.s	loc_31542E
-		move.w	(Ctrl_1).w,(Ctrl_1_Logical).w
+		move.w	(Ctrl_1_Held).w,(Ctrl_1_Held_Logical).w
 
 loc_31542E:
 		btst	#0,obj_control(a0)
@@ -90,7 +91,7 @@ loc_31543E:
 		move.b	status(a0),d0
 		and.w	#6,d0
 		move.w	Obj_Knuckles_Modes(pc,d0.w),d1
-		jsr	Obj_Knuckles_Modes(pc,d1.w)
+		jsr		Obj_Knuckles_Modes(pc,d1.w)
 
 loc_315450:
 		cmp.w	#-$100,(Camera_Min_Y_pos).w
@@ -100,7 +101,7 @@ loc_315450:
 loc_31545E:
 		jsr		Sonic_Display
 		jsr		Sonic_Super
-		jsr	Sonic_RecordPos
+		jsr		Sonic_RecordPos
 		jsr		Sonic_Water
 		move.b	(Primary_Angle).w,next_tilt(a0)
 		move.b	(Secondary_Angle).w,tilt(a0)
@@ -114,7 +115,7 @@ loc_31548A:
 		bsr.w	Knuckles_Animate
 		tst.b	obj_control(a0)
 		bmi.s	loc_31549A
-		jsr	TouchResponse
+		jsr		TouchResponse
 
 loc_31549A:
 		bra.w	LoadKnucklesDynPLC
@@ -130,13 +131,13 @@ Obj_Knuckles_Modes:	dc.w Obj_Knuckles_MdNormal-Obj_Knuckles_Modes	  ; 0 ;	...
 Obj_Knuckles_MdNormal:
 		jsr		Sonic_CheckSpindash
 		bsr.w	Knuckles_Jump
-		jsr	Sonic_SlopeResist
+		jsr		Sonic_SlopeResist
 		bsr.w	Knuckles_Move
-		jsr	Sonic_Roll
-		jsr	Sonic_LevelBound
-		jsr	ObjectMove		  ; AKA	SpeedToPos in Sonic 1
-		jsr	AnglePos
-		jsr	Player_SlopeRepel
+		jsr		Sonic_Roll
+		jsr		Sonic_LevelBound
+		jsr		ObjectMove		  ; AKA	SpeedToPos in Sonic 1
+		jsr		AnglePos
+		jsr		Player_SlopeRepel
 		rts
 ; End of function Obj_Knuckles_MdNormal
 
@@ -156,22 +157,22 @@ Obj_Knuckles_MdAir:
 		jsr		SonicKnux_AirRoll
 		bsr.w	Knuckles_JumpHeight
 		bsr.w	Knuckles_ChgJumpDir
-		jsr	Sonic_LevelBound
-		jsr	ObjectMoveAndFall
+		jsr		Sonic_LevelBound
+		jsr		ObjectMoveAndFall
 		btst	#6,status(a0)
 		beq.s	loc_31569C
 		sub.w	#$28,y_vel(a0)
 
 loc_31569C:
-		jsr	Sonic_JumpAngle
+		jsr		Sonic_JumpAngle
 		bsr.w	Knuckles_DoLevelCollision
 		rts
 ; ---------------------------------------------------------------------------
 
 Obj_Knuckles_MdAir_Gliding:
 		bsr.w	Knuckles_GlideSpeedControl
-		jsr	Sonic_LevelBound
-		jsr	ObjectMove		  ; AKA	SpeedToPos in Sonic 1
+		jsr		Sonic_LevelBound
+		jsr		ObjectMove		  ; AKA	SpeedToPos in Sonic 1
 		bsr.w	Knuckles_GlideControl
 
 return_3156B8:
@@ -207,8 +208,8 @@ Knuckles_NormalGlide:
 		move.b	#9,x_radius(a0)
 		btst	#1,(Gliding_collision_flags).w
 		beq.s	Knuckles_BeginSlide
-		move.b	(Ctrl_1_Logical).w,d0
-		and.b	#$70,d0
+		move.b	(Ctrl_1_Held_Logical).w,d0
+		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		bne.s	loc_31574C
 		move.b	#2,double_jump_flag(a0)
 		move.b	#33,anim(a0)
@@ -218,8 +219,8 @@ Knuckles_NormalGlide:
 		bset	#0,status(a0)
 
 loc_315736:
-		asr	x_vel(a0)
-		asr	x_vel(a0)
+		asr		x_vel(a0)
+		asr		x_vel(a0)
 		move.b	#$13,y_radius(a0)
 		move.b	#9,x_radius(a0)
 		rts
@@ -276,7 +277,7 @@ Knuckles_BeginClimb:
 
 loc_3157D8:
 		bclr	#0,status(a0)
-		jsr	CheckRightCeilingDist
+		jsr		CheckRightCeilingDist
 		or.w	d0,d1
 		bne.w	loc_31586A
 
@@ -313,7 +314,7 @@ Knuckles_FallFromGlide:
 loc_31584A:
 		move.w	y_pos(a0),d2
 		sub.w	#$B,d2
-		jsr	ChkFloorEdge_Part2
+		jsr		ChkFloorEdge_Part2
 		tst.w	d1
 		bmi.s	loc_31587A
 		cmp.w	#$C,d1
@@ -377,8 +378,8 @@ return_315900:
 ; ---------------------------------------------------------------------------
 
 Knuckles_Sliding:
-		move.b	(Ctrl_1_Logical).w,d0
-		and.b	#$70,d0
+		move.b	(Ctrl_1_Held_Logical).w,d0
+		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		beq.s	loc_315926
 		tst.w	x_vel(a0)
 		bpl.s	loc_31591E
@@ -413,14 +414,14 @@ loc_315958:
 		move.b	#$A,y_radius(a0)
 		move.b	#$A,x_radius(a0)
 		bsr.w	Knuckles_DoLevelCollision2
-		jsr	Player_CheckFloor
+		jsr		Player_CheckFloor
 		cmp.w	#$E,d1
 		bge.s	loc_315988
 		add.w	d1,y_pos(a0)
 		move.b	d3,angle(a0)
 		move.b	#$13,y_radius(a0)
 		move.b	#9,x_radius(a0)
-		; play slide sfx
+	; play slide sfx
 		move.b	(Timer_frames+1).w,d0
 		andi.b	#7,d0
 		bne.s	+
@@ -458,7 +459,7 @@ loc_3159F0:
 		move.b	#$A,y_radius(a0)
 		move.b	#$A,x_radius(a0)
 		moveq	#0,d1
-		btst	#0,(Ctrl_1_Logical).w
+		btst	#button_up,(Ctrl_1_Held_Logical).w
 		beq.w	loc_315A76
 		move.w	y_pos(a0),d2
 		sub.w	#$B,d2
@@ -498,7 +499,7 @@ loc_315A54:
 ; ---------------------------------------------------------------------------
 
 loc_315A76:
-		btst	#1,(Ctrl_1_Logical).w
+		btst	#button_down,(Ctrl_1_Held_Logical).w
 		beq.w	loc_315B04
 		cmp.b	#frK_Climb6+1,mapping_frame(a0)
 		bne.s	loc_315AA2
@@ -522,13 +523,25 @@ loc_315AA2:
 		bsr.w	sub_318FF6
 		tst.w	d1
 		bpl.s	loc_315AF4
+	; where the victory shit would go, ref: shima
+	; fuck you, delta. if you want to steal from megamix,
+	; i'm going to steal from you. kiss my ass.
+	; to other contributors of this repo:
+	; yes, i'm still mad about this
+	loc_16D6E:
 		add.w	d1,y_pos(a0)
 		move.b	(Primary_Angle).w,angle(a0)
 		move.w	#0,inertia(a0)
 		move.w	#0,x_vel(a0)
 		move.w	#0,y_vel(a0)
 		bsr.w	Knuckles_ResetOnFloor_Part2
+;		tst.b	(Victory_flag).w	; has the victory animation flag been set?
+;		beq.s	.normalJump	; if not, branch
+;		move.b	#AniIDSonAni_Victory,anim(a0)	; Play the victory animation
+;		bra.s	.ret	; return
+;	.normalJump:
 		move.b	#AniIDSonAni_Wait,anim(a0)
+;	.ret:
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -542,20 +555,54 @@ loc_315B02:
 		moveq	#-1,d1
 
 loc_315B04:
+		move.b	(Ctrl_1_Held_Logical).w,d0
+		andi.b	#button_right,d0	; ???
+		bne.s	loc_16E34
+		move.b	top_solid_bit(a0),d5
+		move.w	y_pos(a0),d2
+		addi.w	#9,d2
+		move.w	x_pos(a0),d3
+		bsr.w	sub_318FF6
+		tst.w	d1
+		bmi.w	loc_16D6E
+
+loc_16E34:
 		tst.w	d1
 		beq.s	loc_315B30
 		subq.b	#1,double_jump_property(a0)
 		bpl.s	loc_315B30
 		move.b	#3,double_jump_property(a0)
 		add.b	mapping_frame(a0),d1
+		btst	#button_up,(Ctrl_1_Held_Logical).w
+		bne.s	ClimbUpAni
+		btst	#button_down,(Ctrl_1_Held_Logical).w
+		bne.s	ClimbDownAni
+		bra.s	ResetAniClimb
+
+	ClimbUpAni:
 		cmp.b	#frK_Climb1,d1
 		bcc.s	loc_315B22
 		move.b	#frK_Climb6,d1
+		bra.s	loc_315B2C
 
 loc_315B22:
 		cmp.b	#frK_Climb6,d1
 		bls.s	loc_315B2C
 		move.b	#frK_Climb1,d1
+		bra.s	loc_315B2C
+
+	ClimbDownAni:
+		cmp.b	#frK_ClimbD1,d1
+		bcs.s	loc_315B22_D
+		move.b	#frK_ClimbD1,d1
+		bra.s	loc_315B2C
+
+loc_315B22_D:
+		move.b	#frK_ClimbD2,d1
+		bra.s	loc_315B2C
+
+	ResetAniClimb:
+		move.b	#frK_Climb6,d1
 
 loc_315B2C:
 		move.b	d1,mapping_frame(a0)
@@ -565,8 +612,8 @@ loc_315B30:
 		move.b	#0,anim_frame(a0)
 		move.b	#$13,y_radius(a0)
 		move.b	#9,x_radius(a0)
-		move.w	(Ctrl_1_Logical).w,d0
-		and.w	#$70,d0
+		move.w	(Ctrl_1_Held_Logical).w,d0
+		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		beq.s	return_315B94
 		move.w	#$FC80,y_vel(a0)
 		move.w	#$400,x_vel(a0)
@@ -760,7 +807,7 @@ loc_315CE2:
 loc_315CFC:
 		move.w	d0,inertia(a0)
 		move.b	double_jump_property(a0),d0
-		btst	#2,(Ctrl_1_Logical).w
+		btst	#button_left,(Ctrl_1_Held_Logical).w
 		beq.s	loc_315D1C
 		cmp.b	#$80,d0
 		beq.s	loc_315D1C
@@ -774,7 +821,7 @@ loc_315D18:
 ; ---------------------------------------------------------------------------
 
 loc_315D1C:
-		btst	#3,(Ctrl_1_Logical).w
+		btst	#button_right,(Ctrl_1_Held_Logical).w
 		beq.s	loc_315D30
 		tst.b	d0
 		beq.s	loc_315D30
@@ -873,12 +920,12 @@ Knuckles_Move:
 		bmi.w	Obj_Knuckles_Traction
 		tst.w	move_lock(a0)
 		bne.w	Obj_Knuckles_ResetScreen
-		btst	#2,(Ctrl_1_Logical).w
+		btst	#button_left,(Ctrl_1_Held_Logical).w
 		beq.s	Obj_Knuckles_NotLeft
 		bsr.w	Knuckles_MoveLeft
 
 Obj_Knuckles_NotLeft:
-		btst	#3,(Ctrl_1_Logical).w
+		btst	#button_right,(Ctrl_1_Held_Logical).w
 		beq.s	Obj_Knuckles_NotRight
 		bsr.w	Knuckles_MoveRight
 
@@ -983,7 +1030,7 @@ loc_315F42:
 ; ---------------------------------------------------------------------------
 
 Knuckles_LookUp:
-		btst	#0,(Ctrl_1_Logical).w
+		btst	#button_up,(Ctrl_1_Held_Logical).w
 		beq.s	Knuckles_Duck
 		move.b	#AniIDSonAni_LookUp,anim(a0)
 		addq.w	#1,(Sonic_Look_delay_counter).w
@@ -997,7 +1044,7 @@ Knuckles_LookUp:
 ; ---------------------------------------------------------------------------
 
 Knuckles_Duck:
-		btst	#1,(Ctrl_1_Logical).w
+		btst	#button_down,(Ctrl_1_Held_Logical).w
 		beq.s	Obj_Knuckles_ResetScreen
 		move.b	#AniIDSonAni_Duck,anim(a0)
 		addq.w	#1,(Sonic_Look_delay_counter).w
@@ -1028,8 +1075,8 @@ Obj_Knuckles_UpdateSpeedOnGround:
 		move.w	#$C,d5
 
 loc_315FDC:
-		move.b	(Ctrl_1_Logical).w,d0
-		and.b	#$C,d0
+		move.b	(Ctrl_1_Held_Logical).w,d0
+		and.b	#button_left_mask|button_right_mask,d0
 		bne.s	Obj_Knuckles_Traction
 		move.w	inertia(a0),d0
 		beq.s	Obj_Knuckles_Traction
@@ -1241,7 +1288,7 @@ Knuckles_ChgJumpDir:
 		btst	#4,status(a0)
 		bne.s	Obj_Knuckles_Jump_ResetScreen
 		move.w	x_vel(a0),d0
-		btst	#2,(Ctrl_1_Logical).w
+		btst	#button_left,(Ctrl_1_Held_Logical).w
 		beq.s	loc_31630E
 
 		bset	#0,status(a0)
@@ -1250,8 +1297,8 @@ Knuckles_ChgJumpDir:
 		neg.w	d1
 		cmp.w	d1,d0
 		bgt.s	loc_31630E
-		cmpi.b	#GameModeID_Demo,(Game_Mode).w	; Demo Mode?
-		beq.w	loc_31630C
+		tst.w	(Demo_mode_flag).w
+		bne.w	loc_31630C
 		add.w	d5,d0
 		cmp.w	d1,d0
 		ble.s	loc_31630E
@@ -1260,14 +1307,14 @@ loc_31630C:
 		move.w	d1,d0
 
 loc_31630E:
-		btst	#3,(Ctrl_1_Logical).w
+		btst	#button_right,(Ctrl_1_Held_Logical).w
 		beq.s	loc_316332
 		bclr	#0,status(a0)
 		add.w	d5,d0
 		cmp.w	d6,d0
 		blt.s	loc_316332
-		cmpi.b	#GameModeID_Demo,(Game_Mode).w	; Demo Mode?
-		beq.w	loc_316330
+		tst.w	(Demo_mode_flag).w
+		bne.w	loc_316330
 		sub.w	d5,d0
 		cmp.w	d6,d0
 		bge.s	loc_316332
@@ -1321,7 +1368,7 @@ return_316376:
 
 Knuckles_Jump:
 		move.b	(Ctrl_1_Press_Logical).w,d0
-		and.b	#$70,d0
+		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		beq.w	return_3164EC
 		moveq	#0,d0
 		move.b	angle(a0),d0
@@ -1335,8 +1382,8 @@ Knuckles_Jump:
 		move.w	#$300,d2
 
 loc_316470:
-		cmpi.b	#GameModeID_Demo,(Game_Mode).w	; Demo Mode?
-		bne.s	loc_31647A
+		tst.w	(Demo_mode_flag).w
+		beq.s	loc_31647A
 		add.w	#$80,d2			  ; Set	the jump height	to Sonic's height in Demo mode because Sonic Team were too lazy to record new demos for S2&K.
 
 loc_31647A:
@@ -1392,8 +1439,8 @@ Knuckles_JumpHeight:
 loc_31650C:
 		cmp.w	y_vel(a0),d1
 		ble.w	Knuckles_CheckGlide	  ; Check if Knuckles should begin a glide
-		move.b	(Ctrl_1_Logical).w,d0
-		and.b	#$70,d0
+		move.b	(Ctrl_1_Held_Logical).w,d0
+		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		bne.s	return_316522
 		move.w	d1,y_vel(a0)
 
@@ -1413,12 +1460,12 @@ return_316538:
 ; ---------------------------------------------------------------------------
 
 Knuckles_CheckGlide:
-		cmpi.b	#GameModeID_Demo,(Game_Mode).w		  ; Don't glide on demos
-		beq.w	return_3165D2
+		tst.w	(Demo_mode_flag).w		  ; Don't glide on demos
+		bne.w	return_3165D2
 		tst.b	double_jump_flag(a0)
 		bne.w	return_3165D2
 		move.b	(Ctrl_1_Press_Logical).w,d0
-		and.b	#$70,d0
+		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		beq.w	return_3165D2
 		tst.b	(Super_Sonic_flag).w
 		bne.s	Knuckles_BeginGlide
@@ -1887,7 +1934,7 @@ Obj_Knuckles_Hurt:
 
 		tst.w	(Debug_mode_flag).w
 		beq.s	Obj_Knuckles_Hurt_Normal
-		btst	#4,(Ctrl_1_Press).w
+		btst	#button_B,(Ctrl_1_Press).w
 		beq.s	Obj_Knuckles_Hurt_Normal
 		move.w	#1,(Debug_placement_mode).w
 		clr.b	(Control_Locked).w
@@ -1897,7 +1944,7 @@ Obj_Knuckles_Hurt:
 Obj_Knuckles_Hurt_Normal:
 		tst.b	routine_secondary(a0)
 		bmi.w	Knuckles_HurtInstantRecover
-		jsr	ObjectMove		  ; AKA	SpeedToPos in Sonic 1
+		jsr		ObjectMove		  ; AKA	SpeedToPos in Sonic 1
 		add.w	#$30,y_vel(a0)
 		btst	#6,status(a0)
 		beq.s	loc_316DA0
@@ -1910,11 +1957,11 @@ loc_316DA0:
 
 loc_316DAE:
 		bsr.w	Knuckles_HurtStop
-		jsr	Sonic_LevelBound
-		jsr	Sonic_RecordPos
+		jsr		Sonic_LevelBound
+		jsr		Sonic_RecordPos
 		bsr.w	Knuckles_Animate
 		bsr.w	LoadKnucklesDynPLC
-		jmp	DisplaySprite
+		jmp		DisplaySprite
 ; End of function Obj_Knuckles_Hurt
 
 
@@ -1965,7 +2012,7 @@ Knuckles_HurtInstantRecover:
 Obj_Knuckles_Dead:
 		tst.w	(Debug_mode_flag).w
 		beq.s	loc_316E4A
-		btst	#4,(Ctrl_1_Press).w
+		btst	#button_B,(Ctrl_1_Press).w
 		beq.s	loc_316E4A
 		move.w	#1,(Debug_placement_mode).w
 		clr.b	(Control_Locked).w
