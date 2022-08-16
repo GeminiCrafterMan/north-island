@@ -21648,6 +21648,7 @@ sonic_1up:
 	addq.w	#1,(Monitors_Broken).w
 	addq.b	#1,(Life_count).w
 	addq.b	#1,(Update_HUD_lives).w
+	move.b	#emotion_happy,(Current_emotion).w
 	music	mus_ExtraLife
 	rts	; Play extra life music
 ; ===========================================================================
@@ -29979,6 +29980,11 @@ loc_19F4C:
 
 ResetEmotion:
 	moveq	#emotion_neutral,d0
+	cmpi.b	#6,(MainCharacter+routine).w
+	bne.s	.notSad
+	moveq	#emotion_sad,d0
+	bra.s	.done
+.notSad:
 	tst.b	(Super_Sonic_flag).w
 	beq.s	.notSuper
 	moveq	#emotion_super,d0
@@ -29986,20 +29992,47 @@ ResetEmotion:
 .notSuper:
 	tst.w	(MainCharacter+invulnerable_time).w
 	beq.s	.notAngry
+	btst	#status_sec_isInvincible,(MainCharacter+status_secondary).w	; Invincible?
+	bne.s	.happy
 	moveq	#emotion_angry,d0
 	bra.s	.done
 .notAngry:
-	btst	#status_sec_isInvincible,(MainCharacter+status_secondary).w
+	btst	#status_sec_hasSpeedShoes,(MainCharacter+status_secondary).w	; Speedy?
 	bne.s	.happy
-	btst	#status_sec_hasSpeedShoes,(MainCharacter+status_secondary).w
+	tst.b	(Victory_flag).w	; Did I win?
 	bne.s	.happy
-	tst.b	(Victory_flag).w
-	bne.s	.happy
+	cmpi.w	#4,(Chain_Bonus_counter).w	; am I badnik bouncing?
+	bge.s	.happy
 	bra.s	.done
 .happy:
 	moveq	#emotion_happy,d0
 .done:
-	move.b	d0,(Current_emotion).w
+	move.b	d0,(Current_emotion).w	; set the emotion
+UpdateEmotionWindow:
+	movem.l	d1-d4,-(sp)
+	moveq	#0,d1
+	moveq	#0,d2
+	moveq	#0,d3
+	moveq	#0,d4
+	move.l	#ArtUnc_SonicEmotions,d1
+;	cmpi.l	#Obj_Tails,(MainCharacter+id).w
+;	bne.s	.notTails
+;	move.l	#ArtUnc_TailsEmotions,d1
+;	bra.s	.cont
+;.notTails:
+;	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
+;	bne.s	.cont
+;	move.l	#ArtUnc_KnucklesEmotions,d1
+;	bra.s	.cont
+.cont:
+	move.w	#tiles_to_bytes(ArtTile_ArtNem_life_counter),d2
+	move.w	#16*6,d3	; length of one emotion's image (1 tile = 16 bytes)
+	move.b	(Current_emotion).w,d4
+	mulu.w	d3,d4	; source, destination
+	add.w	d4,d4
+	add.w	d4,d1
+	jsr		(QueueDMATransfer).l
+	movem.l	(sp)+,d1-d4
 	rts
 
 ; ===========================================================================
@@ -31317,12 +31350,11 @@ Sonic_CheckGoSuper:
 	bne.s	return_1ABA4		; if not, branch
 	cmpi.w	#50,(Ring_count).w	; does Sonic have at least 50 rings?
 	blo.s	return_1ABA4		; if not, branch
-    if gameRevision=2
-	; fixes a bug where the player can get stuck if transforming at the end of a level
 	tst.b	(Update_HUD_timer).w	; has Sonic reached the end of the act?
 	beq.s	return_1ABA4		; if yes, branch
-    endif
+
 Sonic_TurnSuper:
+	move.b	#emotion_super,(Current_emotion).w
 	move.b	#1,(Super_Sonic_palette).w
 	move.b	#$F,(Palette_timer).w
 	move.b	#1,(Super_Sonic_flag).w
@@ -78134,6 +78166,7 @@ loc_3F81C:
 	movea.w	a0,a3
 	bsr.w	AddPoints
 	_move.l	#Obj_Explosion,id(a1) ; load obj
+	jsr		ResetEmotion
 	move.b	#0,routine(a1)
 	tst.w	y_vel(a0)
 	bmi.s	loc_3F844
@@ -78260,11 +78293,11 @@ Hurt_Sound:
 
 ; loc_3F926: KillSonic:
 KillCharacter:
-	move.b	#emotion_sad,(Current_emotion).w
 	tst.w	(Debug_placement_mode).w
 	bne.s	++
 	clr.b	status_secondary(a0)
 	move.b	#6,routine(a0)
+	jsr		ResetEmotion
 	jsrto	(Sonic_ResetOnFloor_Part2).l, JmpTo_Sonic_ResetOnFloor_Part2
 	bset	#1,status(a0)
 	move.w	#-$700,y_vel(a0)
@@ -82764,6 +82797,8 @@ ArtNem_HUD:	BINCLUDE	"art/nemesis/HUD.bin"
 ; Sonic lives counter		ArtNem_79346:
 	even
 ArtNem_Sonic_life_counter:	BINCLUDE	"art/nemesis/HUD - Sonic Lives.bin"
+	even
+ArtUnc_SonicEmotions:		BINCLUDE	"art/uncompressed/HUD - Sonic Emotions.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Tails life counter		; ArtNem_7C20C:
