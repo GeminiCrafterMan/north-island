@@ -29979,6 +29979,10 @@ loc_19F4C:
 	rts
 
 ResetEmotion:
+	movem.l	d0-d3,-(sp)
+	moveq	#0,d1
+	moveq	#0,d2
+	moveq	#0,d3
 	moveq	#emotion_neutral,d0
 	cmpi.b	#6,(MainCharacter+routine).w
 	bne.s	.notSad
@@ -30009,11 +30013,6 @@ ResetEmotion:
 .done:
 	move.b	d0,(Current_emotion).w	; set the emotion
 UpdateEmotionWindow:
-	movem.l	d1-d4,-(sp)
-	moveq	#0,d1
-	moveq	#0,d2
-	moveq	#0,d3
-	moveq	#0,d4
 	move.l	#ArtUnc_SonicEmotions,d1
 ;	cmpi.l	#Obj_Tails,(MainCharacter+id).w
 ;	bne.s	.notTails
@@ -30027,12 +30026,11 @@ UpdateEmotionWindow:
 .cont:
 	move.w	#tiles_to_bytes(ArtTile_ArtNem_life_counter),d2
 	move.w	#16*6,d3	; length of one emotion's image (1 tile = 16 bytes)
-	move.b	(Current_emotion).w,d4
-	mulu.w	d3,d4	; source, destination
-	add.w	d4,d4
-	add.w	d4,d1
+	mulu.w	d3,d0	; source, destination
+	add.w	d0,d0
+	add.w	d0,d1
 	jsr		(QueueDMATransfer).l
-	movem.l	(sp)+,d1-d4
+	movem.l	(sp)+,d0-d3
 	rts
 
 ; ===========================================================================
