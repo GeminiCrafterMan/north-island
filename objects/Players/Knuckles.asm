@@ -132,7 +132,7 @@ Obj_Knuckles_MdNormal:
 		jsr		Sonic_CheckSpindash
 		bsr.w	Knuckles_Jump
 		jsr		Sonic_SlopeResist
-		bsr.w	Knuckles_Move
+		jsr		Sonic_Move
 		jsr		Sonic_Roll
 		jsr		Sonic_LevelBound
 		jsr		ObjectMove		  ; AKA	SpeedToPos in Sonic 1
@@ -155,8 +155,8 @@ Obj_Knuckles_MdAir:
 		move.b	#AniIDSonAni_Fall,anim(a0)
 +
 		jsr		SonicKnux_AirRoll
-		bsr.w	Knuckles_JumpHeight
-		bsr.w	Knuckles_ChgJumpDir
+		jsr		Sonic_JumpHeight
+		jsr		Sonic_ChgJumpDir
 		jsr		Sonic_LevelBound
 		jsr		ObjectMoveAndFall
 		btst	#6,status(a0)
@@ -343,7 +343,7 @@ loc_31587A:
 ; ---------------------------------------------------------------------------
 
 Knuckles_FallingFromGlide:
-		bsr.w	Knuckles_ChgJumpDir
+		jsr		Sonic_ChgJumpDir
 		add.w	#$38,y_vel(a0)
 		btst	#6,status(a0)
 		beq.s	loc_3158B2
@@ -528,20 +528,20 @@ loc_315AA2:
 	; i'm going to steal from you. kiss my ass.
 	; to other contributors of this repo:
 	; yes, i'm still mad about this
-	loc_16D6E:
+	.victory:
 		add.w	d1,y_pos(a0)
 		move.b	(Primary_Angle).w,angle(a0)
 		move.w	#0,inertia(a0)
 		move.w	#0,x_vel(a0)
 		move.w	#0,y_vel(a0)
 		bsr.w	Knuckles_ResetOnFloor_Part2
-;		tst.b	(Victory_flag).w	; has the victory animation flag been set?
-;		beq.s	.normalJump	; if not, branch
-;		move.b	#AniIDSonAni_Victory,anim(a0)	; Play the victory animation
-;		bra.s	.ret	; return
-;	.normalJump:
+		tst.b	(Victory_flag).w	; has the victory animation flag been set?
+		beq.s	.normalJump	; if not, branch
+		move.b	#AniIDSonAni_Victory,anim(a0)	; Play the victory animation
+		bra.s	.ret	; return
+	.normalJump:
 		move.b	#AniIDSonAni_Wait,anim(a0)
-;	.ret:
+	.ret:
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -564,7 +564,7 @@ loc_315B04:
 		move.w	x_pos(a0),d3
 		bsr.w	sub_318FF6
 		tst.w	d1
-		bmi.w	loc_16D6E
+		bmi.w	loc_315AA2.victory
 
 loc_16E34:
 		tst.w	d1
@@ -896,10 +896,16 @@ loc_315DA6:
 ; ---------------------------------------------------------------------------
 
 Obj_Knuckles_MdJump:
-		bsr.w	Knuckles_JumpHeight
-		bsr.w	Knuckles_ChgJumpDir
-		jsr	Sonic_LevelBound
-		jsr	ObjectMoveAndFall
+		cmpi.b	#AniIDSonAni_Spring,anim(a0)
+		bne.s	+
+		tst.b	y_vel(a0)
+		blt.s	+
+		move.b	#AniIDSonAni_Fall,anim(a0)
++
+		jsr		Sonic_JumpHeight
+		jsr		Sonic_ChgJumpDir
+		jsr		Sonic_LevelBound
+		jsr		ObjectMoveAndFall
 		btst	#6,status(a0)
 		beq.s	loc_315DE2
 		sub.w	#$28,y_vel(a0)
@@ -908,460 +914,6 @@ loc_315DE2:
 		jsr	Sonic_JumpAngle
 		bsr.w	Knuckles_DoLevelCollision
 		rts
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_Move:
-		move.w	(Sonic_top_speed).w,d6
-		move.w	(Sonic_acceleration).w,d5
-		move.w	(Sonic_deceleration).w,d4
-		tst.b	status_secondary(a0)
-		bmi.w	Obj_Knuckles_Traction
-		tst.w	move_lock(a0)
-		bne.w	Obj_Knuckles_ResetScreen
-		btst	#button_left,(Ctrl_1_Held_Logical).w
-		beq.s	Obj_Knuckles_NotLeft
-		bsr.w	Knuckles_MoveLeft
-
-Obj_Knuckles_NotLeft:
-		btst	#button_right,(Ctrl_1_Held_Logical).w
-		beq.s	Obj_Knuckles_NotRight
-		bsr.w	Knuckles_MoveRight
-
-Obj_Knuckles_NotRight:
-		move.b	angle(a0),d0
-		add.b	#$20,d0
-		and.b	#$C0,d0
-		bne.w	Obj_Knuckles_ResetScreen
-		tst.w	inertia(a0)
-		bne.w	Obj_Knuckles_ResetScreen
-		bclr	#5,status(a0)
-		move.b	#AniIDSonAni_Wait,anim(a0)
-		btst	#3,status(a0)
-		beq.w	Knuckles_Balance
-		moveq	#0,d0
-		move.w	interact(a0),d0
-		tst.b	status(a1)
-		bmi.w	Knuckles_LookUp
-		moveq	#0,d1
-		move.b	width_pixels(a1),d1
-		move.w	d1,d2
-		add.w	d2,d2
-		subq.w	#2,d2
-		add.w	x_pos(a0),d1
-		sub.w	x_pos(a1),d1
-		cmp.w	#2,d1
-		blt.s	Knuckles_BalanceOnObjLeft
-		cmp.w	d2,d1
-		bge.s	Knuckles_BalanceOnObjRight
-		bra.w	Knuckles_LookUp
-; ---------------------------------------------------------------------------
-
-Knuckles_BalanceOnObjRight:
-		btst	#0,status(a0)
-		bne.s	loc_315E9A
-		move.b	#AniIDSonAni_Balance,anim(a0)
-		bra.w	Obj_Knuckles_ResetScreen
-; ---------------------------------------------------------------------------
-
-loc_315E9A:
-		bclr	#0,status(a0)
-		move.b	#0,anim_frame_duration(a0)
-		move.b	#4,anim_frame(a0)
-		move.b	#AniIDSonAni_Balance,anim(a0)
-		move.b	#AniIDSonAni_Balance,next_anim(a0)
-		bra.w	Obj_Knuckles_ResetScreen
-; ---------------------------------------------------------------------------
-
-Knuckles_BalanceOnObjLeft:
-		btst	#0,status(a0)
-		beq.s	loc_315EC8
-		move.b	#AniIDSonAni_Balance,anim(a0)
-		bra.w	Obj_Knuckles_ResetScreen
-; ---------------------------------------------------------------------------
-
-loc_315EC8:
-		bset	#0,status(a0)
-		move.b	#0,anim_frame_duration(a0)
-		move.b	#4,anim_frame(a0)
-		move.b	#AniIDSonAni_Balance,anim(a0)
-		move.b	#AniIDSonAni_Balance,next_anim(a0)
-		bra.w	Obj_Knuckles_ResetScreen
-; ---------------------------------------------------------------------------
-
-Knuckles_Balance:
-		jsr	ChkFloorEdge
-		cmp.w	#$C,d1
-		blt.w	Knuckles_LookUp
-		cmp.b	#3,next_tilt(a0)
-		bne.s	Knuckles_BalanceLeft
-		btst	#0,status(a0)
-		bne.s	loc_315F0C
-		move.b	#AniIDSonAni_Balance,anim(a0)
-		bra.w	Obj_Knuckles_ResetScreen
-; ---------------------------------------------------------------------------
-
-loc_315F0C:
-		bclr	#0,status(a0)
-		move.b	#0,anim_frame_duration(a0)
-		move.b	#4,anim_frame(a0)
-		move.b	#AniIDSonAni_Balance,anim(a0)
-		move.b	#AniIDSonAni_Balance,next_anim(a0)
-		bra.w	Obj_Knuckles_ResetScreen
-; ---------------------------------------------------------------------------
-
-Knuckles_BalanceLeft:
-		cmp.b	#3,tilt(a0)
-		bne.s	Knuckles_LookUp
-		btst	#0,status(a0)
-		beq.s	loc_315F42
-		move.b	#AniIDSonAni_Balance,anim(a0)
-		bra.w	Obj_Knuckles_ResetScreen
-; ---------------------------------------------------------------------------
-
-loc_315F42:
-		bset	#0,status(a0)
-		move.b	#0,anim_frame_duration(a0)
-		move.b	#4,anim_frame(a0)
-		move.b	#AniIDSonAni_Balance,anim(a0)
-		move.b	#AniIDSonAni_Balance,next_anim(a0)
-		bra.w	Obj_Knuckles_ResetScreen
-; ---------------------------------------------------------------------------
-
-Knuckles_LookUp:
-		btst	#button_up,(Ctrl_1_Held_Logical).w
-		beq.s	Knuckles_Duck
-		move.b	#AniIDSonAni_LookUp,anim(a0)
-		addq.w	#1,(Sonic_Look_delay_counter).w
-		cmp.w	#$78,(Sonic_Look_delay_counter).w
-		bcs.s	Obj_Knuckles_ResetScreen_Part2
-		move.w	#$78,(Sonic_Look_delay_counter).w
-		cmp.w	#$C8,(Camera_Y_pos_bias).w
-		beq.s	Obj_Knuckles_UpdateSpeedOnGround
-		addq.w	#2,(Camera_Y_pos_bias).w
-		bra.s	Obj_Knuckles_UpdateSpeedOnGround
-; ---------------------------------------------------------------------------
-
-Knuckles_Duck:
-		btst	#button_down,(Ctrl_1_Held_Logical).w
-		beq.s	Obj_Knuckles_ResetScreen
-		move.b	#AniIDSonAni_Duck,anim(a0)
-		addq.w	#1,(Sonic_Look_delay_counter).w
-		cmp.w	#$78,(Sonic_Look_delay_counter).w
-		bcs.s	Obj_Knuckles_ResetScreen_Part2
-		move.w	#$78,(Sonic_Look_delay_counter).w
-		cmp.w	#8,(Camera_Y_pos_bias).w
-		beq.s	Obj_Knuckles_UpdateSpeedOnGround
-		subq.w	#2,(Camera_Y_pos_bias).w
-		bra.s	Obj_Knuckles_UpdateSpeedOnGround
-; ---------------------------------------------------------------------------
-
-Obj_Knuckles_ResetScreen:
-		move.w	#0,(Sonic_Look_delay_counter).w
-
-Obj_Knuckles_ResetScreen_Part2:
-		cmp.w	#$60,(Camera_Y_pos_bias).w
-		beq.s	Obj_Knuckles_UpdateSpeedOnGround
-		bcc.s	loc_315FCE
-		addq.w	#4,(Camera_Y_pos_bias).w
-
-loc_315FCE:
-		subq.w	#2,(Camera_Y_pos_bias).w
-
-Obj_Knuckles_UpdateSpeedOnGround:
-		tst.b	(Super_Sonic_flag).w
-		beq.s	loc_315FDC
-		move.w	#$C,d5
-
-loc_315FDC:
-		move.b	(Ctrl_1_Held_Logical).w,d0
-		and.b	#button_left_mask|button_right_mask,d0
-		bne.s	Obj_Knuckles_Traction
-		move.w	inertia(a0),d0
-		beq.s	Obj_Knuckles_Traction
-		bmi.s	Obj_Knuckles_SettleLeft
-		sub.w	d5,d0
-		bcc.s	loc_315FF6
-		move.w	#0,d0
-
-loc_315FF6:
-		move.w	d0,inertia(a0)
-		bra.s	Obj_Knuckles_Traction
-; ---------------------------------------------------------------------------
-
-Obj_Knuckles_SettleLeft:
-		add.w	d5,d0
-		bcc.s	loc_316004
-		move.w	#0,d0
-
-loc_316004:
-		move.w	d0,inertia(a0)
-
-Obj_Knuckles_Traction:
-		move.b	angle(a0),d0
-		jsr	CalcSine
-		muls.w	inertia(a0),d1
-		asr.l	#8,d1
-		move.w	d1,x_vel(a0)
-		muls.w	inertia(a0),d0
-		asr.l	#8,d0
-		move.w	d0,y_vel(a0)
-
-Obj_Knuckles_CheckWallsOnGround:
-		move.b	angle(a0),d0
-		add.b	#$40,d0
-		bmi.s	return_3160A6
-		move.b	#$40,d1
-		tst.w	inertia(a0)
-		beq.s	return_3160A6
-		bmi.s	loc_31603E
-		neg.w	d1
-
-loc_31603E:
-		move.b	angle(a0),d0
-		add.b	d1,d0
-		move.w	d0,-(sp)
-		jsr	CalcRoomInFront		  ; Also known as Sonic_WalkSpeed in Sonic 1
-		move.w	(sp)+,d0
-		tst.w	d1
-		bpl.s	return_3160A6
-		asl.w	#8,d1
-		add.b	#$20,d0
-		and.b	#$C0,d0
-		beq.s	loc_3160A2
-		cmp.b	#$40,d0
-		beq.s	loc_316088
-		cmp.b	#$80,d0
-		beq.s	loc_316082
-		add.w	d1,x_vel(a0)
-		move.w	#0,inertia(a0)
-		btst	#0,status(a0)
-		bne.s	return_316080
-		bset	#5,status(a0)
-
-return_316080:
-		rts
-; ---------------------------------------------------------------------------
-
-loc_316082:
-		sub.w	d1,y_vel(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-loc_316088:
-		sub.w	d1,x_vel(a0)
-		move.w	#0,inertia(a0)
-		btst	#0,status(a0)
-		beq.s	return_316080
-		bset	#5,status(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-loc_3160A2:
-		add.w	d1,y_vel(a0)
-
-return_3160A6:
-		rts
-; End of function Knuckles_Move
-
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_MoveLeft:
-		move.w	inertia(a0),d0
-		beq.s	loc_3160B0
-		bpl.s	Knuckles_TurnLeft
-
-loc_3160B0:
-		bset	#0,status(a0)
-		bne.s	loc_3160C4
-		bclr	#5,status(a0)
-		move.b	#1,next_anim(a0)
-
-loc_3160C4:
-		sub.w	d5,d0
-		move.w	d6,d1
-		neg.w	d1
-		cmp.w	d1,d0
-		bgt.s	loc_3160D6
-		add.w	d5,d0
-		cmp.w	d1,d0
-		ble.s	loc_3160D6
-		move.w	d1,d0
-
-loc_3160D6:
-		move.w	d0,inertia(a0)
-		move.b	#AniIDSonAni_Walk,anim(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_TurnLeft:
-		sub.w	d4,d0
-		bcc.s	loc_3160EA
-		move.w	#-$80,d0
-
-loc_3160EA:
-		move.w	d0,inertia(a0)
-		move.b	angle(a0),d1
-		add.b	#$20,d1
-		and.b	#$C0,d1
-		bne.s	return_31612C
-		cmp.w	#$400,d0
-		blt.s	return_31612C
-		move.b	#AniIDSonAni_Stop,anim(a0)
-		bclr	#0,status(a0)
-		sfx	sfx_Skid
-		cmp.b	#$C,air_left(a0)
-		bcs.s	return_31612C
-		move.b	#6,(Sonic_Dust+routine).w
-		move.b	#$15,(Sonic_Dust+mapping_frame).w
-
-return_31612C:
-		rts
-; End of function Knuckles_MoveLeft
-
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_MoveRight:
-		move.w	inertia(a0),d0
-		bmi.s	Knuckles_TurnRight
-		bclr	#0,status(a0)
-		beq.s	loc_316148
-		bclr	#5,status(a0)
-		move.b	#1,next_anim(a0)
-
-loc_316148:
-		add.w	d5,d0
-		cmp.w	d6,d0
-		blt.s	loc_316156
-		sub.w	d5,d0
-		cmp.w	d6,d0
-		bge.s	loc_316156
-		move.w	d6,d0
-
-loc_316156:
-		move.w	d0,inertia(a0)
-		move.b	#AniIDSonAni_Walk,anim(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_TurnRight:
-		add.w	d4,d0
-		bcc.s	loc_31616A
-		move.w	#$80,d0
-
-loc_31616A:
-		move.w	d0,inertia(a0)
-		move.b	angle(a0),d1
-		add.b	#$20,d1
-		and.b	#$C0,d1
-		bne.s	return_3161AC
-		cmp.w	#$FC00,d0
-		bgt.s	return_3161AC
-		move.b	#AniIDSonAni_Stop,anim(a0)
-		bset	#0,status(a0)
-		sfx	sfx_Skid
-		cmp.b	#$C,air_left(a0)
-		bcs.s	return_3161AC
-		move.b	#6,(Sonic_Dust+routine).w
-		move.b	#$15,(Sonic_Dust+mapping_frame).w
-
-return_3161AC:
-		rts
-; End of function Knuckles_MoveRight
-
-; ---------------------------------------------------------------------------
-; Subroutine for moving	Knuckles left or right when he's in the air
-; ---------------------------------------------------------------------------
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_ChgJumpDir:
-		move.w	(Sonic_top_speed).w,d6
-		move.w	(Sonic_acceleration).w,d5
-		asl.w	#1,d5
-		btst	#4,status(a0)
-		bne.s	Obj_Knuckles_Jump_ResetScreen
-		move.w	x_vel(a0),d0
-		btst	#button_left,(Ctrl_1_Held_Logical).w
-		beq.s	loc_31630E
-
-		bset	#0,status(a0)
-		sub.w	d5,d0
-		move.w	d6,d1
-		neg.w	d1
-		cmp.w	d1,d0
-		bgt.s	loc_31630E
-		tst.w	(Demo_mode_flag).w
-		bne.w	loc_31630C
-		add.w	d5,d0
-		cmp.w	d1,d0
-		ble.s	loc_31630E
-
-loc_31630C:
-		move.w	d1,d0
-
-loc_31630E:
-		btst	#button_right,(Ctrl_1_Held_Logical).w
-		beq.s	loc_316332
-		bclr	#0,status(a0)
-		add.w	d5,d0
-		cmp.w	d6,d0
-		blt.s	loc_316332
-		tst.w	(Demo_mode_flag).w
-		bne.w	loc_316330
-		sub.w	d5,d0
-		cmp.w	d6,d0
-		bge.s	loc_316332
-
-loc_316330:
-		move.w	d6,d0
-
-loc_316332:
-		move.w	d0,x_vel(a0)
-
-Obj_Knuckles_Jump_ResetScreen:
-		cmp.w	#$60,(Camera_Y_pos_bias).w
-		beq.s	Knuckles_JumpPeakDecelerate
-		bcc.s	loc_316344
-		addq.w	#4,(Camera_Y_pos_bias).w
-
-loc_316344:
-		subq.w	#2,(Camera_Y_pos_bias).w
-
-Knuckles_JumpPeakDecelerate:
-		cmp.w	#-$400,y_vel(a0)
-		bcs.s	return_316376
-		move.w	x_vel(a0),d0
-		move.w	d0,d1
-		asr.w	#5,d1
-		beq.s	return_316376
-		bmi.s	Knuckles_JumpPeakDecelerateLeft
-		sub.w	d1,d0
-		bcc.s	loc_316364
-		move.w	#0,d0
-
-loc_316364:
-		move.w	d0,x_vel(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_JumpPeakDecelerateLeft:
-		sub.w	d1,d0
-		bcs.s	loc_316372
-		move.w	#0,d0
-
-loc_316372:
-		move.w	d0,x_vel(a0)
-
-return_316376:
-		rts
-; End of function Knuckles_ChgJumpDir
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -1423,41 +975,6 @@ Knuckles_RollJump:
 		bset	#4,status(a0)
 		rts
 ; End of function Knuckles_Jump
-
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_JumpHeight:
-		tst.b	jumping(a0)
-		beq.s	Knuckles_UpwardsVelocityCap
-		move.w	#-$400,d1
-		btst	#6,status(a0)
-		beq.s	loc_31650C
-		move.w	#-$200,d1
-
-loc_31650C:
-		cmp.w	y_vel(a0),d1
-		ble.w	Knuckles_CheckGlide	  ; Check if Knuckles should begin a glide
-		move.b	(Ctrl_1_Held_Logical).w,d0
-		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
-		bne.s	return_316522
-		move.w	d1,y_vel(a0)
-
-return_316522:
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_UpwardsVelocityCap:
-		tst.b	pinball_mode(a0)
-		bne.s	return_316538
-		cmp.w	#-$FC0,y_vel(a0)
-		bge.s	return_316538
-		move.w	#-$FC0,y_vel(a0)
-
-return_316538:
-		rts
-; ---------------------------------------------------------------------------
 
 Knuckles_CheckGlide:
 		tst.w	(Demo_mode_flag).w		  ; Don't glide on demos
@@ -1880,10 +1397,15 @@ return_316CD4:
 
 
 Knuckles_ResetOnFloor:
+		jsr		ResetEmotion
 		tst.b	pinball_mode(a0)
 		bne.s	Knuckles_ResetOnFloor_Part3
+		tst.b	(Victory_flag).w ; Has the victory animation flag been set?
+		beq.s	.normalJump	; if not, branch
+		move.b	#AniIDSonAni_Victory,anim(a0) ; play it
+		bra.s	Knuckles_ResetOnFloor_Part2
+	.normalJump:
 		move.b	#AniIDSonAni_Walk,anim(a0)
-; End of function Knuckles_ResetOnFloor
 
 
 ; =============== S U B	R O U T	I N E =======================================

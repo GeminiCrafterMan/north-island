@@ -40,6 +40,10 @@ KnucklesAniData:
 		dc.w KnucklesAni_GetUp-KnucklesAniData;	34
 		dc.w KnucklesAni_HardFall-KnucklesAniData; 35
 		dc.w KnucklesAni_Badass-KnucklesAniData; 36
+		dc.w KnucklesAni_AirRoll-KnucklesAniData
+		dc.w KnucklesAni_Fall-KnucklesAniData
+		dc.w KnucklesAni_Victory-KnucklesAniData
+
 KnucklesAni_Walk:dc.b $FF,  frK_Walk17,	frK_Walk18,  frK_Walk11,	frK_Walk12,  frK_Walk13,	frK_Walk14,  frK_Walk15,	frK_Walk16,afEnd
 	rev02even
 KnucklesAni_Run:dc.b $FF,frK_Run11,frK_Run12,frK_Run13,frK_Run14,afEnd,afEnd,afEnd,afEnd,afEnd
@@ -128,8 +132,14 @@ KnucklesAni_Badass:dc.b	  5,frK_Idle6,frK_Idle7,frK_Idle8,frK_Idle9,frK_Idle6,fr
 	rev02even
 KnucklesAni_Transform:dc.b   2,frK_Transf1,frK_Transf1,frK_Transf2,frK_Transf3,frK_Transf4,frK_Transf3,frK_Transf4,frK_Transf3,frK_Transf4,frK_Transf3,frK_Transf2, afChange,  0
 	rev02even
-KnucklesAni_Dummy:dc.b	  $7F, frK_PHold, afEnd
+KnucklesAni_AirRoll:	dc.b 2, frK_AirRol1, frK_AirRol2, frK_AirRol3, afChange, 2
 	rev02even
+KnucklesAni_Fall:		dc.b 2, frK_Fall1, frK_Fall2, afBack, 1
+	rev02even
+KnucklesAni_Victory:	dc.b 5,	frK_Win1, frK_Win2, frK_Win2, frK_Win2, frK_Win3, frK_Win4, afBack, 1
+	rev02even
+KnucklesAni_Dummy:dc.b	  $7F, frK_PHold, afEnd
+	even
 
 ; Frame IDs
 	phase 0 ; Reset ds.b value to 0
@@ -194,6 +204,8 @@ frK_Slide	ds.b 1
 frK_Hurt	ds.b 1
 ; boing
 frK_Spring	ds.b 1
+frK_Fall1	ds.b 1
+frK_Fall2	ds.b 1
 ; hang from vine/wfz thing
 frK_Hang1	ds.b 1
 frK_Hang2	ds.b 1
@@ -281,5 +293,9 @@ frK_PHold	ds.b 1
 ; climb down
 frK_ClimbD1	ds.b 1
 frK_ClimbD2	ds.b 1
+; air roll
+frK_AirRol1	ds.b 1
+frK_AirRol2 ds.b 1
+frK_AirRol3 ds.b 1
 	even
 	dephase

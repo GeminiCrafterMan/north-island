@@ -3917,6 +3917,8 @@ Level_TtlCard:
 	move.b	#1,(Control_Locked).w
 	move.b	#1,(Control_Locked_P2).w
 	move.b	#0,(Level_started_flag).w
+	move.b	#0,(Victory_flag).w
+	jsr		ResetEmotion
 ; Level_ChkWater:
 	tst.b	(Water_flag).w	; does level have water?
 	beq.s	+	; if not, branch
@@ -4057,7 +4059,6 @@ Level_MainLoop:
 	bsr.w	RunPLC_RAM
 	bsr.w	OscillateNumDo
 	bsr.w	ChangeRingFrame
-	bsr.w	CheckLoadSignpostArt
 	jsr	(BuildSprites).l
 	jsr	(ObjectsManager).l
 	cmpi.b	#GameModeID_Demo,(Game_Mode).w	; check if in demo mode
@@ -5004,30 +5005,6 @@ LevelEnd_SetSignpost:
 	move.w	#1,(Level_Has_Signpost).w	; set level type to signpost
 +	rts
 ; End of function SetLevelEndType
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; sub_4C48:
-CheckLoadSignpostArt:
-	tst.w	(Level_Has_Signpost).w
-	beq.s	+	; rts
-	tst.w	(Debug_placement_mode).w
-	bne.s	+	; rts
-	move.w	(Camera_X_pos).w,d0
-	move.w	(Camera_Max_X_pos).w,d1
-	subi.w	#$100,d1
-	cmp.w	d1,d0
-	blt.s	+
-	tst.b	(Update_HUD_timer).w
-	beq.s	+
-	cmp.w	(Camera_Min_X_pos).w,d1
-	beq.s	+
-	move.w	d1,(Camera_Min_X_pos).w ; prevent camera from scrolling back to the left
-	moveq	#PLCID_Signpost,d0 ; <== PLC_1F
-	bra.w	LoadPLC2		; load signpost art
-+	rts
-; End of function CheckLoadSignpostArt
 
 ; ===========================================================================
 ; macro to simplify editing the demo scripts
@@ -28735,7 +28712,7 @@ word_19194:
 ; OST:
 Obj_Signpost_spinframe		= objoff_30 ; $30(a0)
 Obj_Signpost_sparkleframe	= objoff_34 ; $34(a0)
-Obj_Signpost_finalanim		= objoff_36 ; $36(a0) ; 4 if Tails only, 3 otherwise (determines what character to show)
+Obj_Signpost_finalanim		= objoff_36 ; $36(a0)
 ; ----------------------------------------------------------------------------
 
 Obj_Signpost:
@@ -28744,6 +28721,7 @@ Obj_Signpost:
 	move.w	Obj_Signpost_Index(pc,d0.w),d1
 	jsr	Obj_Signpost_Index(pc,d1.w)
 	lea	(Ani_Obj_Signpost).l,a1
+	move.b	#-1,(Signpost_prev_frame).w
 	bsr.w	AnimateSprite
 	bsr.w	PLCLoad_Signpost
 	bra.w	MarkObjGone
@@ -28763,7 +28741,7 @@ Obj_Signpost_Init:
 	rts
 ; ---------------------------------------------------------------------------
 loc_1921E:
-	move.l	#Obj_Signpost_MapUnc_195BE,mappings(a0)
+	move.l	#MapUnc_Obj_Signpost,mappings(a0)
 	move.w	#make_art_tile(ArtTile_ArtNem_Signpost,0,0),art_tile(a0)
 
 loc_1922C:
@@ -28776,14 +28754,15 @@ loc_1922C:
 ; loc_1924C: Obj_0D_sub_2:
 Obj_Signpost_Main:
 	tst.b	(Update_HUD_timer).w
-	beq.w	loc_19350
+	beq.w	Sign_Part2
 	lea	(MainCharacter).w,a1 ; a1=character
 	move.w	x_pos(a1),d0
 	sub.w	x_pos(a0),d0
-	bcs.w	loc_19350
+	bcs.w	Sign_Part2
 	cmpi.w	#$20,d0
-	bhs.w	loc_19350
+	bhs.w	Sign_Part2
 	sfx	sfx_Signpost	; play spinning sound
+
 	clr.b	(Update_HUD_timer).w
 	move.w	#1,anim(a0)
 	move.w	#0,Obj_Signpost_spinframe(a0)
@@ -28796,13 +28775,17 @@ Obj_Signpost_Main:
 
 loc_192A0:
 	tst.b	Obj_Signpost_finalanim(a0)
-	bne.w	loc_19350
+	bne.w	Sign_Part2
 	move.b	#3,Obj_Signpost_finalanim(a0)
-	cmpi.w	#2,(Player_mode).w
-	bne.s	loc_19350
+	cmpi.l	#Obj_Tails,(MainCharacter+id).w
+	bne.s	.notTails
 	move.b	#4,Obj_Signpost_finalanim(a0)
+.notTails:
+	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
+	bne.s	Sign_Part2
+	move.b	#5,Obj_Signpost_finalanim(a0)
 
-loc_19350:
+Sign_Part2:
 	moveq	#0,d0
 	move.b	routine_secondary(a0),d0
 	move.w	Obj_Signpost_Main_States(pc,d0.w),d1
@@ -28818,17 +28801,17 @@ Obj_Signpost_Main_StateNull:
 	rts
 ; ===========================================================================
 ; loc_19368:
-Obj_Signpost_Main_State2:
+Obj_Signpost_Main_State2:	; Sign_Spin
 	subq.w	#1,Obj_Signpost_spinframe(a0)
-	bpl.s	loc_19398
+	bpl.s	.chkSparkle
 	move.w	#$3C,Obj_Signpost_spinframe(a0)
 	addq.b	#1,anim(a0)
 	cmpi.b	#3,anim(a0)
-	bne.s	loc_19398
+	bne.s	.chkSparkle
 	move.b	#4,routine_secondary(a0) ; => Obj_Signpost_Main_State3
 	move.b	Obj_Signpost_finalanim(a0),anim(a0)
 
-loc_19398:
+.chkSparkle:
 	subq.w	#1,objoff_32(a0)
 	bpl.s	return_19406
 	move.w	#$B,objoff_32(a0)
@@ -28870,22 +28853,9 @@ Obj_Signpost_RingSparklePositions:
 	dc.b  24, 16	; 15
 ; ===========================================================================
 ; loc_19418:
-Obj_Signpost_Main_State3:
+Obj_Signpost_Main_State3:	; Sign_SonicRun
 	tst.w	(Debug_placement_mode).w
 	bne.w	return_194D0
-	btst	#1,(MainCharacter+status).w
-	bne.s	loc_19434
-	move.b	#1,(Control_Locked).w
-	move.w	#(button_right_mask<<8)|0,(Ctrl_1_Logical).w
-loc_19434:
-	; This check here is for S1's Big Ring, which would set Sonic's Object ID to 0
-	tst.l	(MainCharacter+id).w
-	beq.s	loc_1944C
-	move.w	(MainCharacter+x_pos).w,d0
-	move.w	(Camera_Max_X_pos).w,d1
-	addi.w	#$128,d1
-	cmp.w	d1,d0
-	blo.w	return_194D0
 
 loc_1944C:
 	move.b	#0,routine_secondary(a0) ; => Obj_Signpost_Main_StateNull
@@ -28923,8 +28893,12 @@ Load_EndOfAct:
 	add.w	d0,d0
 	move.w	TimeBonuses(pc,d0.w),(Bonus_Countdown_1).w
 	move.w	(Ring_count).w,d0
-	mulu.w	#$A,d0
+	mulu.w	#10,d0
 	move.w	d0,(Bonus_Countdown_2).w
+	move.b	#1,(Victory_flag).w
+	move.b	#emotion_happy,(Current_emotion).w
+	move.b	#1,(Control_Locked).w
+	move.w	#0,(Ctrl_1_Logical).w	; Stop.
 	clr.w	(Total_Bonus_Countdown).w
 	clr.w	(Bonus_Countdown_3).w
 	tst.w	(Perfect_rings_left).w
@@ -28932,6 +28906,7 @@ Load_EndOfAct:
 	move.w	#5000,(Bonus_Countdown_3).w
 +
 	music	mus_GotThroughAct
+	move.b	
 
 return_194D0:
 	rts
@@ -28943,41 +28918,84 @@ TimeBonuses:
 	dc.w   50,   50,   50,  50,   0
 ; ===========================================================================
 
-PLCLoad_Signpost:	; You bet your ass I'll be using this later. Copy it from vanilla.
-	rts
+PLCLoad_Signpost:
+		moveq	#0,d0
+		move.b	mapping_frame(a0),d0	; load frame number
+
+PLCLoad_Signpost_Part2:
+		cmp.b	(Signpost_prev_frame).w,d0
+		beq.s	.nochange
+		move.b	d0,(Signpost_prev_frame).w
+		lea	(MapRUnc_Obj_Signpost).l,a2
+	.cont:
+		add.w	d0,d0
+		adda.w	(a2,d0.w),a2
+		move.w	(a2)+,d5
+		subq.w	#1,d5
+		bmi.s	.nochange
+		move.w	#tiles_to_bytes(ArtTile_ArtNem_Signpost),d4	; Temporary
+		move.l	#ArtUnc_Signpost,d6
+
+	.readentry:
+		moveq	#0,d1
+		move.w	(a2)+,d1
+		move.w	d1,d3
+		lsr.w	#8,d3
+		andi.w	#$F0,d3
+		addi.w	#$10,d3
+		andi.w	#$FFF,d1
+		lsl.l	#5,d1
+		add.l	d6,d1
+		move.w	d4,d2
+		add.w	d3,d4
+		add.w	d3,d4
+		jsr	(QueueDMATransfer).l
+		dbf	d5,.readentry	; repeat for number of entries
+
+	.nochange:
+		rts
+; End of function PLCLoad_Signpost
 ; ===========================================================================
 ; animation script
 ; off_1958E:
 Ani_Obj_Signpost:	offsetTable
-		offsetTableEntry.w byte_19598	; 0
-		offsetTableEntry.w byte_1959B	; 1
-		offsetTableEntry.w byte_195A9	; 2
-		offsetTableEntry.w byte_195B7	; 3
-		offsetTableEntry.w byte_195BA	; 4
-byte_19598:	dc.b	$0F, $02, $FF
+		offsetTableEntry.w .eggman		; 0
+		offsetTableEntry.w .spin		; 1
+		offsetTableEntry.w .spin		; 2
+		offsetTableEntry.w .sonic		; 3
+		offsetTableEntry.w .tails		; 4
+		offsetTableEntry.w .knuckles	; 5
+
+.eggman:	dc.b	$F, .fr_eggman, afEnd
 	rev02even
-byte_1959B:	dc.b	$01, $02, $03, $04, $05, $01, $03, $04, $05, $00, $03, $04, $05, $FF
+.spin:		dc.b	$1, .fr_eggman, .fr_spin1, .fr_spin2, .fr_spin3, .fr_tails, .fr_spin1, .fr_spin2, .fr_spin3, .fr_sonic, .fr_spin1, .fr_spin2, .fr_spin3, afEnd
 	rev02even
-byte_195A9:	dc.b	$01, $02, $03, $04, $05, $01, $03, $04, $05, $00, $03, $04, $05, $FF
+.sonic:		dc.b	$F, .fr_sonic, afEnd
 	rev02even
-byte_195B7:	dc.b	$0F, $00, $FF
+.tails:		dc.b	$F, .fr_tails, afEnd
 	rev02even
-byte_195BA:	dc.b	$0F, $01, $FF
+.knuckles:	dc.b	$F, .fr_knux,  afEnd
 	even
+
+; frame IDs
+	phase 0
+.fr_eggman	ds.b 1
+.fr_spin1	ds.b 1
+.fr_spin2	ds.b 1
+.fr_spin3	ds.b 1
+.fr_sonic	ds.b 1
+.fr_tails	ds.b 1
+.fr_knux	ds.b 1
+	even
+	dephase
 ; -------------------------------------------------------------------------------
-; sprite mappings - Primary sprite table for object 0D (signpost)
+; sprite mappings - object 0D (signpost)
 ; -------------------------------------------------------------------------------
-; SprTbl_0D_Primary:
-Obj_Signpost_MapUnc_195BE:	BINCLUDE "mappings/sprite/Obj_Signpost_a.bin"
-; -------------------------------------------------------------------------------
-; sprite mappings - Secondary sprite table for object 0D (signpost)
-; -------------------------------------------------------------------------------
-; SprTbl_0D_Scndary:
-Obj_Signpost_MapUnc_19656:	BINCLUDE "mappings/sprite/Obj_Signpost_b.bin"
+MapUnc_Obj_Signpost:	BINCLUDE "mappings/sprite/Obj_Signpost.bin"
 ; -------------------------------------------------------------------------------
 ; dynamic pattern loading cues
 ; -------------------------------------------------------------------------------
-Obj_Signpost_MapRUnc_196EE:	BINCLUDE "mappings/spriteDPLC/Obj_Signpost.bin"
+MapRUnc_Obj_Signpost:	BINCLUDE "mappings/spriteDPLC/Obj_Signpost.bin"
 ; ===========================================================================
 
     if gameRevision<2
@@ -29959,8 +29977,19 @@ loc_19F4C:
 	moveq	#0,d4
 	rts
 
-
-
+ResetEmotion:
+	moveq	#emotion_neutral,d0
+	tst.b	(Super_Sonic_flag).w
+	beq.s	.notSuper
+	moveq	#emotion_super,d0
+	bra.s	.notVictory
+.notSuper:
+	tst.b	(Victory_flag).w
+	beq.s	.notVictory
+	moveq	#emotion_happy,d0
+.notVictory:
+	move.b	d0,(Current_emotion).w
+	rts
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -30379,7 +30408,7 @@ Obj_Sonic_NotLeft:
 	beq.s	Obj_Sonic_NotRight			; if not, branch
 	bsr.w	Sonic_MoveRight
 ; loc_1A38E:
-Obj_Sonic_NotRight:
+Obj_Sonic_NotRight:	; @notkyuko in SHIMA
 	move.b	angle(a0),d0
 	addi.b	#$20,d0
 	andi.b	#$C0,d0		; is Sonic on a slope?
@@ -30387,9 +30416,15 @@ Obj_Sonic_NotRight:
 	tst.w	inertia(a0)	; is Sonic moving?
 	bne.w	Obj_Sonic_ResetScr	; if yes, branch
 	bclr	#5,status(a0)
+	tst.b	(Victory_flag).w
+	beq.s	.normal
+	move.b	#AniIDSonAni_Victory,anim(a0)
+	rts
+.normal:
 	move.b	#AniIDSonAni_Wait,anim(a0)	; use "standing" animation
 	btst	#3,status(a0)
 	beq.w	Sonic_Balance
+.cont:
 	moveq	#0,d0
 	move.w	interact(a0),a1
 	tst.b	status(a1)
@@ -31169,7 +31204,13 @@ SonicKnux_AirRoll:
 	btst	#1,status(a0)	; is Sonic in the air?
 	beq.s	.nope	; if not, branch
 	move.b	(Ctrl_1_Held_Logical).w,d0
+	tst.b	(Debug_mode_flag).w
+	beq.s	.notDebug
+	andi.b	#button_C_mask|button_A_mask,d0 ; is a jump button pressed?
+	bra.s	.debugDone
+.notDebug:
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0 ; is a jump button pressed?
+.debugDone:
 	beq.s	.nope	; if not, branch
 	move.b	#AniIDSonAni_AirRoll,anim(a0)	; use "rolling"	animation
 	bset	#2,status(a0)	; force Sonic to roll
@@ -31183,7 +31224,13 @@ Tails_AirRoll:
 	btst	#1,status(a0)	; is Tails in the air?
 	beq.s	.nope	; if not, branch
 	move.b	(Ctrl_2_Held_Logical).w,d0
+	tst.b	(Debug_mode_flag).w
+	beq.s	.notDebug
+	andi.b	#button_C_mask|button_A_mask,d0 ; is a jump button pressed?
+	bra.s	.debugDone
+.notDebug:
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0 ; is a jump button pressed?
+.debugDone:
 	beq.s	.nope	; if not, branch
 	move.b	#AniIDTailsAni_AirRoll,anim(a0)	; use "rolling"	animation
 	bset	#2,status(a0)	; force Tails to roll
@@ -31204,7 +31251,7 @@ Tails_AirRoll:
 ; loc_1AAF0:
 Sonic_JumpHeight:
 	tst.b	jumping(a0)	; is Sonic jumping?
-	beq.s	Sonic_UpVelCap	; if not, branch
+	beq.w	Sonic_UpVelCap	; if not, branch
 
 	move.w	#-$400,d1
 	btst	#6,status(a0)	; is Sonic underwater?
@@ -31217,9 +31264,19 @@ Sonic_JumpHeight:
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0 ; is a jump button pressed?
 	bne.s	+		; if yes, branch
 	move.w	d1,y_vel(a0)	; immediately reduce Sonic's upward speed to d1
-+
-	tst.b	y_vel(a0)		; is Sonic exactly at the height of his jump?
-	beq.s	Sonic_CheckGoSuper	; if yes, test for turning into Super Sonic
++	; put shima-esque thingy here, it's a LUT
+	tst.b	move_lock(a0)
+	bne.w	return_1AB36
+
+DoubleJumpMoves:
+	; Okay, I was GOING to make a LUT, but then I realized that that doesn't work here!!
+	cmpi.l	#Obj_Sonic,id(a0)
+	jeq		Sonic_CheckGoSuper	; Sonic_DJMoves
+;	cmpi.l	#Obj_Tails,id(a0)
+;	jeq		Tails_CheckFlight	; Nonexistent!
+	cmpi.l	#Obj_Knuckles,id(a0)
+	jeq		Knuckles_CheckGlide
+.ret:
 	rts
 ; ---------------------------------------------------------------------------
 ; loc_1AB22:
@@ -31852,8 +31909,14 @@ return_1B09E:
 
 ; loc_1B0A0:
 Sonic_ResetOnFloor:
+	jsr		ResetEmotion
 	tst.b	pinball_mode(a0)
 	bne.s	Sonic_ResetOnFloor_Part3
+	tst.b	(Victory_flag).w ; Has the victory animation flag been set?
+	beq.s	.normalJump	; if not, branch
+	move.b	#AniIDSonAni_Victory,anim(a0) ; play it
+	bra.s	Sonic_ResetOnFloor_Part2
+.normalJump:
 	move.b	#AniIDSonAni_Walk,anim(a0)
 ; loc_1B0AC:
 Sonic_ResetOnFloor_Part2:
@@ -33233,9 +33296,15 @@ Obj_Tails_NotRight:
 	tst.w	inertia(a0)	; is Tails moving?
 	bne.w	Obj_Tails_ResetScr	; if yes, branch
 	bclr	#5,status(a0)
+	tst.b	(Victory_flag).w
+	beq.s	.normal
+	move.b	#AniIDTailsAni_Victory,anim(a0)
+	rts
+.normal:
 	move.b	#AniIDTailsAni_Wait,anim(a0)	; use "standing" animation
 	btst	#3,status(a0)
 	beq.s	Tails_Balance
+.cont:
 	moveq	#0,d0
 	move.w	interact(a0),a1
 	tst.b	status(a1)
@@ -34413,8 +34482,14 @@ return_1CB4E:
 
 ; loc_1CB50:
 Tails_ResetOnFloor:
+	jsr		ResetEmotion
 	tst.b	pinball_mode(a0)
 	bne.s	Tails_ResetOnFloor_Part3
+	tst.b	(Victory_flag).w ; Has the victory animation flag been set?
+	beq.s	.normalJump	; if not, branch
+	move.b	#AniIDTailsAni_Victory,anim(a0) ; play it
+	bra.s	Tails_ResetOnFloor_Part2
+.normalJump:
 	move.b	#AniIDTailsAni_Walk,anim(a0)
 ; loc_1CB5C:
 Tails_ResetOnFloor_Part2:
@@ -35120,8 +35195,10 @@ Obj_TailsTailsAniSelection:
 	dc.b	0,0	; TailsAni_Dummy4,5	->
 	dc.b	0	; TailsAni_HaulAss	->
 	dc.b	0	; TailsAni_Fly		->
+	dc.b	0,0,0,0	; four dummy animations
 	dc.b	3	; TailsAni_AirRoll	-> Directional
 	dc.b	0	; TailsAni_Fall		-> Nothing
+	dc.b	0	; TailsAni_Victory	-> nothing
 	even
 
 	include	"animations/Tails's Tails.asm"
@@ -78114,6 +78191,7 @@ loc_3F88C:
 	bne.s	Hurt_Shield
 	tst.w	d0
 	beq.w	KillCharacter
+	move.b	#emotion_angry,(Current_emotion).w
 	jsr	(SingleObjLoad).l
 	bne.s	Hurt_Shield
 	_move.l	#Obj_LostRings,id(a1) ; load obj
@@ -78169,6 +78247,7 @@ Hurt_Sound:
 
 ; loc_3F926: KillSonic:
 KillCharacter:
+	move.b	#emotion_sad,(Current_emotion).w
 	tst.w	(Debug_placement_mode).w
 	bne.s	++
 	clr.b	status_secondary(a0)
@@ -81596,7 +81675,6 @@ PLCptr_Arz2:		offsetTableEntry.w PlrList_Arz2			; 35
 PLCptr_Scz1:		offsetTableEntry.w PlrList_Scz1			; 36
 PLCptr_Scz2:		offsetTableEntry.w PlrList_Scz2			; 37
 PLCptr_Results:		offsetTableEntry.w PlrList_Results		; 38
-PLCptr_Signpost:	offsetTableEntry.w PlrList_Signpost		; 39
 PLCptr_CpzBoss:		offsetTableEntry.w PlrList_CpzBoss		; 40
 PLCptr_EhzBoss:		offsetTableEntry.w PlrList_EhzBoss		; 41
 PLCptr_HtzBoss:		offsetTableEntry.w PlrList_HtzBoss		; 42
@@ -82017,13 +82095,6 @@ PlrList_Results: plrlistheader
 	plreq ArtTile_ArtNem_MiniCharacter, ArtNem_MiniSonic
 	plreq ArtTile_ArtNem_Perfect, ArtNem_Perfect
 PlrList_Results_End
-;---------------------------------------------------------------------------------------
-; Pattern load queue
-; End of level signpost
-;---------------------------------------------------------------------------------------
-PlrList_Signpost: plrlistheader
-	plreq ArtTile_ArtNem_Signpost, ArtNem_Signpost
-PlrList_Signpost_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; CPZ Boss
@@ -82716,14 +82787,8 @@ ArtNem_Numbers:	BINCLUDE	"art/nemesis/Numbers.bin"
 	even
 ArtNem_Checkpoint:	BINCLUDE	"art/nemesis/Star pole.bin"
 ;---------------------------------------------------------------------------------------
-; Nemesis compressed art (78 blocks)
-; Signpost		; ArtNem_79BDE:
-	even
-ArtNem_Signpost:	BINCLUDE	"art/nemesis/Signpost.bin"
-;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Signpost		; ArtUnc_7A18A:
-; Yep, it's in the ROM twice: once compressed and once uncompressed
 	even
 ArtUnc_Signpost:	BINCLUDE	"art/uncompressed/Signpost.bin"
 ;---------------------------------------------------------------------------------------

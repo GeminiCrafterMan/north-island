@@ -36,8 +36,13 @@ TailsAni_Dummy4_ptr:	offsetTableEntry.w TailsAni_Dummy	; 29 ; $1D
 TailsAni_Dummy5_ptr:	offsetTableEntry.w TailsAni_Dummy	; 30 ; $1E
 TailsAni_HaulAss_ptr:	offsetTableEntry.w TailsAni_HaulAss	; 31 ; $1F
 TailsAni_Fly_ptr:	offsetTableEntry.w TailsAni_Fly		; 32 ; $20
+						offsetTableEntry.w TailsAni_Dummy
+						offsetTableEntry.w TailsAni_Dummy
+						offsetTableEntry.w TailsAni_Dummy
+						offsetTableEntry.w TailsAni_Dummy
 TailsAni_AirRoll_ptr:	offsetTableEntry.w TailsAni_AirRoll	; 33 ; $21
 TailsAni_Fall_ptr:	offsetTableEntry.w TailsAni_Fall	; 34 ; $22
+TailsAni_Victory_ptr:	offsetTableEntry.w TailsAni_Victory
 
 TailsAni_Walk:	dc.b $FF,frT_Walk13,frT_Walk14,frT_Walk15,frT_Walk16,frT_Walk17,frT_Walk18, frT_Walk11, frT_Walk12,afEnd
 	rev02even
@@ -103,6 +108,8 @@ TailsAni_Fly:		dc.b   1,frT_Fly1,frT_Fly2,afEnd
 TailsAni_AirRoll:	dc.b   1,  frT_AirRoll1,  frT_AirRoll2,  frT_AirRoll3,afChange, 2	; transition to rolling
 	rev02even
 TailsAni_Fall:	dc.b	2,	frT_FallT,	frT_Fall1, frT_Fall2,afBack, 2
+	rev02even
+TailsAni_Victory:	dc.b	4, frT_Win1, frT_Win2, frT_Win3, frT_Win4, frT_Win5, frT_Win6, frT_Win7, frT_Win8, afBack, 1
 	even
 
 ; Frame IDs
@@ -210,5 +217,14 @@ frT_AirRoll3	ds.b 1
 frT_FallT	ds.b 1
 frT_Fall1	ds.b 1
 frT_Fall2	ds.b 1
+; victory
+frT_Win1	ds.b 1
+frT_Win2	ds.b 1
+frT_Win3	ds.b 1
+frT_Win4	ds.b 1
+frT_Win5	ds.b 1
+frT_Win6	ds.b 1
+frT_Win7	ds.b 1
+frT_Win8	ds.b 1
 	even
 	dephase

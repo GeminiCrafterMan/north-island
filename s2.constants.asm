@@ -263,6 +263,17 @@ button_A_mask:			EQU	1<<button_A	; $40
 button_start_mask:		EQU	1<<button_start	; $80
 
 ; ---------------------------------------------------------------------------
+; Emotion Window emotions
+;
+; For use with Current_emotion
+
+emotion_neutral:		EQU 0
+emotion_happy:			EQU 1
+emotion_angry:			EQU 2
+emotion_sad:			EQU 3
+emotion_super:			EQU 4
+
+; ---------------------------------------------------------------------------
 ; Casino night bumpers
 bumper_id           = 0
 bumper_x            = 2
@@ -487,7 +498,6 @@ PLCID_Arz2 =		id(PLCptr_Arz2) ; 23
 PLCID_Scz1 =		id(PLCptr_Scz1) ; 24
 PLCID_Scz2 =		id(PLCptr_Scz2) ; 25
 PLCID_Results =		id(PLCptr_Results) ; 26
-PLCID_Signpost =	id(PLCptr_Signpost) ; 27
 PLCID_CpzBoss =		id(PLCptr_CpzBoss) ; 28
 PLCID_EhzBoss =		id(PLCptr_EhzBoss) ; 29
 PLCID_HtzBoss =		id(PLCptr_HtzBoss) ; 2A
@@ -571,6 +581,7 @@ AniIDSonAni_Lying			= id(SonAni_Lying_ptr)			; 32 ; $20
 AniIDSonAni_LieDown			= id(SonAni_LieDown_ptr)		; 33 ; $21
 AniIDSonAni_AirRoll			= id(SonAni_AirRoll_ptr)		; 34 ; $22
 AniIDSonAni_Fall			= id(SonAni_Fall_ptr)			; 35 ; $23
+AniIDSonAni_Victory			= id(SonAni_Victory_ptr)
 
 
 offset :=	TailsAniData
@@ -612,6 +623,7 @@ AniIDTailsAni_HaulAss		= id(TailsAni_HaulAss_ptr)		; 31 ; $1F
 AniIDTailsAni_Fly			= id(TailsAni_Fly_ptr)			; 32 ; $20
 AniIDTailsAni_AirRoll		= id(TailsAni_AirRoll_ptr)		; 33 ; $21
 AniIDTailsAni_Fall			= id(TailsAni_Fall_ptr)			; 34 ; $22
+AniIDTailsAni_Victory		= id(TailsAni_Victory_ptr)
 
 
 ; Other sizes
@@ -1267,12 +1279,12 @@ LevSel_HoldTimer:		ds.w 1
 Level_select_zone:		ds.w 1
 Sound_test_sound:		ds.w 1
 Title_screen_option:		ds.b 1
-				ds.b 1		; $FFFFFF87 ; unused
+Victory_flag:				ds.b 1
 Current_Zone_2P:		ds.b 1
 Current_Act_2P:			ds.b 1
 Two_player_mode_copy:		ds.w 1
 Options_menu_box:		ds.b 1
-				ds.b 1		; $FFFFFF8D ; unused
+Current_emotion:			ds.b 1
 Total_Bonus_Countdown:		ds.w 1
 
 Level_Music:			ds.w 1

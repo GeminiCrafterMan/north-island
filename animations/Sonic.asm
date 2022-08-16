@@ -37,8 +37,12 @@ SonAni_Balance4_ptr:		offsetTableEntry.w SonAni_Balance4	; 30 ; $1E
 SupSonAni_Transform_ptr:	offsetTableEntry.w SupSonAni_Transform	; 31 ; $1F
 SonAni_Lying_ptr:		offsetTableEntry.w SonAni_Lying		; 32 ; $20
 SonAni_LieDown_ptr:		offsetTableEntry.w SonAni_LieDown	; 33 ; $21
+						offsetTableEntry.w SonAni_Dummy
+						offsetTableEntry.w SonAni_Dummy
+						offsetTableEntry.w SonAni_Dummy
 SonAni_AirRoll_ptr:		offsetTableEntry.w SonAni_AirRoll	; 34 ; $22
 SonAni_Fall_ptr:		offsetTableEntry.w SonAni_Fall	; 34 ; $22
+SonAni_Victory_ptr:		offsetTableEntry.w SonAni_Victory
 
 SonAni_Walk:	dc.b $FF, frS_Walk13,frS_Walk14,frS_Walk15,frS_Walk16,frS_Walk17,frS_Walk18, frS_Walk11, frS_Walk12,afEnd
 	rev02even
@@ -119,6 +123,10 @@ SonAni_LieDown:	dc.b   3,  frS_Idle7,afChange,  0
 SonAni_AirRoll:	dc.b   5,  frS_AirRoll,afChange, 2	; transition to rolling
 	rev02even
 SonAni_Fall:	dc.b	2,	frS_Fall1, frS_Fall2,afEnd
+	rev02even
+SonAni_Victory: dc.b	5,	frS_Win1, frS_Win2, frS_Win3, frS_Win4, afBack, 2
+	rev02even
+SonAni_Dummy:	dc.b	$7F,frS_Derp,afChange,0
 	even
 
 ; ---------------------------------------------------------------------------
@@ -160,8 +168,12 @@ SuperSonicAniData: offsetTable
 	offsetTableEntry.w SupSonAni_Transform	; 31 ; $1F
 	offsetTableEntry.w SonAni_Lying		; 32 ; $20
 	offsetTableEntry.w SonAni_LieDown	; 33 ; $21
+	offsetTableEntry.w SonAni_Dummy
+	offsetTableEntry.w SonAni_Dummy
+	offsetTableEntry.w SonAni_Dummy
 	offsetTableEntry.w SonAni_AirRoll	; 34 ; $22
 	offsetTableEntry.w SupSonAni_Fall	; 34 ; $22
+	offsetTableEntry.w SonAni_Victory
 
 SupSonAni_Stand:	dc.b   7,	frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
 					dc.b		frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
@@ -304,5 +316,10 @@ frS_AirRoll	ds.b 1
 ; Fall
 frS_Fall1	ds.b 1
 frS_Fall2	ds.b 1
+; i win muahaha
+frS_Win1	ds.b 1
+frS_Win2	ds.b 1
+frS_Win3	ds.b 1
+frS_Win4	ds.b 1
 	even
 	dephase
