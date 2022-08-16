@@ -3918,6 +3918,7 @@ Level_TtlCard:
 	move.b	#1,(Control_Locked_P2).w
 	move.b	#0,(Level_started_flag).w
 	move.b	#0,(Victory_flag).w
+	move.b	#0,(Super_Sonic_flag).w
 	jsr		ResetEmotion
 ; Level_ChkWater:
 	tst.b	(Water_flag).w	; does level have water?
@@ -28896,7 +28897,7 @@ Load_EndOfAct:
 	mulu.w	#10,d0
 	move.w	d0,(Bonus_Countdown_2).w
 	move.b	#1,(Victory_flag).w
-	move.b	#emotion_happy,(Current_emotion).w
+	jsr		ResetEmotion
 	move.b	#1,(Control_Locked).w
 	move.w	#0,(Ctrl_1_Logical).w	; Stop.
 	clr.w	(Total_Bonus_Countdown).w
@@ -28906,7 +28907,6 @@ Load_EndOfAct:
 	move.w	#5000,(Bonus_Countdown_3).w
 +
 	music	mus_GotThroughAct
-	move.b	
 
 return_194D0:
 	rts
@@ -29982,12 +29982,23 @@ ResetEmotion:
 	tst.b	(Super_Sonic_flag).w
 	beq.s	.notSuper
 	moveq	#emotion_super,d0
-	bra.s	.notVictory
+	bra.s	.done
 .notSuper:
+	tst.w	(MainCharacter+invulnerable_time).w
+	beq.s	.notAngry
+	moveq	#emotion_angry,d0
+	bra.s	.done
+.notAngry:
+	btst	#status_sec_isInvincible,(MainCharacter+status_secondary).w
+	bne.s	.happy
+	btst	#status_sec_hasSpeedShoes,(MainCharacter+status_secondary).w
+	bne.s	.happy
 	tst.b	(Victory_flag).w
-	beq.s	.notVictory
+	bne.s	.happy
+	bra.s	.done
+.happy:
 	moveq	#emotion_happy,d0
-.notVictory:
+.done:
 	move.b	d0,(Current_emotion).w
 	rts
 
@@ -31345,6 +31356,8 @@ Sonic_Super:
 	bne.w	return_1AC3C
 	tst.b	(Super_Sonic_flag).w	; Ignore all this code if not Super Sonic
 	beq.w	return_1AC3C
+	cmpi.b	#6,(MainCharacter+routine).w
+	bge.s	Sonic_RevertToNormal
 	tst.b	(Update_HUD_timer).w
 	beq.s	Sonic_RevertToNormal ; ?
 	subq.w	#1,(Super_Sonic_frame_count).w
@@ -78191,7 +78204,6 @@ loc_3F88C:
 	bne.s	Hurt_Shield
 	tst.w	d0
 	beq.w	KillCharacter
-	move.b	#emotion_angry,(Current_emotion).w
 	jsr	(SingleObjLoad).l
 	bne.s	Hurt_Shield
 	_move.l	#Obj_LostRings,id(a1) ; load obj
@@ -78227,6 +78239,7 @@ Hurt_ChkSpikes:
 	move.w	#0,inertia(a0)
 	move.b	#AniIDSonAni_Hurt2,anim(a0)
 	move.w	#$78,invulnerable_time(a0)
+	jsr		ResetEmotion
 	moveq	#sfx_Death,d0		; load normal damage sound
 	cmpi.l	#Obj_Spikes,(a2)	; was damage caused by spikes?
 	bne.s	Hurt_Sound		; if not, branch
