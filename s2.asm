@@ -29985,7 +29985,7 @@ ResetEmotion:
 	moveq	#0,d3
 	moveq	#emotion_neutral,d0
 	cmpi.b	#6,(MainCharacter+routine).w
-	bne.s	.notSad
+	blt.s	.notSad
 	moveq	#emotion_sad,d0
 	bra.s	.done
 .notSad:
@@ -77847,7 +77847,7 @@ TouchResponse:
 	move.b	y_radius(a0),d5
 	subq.b	#3,d5
 	sub.w	d5,d3
-	cmpi.b	#$4D,mapping_frame(a0)	; is Sonic ducking?
+	cmpi.b	#$4D,mapping_frame(a0)	; is Sonic ducking?	; mess with this later.
 	bne.s	Touch_NoDuck		; if not, branch
 	addi.w	#$C,d3
 	moveq	#$A,d5
@@ -78154,6 +78154,7 @@ Touch_KillEnemy:
 
 loc_3F802:
 	move.w	d0,objoff_3E(a1)
+;	jsr		ResetEmotion
 	move.w	Enemy_Points(pc,d0.w),d0
 	cmpi.w	#$20,(Chain_Bonus_counter).w	; have 16 enemies been destroyed?
 	blo.s	loc_3F81C			; if not, branch
@@ -78164,7 +78165,6 @@ loc_3F81C:
 	movea.w	a0,a3
 	bsr.w	AddPoints
 	_move.l	#Obj_Explosion,id(a1) ; load obj
-	jsr		ResetEmotion
 	move.b	#0,routine(a1)
 	tst.w	y_vel(a0)
 	bmi.s	loc_3F844
