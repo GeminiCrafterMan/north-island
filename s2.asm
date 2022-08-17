@@ -29965,10 +29965,10 @@ ResetEmotion:
 	moveq	#emotion_super,d0
 	bra.s	.done
 .notSuper:
+	btst	#status_sec_isInvincible,(MainCharacter+status_secondary).w	; Invincible?
+	bne.s	.happy	; I know it's out of order. Don't care, it probably works.
 	tst.w	(MainCharacter+invulnerable_time).w
 	beq.s	.notAngry
-	btst	#status_sec_isInvincible,(MainCharacter+status_secondary).w	; Invincible?
-	bne.s	.happy
 	moveq	#emotion_angry,d0
 	bra.s	.done
 .notAngry:
