@@ -21649,6 +21649,7 @@ sonic_1up:
 	addq.b	#1,(Life_count).w
 	addq.b	#1,(Update_HUD_lives).w
 	move.b	#emotion_happy,(Current_emotion).w
+	jsr		UpdateEmotionWindow
 	music	mus_ExtraLife
 	rts	; Play extra life music
 ; ===========================================================================
@@ -21794,29 +21795,8 @@ invincible_monitor:
 super_monitor:
 	addq.w	#1,(a2)
 	addi.w	#50,(Ring_count).w
-	move.b	#1,(Super_Sonic_palette).w
-	move.b	#$F,(Palette_timer).w
-	move.b	#1,(Super_Sonic_flag).w
-	move.b	#$81,obj_control(a1)
-	move.b	#AniIDSupSonAni_Transform,anim(a1)			; use transformation animation
-	move.l	#Obj_SuperSonicStars,(SuperSonicStars+id).w ; load Obj_SuperSonicStars (super sonic stars object) at $FFFFD040
-	cmpi.w	#2,(Player_mode).w
-	bne.s	.Sonic
-.Tails:
-	move.w	#$A00,(Tails_top_speed).w
-	move.w	#$30,(Tails_acceleration).w
-	move.w	#$100,(Tails_deceleration).w
-	bra.s	.Cont
-.Sonic:
-	move.w	#$A00,(Sonic_top_speed).w
-	move.w	#$30,(Sonic_acceleration).w
-	move.w	#$100,(Sonic_deceleration).w
-.Cont:
-	move.w	#0,invincibility_time(a1)
-	bset	#status_sec_isInvincible,status_secondary(a1)	; make Sonic invincible
-	sfx	sfx_Transform				; Play transformation sound effect.
-	music	mus_SuperSonic				; load the Super Sonic song and return
-	rts
+	ori.b	#1,(Update_HUD_rings).w
+	jmp		Sonic_TurnSuper
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -29979,16 +29959,7 @@ loc_19F4C:
 	rts
 
 ResetEmotion:
-	movem.l	d0-d3,-(sp)
-	moveq	#0,d1
-	moveq	#0,d2
-	moveq	#0,d3
 	moveq	#emotion_neutral,d0
-	cmpi.b	#6,(MainCharacter+routine).w
-	blt.s	.notSad
-	moveq	#emotion_sad,d0
-	bra.s	.done
-.notSad:
 	tst.b	(Super_Sonic_flag).w
 	beq.s	.notSuper
 	moveq	#emotion_super,d0
@@ -30013,16 +29984,20 @@ ResetEmotion:
 .done:
 	move.b	d0,(Current_emotion).w	; set the emotion
 UpdateEmotionWindow:
+	movem.l	d0-d3,-(sp)
+	moveq	#0,d1
+	moveq	#0,d2
+	moveq	#0,d3
+	move.b	(Current_emotion).w,d0
 	move.l	#ArtUnc_SonicEmotions,d1
-;	cmpi.l	#Obj_Tails,(MainCharacter+id).w
-;	bne.s	.notTails
-;	move.l	#ArtUnc_TailsEmotions,d1
-;	bra.s	.cont
-;.notTails:
-;	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
-;	bne.s	.cont
-;	move.l	#ArtUnc_KnucklesEmotions,d1
-;	bra.s	.cont
+	cmpi.l	#Obj_Tails,(MainCharacter+id).w
+	bne.s	.notTails
+	move.l	#ArtUnc_TailsEmotions,d1
+	bra.s	.cont
+.notTails:
+	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
+	bne.s	.cont
+	move.l	#ArtUnc_KnucklesEmotions,d1
 .cont:
 	move.w	#tiles_to_bytes(ArtTile_ArtNem_life_counter),d2
 	move.w	#16*6,d3	; length of one emotion's image (1 tile = 16 bytes)
@@ -31313,7 +31288,7 @@ Sonic_JumpHeight:
 DoubleJumpMoves:
 	; Okay, I was GOING to make a LUT, but then I realized that that doesn't work here!!
 	cmpi.l	#Obj_Sonic,id(a0)
-	jeq		Sonic_CheckGoSuper	; Sonic_DJMoves
+	jeq		Sonic_DJMoves
 ;	cmpi.l	#Obj_Tails,id(a0)
 ;	jeq		Tails_CheckFlight	; Nonexistent!
 	cmpi.l	#Obj_Knuckles,id(a0)
@@ -31333,6 +31308,18 @@ return_1AB36:
 	rts
 ; End of subroutine Sonic_JumpHeight
 
+Sonic_DJMoves:
+		tst.w	(Demo_mode_flag).w		  ; Don't glide on demos
+		bne.s	.ret
+		tst.b	double_jump_flag(a0)
+		bne.s	.ret
+		move.b	(Ctrl_1_Press_Logical).w,d0
+		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
+		beq.s	.ret
+		bra.s	Sonic_CheckGoSuper
+	.ret:
+		rts
+
 ; ---------------------------------------------------------------------------
 ; Subroutine called at the peak of a jump that transforms Sonic into Super Sonic
 ; if he has enough rings and emeralds
@@ -31343,27 +31330,36 @@ return_1AB36:
 ; loc_1AB38: test_set_SS:
 Sonic_CheckGoSuper:
 	tst.b	(Super_Sonic_flag).w	; is Sonic already Super?
-	bne.s	return_1ABA4		; if yes, branch
+	bne.w	return_1ABA4		; if yes, branch
 	cmpi.b	#7,(Emerald_count).w	; does Sonic have exactly 7 emeralds?
-	bne.s	return_1ABA4		; if not, branch
+	bne.w	return_1ABA4		; if not, branch
 	cmpi.w	#50,(Ring_count).w	; does Sonic have at least 50 rings?
-	blo.s	return_1ABA4		; if not, branch
+	blo.w	return_1ABA4		; if not, branch
 	tst.b	(Update_HUD_timer).w	; has Sonic reached the end of the act?
-	beq.s	return_1ABA4		; if yes, branch
+	beq.w	return_1ABA4		; if yes, branch
 
 Sonic_TurnSuper:
-	move.b	#emotion_super,(Current_emotion).w
 	move.b	#1,(Super_Sonic_palette).w
 	move.b	#$F,(Palette_timer).w
 	move.b	#1,(Super_Sonic_flag).w
-	move.b	#$81,obj_control(a0)
-	move.b	#AniIDSupSonAni_Transform,anim(a0)			; use transformation animation
+	jsr		ResetEmotion
+	move.b	#$81,(MainCharacter+obj_control).w
+	move.b	#AniIDSupSonAni_Transform,(MainCharacter+anim).w			; use transformation animation
 	move.l	#Obj_SuperSonicStars,(SuperSonicStars+id).w ; load Obj_SuperSonicStars (super sonic stars object) at $FFFFD040
+	cmpi.w	#2,(Player_mode).w
+	bne.s	.Sonic
+.Tails:
+	move.w	#$A00,(Tails_top_speed).w
+	move.w	#$30,(Tails_acceleration).w
+	move.w	#$100,(Tails_deceleration).w
+	bra.s	.Cont
+.Sonic:
 	move.w	#$A00,(Sonic_top_speed).w
 	move.w	#$30,(Sonic_acceleration).w
 	move.w	#$100,(Sonic_deceleration).w
-	move.w	#0,invincibility_time(a0)
-	bset	#status_sec_isInvincible,status_secondary(a0)	; make Sonic invincible
+.Cont:
+	move.w	#0,(MainCharacter+invincibility_time).w
+	bset	#status_sec_isInvincible,(MainCharacter+status_secondary).w
 	sfx	sfx_Transform				; Play transformation sound effect.
 	music	mus_SuperSonic				; load the Super Sonic song and return
 
@@ -35524,6 +35520,8 @@ Obj_SmallBubbles_ReduceAir:
 	movea.l	(sp)+,a0 ; load 0bj address ; restore a0 = Obj_SmallBubbles
 	cmpa.w	#MainCharacter,a2
 	bne.s	+	; if it isn't player 1, branch
+	move.b	#emotion_sad,(Current_emotion).w
+	jsr		UpdateEmotionWindow
 	move.b	#1,(Deform_lock).w
 +
 	rts
@@ -78295,7 +78293,8 @@ KillCharacter:
 	bne.s	++
 	clr.b	status_secondary(a0)
 	move.b	#6,routine(a0)
-	jsr		ResetEmotion
+	move.b	#emotion_sad,(Current_emotion).w
+	jsr		UpdateEmotionWindow
 	jsrto	(Sonic_ResetOnFloor_Part2).l, JmpTo_Sonic_ResetOnFloor_Part2
 	bset	#1,status(a0)
 	move.w	#-$700,y_vel(a0)
@@ -82802,11 +82801,15 @@ ArtUnc_SonicEmotions:		BINCLUDE	"art/uncompressed/HUD - Sonic Emotions.bin"
 ; Tails life counter		; ArtNem_7C20C:
 	even
 ArtNem_Tails_life_counter:	BINCLUDE	"art/nemesis/HUD - Tails Lives.bin"
+	even
+ArtUnc_TailsEmotions:		BINCLUDE	"art/uncompressed/HUD - Tails Emotions.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Knuckles life counter
 	even
 ArtNem_Knuckles_life_counter:	BINCLUDE	"art/nemesis/HUD - Knuckles Lives.bin"
+	even
+ArtUnc_KnucklesEmotions:		BINCLUDE	"art/uncompressed/HUD - Knuckles Emotions.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (14 blocks)
 ; Ring				ArtNem_7945C:
