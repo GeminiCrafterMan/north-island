@@ -432,6 +432,9 @@ __sfx :=	__sfx+1
 sfx_GroundSlide =	__sfx
 __sfx :=	__sfx+1
 		dc.l ((0)<<24)|_sfx_GroundSlide
+sfx_DoubleJump =	__sfx
+__sfx :=	__sfx+1
+		dc.l ((0)<<24)|_sfx_DoubleJump
 
 
 ; unused sfx
@@ -768,6 +771,8 @@ _sfx_Grab:	include "AMPS/sfx/Grab.s2a"
 _sfx_GlideLand:	include "AMPS/sfx/GlideLand.s2a"
 		align 2
 _sfx_GroundSlide:	include "AMPS/sfx/GroundSlide.s2a"
+		align 2
+_sfx_DoubleJump:	include "AMPS/sfx/DoubleJump.s2a"
 		align 2
 _sfx_Chain:	include "AMPS/sfx/Chain.s2a"
 		align 2

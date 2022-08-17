@@ -5328,13 +5328,6 @@ LoadZoneTiles:
 	lea	(Chunk_Table).l,a1
 	bsr.w	KosDec
 	move.w	a1,d3
-	cmpi.b	#hill_top_zone,(Current_Zone).w
-	bne.s	+
-	lea	(ArtKos_HTZ).l,a0
-	lea	(Chunk_Table+tiles_to_bytes(ArtTile_ArtKos_NumTiles_HTZ_Main)).l,a1
-	bsr.w	KosDec	; patch for HTZ
-	move.w	#tiles_to_bytes(ArtTile_ArtKos_NumTiles_HTZ),d3
-+
 	cmpi.b	#wing_fortress_zone,(Current_Zone).w
 	bne.s	+
 	lea	(ArtKos_WFZ).l,a0
@@ -29959,6 +29952,10 @@ loc_19F4C:
 	rts
 
 ResetEmotion:
+	cmpa.w	#MainCharacter,a0
+	beq.s	.cont
+	rts
+.cont:
 	moveq	#emotion_neutral,d0
 	tst.b	(Super_Sonic_flag).w
 	beq.s	.notSuper
@@ -30303,6 +30300,11 @@ Obj_Sonic_MdNormal_Checks:
 	move.b	(Ctrl_1_Press_Logical).w,d0
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	bne.s	Obj_Sonic_MdNormal
+	tst.b	(Victory_flag).w
+	beq.s	.cont
+	move.b	#AniIDSonAni_Victory,anim(a0)
+	rts
+.cont:
 	cmpi.b	#AniIDSonAni_Blink,anim(a0)
 	beq.s	return_1A2DE
 	cmpi.b	#AniIDSonAni_GetUp,anim(a0)
@@ -31220,6 +31222,12 @@ Sonic_RollJump:
 SonicKnux_AirRoll:
 	btst	#1,status(a0)	; is Sonic in the air?
 	beq.s	.nope	; if not, branch
+	cmpi.b	#AniIDSonAni_Roll,anim(a0)
+	beq.s	.nope
+	cmpi.b	#AniIDSonAni_Roll2,anim(a0)
+	beq.s	.nope
+	tst.b	double_jump_flag(a0)
+	bne.s	.nope
 	move.b	(Ctrl_1_Held_Logical).w,d0
 	tst.b	(Debug_mode_flag).w
 	beq.s	.notDebug
@@ -31240,6 +31248,12 @@ SonicKnux_AirRoll:
 Tails_AirRoll:
 	btst	#1,status(a0)	; is Tails in the air?
 	beq.s	.nope	; if not, branch
+	cmpi.b	#AniIDTailsAni_Roll,anim(a0)
+	beq.s	.nope
+	cmpi.b	#AniIDTailsAni_Roll2,anim(a0)
+	beq.s	.nope
+	tst.b	double_jump_flag(a0)
+	bne.s	.nope
 	move.b	(Ctrl_2_Held_Logical).w,d0
 	tst.b	(Debug_mode_flag).w
 	beq.s	.notDebug
@@ -31309,34 +31323,44 @@ return_1AB36:
 ; End of subroutine Sonic_JumpHeight
 
 Sonic_DJMoves:
-		tst.w	(Demo_mode_flag).w		  ; Don't glide on demos
-		bne.s	.ret
-		tst.b	double_jump_flag(a0)
-		bne.s	.ret
-		move.b	(Ctrl_1_Press_Logical).w,d0
-		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
-		beq.s	.ret
-		bra.s	Sonic_CheckGoSuper
-	.ret:
-		rts
+	tst.w	(Demo_mode_flag).w
+	bne.w	.ret
+	tst.b	double_jump_flag(a0)
+	bne.w	.ret
+	move.b	(Ctrl_1_Press_Logical).w,d0
+	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
+	beq.w	.ret
+	tst.b	(Super_Sonic_flag).w	; is Sonic already Super?
+	bne.s	.doubleJump		; if yes, branch
+	cmpi.b	#7,(Emerald_count).w	; does Sonic have exactly 7 emeralds?
+	bne.s	.doubleJump		; if not, branch
+	cmpi.w	#50,(Ring_count).w	; does Sonic have at least 50 rings?
+	blo.s	.doubleJump		; if not, branch
+	tst.b	(Update_HUD_timer).w	; has Sonic reached the end of the act?
+	beq.s	.doubleJump		; if yes, branch
+	bra.s	Sonic_TurnSuper
+.doubleJump:
+	move.b	#1,double_jump_flag(a0)
+	sfx		sfx_DoubleJump
+	move.b	#AniIDSonAni_Spring,anim(a0)
+	move.b	#$13,y_radius(a0)
+	move.b	#9,x_radius(a0)
+	bclr	#2,status(a0)
+	btst	#6,status(a0)
+	bne.s	.underwater
+	move.w	#-$600,y_vel(a0)
+	bra.s	.ret
+.underwater:
+	move.w	#-$450,y_vel(a0)
+.ret:
+	rts
 
 ; ---------------------------------------------------------------------------
-; Subroutine called at the peak of a jump that transforms Sonic into Super Sonic
-; if he has enough rings and emeralds
+; Subroutine that transforms Sonic into Super Sonic if he has enough rings
+; and emeralds
 ; ---------------------------------------------------------------------------
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1AB38: test_set_SS:
-Sonic_CheckGoSuper:
-	tst.b	(Super_Sonic_flag).w	; is Sonic already Super?
-	bne.w	return_1ABA4		; if yes, branch
-	cmpi.b	#7,(Emerald_count).w	; does Sonic have exactly 7 emeralds?
-	bne.w	return_1ABA4		; if not, branch
-	cmpi.w	#50,(Ring_count).w	; does Sonic have at least 50 rings?
-	blo.w	return_1ABA4		; if not, branch
-	tst.b	(Update_HUD_timer).w	; has Sonic reached the end of the act?
-	beq.w	return_1ABA4		; if yes, branch
 
 Sonic_TurnSuper:
 	move.b	#1,(Super_Sonic_palette).w
@@ -31977,6 +32001,7 @@ Sonic_ResetOnFloor_Part3:
 	bclr	#5,status(a0)
 	bclr	#4,status(a0)
 	move.b	#0,jumping(a0)
+	move.b	#0,double_jump_flag(a0)
 	move.w	#0,(Chain_Bonus_counter).w
 	move.b	#0,flip_angle(a0)
 	move.b	#0,flip_turned(a0)
@@ -40760,7 +40785,7 @@ Obj_Seesaw_UpdateMappingAndCollision:
 	move.b	width_pixels(a0),d1
 	moveq	#8,d3
 	move.w	(sp)+,d4
-	bra.w	SlopedPlatform
+	jmp		SlopedPlatform
 ; ===========================================================================
 
 return_21A74:
@@ -81627,7 +81652,7 @@ LevelArtPointers:
 	levartptrs PLCID_Mtz1,     PLCID_Mtz2,      PalID_MTZ,  ArtKos_MTZ, BM16_MTZ, BM128_MTZ ;   4 ; MTZ  ; METROPOLIS ZONE ACTS 1 & 2
 	levartptrs PLCID_Mtz1,     PLCID_Mtz2,      PalID_MTZ,  ArtKos_MTZ, BM16_MTZ, BM128_MTZ ;   5 ; MTZ3 ; METROPOLIS ZONE ACT 3
 	levartptrs PLCID_Wfz1,     PLCID_Wfz2,      PalID_WFZ,  ArtKos_SCZ, BM16_WFZ, BM128_WFZ ;   6 ; WFZ  ; WING FORTRESS ZONE
-	levartptrs PLCID_Htz1,     PLCID_Htz2,      PalID_HTZ,  ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   7 ; HTZ  ; HILL TOP ZONE
+	levartptrs PLCID_Htz1,     PLCID_Htz2,      PalID_HTZ,  ArtKos_HTZ, BM16_EHZ, BM128_EHZ ;   7 ; HTZ  ; HILL TOP ZONE
 	levartptrs PLCID_Hpz1,     PLCID_Hpz2,      PalID_HPZ,  ArtKos_HPZ, BM16_HPZ, BM128_HPZ ;   8 ; HPZ  ; HIDDEN PALACE ZONE (UNUSED)
 	levartptrs PLCID_Unused3,  PLCID_Unused4,   PalID_EHZ4, ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   9 ; LEV9 ; LEVEL 9 (UNUSED)
 	levartptrs PLCID_Ooz1,     PLCID_Ooz2,      PalID_OOZ,  ArtKos_OOZ, BM16_OOZ, BM128_OOZ ;  $A ; OOZ  ; OIL OCEAN ZONE
@@ -83707,7 +83732,7 @@ BM16_HTZ:	BINCLUDE	"mappings/16x16/HTZ.bin"
 ;-----------------------------------------------------------------------------------
 ; HTZ pattern suppliment to EHZ level patterns (Kosinski compression)
 ; ArtKoz_98AB4:
-ArtKos_HTZ:	BINCLUDE	"art/kosinski/HTZ_Supp.bin"
+ArtKos_HTZ:	BINCLUDE	"art/kosinski/HTZ.bin"
 ;-----------------------------------------------------------------------------------
 ; EHZ/HTZ 128x128 block mappings (Kosinski compression)
 BM128_EHZ:	BINCLUDE	"mappings/128x128/EHZ_HTZ.bin"

@@ -90,7 +90,7 @@ SoundIndex:
 	ptrSFX	0, Lazer, LargeLazer, LazerFloor, PlatformKnock
 	ptrSFX	0, OilSlide, MechaSonic, Error, EnterSS, Continue
 	ptrSFX	$80, Gloop
-	ptrSFX	0, AirRoll, Grab, GlideLand, GroundSlide
+	ptrSFX	0, AirRoll, Grab, GlideLand, GroundSlide, DoubleJump
 
 ; unused sfx
 	ptrSFX	0, Chain, Bonus, BigRing, ActionBlock, Diamonds
