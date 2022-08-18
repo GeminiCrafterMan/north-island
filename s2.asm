@@ -53132,14 +53132,30 @@ SlotMachine_GetPixelRow:
 	andi.w	#7,d0					; Limit each sequence to 8 pictures
 	move.b	(a3,d0.w),d0			; Get slot pic id
 	andi.w	#7,d0					; Get only lower 3 bits; leaves space for 2 more images
+	beq.s	.charSlot
+.sonicSlot:
 	ror.w	#7,d0					; Equal to shifting left 9 places, or multiplying by 4*4 tiles, in bytes
 	lea	(ArtUnc_CNZSlotPics).l,a2	; Load slot pictures
 	adda.w	d0,a2					; a2 = pointer to first tile of slot picture
+
+.loadSlotPic:
 	move.w	d3,d0					; d0 = d3
 	andi.w	#$F8,d0					; Strip high word (picture index)
 	lsr.w	#1,d0					; Convert into bytes
 	adda.w	d0,a2					; a2 = pointer to desired pixel row
 	rts
+
+.charSlot:
+	cmpi.l	#Obj_Tails,(MainCharacter+id).w
+	bne.s	.chkKnux
+	lea		(ArtUnc_MTPSlotPic).l,a2
+	bra.s	.loadSlotPic
+
+.chkKnux:
+	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
+	bne.s	.sonicSlot
+	lea		(ArtUnc_KTESlotPic).l,a2
+	bra.s	.loadSlotPic
 ; ==========================================================================
 ; loc_2C2DE:
 SlotMachine_ChooseReward:
@@ -82619,6 +82635,8 @@ ArtUnc_CNZFlipTiles:	BINCLUDE	"art/uncompressed/Flipping foreground section (CNZ
 ; Uncompressed art
 ; Bonus pictures for slots in CNZ ; ArtUnc_4EEFE:
 ArtUnc_CNZSlotPics:	BINCLUDE	"art/uncompressed/Slot pictures.bin"
+ArtUnc_MTPSlotPic:	BINCLUDE	"art/uncompressed/Tails Slot picture.bin"
+ArtUnc_KTESlotPic:	BINCLUDE	"art/uncompressed/Knuckles Slot picture.bin"
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Animated background section in CPZ and DEZ ; ArtUnc_4FAFE:
