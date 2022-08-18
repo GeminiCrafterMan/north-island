@@ -16,18 +16,17 @@ Obj_Knuckles_Normal:
 
 ; ---------------------------------------------------------------------------
 Obj_Knuckles_Index:
-		dc.w	Obj_Knuckles_Init-Obj_Knuckles_Index	  ; 0 ;	...
-		dc.w	Obj_Knuckles_Control-Obj_Knuckles_Index	  ; 1
-		dc.w	Obj_Knuckles_Hurt-Obj_Knuckles_Index	  ; 2
-		dc.w	Obj_Knuckles_Dead-Obj_Knuckles_Index	  ; 3
-		dc.w	Obj_Knuckles_Gone-Obj_Knuckles_Index	  ; 4
-		dc.w	Obj_Knuckles_Respawning-Obj_Knuckles_Index ; 5
+		dc.w	Obj_Knuckles_Init-Obj_Knuckles_Index		; 0
+		dc.w	Obj_Knuckles_Control-Obj_Knuckles_Index		; 1
+		dc.w	Obj_Knuckles_Hurt-Obj_Knuckles_Index		; 2
+		dc.w	Obj_Knuckles_Dead-Obj_Knuckles_Index		; 3
+		dc.w	Obj_Knuckles_Gone-Obj_Knuckles_Index		; 4
+		dc.w	Obj_Knuckles_Respawning-Obj_Knuckles_Index	; 5
 ; ---------------------------------------------------------------------------
 
 Obj_Knuckles_Init:
 		addq.b	#2,routine(a0)
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
+		jsr		ResetHeight_a0
 		move.l	#MapUnc_Knuckles,mappings(a0)	  ; SK_Map_Knuckles
 		move.w  #prio(2),priority(a0)
 		move.b	#$18,width_pixels(a0)
@@ -99,7 +98,7 @@ loc_315450:
 		and.w	#$7FF,y_pos(a0)
 
 loc_31545E:
-		jsr		Sonic_Display
+		jsr		Player_Display
 		jsr		Sonic_Super
 		jsr		Sonic_RecordPos
 		jsr		Sonic_Water
@@ -120,10 +119,11 @@ loc_31548A:
 loc_31549A:
 		bra.w	LoadKnucklesDynPLC
 ; ---------------------------------------------------------------------------
-Obj_Knuckles_Modes:	dc.w Obj_Knuckles_MdNormal-Obj_Knuckles_Modes	  ; 0 ;	...
-		dc.w Obj_Knuckles_MdAir-Obj_Knuckles_Modes	  ; 1
-		dc.w Obj_Knuckles_MdRoll-Obj_Knuckles_Modes	  ; 2
-		dc.w Obj_Knuckles_MdJump-Obj_Knuckles_Modes	  ; 3
+Obj_Knuckles_Modes:
+		dc.w Obj_Knuckles_MdNormal-Obj_Knuckles_Modes	; 0
+		dc.w Obj_Knuckles_MdAir-Obj_Knuckles_Modes		; 1
+		dc.w Obj_Knuckles_MdRoll-Obj_Knuckles_Modes		; 2
+		dc.w Obj_Knuckles_MdJump-Obj_Knuckles_Modes		; 3
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -204,8 +204,7 @@ Knuckles_NormalGlide:
 		bsr.w	Knuckles_DoLevelCollision2
 		btst	#5,(Gliding_collision_flags).w
 		bne.w	Knuckles_BeginClimb
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
+		jsr		ResetHeight_a0
 		btst	#1,(Gliding_collision_flags).w
 		beq.s	Knuckles_BeginSlide
 		move.b	(Ctrl_1_Held_Logical).w,d0
@@ -221,8 +220,7 @@ Knuckles_NormalGlide:
 loc_315736:
 		asr		x_vel(a0)
 		asr		x_vel(a0)
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
+		jsr		ResetHeight_a0
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -282,8 +280,7 @@ loc_3157D8:
 		bne.w	loc_31586A
 
 loc_3157E8:
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
+		jsr		ResetHeight_a0
 		tst.b	(Super_Sonic_flag).w
 		beq.s	loc_315804
 		cmp.w	#$480,inertia(a0)
@@ -336,8 +333,7 @@ loc_31586A:
 loc_31587A:
 		move.b	#2,double_jump_flag(a0)
 		move.b	#33,anim(a0)
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
+		jsr		ResetHeight_a0
 		bset	#1,(Gliding_collision_flags).w
 		rts
 ; ---------------------------------------------------------------------------
@@ -419,8 +415,7 @@ loc_315958:
 		bge.s	loc_315988
 		add.w	d1,y_pos(a0)
 		move.b	d3,angle(a0)
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
+		jsr		ResetHeight_a0
 	; play slide sfx
 		move.b	(Timer_frames+1).w,d0
 		andi.b	#7,d0
@@ -432,8 +427,7 @@ loc_315958:
 loc_315988:
 		move.b	#2,double_jump_flag(a0)
 		move.b	#33,anim(a0)
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
+		jsr		ResetHeight_a0
 		bset	#1,(Gliding_collision_flags).w
 		rts
 ; ---------------------------------------------------------------------------
@@ -610,8 +604,7 @@ loc_315B2C:
 loc_315B30:
 		move.b	#$20,anim_frame_duration(a0)
 		move.b	#0,anim_frame(a0)
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
+		jsr		ResetHeight_a0
 		move.w	(Ctrl_1_Held_Logical).w,d0
 		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		beq.s	return_315B94
@@ -652,8 +645,7 @@ loc_315BAE:
 		move.b	#frK_GlideX2,mapping_frame(a0)
 		move.b	#7,anim_frame_duration(a0)
 		move.b	#1,anim_frame(a0)
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
+		jsr		ResetHeight_a0
 		rts
 ; End of function Knuckles_GlideControl
 
@@ -957,8 +949,7 @@ loc_31647A:
 
 loc_3164B2:
 		sfx	sfx_Jump	; play jumping sound
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
+		jsr		ResetHeight_a0
 		btst	#2,status(a0)
 		bne.s	Knuckles_RollJump
 		move.b	#$E,y_radius(a0)
@@ -1240,7 +1231,7 @@ loc_316B4E:
 loc_316B66:
 		add.w	d1,y_pos(a0)
 		move.b	d3,angle(a0)
-		bsr.w	Knuckles_ResetOnFloor
+		jsr		Player_ResetOnFloor
 		move.b	d3,d0
 		add.b	#$20,d0
 		and.b	#$40,d0
@@ -1306,7 +1297,7 @@ Knuckles_HitFloor_0:
 		bpl.s	return_316C1C
 		add.w	d1,y_pos(a0)
 		move.b	d3,angle(a0)
-		bsr.w	Knuckles_ResetOnFloor
+		jsr		Player_ResetOnFloor
 		move.w	#0,y_vel(a0)
 		move.w	x_vel(a0),inertia(a0)
 
@@ -1343,7 +1334,7 @@ loc_316C42:
 
 loc_316C62:
 		move.b	d3,angle(a0)
-		bsr.w	Knuckles_ResetOnFloor
+		jsr		Player_ResetOnFloor
 		move.w	y_vel(a0),inertia(a0)
 		tst.b	d3
 		bpl.s	return_316C78
@@ -1384,7 +1375,7 @@ Knuckles_HitFloor2:
 		bpl.s	return_316CD4
 		add.w	d1,y_pos(a0)
 		move.b	d3,angle(a0)
-		bsr.w	Knuckles_ResetOnFloor
+		jsr		Player_ResetOnFloor
 		move.w	#0,y_vel(a0)
 		move.w	x_vel(a0),inertia(a0)
 
@@ -1392,29 +1383,14 @@ return_316CD4:
 		rts
 ; End of function Knuckles_DoLevelCollision
 
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_ResetOnFloor:
-		jsr		ResetEmotion
-		tst.b	pinball_mode(a0)
-		bne.s	Knuckles_ResetOnFloor_Part3
-		tst.b	(Victory_flag).w ; Has the victory animation flag been set?
-		beq.s	.normalJump	; if not, branch
-		move.b	#AniIDSonAni_Victory,anim(a0) ; play it
-		bra.s	Knuckles_ResetOnFloor_Part2
-	.normalJump:
-		move.b	#AniIDSonAni_Walk,anim(a0)
-
-
 ; =============== S U B	R O U T	I N E =======================================
 
 
 Knuckles_ResetOnFloor_Part2:
+		tst.b	pinball_mode(a0)
+		bne.s	Knuckles_ResetOnFloor_Part3
 		move.b	y_radius(a0),d0
-		move.b	#$13,y_radius(a0)
-		move.b	#9,x_radius(a0)
+		jsr		ResetHeight_a0
 		btst	#2,status(a0)
 		beq.s	Knuckles_ResetOnFloor_Part3
 		bclr	#2,status(a0)
@@ -1550,19 +1526,8 @@ loc_316E4A:
 		jmp	DisplaySprite
 ; End of function Obj_Knuckles_Dead
 
-; =============== S U B	R O U T	I N E =======================================
-
-
 Obj_Knuckles_Gone:
-		tst.w	restart_countdown(a0)
-		beq.s	return_316F78
-		subq.w	#1,restart_countdown(a0)
-		bne.s	return_316F78
-		move.w	#1,(Level_Inactive_flag).w
-
-return_316F78:
-		rts
-; End of function Obj_Knuckles_Gone
+		jmp		Obj_Sonic_Gone
 
 ; ---------------------------------------------------------------------------
 

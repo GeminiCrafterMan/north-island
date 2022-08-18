@@ -3919,7 +3919,7 @@ Level_TtlCard:
 	move.b	#0,(Level_started_flag).w
 	move.b	#0,(Victory_flag).w
 	move.b	#0,(Super_Sonic_flag).w
-	jsr		ResetEmotion
+	jsr		ResetEmotion.cont
 ; Level_ChkWater:
 	tst.b	(Water_flag).w	; does level have water?
 	beq.s	+	; if not, branch
@@ -21641,9 +21641,8 @@ sonic_1up:
 	addq.w	#1,(Monitors_Broken).w
 	addq.b	#1,(Life_count).w
 	addq.b	#1,(Update_HUD_lives).w
-	move.b	#emotion_happy,(Current_emotion).w
-	jsr		UpdateEmotionWindow
 	music	mus_ExtraLife
+	jsr		UpdateEmotionWindow
 	rts	; Play extra life music
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -21654,6 +21653,8 @@ tails_1up:
 	addq.w	#1,(Monitors_Broken_2P).w
 	addq.b	#1,(Life_count_2P).w
 	addq.b	#1,(Update_HUD_lives_2P).w
+	move.b	#emotion_angry,(Current_emotion).w	; "the fuck is this?"
+	jsr		UpdateEmotionWindow
 	music	mus_ExtraLife
 	rts	; Play extra life music
 ; ===========================================================================
@@ -21663,7 +21664,7 @@ tails_1up:
 ; ---------------------------------------------------------------------------
 super_ring:
 	addq.w	#1,(a2)
-
+.giveRings:
 	lea	(Ring_count).w,a2
 	lea	(Update_HUD_rings).w,a3
 	lea	(Extra_life_flags).w,a4
@@ -21713,12 +21714,12 @@ ChkPlayer_1up:
 ; ---------------------------------------------------------------------------
 super_shoes:
 	addq.w	#1,(a2)
+	tst.b	(Super_Sonic_flag).w	; is Sonic super?
+	jne		super_ring.giveRings
 	bset	#status_sec_hasSpeedShoes,status_secondary(a1)	; give super sneakers status
 	move.w	#$4B0,speedshoes_time(a1)
-	cmpa.w	#MainCharacter,a1	; did the main character break the monitor?
-	bne.s	super_shoes_Tails	; if not, branch
-	cmpi.w	#2,(Player_mode).w	; is player using Tails?
-	beq.s	super_shoes_Tails	; if yes, branch
+	cmpi.l	#Obj_Tails,id(a1)
+	beq.s	super_shoes_Tails
 	move.w	#$C00,(Sonic_top_speed).w	; set stats
 	move.w	#$18,(Sonic_acceleration).w
 	move.w	#$80,(Sonic_deceleration).w
@@ -21731,6 +21732,8 @@ super_shoes_Tails:
 	move.w	#$80,(Tails_deceleration).w
 +
 	command	mus_ShoesOn
+	move.b	#emotion_happy,(Current_emotion).w
+	jsr		UpdateEmotionWindow
 	rts	; Speed up tempo
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -21759,7 +21762,7 @@ shield_monitor:
 invincible_monitor:
 	addq.w	#1,(a2)
 	tst.b	(Super_Sonic_flag).w	; is Sonic super?
-	bne.s	+++	; rts		; if yes, branch
+	jne		super_ring.giveRings
 	bset	#status_sec_isInvincible,status_secondary(a1)	; give invincibility status
 	move.w	#20*60,invincibility_time(a1) ; 20 seconds
 	tst.b	(Current_Boss_ID).w	; don't change music during boss battles
@@ -21772,6 +21775,8 @@ invincible_monitor:
 	bne.s	+
 	move.l	#Obj_InvincibilityStars,(Sonic_InvincibilityStars+id).w ; load Obj_InvincibilityStars (invincibility stars) at $FFFFD200
 	move.w	a1,(Sonic_InvincibilityStars+parent).w
+	move.b	#emotion_happy,(Current_emotion).w
+	jsr		ResetEmotion.cont
 	rts
 ; ---------------------------------------------------------------------------
 +	; give invincibility to sidekick
@@ -27863,31 +27868,11 @@ ObjectLayoutBoundary macro
 	dc.w	$FFFF, $0000, $0000
     endm
 
-	; [Bug] Sonic Team forgot to put a boundary marker here,
-	; meaning the game could potentially read past the start
-	; of the file and load random objects.
-	;ObjectLayoutBoundary
-
-; byte_1802A;
-    if gameRevision=0
-Objects_CNZ1_2P:	BINCLUDE	"level/objects/CNZ_1_2P (REV00).bin"
-    else
-    ; a Crawl badnik was moved slightly further away from a ledge
-    ; 2 flippers were moved closer to a wall
-Objects_CNZ1_2P:	BINCLUDE	"level/objects/CNZ_1_2P.bin"
-    endif
 
 	ObjectLayoutBoundary
-
-; byte_18492:
-    if gameRevision=0
-Objects_CNZ2_2P:	BINCLUDE	"level/objects/CNZ_2_2P (REV00).bin"
-    else
-    ; 4 Crawl badniks were slightly moved, placing them closer/farther away from ledges
-    ; 2 flippers were moved away from a wall to keep players from getting stuck behind them
+Objects_CNZ1_2P:	BINCLUDE	"level/objects/CNZ_1_2P.bin"
+	ObjectLayoutBoundary
 Objects_CNZ2_2P:	BINCLUDE	"level/objects/CNZ_2_2P.bin"
-    endif
-
 	ObjectLayoutBoundary
 
 ; ===========================================================================
@@ -28871,7 +28856,6 @@ Load_EndOfAct:
 	mulu.w	#10,d0
 	move.w	d0,(Bonus_Countdown_2).w
 	move.b	#1,(Victory_flag).w
-	jsr		ResetEmotion
 	move.b	#1,(Control_Locked).w
 	move.w	#0,(Ctrl_1_Logical).w	; Stop.
 	clr.w	(Total_Bonus_Countdown).w
@@ -28881,6 +28865,7 @@ Load_EndOfAct:
 	move.w	#5000,(Bonus_Countdown_3).w
 +
 	music	mus_GotThroughAct
+	jsr		ResetEmotion.cont
 
 return_194D0:
 	rts
@@ -29957,6 +29942,11 @@ ResetEmotion:
 	rts
 .cont:
 	moveq	#emotion_neutral,d0
+	cmpi.b	#6,(MainCharacter+routine).w
+	blt.s	.notSad
+	moveq	#emotion_sad,d0
+	bra.s	.done
+.notSad:
 	tst.b	(Super_Sonic_flag).w
 	beq.s	.notSuper
 	moveq	#emotion_super,d0
@@ -29975,6 +29965,8 @@ ResetEmotion:
 	bne.s	.happy
 	cmpi.w	#4,(Chain_Bonus_counter).w	; am I badnik bouncing?
 	bge.s	.happy
+	btst	#mfbBacked,mFlags.w
+	bne.s	.happy
 	bra.s	.done
 .happy:
 	moveq	#emotion_happy,d0
@@ -30003,6 +29995,24 @@ UpdateEmotionWindow:
 	add.w	d0,d1
 	jsr		(QueueDMATransfer).l
 	movem.l	(sp)+,d0-d3
+	rts
+
+ResetHeight_a0:
+	move.b	#$13,y_radius(a0)
+	cmpi.l	#Obj_Tails,id(a0)
+	bne.s	.normal
+	subq.b	#4,y_radius(a0)
+.normal:
+	move.b	#9,x_radius(a0)
+	rts
+
+ResetHeight_a1:
+	move.b	#$13,y_radius(a1)
+	cmpi.l	#Obj_Tails,id(a1)
+	bne.s	.normal
+	subq.b	#4,y_radius(a1)
+.normal:
+	move.b	#9,x_radius(a1)
 	rts
 
 ; ===========================================================================
@@ -30035,8 +30045,7 @@ Obj_Sonic_Index:	offsetTable
 ; loc_19F76: Obj_01_Sub_0: Obj_Sonic_Main:
 Obj_Sonic_Init:
 	addq.b	#2,routine(a0)	; => Obj_Sonic_Control
-	move.b	#$13,y_radius(a0) ; this sets Sonic's collision height (2*pixels)
-	move.b	#9,x_radius(a0)
+	jsr		ResetHeight_a0
 	move.l	#Mapunc_Sonic,mappings(a0)
 	move.w	#prio(2),priority(a0)
 	move.b	#$18,width_pixels(a0)
@@ -30102,7 +30111,7 @@ Obj_Sonic_Control:
 	bne.s	+				; if not, branch
 	andi.w	#$7FF,y_pos(a0) 		; perform wrapping of Sonic's y position
 +
-	bsr.s	Sonic_Display
+	bsr.s	Player_Display
 	bsr.w	Sonic_Super
 	bsr.w	Sonic_RecordPos
 	bsr.w	Sonic_Water
@@ -30134,7 +30143,7 @@ Obj_Sonic_Modes:	offsetTable
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1A0C6:
-Sonic_Display:
+Player_Display:
 	move.w	invulnerable_time(a0),d0
 	beq.s	Obj_Sonic_Display
 	subq.w	#1,invulnerable_time(a0)
@@ -30146,7 +30155,7 @@ Obj_Sonic_Display:
 ; loc_1A0DA:
 Obj_Sonic_ChkInvin:		; Checks if invincibility has expired and disables it if it has.
 	btst	#status_sec_isInvincible,status_secondary(a0)
-	beq.s	Obj_Sonic_ChkShoes
+	beq.s	Obj_Sonic_RmvInvin.reset
 	tst.w	invincibility_time(a0)
 	beq.s	Obj_Sonic_ChkShoes	; If there wasn't any time left, that means we're in Super Sonic mode.
 	subq.w	#1,invincibility_time(a0)
@@ -30160,6 +30169,8 @@ Obj_Sonic_ChkInvin:		; Checks if invincibility has expired and disables it if it
 ;loc_1A106:
 Obj_Sonic_RmvInvin:
 	bclr	#status_sec_isInvincible,status_secondary(a0)
+.reset:
+	jsr		ResetEmotion
 ; loc_1A10C:
 Obj_Sonic_ChkShoes:		; Checks if Speed Shoes have expired and disables them if they have.
 	btst	#status_sec_hasSpeedShoes,status_secondary(a0)
@@ -30168,6 +30179,8 @@ Obj_Sonic_ChkShoes:		; Checks if Speed Shoes have expired and disables them if t
 	beq.s	Obj_Sonic_ExitChk
 	subq.w	#1,speedshoes_time(a0)
 	bne.s	Obj_Sonic_ExitChk
+	cmpi.l	#Obj_Tails,id(a0)
+	beq.s	.Tails
 	move.w	#$600,(Sonic_top_speed).w
 	move.w	#$C,(Sonic_acceleration).w
 	move.w	#$80,(Sonic_deceleration).w
@@ -30176,10 +30189,21 @@ Obj_Sonic_ChkShoes:		; Checks if Speed Shoes have expired and disables them if t
 	move.w	#$A00,(Sonic_top_speed).w
 	move.w	#$30,(Sonic_acceleration).w
 	move.w	#$100,(Sonic_deceleration).w
+	bra.s	Obj_Sonic_RmvSpeed
+.Tails:
+	move.w	#$600,(Tails_top_speed).w
+	move.w	#$C,(Tails_acceleration).w
+	move.w	#$80,(Tails_deceleration).w
+	tst.b	(Super_Sonic_flag).w
+	beq.s	Obj_Sonic_RmvSpeed
+	move.w	#$A00,(Tails_top_speed).w
+	move.w	#$30,(Tails_acceleration).w
+	move.w	#$100,(Tails_deceleration).w
 ; loc_1A14A:
 Obj_Sonic_RmvSpeed:
 	bclr	#status_sec_hasSpeedShoes,status_secondary(a0)
 	command	mus_ShoesOff		; Slow down tempo
+	jsr		ResetEmotion
 ; ---------------------------------------------------------------------------
 ; return_1A15A:
 Obj_Sonic_ExitChk:
@@ -30889,8 +30913,7 @@ Sonic_CheckRollStop:
 	tst.b	pinball_mode(a0) ; note: the spindash flag has a different meaning when Sonic's already rolling -- it's used to mean he's not allowed to stop rolling
 	bne.s	Sonic_KeepRolling
 	bclr	#2,status(a0)
-	move.b	#$13,y_radius(a0)
-	move.b	#9,x_radius(a0)
+	jsr		ResetHeight_a0
 	move.b	#AniIDSonAni_Wait,anim(a0)
 	subq.w	#5,y_pos(a0)
 	bra.s	Obj_Sonic_Roll_ResetScr
@@ -31343,8 +31366,7 @@ Sonic_DJMoves:
 	move.b	#1,double_jump_flag(a0)
 	sfx		sfx_DoubleJump
 	move.b	#AniIDSonAni_Spring,anim(a0)
-	move.b	#$13,y_radius(a0)
-	move.b	#9,x_radius(a0)
+	jsr		ResetHeight_a0
 	bclr	#2,status(a0)
 	btst	#6,status(a0)
 	bne.s	.underwater
@@ -31366,7 +31388,6 @@ Sonic_TurnSuper:
 	move.b	#1,(Super_Sonic_palette).w
 	move.b	#$F,(Palette_timer).w
 	move.b	#1,(Super_Sonic_flag).w
-	jsr		ResetEmotion
 	move.b	#$81,(MainCharacter+obj_control).w
 	move.b	#AniIDSupSonAni_Transform,(MainCharacter+anim).w			; use transformation animation
 	move.l	#Obj_SuperSonicStars,(SuperSonicStars+id).w ; load Obj_SuperSonicStars (super sonic stars object) at $FFFFD040
@@ -31386,9 +31407,7 @@ Sonic_TurnSuper:
 	bset	#status_sec_isInvincible,(MainCharacter+status_secondary).w
 	sfx	sfx_Transform				; Play transformation sound effect.
 	music	mus_SuperSonic				; load the Super Sonic song and return
-
-; ---------------------------------------------------------------------------
-return_1ABA4:
+	jsr		ResetEmotion.cont
 	rts
 ; End of subroutine Sonic_CheckGoSuper
 
@@ -31810,7 +31829,7 @@ Sonic_DoLevelCollision:
 +
 	add.w	d1,y_pos(a0)
 	move.b	d3,angle(a0)
-	bsr.w	Sonic_ResetOnFloor
+	bsr.w	Player_ResetOnFloor
 	move.b	d3,d0
 	addi.b	#$20,d0
 	andi.b	#$40,d0
@@ -31876,7 +31895,7 @@ Sonic_HitFloor:
 	bpl.s	return_1AFE6
 	add.w	d1,y_pos(a0)
 	move.b	d3,angle(a0)
-	bsr.w	Sonic_ResetOnFloor
+	bsr.w	Player_ResetOnFloor
 	move.w	#0,y_vel(a0)
 	move.w	x_vel(a0),inertia(a0)
 
@@ -31911,7 +31930,7 @@ Sonic_HitCeilingAndWalls:
 
 loc_1B02C:
 	move.b	d3,angle(a0)
-	bsr.w	Sonic_ResetOnFloor
+	bsr.w	Player_ResetOnFloor
 	move.w	y_vel(a0),inertia(a0)
 	tst.b	d3
 	bpl.s	return_1B042
@@ -31954,7 +31973,7 @@ Sonic_HitFloor2:
 	bpl.s	return_1B09E
 	add.w	d1,y_pos(a0)
 	move.b	d3,angle(a0)
-	bsr.w	Sonic_ResetOnFloor
+	bsr.w	Player_ResetOnFloor
 	move.w	#0,y_vel(a0)
 	move.w	x_vel(a0),inertia(a0)
 
@@ -31971,15 +31990,7 @@ return_1B09E:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1B0A0:
-Sonic_ResetOnFloor:
-	jsr		ResetEmotion
-	tst.b	pinball_mode(a0)
-	bne.s	Sonic_ResetOnFloor_Part3
-	tst.b	(Victory_flag).w ; Has the victory animation flag been set?
-	beq.s	.normalJump	; if not, branch
-	move.b	#AniIDSonAni_Victory,anim(a0) ; play it
-	bra.s	Sonic_ResetOnFloor_Part2
-.normalJump:
+Player_ResetOnFloor:
 	move.b	#AniIDSonAni_Walk,anim(a0)
 ; loc_1B0AC:
 Sonic_ResetOnFloor_Part2:
@@ -31988,11 +31999,12 @@ Sonic_ResetOnFloor_Part2:
 	cmpi.l	#Obj_Knuckles,id(a0); is this object ID Knuckles?
 	jeq		Knuckles_ResetOnFloor_Part2	; if so, branch to the Knuckles version of this code
 
+	tst.b	pinball_mode(a0)
+	bne.s	Sonic_ResetOnFloor_Part3
 	btst	#2,status(a0)
 	beq.s	Sonic_ResetOnFloor_Part3
 	bclr	#2,status(a0)
-	move.b	#$13,y_radius(a0) ; this increases Sonic's collision height to standing
-	move.b	#9,x_radius(a0)
+	jsr		ResetHeight_a0
 	move.b	#AniIDSonAni_Walk,anim(a0)	; use running/walking/standing animation
 	subq.w	#5,y_pos(a0)	; move Sonic up 5 pixels so the increased height doesn't push him into the ground
 ; loc_1B0DA:
@@ -32157,29 +32169,6 @@ Obj_Sonic_ResetLevel:
 	bra.s	Obj_Sonic_Finished
 +
 	rts
-
-Obj_Knuckles_ResetLevel_Part2:	; I really don't know if this is necessary.
-		tst.w	($FFFFFFDC).w
-		beq.s	return_316F64
-		move.b	#0,(Scroll_lock).w
-		move.b	#$A,routine(a0)
-		move.w	(Saved_x_pos).w,x_pos(a0)
-		move.w	(Saved_y_pos).w,y_pos(a0)
-		move.w	(Saved_art_tile).w,art_tile(a0)
-		move.w	(Saved_Solid_bits).w,top_solid_bit(a0)
-		clr.w	(Ring_count).w
-		clr.b	(Extra_life_flags).w
-		move.b	#0,obj_control(a0)
-		move.b	#5,anim(a0)
-		move.w	#0,x_vel(a0)
-		move.w	#0,y_vel(a0)
-		move.w	#0,inertia(a0)
-		move.b	#2,status(a0)
-		move.w	#0,move_lock(a0)
-		move.w	#0,restart_countdown(a0)
-
-return_316F64:					  ; ...
-		rts
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Sonic when he's offscreen and waiting for the level to restart
@@ -32535,11 +32524,15 @@ JmpTo_KillCharacter ; JmpTo
 ; Sprite_1B8A4: Object_Tails:
 Obj_Tails:
 	; a0=character
-	cmpi.w	#2,(Player_mode).w
+	cmpa.w	#MainCharacter,a0
 	bne.s	+
 	move.w	(Camera_Min_X_pos).w,(Tails_Min_X_pos).w
 	move.w	(Camera_Max_X_pos).w,(Tails_Max_X_pos).w
 	move.w	(Camera_Max_Y_pos_now).w,(Tails_Max_Y_pos).w
+	tst.w	(Debug_placement_mode).w	; is debug mode being used?
+	beq.s	+			; if not, branch
+	jmp		(DebugMode).l
+; ---------------------------------------------------------------------------
 +
 	moveq	#0,d0
 	move.b	routine(a0),d0
@@ -32558,8 +32551,7 @@ Obj_Tails_Index:	offsetTable
 ; loc_1B8D8: Obj_Tails_Main:
 Obj_Tails_Init:
 	addq.b	#2,routine(a0)	; => Obj_Tails_Normal
-	move.b	#$F,y_radius(a0) ; this sets Tails' collision height (2*pixels) to less than Sonic's height
-	move.b	#9,x_radius(a0)
+	jsr		ResetHeight_a0
 	move.l	#MapUnc_Tails,mappings(a0)
 	move.w	#prio(2),priority(a0)
 	move.b	#$18,width_pixels(a0)
@@ -32612,7 +32604,15 @@ Obj_Tails_Control:
 	cmpa.w	#MainCharacter,a0
 	bne.s	Obj_Tails_Control_Joypad2
 	move.w	(Ctrl_1_Logical).w,(Ctrl_2_Logical).w
-	tst.b	(Control_Locked).w	; are controls locked?
+	tst.w	(Debug_mode_flag).w	; is debug cheat enabled?
+	beq.s	+			; if not, branch
+	btst	#button_B,(Ctrl_1_Press).w	; is button B pressed?
+	beq.s	+			; if not, branch
+	move.w	#1,(Debug_placement_mode).w	; change Sonic into a ring/item
+	clr.b	(Control_Locked).w		; unlock control
+	rts
+; -----------------------------------------------------------------------
++	tst.b	(Control_Locked).w	; are controls locked?
 	bne.s	Obj_Tails_Control_Part2	; if yes, branch
 	move.w	(Ctrl_1).w,(Ctrl_2_Logical).w	; copy new held buttons, to enable joypad control
 	move.w	(Ctrl_1).w,(Ctrl_1_Logical).w
@@ -32639,7 +32639,7 @@ Obj_Tails_Control_Part2:
 	bne.s	+                               ; if not, branch
 	andi.w	#$7FF,y_pos(a0)                 ; perform wrapping of Sonic's y position
 +
-	bsr.s	Tails_Display
+	jsr		Player_Display
 	bsr.w	Sonic_Super
 	bsr.w	Tails_RecordPos
 	bsr.w	Tails_Water
@@ -32667,56 +32667,6 @@ Obj_Tails_Modes:	offsetTable
 		offsetTableEntry.w Obj_Tails_MdRoll		; 4 - rolling
 		offsetTableEntry.w Obj_Tails_MdJump		; 6 - jumping
 ; ===========================================================================
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1BA56:
-Tails_Display:
-	move.w	invulnerable_time(a0),d0
-	beq.s	Obj_Tails_Display
-	subq.w	#1,invulnerable_time(a0)
-	lsr.w	#3,d0
-	bcc.s	Obj_Tails_ChkInvinc
-; loc_1BA64:
-Obj_Tails_Display:
-	jsr	(DisplaySprite).l
-; loc_1BA6A:
-Obj_Tails_ChkInvinc:	; Checks if invincibility has expired and disables it if it has.
-	btst	#status_sec_isInvincible,status_secondary(a0)
-	beq.s	Obj_Tails_ChkShoes
-	tst.w	invincibility_time(a0)
-	beq.s	Obj_Tails_ChkShoes
-	subq.w	#1,invincibility_time(a0)
-	bne.s	Obj_Tails_ChkShoes
-	tst.b	(Current_Boss_ID).w	; Don't change music if in a boss fight
-	bne.s	Obj_Tails_RmvInvin
-	cmpi.b	#$C,air_left(a0)	; Don't change music if drowning
-	blo.s	Obj_Tails_RmvInvin
-	move.w	(Level_Music).w,d0
-	move.b	d0,mQueue+1.w
-; loc_1BA96:
-Obj_Tails_RmvInvin:
-	bclr	#status_sec_isInvincible,status_secondary(a0)
-; loc_1BA9C:
-Obj_Tails_ChkShoes:		; Checks if Speed Shoes have expired and disables them if they have.
-	btst	#status_sec_hasSpeedShoes,status_secondary(a0)
-	beq.s	Obj_Tails_ExitChk
-	tst.w	speedshoes_time(a0)
-	beq.s	Obj_Tails_ExitChk
-	subq.w	#1,speedshoes_time(a0)
-	bne.s	Obj_Tails_ExitChk
-	move.w	#$600,(Tails_top_speed).w
-	move.w	#$C,(Tails_acceleration).w
-	move.w	#$80,(Tails_deceleration).w
-; Obj_Tails_RmvSpeed:
-	bclr	#status_sec_hasSpeedShoes,status_secondary(a0)
-	command	Mus_ShoesOff	; Slow down tempo
-; ===========================================================================
-; return_1BAD2:
-Obj_Tails_ExitChk:
-	rts
-; End of subroutine Tails_Display
-
 
 ; ---------------------------------------------------------------------------
 ; Tails' AI code for the Sonic and Tails mode 1-player game
@@ -33708,8 +33658,7 @@ Tails_CheckRollStop:
 	tst.b	pinball_mode(a0)  ; note: the spindash flag has a different meaning when Tails is already rolling -- it's used to mean he's not allowed to stop rolling
 	bne.s	Tails_KeepRolling
 	bclr	#2,status(a0)
-	move.b	#$F,y_radius(a0) ; sets standing height to only slightly higher than rolling height, unlike Sonic
-	move.b	#9,x_radius(a0)
+	jsr		ResetHeight_a0
 	move.b	#AniIDTailsAni_Wait,anim(a0)
 	subq.w	#1,y_pos(a0)
 	bra.s	Obj_Tails_Roll_ResetScr
@@ -34384,7 +34333,7 @@ Tails_DoLevelCollision:
 +
 	add.w	d1,y_pos(a0)
 	move.b	d3,angle(a0)
-	bsr.w	Tails_ResetOnFloor
+	bsr.w	Player_ResetOnFloor
 	move.b	d3,d0
 	addi.b	#$20,d0
 	andi.b	#$40,d0
@@ -34450,7 +34399,7 @@ Tails_HitFloor:
 	bpl.s	return_1CA96
 	add.w	d1,y_pos(a0)
 	move.b	d3,angle(a0)
-	bsr.w	Tails_ResetOnFloor
+	bsr.w	Player_ResetOnFloor
 	move.w	#0,y_vel(a0)
 	move.w	x_vel(a0),inertia(a0)
 
@@ -34485,7 +34434,7 @@ Tails_HitCeilingAndWalls:
 
 loc_1CADC:
 	move.b	d3,angle(a0)
-	bsr.w	Tails_ResetOnFloor
+	bsr.w	Player_ResetOnFloor
 	move.w	y_vel(a0),inertia(a0)
 	tst.b	d3
 	bpl.s	return_1CAF2
@@ -34528,7 +34477,7 @@ Tails_HitFloor2:
 	bpl.s	return_1CB4E
 	add.w	d1,y_pos(a0)
 	move.b	d3,angle(a0)
-	bsr.w	Tails_ResetOnFloor
+	bsr.w	Player_ResetOnFloor
 	move.w	#0,y_vel(a0)
 	move.w	x_vel(a0),inertia(a0)
 
@@ -34536,32 +34485,20 @@ return_1CB4E:
 	rts
 ; End of function Tails_DoLevelCollision
 
-
-
 ; ---------------------------------------------------------------------------
 ; Subroutine to reset Tails' mode when he lands on the floor
 ; ---------------------------------------------------------------------------
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
-; loc_1CB50:
-Tails_ResetOnFloor:
-	jsr		ResetEmotion
-	tst.b	pinball_mode(a0)
-	bne.s	Tails_ResetOnFloor_Part3
-	tst.b	(Victory_flag).w ; Has the victory animation flag been set?
-	beq.s	.normalJump	; if not, branch
-	move.b	#AniIDTailsAni_Victory,anim(a0) ; play it
-	bra.s	Tails_ResetOnFloor_Part2
-.normalJump:
-	move.b	#AniIDTailsAni_Walk,anim(a0)
 ; loc_1CB5C:
 Tails_ResetOnFloor_Part2:
+	tst.b	pinball_mode(a0)
+	bne.s	Tails_ResetOnFloor_Part3
 	btst	#2,status(a0)
 	beq.s	Tails_ResetOnFloor_Part3
 	bclr	#2,status(a0)
-	move.b	#$F,y_radius(a0) ; this slightly increases Tails' collision height to standing
-	move.b	#9,x_radius(a0)
+	jsr		ResetHeight_a0
 	move.b	#AniIDTailsAni_Walk,anim(a0)	; use running/walking/standing animation
 	subq.w	#1,y_pos(a0)	; move Tails up 1 pixel so the increased height doesn't push him slightly into the ground
 ; loc_1CB80:
@@ -38721,22 +38658,14 @@ loc_1FB0C:
 	bclr	#4,status(a1)
 	btst	#2,status(a1)
 	beq.w	loc_1FBB8
-	cmpi.l	#Obj_Knuckles,id(a1)
-	beq.s	.skip
-	cmpi.b	#1,(a1)
-	bne.s	loc_1FBA8
 .skip:
 	bclr	#2,status(a1)
-	move.b	#$13,y_radius(a1)
-	move.b	#9,x_radius(a1)
+	jsr		ResetHeight_a1
 	subq.w	#5,y_pos(a1)
-	bra.s	loc_1FBB8
+	cmpi.l	#Obj_Tails,id(a1)
+	bne.s	loc_1FBB8
+	addq.w	#4,y_pos(a1)
 ; ===========================================================================
-
-loc_1FBA8:
-	move.b	#$F,y_radius(a1)
-	move.b	#9,x_radius(a1)
-	subq.w	#1,y_pos(a1)
 
 loc_1FBB8:
 	cmpi.b	#6,routine(a0)
@@ -78168,6 +78097,7 @@ return_3F7E8:
 ; loc_3F7EA:
 Touch_KillEnemy:
 	bset	#7,status(a1)
+;	jsr		UpdateEmotionWindow
 	moveq	#0,d0
 	move.w	(Chain_Bonus_counter).w,d0
 	addq.w	#2,(Chain_Bonus_counter).w	; add 2 to chain bonus counter
@@ -78177,7 +78107,6 @@ Touch_KillEnemy:
 
 loc_3F802:
 	move.w	d0,objoff_3E(a1)
-;	jsr		ResetEmotion
 	move.w	Enemy_Points(pc,d0.w),d0
 	cmpi.w	#$20,(Chain_Bonus_counter).w	; have 16 enemies been destroyed?
 	blo.s	loc_3F81C			; if not, branch
@@ -78318,9 +78247,8 @@ KillCharacter:
 	bne.s	++
 	clr.b	status_secondary(a0)
 	move.b	#6,routine(a0)
-	move.b	#emotion_sad,(Current_emotion).w
-	jsr		UpdateEmotionWindow
 	jsrto	(Sonic_ResetOnFloor_Part2).l, JmpTo_Sonic_ResetOnFloor_Part2
+	jsr		ResetEmotion
 	bset	#1,status(a0)
 	move.w	#-$700,y_vel(a0)
 	move.w	#0,x_vel(a0)
@@ -80178,6 +80106,7 @@ AddPoints:
 	addq.b	#1,(Life_count).w
 	addq.b	#1,(Update_HUD_lives).w
 	music	mus_ExtraLife
+	jsr		UpdateEmotionWindow
 ; ===========================================================================
 +	rts
 ; End of function AddPoints
@@ -81107,11 +81036,16 @@ Debug_ExitDebugMode:
 	moveq	#0,d0
 	move.w	d0,(Debug_placement_mode).w
 	lea	(MainCharacter).w,a1 ; a1=character
-	move.l	#Mapunc_Sonic,mappings(a1)
+; I no longer need to reset mappings -- the dynplc routines do it for me
+	cmpi.l	#Obj_Tails,id(a1)
+	bne.s	.notTails
+	move.w	#make_art_tile(ArtTile_ArtUnc_Tails,0,0),art_tile(a1)
+	bra.s	+
+.notTails:
 	move.w	#make_art_tile(ArtTile_ArtUnc_Sonic,0,0),art_tile(a1)
++
 	bsr.s	Debug_ResetPlayerStats
-	move.b	#$13,y_radius(a1)
-	move.b	#9,x_radius(a1)
+	jsr		ResetHeight_a1
 	move.w	(Camera_Min_Y_pos_Debug_Copy).w,(Camera_Min_Y_pos).w
 	move.w	(Camera_Max_Y_pos_Debug_Copy).w,(Camera_Max_Y_pos).w
 	; useless leftover; this is for S1's special stage
@@ -82815,24 +82749,17 @@ ArtNem_DignlSprng:	BINCLUDE	"art/nemesis/Diagonal spring.bin"
 	even
 ArtNem_HUD:	BINCLUDE	"art/nemesis/HUD.bin"
 ;---------------------------------------------------------------------------------------
-; Nemesis compressed art (12 blocks)
-; Sonic lives counter		ArtNem_79346:
+; life counters and emotion windows
 	even
 ArtNem_Sonic_life_counter:	BINCLUDE	"art/nemesis/HUD - Sonic Lives.bin"
 	even
-ArtUnc_SonicEmotions:		BINCLUDE	"art/uncompressed/HUD - Sonic Emotions.bin"
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (12 blocks)
-; Tails life counter		; ArtNem_7C20C:
-	even
 ArtNem_Tails_life_counter:	BINCLUDE	"art/nemesis/HUD - Tails Lives.bin"
 	even
-ArtUnc_TailsEmotions:		BINCLUDE	"art/uncompressed/HUD - Tails Emotions.bin"
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (12 blocks)
-; Knuckles life counter
-	even
 ArtNem_Knuckles_life_counter:	BINCLUDE	"art/nemesis/HUD - Knuckles Lives.bin"
+	even
+ArtUnc_SonicEmotions:		BINCLUDE	"art/uncompressed/HUD - Sonic Emotions.bin"
+	even
+ArtUnc_TailsEmotions:		BINCLUDE	"art/uncompressed/HUD - Tails Emotions.bin"
 	even
 ArtUnc_KnucklesEmotions:		BINCLUDE	"art/uncompressed/HUD - Knuckles Emotions.bin"
 ;---------------------------------------------------------------------------------------
@@ -84250,14 +84177,7 @@ Off_Objects: zoneOrderedOffsetTable 2,2
 	ObjectLayoutBoundary
 Objects_EHZ_1:	BINCLUDE	"level/objects/EHZ_1.bin"
 	ObjectLayoutBoundary
-
-    if gameRevision=0
-; A collision switcher was improperly placed
-Objects_EHZ_2:	BINCLUDE	"level/objects/EHZ_2 (REV00).bin"
-    else
 Objects_EHZ_2:	BINCLUDE	"level/objects/EHZ_2.bin"
-    endif
-
 	ObjectLayoutBoundary
 Objects_MTZ_1:	BINCLUDE	"level/objects/MTZ_1.bin"
 	ObjectLayoutBoundary
@@ -84265,14 +84185,7 @@ Objects_MTZ_2:	BINCLUDE	"level/objects/MTZ_2.bin"
 	ObjectLayoutBoundary
 Objects_MTZ_3:	BINCLUDE	"level/objects/MTZ_3.bin"
 	ObjectLayoutBoundary
-
-    if gameRevision=0
-; The lampposts were bugged: their 'remember state' flags weren't set
-Objects_WFZ_1:	BINCLUDE	"level/objects/WFZ_1 (REV00).bin"
-    else
 Objects_WFZ_1:	BINCLUDE	"level/objects/WFZ_1.bin"
-    endif
-
 	ObjectLayoutBoundary
 Objects_WFZ_2:	BINCLUDE	"level/objects/WFZ_2.bin"
 	ObjectLayoutBoundary
@@ -84294,18 +84207,9 @@ Objects_MCZ_1:	BINCLUDE	"level/objects/MCZ_1.bin"
 	ObjectLayoutBoundary
 Objects_MCZ_2:	BINCLUDE	"level/objects/MCZ_2.bin"
 	ObjectLayoutBoundary
-
-    if gameRevision=0
-; The signposts are too low, causing them to poke out the bottom of the ground
-Objects_CNZ_1:	BINCLUDE	"level/objects/CNZ_1 (REV00).bin"
-	ObjectLayoutBoundary
-Objects_CNZ_2:	BINCLUDE	"level/objects/CNZ_2 (REV00).bin"
-    else
 Objects_CNZ_1:	BINCLUDE	"level/objects/CNZ_1.bin"
 	ObjectLayoutBoundary
 Objects_CNZ_2:	BINCLUDE	"level/objects/CNZ_2.bin"
-    endif
-
 	ObjectLayoutBoundary
 Objects_CPZ_1:	BINCLUDE	"level/objects/CPZ_1.bin"
 	ObjectLayoutBoundary
@@ -84368,12 +84272,6 @@ ArtNem_HtzValveBarrier:	BINCLUDE	"art/nemesis/One way barrier from HTZ.bin"
 ; See-saw in HTZ
 	even
 ArtNem_HtzSeeSaw:	BINCLUDE	"art/nemesis/See-saw in HTZ.bin"
-; --------------------------------------------------------------------
-; Nemesis compressed art (24 blocks)
-; Unused Fireball
-	even
-;ArtNem_F0B06:
-	BINCLUDE	"art/nemesis/Fireball 3.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Rock from HTZ
@@ -84497,6 +84395,7 @@ DualPCM_sz:
 	shared word_728C_user,Obj_EndingController_MapUnc_7240,off_3A294,MapRUnc_Sonic
 
 ; --------------------------------------------------------------------
+	!align		$800
 	include	"ErrorDebugger/ErrorHandler.asm"
 EndOfRom:
 	END

@@ -193,7 +193,7 @@ SupSonAni_Stand:	dc.b   7,	frS_Idle1,	frS_Idle2,	frS_Idle3,	frS_Idle2
 	rev02even
 SupSonAni_Fall:		dc.b	2,	frS_Fall1, frS_Fall2,afBack, 1	; Alternate falling animation because I couldn't find a copy of the other in a Super state.
 	even
-SupSonAni_Transform:	dc.b   2,frS_Transform1,frS_Transform1,frS_Transform2,frS_Transform2,frS_Transform3,frS_Transform4,frS_Transform5,frS_Transform4,frS_Transform5,frS_Transform4,frS_Transform5,frS_Transform4,frS_Transform5,afChange,  0
+SupSonAni_Transform:	dc.b   2,frS_Transform1,frS_Transform1,frS_Transform2,frS_Transform2,frS_Transform3,frS_Transform4,frS_Transform6,frS_Transform5,frS_Transform6,frS_Transform5,frS_Transform6,frS_Transform5,frS_Transform6,afChange,  0
 	even
 
 ; Frame IDs
@@ -290,6 +290,7 @@ frS_Transform2	ds.b 1
 frS_Transform3	ds.b 1
 frS_Transform4	ds.b 1
 frS_Transform5	ds.b 1
+frS_Transform6	ds.b 1
 ; Balance B
 frS_BalanceB1	ds.b 1
 frS_BalanceB2	ds.b 1

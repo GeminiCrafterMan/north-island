@@ -111,9 +111,9 @@ KnucklesAni_Drown:dc.b $20,frK_Drown,afEnd
 	rev02even
 KnucklesAni_Death:dc.b $20,frK_Death,afEnd
 	rev02even
-KnucklesAni_Slide:dc.b   9,frK_Slide,afEnd
-	rev02even
 KnucklesAni_Hurt:dc.b $40,frK_Hurt,afEnd
+	rev02even
+KnucklesAni_Slide:dc.b   9,frK_Hurt,frK_Slide,afEnd
 	rev02even
 KnucklesAni_Blank:dc.b $77,  frK_Null,afEnd
 	rev02even
@@ -199,9 +199,9 @@ frK_SpDsh3	ds.b 1
 frK_SpDsh4	ds.b 1
 frK_SpDsh5	ds.b 1
 frK_SpDsh6	ds.b 1
-; slide and hurt
-frK_Slide	ds.b 1
+; hurt and slide
 frK_Hurt	ds.b 1
+frK_Slide	ds.b 1
 ; boing
 frK_Spring	ds.b 1
 frK_Fall1	ds.b 1
