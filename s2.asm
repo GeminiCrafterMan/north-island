@@ -2445,8 +2445,10 @@ CyclingPal_WFZ2:
 
 ; sub_213E:
 PalCycle_SuperSonic:
+	cmpi.w	#3,(Player_mode).w
+	beq.w	PalCycle_SuperKnuckles
 	move.b	(Super_Sonic_palette).w,d0
-	beq.s	++	; rts	; return, if Sonic isn't super
+	beq.s	+	; rts	; return, if Sonic isn't super
 	bmi.w	PalCycle_SuperSonic_normal	; branch, if fade-in is done
 	subq.b	#1,d0
 	bne.s	PalCycle_SuperSonic_revert	; branch for values greater than 1
@@ -2454,7 +2456,7 @@ PalCycle_SuperSonic:
 	; fade from Sonic's to Super Sonic's palette
 	; run frame timer
 	subq.b	#1,(Palette_timer).w
-	bpl.s	++	; rts
+	bpl.s	+	; rts
 	move.b	#3,(Palette_timer).w
 
 	; increment palette frame and update Sonic's palette
@@ -2462,15 +2464,10 @@ PalCycle_SuperSonic:
 	move.w	(Palette_frame).w,d0
 	addq.w	#8,(Palette_frame).w	; 1 palette entry = 1 word, Sonic uses 4 shades of blue
 	cmpi.w	#$30,(Palette_frame).w	; has palette cycle reached the 6th frame?
-	blo.s	+			; if not, branch
+	blo.s	PalCycle_SuperSonic_palettes			; if not, branch
 	move.b	#-1,(Super_Sonic_palette).w	; mark fade-in as done
 	move.b	#0,(MainCharacter+obj_control).w	; restore Sonic's movement
-+
-	lea	(Normal_palette+4).w,a1
-	move.l	(a0,d0.w),(a1)+
-	move.l	4(a0,d0.w),(a1)
-	; note: the fade in for Sonic's underwater palette is missing.
-	; branch to the code below (*) to fix this
+	bra.s	PalCycle_SuperSonic_palettes
 /	rts
 ; ===========================================================================
 ; loc_2188:
@@ -2484,10 +2481,11 @@ PalCycle_SuperSonic_revert:	; runs the fade in transition backwards
 	lea	(CyclingPal_SSTransformation).l,a0
 	move.w	(Palette_frame).w,d0
 	subq.w	#8,(Palette_frame).w	; previous frame
-	bcc.s	+			; branch, if it isn't the first frame
-	move.b	#0,(Palette_frame).w
+	bcc.s	PalCycle_SuperSonic_palettes			; branch, if it isn't the first frame
+	move.w	#0,(Palette_frame).w
 	move.b	#0,(Super_Sonic_palette).w	; stop palette cycle
-+
+
+PalCycle_SuperSonic_palettes:
 	lea	(Normal_palette+4).w,a1
 	move.l	(a0,d0.w),(a1)+
 	move.l	4(a0,d0.w),(a1)
@@ -2505,13 +2503,9 @@ PalCycle_SuperSonic_normal:
 	move.w	(Palette_frame).w,d0
 	addq.w	#8,(Palette_frame).w	; next frame
 	cmpi.w	#$78,(Palette_frame).w	; is it the last frame?
-	blo.s	+			; if not, branch
+	bls.s	PalCycle_SuperSonic_palettes			; if not, branch
 	move.w	#$30,(Palette_frame).w	; reset frame counter (Super Sonic's normal palette cycle starts at $30. Everything before that is for the palette fade)
-+
-	lea	(Normal_palette+4).w,a1
-	move.l	(a0,d0.w),(a1)+
-	move.l	4(a0,d0.w),(a1)
-	rts
+	bra.s	PalCycle_SuperSonic_palettes
 ; End of function PalCycle_SuperSonic
 
 ; ===========================================================================
@@ -2521,7 +2515,159 @@ PalCycle_SuperSonic_normal:
 ; Pal_2246:
 CyclingPal_SSTransformation:
 	BINCLUDE	"art/palettes/Super Sonic transformation.bin"
+;----------------------------------------------------------------------------
+; Gonna leave this commented for now since I'll need to use a bit of variables for him
+; Also, for potential rewrite, since I don't think you want his red to flash
+;PalCycle_SuperTails:
+;	move.b	(Super_Sonic_palette).w,d0
+;	beq.s	+	; rts	; return, if Tails isn't super
+;	bmi.w	PalCycle_SuperTails_normal	; branch, if fade-in is done
+;	subq.b	#1,d0
+;	bne.s	PalCycle_SuperTails_revert	; branch for values greater than 1
 
+	; fade from Tails' to Super Tails' palette
+	; run frame timer
+;	subq.b	#1,(Palette_timer_Tails).w
+;	bpl.s	+	; rts
+;	move.b	#$B,(Palette_timer_Tails).w
+
+	; increment palette frame and update Tails' palette
+;	lea	(CyclingPal_STTransformation).l,a0
+;	move.w	(Palette_frame_Tails).w,d0
+;	addq.w	#8,(Palette_frame_Tails).w	; 1 palette entry = 1 word, Tails uses 4 shades of "Orange"
+;	cmpi.w	#$18,(Palette_frame_Tails).w	; has palette cycle reached the 3rd frame?
+;	blo.s	PalCycle_SuperTails_palettes			; if not, branch
+;	move.b	#-1,(Super_Sonic_palette).w	; mark fade-in as done
+;	move.b	#0,(MainCharacter+obj_control).w	; restore Tails' movement
+;	bra.s	PalCycle_SuperTails_palettes
+;/	rts
+; ===========================================================================
+; loc_2188:
+;PalCycle_SuperTails_revert:	; runs the fade in transition backwards
+	; run frame timer
+;	subq.b	#1,(Palette_timer_Tails).w
+;	bpl.s	-	; rts
+;	move.b	#$B,(Palette_timer_Tails).w
+
+	; decrement palette frame and update Tails' palette
+;	lea	(CyclingPal_STTransformation).l,a0
+;	move.w	(Palette_frame_Tails).w,d0
+;	subq.w	#8,(Palette_frame_Tails).w	; previous frame
+;	bcc.s	PalCycle_SuperTails_palettes			; branch, if it isn't the first frame
+;	lea	(CyclingPal_SSTransformation).l,a0
+;	move.w	#0,(Palette_frame).w
+;	bsr.w	PalCycle_SuperSonic_palettes
+;	lea	(CyclingPal_STTransformation).l,a0
+;	move.w	#0,(Palette_frame_Tails).w
+
+;PalCycle_SuperTails_palettes:
+;	lea	(Normal_palette+$16).w,a1
+;	move.w	(a0,d0.w),(a1)
+;	lea	(Normal_palette+$1A).w,a1
+;	move.w	2(a0,d0.w),(a1)
+;	lea	(Normal_palette+$1C).w,a1
+;	move.l	4(a0,d0.w),(a1)
+;	rts
+; ===========================================================================
+; loc_21E6:
+;PalCycle_SuperTails_normal:
+	; run frame timer
+;	subq.b	#1,(Palette_timer_Tails).w
+;	bpl.w	PalCycle_SuperSonic_normal	; rts
+;	move.b	#$B,(Palette_timer_Tails).w
+;	bra.s	+
+;	subq.b	#1,(Palette_timer_Tails).w
+;	bpl.w	-	; rts
+;	move.b	#$B,(Palette_timer_Tails).w
+;+
+	; increment palette frame and update Tails' palette
+;	lea	(CyclingPal_STTransformation).l,a0
+;	move.w	(Palette_frame_Tails).w,d0
+;	addq.w	#8,(Palette_frame_Tails).w	; next frame
+;	cmpi.w	#$28,(Palette_frame_Tails).w	; is it the last frame?
+;	bls.w	PalCycle_SuperTails_palettes			; if not, branch
+;	move.w	#0,(Palette_frame_Tails).w	; reset frame counter (Super Tails' normal palette cycle starts at 8. Everything before that is for the palette fade)
+;	bra.w	PalCycle_SuperTails_palettes
+; End of function PalCycle_SuperTails
+
+; ===========================================================================
+;----------------------------------------------------------------------------
+;Palette for transformation to Super Tails
+;----------------------------------------------------------------------------
+; Pal_2246:
+;CyclingPal_STTransformation:
+;	BINCLUDE	"art/palettes/Super Tails transformation.bin"
+;----------------------------------------------------------------------------
+; Separate set, since it's kinda more of a pain to set up due to the different values in most stuff
+PalCycle_SuperKnuckles:
+	move.b	(Super_Sonic_palette).w,d0
+	beq.s	+	; rts	; return, if Knuckles isn't super
+	bmi.w	PalCycle_SuperKnuckles_normal	; branch, if fade-in is done
+	subq.b	#1,d0
+	bne.s	PalCycle_SuperKnuckles_revert	; branch for values greater than 1
+
+	; fade from Knuckles' to Super Knuckles' palette
+	; run frame timer
+	subq.b	#1,(Palette_timer).w
+	bpl.s	+	; rts
+	move.b	#4,(Palette_timer).w
+
+	; increment palette frame and update Knuckles' palette
+	lea	(CyclingPal_SKTransformation).l,a0
+	move.w	(Palette_frame).w,d0
+	addq.w	#6,(Palette_frame).w	; 1 palette entry = 1 word, Knuckles uses 3 shades of red
+	cmpi.w	#$24,(Palette_frame).w	; has palette cycle reached the 6th frame?
+	blo.s	PalCycle_SuperKnuckles_palettes			; if not, branch
+	move.b	#-1,(Super_Sonic_palette).w	; mark fade-in as done
+	move.b	#0,(MainCharacter+obj_control).w	; restore Knuckles' movement
+	bra.s	PalCycle_SuperKnuckles_palettes
+/	rts
+; ===========================================================================
+; loc_2188:
+PalCycle_SuperKnuckles_revert:	; runs the fade in transition backwards
+	; run frame timer
+	subq.b	#1,(Palette_timer).w
+	bpl.s	-	; rts
+	move.b	#4,(Palette_timer).w
+
+	; decrement palette frame and update Knuckles' palette
+	lea	(CyclingPal_SKTransformation).l,a0
+	move.w	(Palette_frame).w,d0
+	subq.w	#6,(Palette_frame).w	; previous frame
+	bcc.s	PalCycle_SuperKnuckles_palettes			; branch, if it isn't the first frame
+	move.w	#0,(Palette_frame).w
+	move.b	#0,(Super_Sonic_palette).w	; stop palette cycle
+
+PalCycle_SuperKnuckles_palettes:
+	lea	(Normal_palette+4).w,a1
+	move.l	(a0,d0.w),(a1)+
+	move.w	4(a0,d0.w),(a1)
+	rts
+; ===========================================================================
+; loc_21E6:
+PalCycle_SuperKnuckles_normal:
+	; run frame timer
+	subq.b	#1,(Palette_timer).w
+	bpl.s	-	; rts
+	move.b	#4,(Palette_timer).w
+
+	; increment palette frame and update Knuckles' palette
+	lea	(CyclingPal_SKTransformation).l,a0
+	move.w	(Palette_frame).w,d0
+	addq.w	#6,(Palette_frame).w	; next frame
+	cmpi.w	#$3C,(Palette_frame).w	; is it the last frame?
+	bls.s	PalCycle_SuperKnuckles_palettes			; if not, branch
+	move.w	#6,(Palette_frame).w	; reset frame counter (Super Knuckles' normal palette cycle starts at 6. Everything before that is for the palette fade)
+	bra.s	PalCycle_SuperKnuckles_palettes
+; End of function PalCycle_SuperKnuckles
+
+; ===========================================================================
+;----------------------------------------------------------------------------
+;Palette for transformation to Super Knuckles
+;----------------------------------------------------------------------------
+; Pal_2246:
+CyclingPal_SKTransformation:
+	BINCLUDE	"art/palettes/Super Knuckles transformation.bin"
 ; ---------------------------------------------------------------------------
 ; Subroutine to fade in from black
 ; ---------------------------------------------------------------------------
@@ -3894,6 +4040,10 @@ Level_TtlCard:
 	jsr	(Hud_Base).l
 +
 	moveq	#PalID_BGND,d0
+	cmpi.w	#3,(Player_mode).w
+	blo.s	+
+	moveq	#PalID_Knux,d0
++
 	bsr.w	PalLoad_ForFade	; load Sonic's palette line
 	jsr	LevelSizeLoad
 	jsrto	(DeformBgLayer).l, JmpTo_DeformBgLayer
@@ -11091,27 +11241,41 @@ EndingSequence:
 	move.w	#$8ADF,(Hint_counter_reserve).w	; H-INT every 224th scanline
 	move.w	(Hint_counter_reserve).w,(a6)
 	clr.b	(Super_Sonic_flag).w
+;	clr.b	(Super_Tails_flag).w ; Still doesn't Exist
 	cmpi.b	#7,(Emerald_count).w
 	bne.s	+
 	cmpi.w	#2,(Player_mode).w
 	beq.s	+
-	st	(Super_Sonic_flag).w
+	move.b	#1,(Super_Sonic_flag).w
+;	move.b	#1,(Super_Tails_flag).w
 	move.b	#-1,(Super_Sonic_palette).w
 	move.b	#$F,(Palette_timer).w
 	move.w	#$30,(Palette_frame).w
+;	move.b	#$F,(Palette_timer_Tails).w
+;	move.w	#0,(Palette_frame_Tails).w
 +
 	moveq	#0,d0
 	cmpi.w	#2,(Player_mode).w
 	beq.s	+
+	cmpi.w    #3,(Player_mode).w ; Check for Knuckles in the Ending
+	beq.s    KnucklesEnd		; If it's him, then go to his checks
 	tst.b	(Super_Sonic_flag).w
-	bne.s	++
+	bne.s	++ ; Super Sonic's Ending Value is Sonic's + 2
 	bra.w	+++
 
 ; ===========================================================================
+KnucklesEnd:
+	moveq    #8,d0 ; Value of Knuckles' Ending
+	tst.b    (Super_Sonic_flag).w
+	beq.s    +++
+	bra.s    ++ ; Super Knuckles' Ending Value is Knuckles' + 2
 +
-	addq.w	#2,d0
+	moveq    #4,d0 ; Value of Tails' Ending
+;	tst.b    (Super_Tails_flag).w
+;	beq.s    ++
+; Super Tails' Ending Value is Tails' + 2
 +
-	addq.w	#2,d0
+	addq.w   #2,d0 ; Add 2 to the Ending Value to make it The Super Variant
 +
 	move.w	d0,(Ending_Routine).w
 	bsr.w	EndingSequence_LoadCharacterArt
@@ -11174,8 +11338,15 @@ EndingSequence:
 	move.b	#6,routine(a1)
 	move.w	#$60,objoff_3C(a1)
 	move.w	#1,objoff_30(a1)
-	cmpi.w	#4,(Ending_Routine).w
-	bne.s	+
+	cmpi.w  #4,(Ending_Routine).w ; Are We Tails with no Emeralds?
+    beq.s   .EndingTails
+    cmpi.w  #8,(Ending_Routine).w ; Or Knuckles Without them?
+    beq.s   .EndingTails
+    cmpi.w  #$A,(Ending_Routine).w ; Or Super Knuckles?
+    beq.s   .EndingTails
+    cmpi.w  #6,(Ending_Routine).w ; Or Super Tails?
+    bne.s    + ; If not, load the Ending pictures
+	.EndingTails:
 	move.w	#$10,objoff_2E(a1)
 	move.w	#$100,objoff_3C(a1)
 +
@@ -11377,13 +11548,21 @@ pal_A0FE:	BINCLUDE	"art/palettes/Ending Cycle.bin"
 ; Object CA - Cut scene at end of game
 ; ----------------------------------------------------------------------------
 ; Sprite_A1D6:
-Obj_CutScene:
+Obj_CutScene: ; Tails' is broken due to commented stuff, for now
 	addq.w	#1,objoff_32(a0)
-	cmpi.w	#4,(Ending_Routine).w
-	beq.s	+
-	cmpi.w	#2,(Ending_Routine).w
-	bne.s	+
-	st	(Super_Sonic_flag).w
+    clr.b	(Super_Sonic_flag).w
+;   clr.b	(Super_Tails_flag).w
+    cmpi.w	#2,(Ending_Routine).w	; Are we Super Sonic?
+    beq.s	Super_EndingCA
+    cmpi.w	#$A,(Ending_Routine).w	; Are we Super Knuckles?
+    beq.s	Super_EndingCA
+	cmpi.w  #6,(Ending_Routine).w	; Are we Super Tails?
+    bne.s    +
+;	move.b	#1,(Super_Tails_flag).w If Tails, Set his super flag
+	bra.s	Super_EndingCA.ContinueE
+Super_EndingCA:
+	move.b	#1,(Super_Sonic_flag).w ; Otherwise, set Super for the others
+	.ContinueE:
 	move.w	#$100,(Ring_count).w
 	move.b	#-1,(Super_Sonic_palette).w
 +
@@ -11486,6 +11665,9 @@ Obj_CutScene_State5_States:	offsetTable
 	offsetTableEntry.w loc_A2E0	; 0
 	offsetTableEntry.w loc_A2EE	; 2
 	offsetTableEntry.w loc_A2F2	; 4
+	offsetTableEntry.w loc_A2F2	; 6
+	offsetTableEntry.w loc_A2E0K	; 8
+	offsetTableEntry.w loc_A2E0K	; A
 ; ===========================================================================
 
 loc_A2E0:
@@ -11510,6 +11692,12 @@ loc_A2F2:
 	rts
 ; ===========================================================================
 
+loc_A2E0K:
+	moveq	#$10,d0
+	move.l	#Obj_Knuckles,id(a1) ; load Knuckles object
+	move.b	#$81,obj_control(a1)
+	rts
+; ===========================================================================
 loc_A30A:
 	subq.w	#1,objoff_3C(a0)
 	bpl.s	+
@@ -11519,15 +11707,25 @@ loc_A30A:
 	move.w	#$C0,objoff_3C(a0)
 +
 	lea	(MainCharacter).w,a1 ; a1=character
-	move.b	#AniIDSonAni_Float2,anim(a1)
-	move.w	#$A0,x_pos(a1)
-	move.w	#$50,y_pos(a1)
-	cmpi.w	#2,(Ending_Routine).w
-	bne.s	+	; rts
-	move.b	#AniIDSonAni_Walk,anim(a1)
-	move.w	#$1000,inertia(a1)
+    move.b    #AniIDSonAni_Float2,anim(a1)
+    move.w    #$A0,x_pos(a1)
+    move.w    #$50,y_pos(a1)
+    cmpi.w    #2,(Ending_Routine).w ; Is this Super Sonic
+    beq.s    Ending_SuperSonic    ; rts
+    cmpi.w    #6,(Ending_Routine).w ; Is this Super Tails
+    beq.s    Ending_SuperSonic    ; rts
+    cmpi.w    #$A,(Ending_Routine).w
+    beq.s    Ending_SuperKnuckles    ; rts
+    bra.s    +
+Ending_SuperKnuckles:
+    move.b    #$20,anim(a1) ; AniIDKnuxAni_Gliding
+    bra.s    +
+Ending_SuperSonic:
+;    move.l    #Mapunc_SuperSonic,(MainCharacter+mappings).w
+    move.b    #0,anim(a1)
+    move.w    #$1000,inertia(a1)
 +
-	rts
+    rts
 ; ===========================================================================
 
 loc_A34C:
@@ -11542,8 +11740,15 @@ loc_A34C:
 +
 	addq.b	#2,routine(a0)
 	move.w	#$100,objoff_3C(a0)
-	cmpi.w	#4,(Ending_Routine).w
-	bne.s	return_A38C
+	cmpi.w   #4,(Ending_Routine).w ; Tails
+    beq.s    +
+    cmpi.w   #8,(Ending_Routine).w ; Knuckles
+    beq.s    +
+    cmpi.w   #$A,(Ending_Routine).w ; Super Knuckles
+    beq.s    +
+    cmpi.w   #6,(Ending_Routine).w ; Super Tails
+    bne.s    return_A38C
++
 	move.w	#$880,objoff_3C(a0)
 	btst	#6,(Graphics_Flags).w
 	beq.s	return_A38C
@@ -11673,17 +11878,26 @@ loc_A4B6:
 	move.w	#2,objoff_3C(a0)
 	clr.w	objoff_32(a0)
 	clr.b	mapping_frame(a0)
-	cmpi.w	#2,(Ending_Routine).w
+	cmpi.w  #2,(Ending_Routine).w ; Are we Super Sonic?
+    beq.s    +
+	cmpi.w	#$A,(Ending_Routine).w ; Are we Super Knuckles?
 	beq.s	+
-	move.b	#7,mapping_frame(a0)
-	cmpi.w	#4,(Ending_Routine).w
-	bne.s	+
-	move.b	#$18,mapping_frame(a0)
+    move.b  #7,mapping_frame(a0)
+    cmpi.w  #4,(Ending_Routine).w ; Are we Tails?
+    beq.s   .TailsEnd
+    cmpi.w  #6,(Ending_Routine).w ; Are we Super Tails?
+    bne.s    +
+	.TailsEnd:
+	move.b	#$18,mapping_frame(a0)  ; Set Sonic as the pilot
 +
 	clr.b	anim(a0)
 	clr.b	anim_frame(a0)
 	clr.b	anim_frame_duration(a0)
+	move.l	#Obj_TornadoHelixes_Map_Knuckles,mappings(a0)
+	cmpi.w	#3,(Player_mode).w
+	beq.s	+
 	move.l	#Obj_TornadoHelixes_MapUnc_ADA2,mappings(a0)
++
 	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,0,0),art_tile(a0)
 	subi.w	#$14,x_pos(a0)
 	addi.w	#$14,y_pos(a0)
@@ -11704,6 +11918,9 @@ off_A534:	offsetTable
 		offsetTableEntry.w loc_A53A	; 0
 		offsetTableEntry.w loc_A55C	; 2
 		offsetTableEntry.w loc_A582	; 4
+		offsetTableEntry.w loc_A582	; 6
+		offsetTableEntry.w loc_A53Ak	; 8
+		offsetTableEntry.w loc_A53Ak	; A
 ; ===========================================================================
 
 loc_A53A:
@@ -11735,11 +11952,23 @@ loc_A582:
 	move.w	y_pos(a0),d0
 	subi.w	#$18,d0
 	bra.s	-
+; ===========================================================================
+
+loc_A53Ak:
+	move.w	y_pos(a0),d0
+	subi.w	#$1C,d0
+	move.w	d0,y_pos(a1)
+	move.w	x_pos(a0),x_pos(a1)
+	move.w	#$500,anim(a1)
+	move.w	#$100,anim_frame_duration(a1)
+	rts
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 
 sub_A58C:
+	cmpi.l	#Obj_Sonic,(MainCharacter+id).w
+	bne.s   loc_A594
 	tst.b	(Super_Sonic_flag).w
 	bne.w	return_A38C
 
@@ -11785,6 +12014,19 @@ off_A5FC:	offsetTable
 		offsetTableEntry.w byte_A602	; 0
 		offsetTableEntry.w byte_A61E	; 2
 		offsetTableEntry.w byte_A63A	; 4
+		offsetTableEntry.w byte_A63A	; 6
+		offsetTableEntry.w byte_A602	; 8
+		offsetTableEntry.w byte_A602	; A
+; ===========================================================================
+word_A656: ; Note: reason I organized it like this is to prevent the "X thing is not allowed" which is incredibly weird, seems to be some distance thing, but hey, it works haha
+	dc.w   $A0,  $70,  $B0,  $70,  $B6,  $71,  $BC,  $72
+	dc.w   $C4,  $74,  $C8,  $75,  $CA,  $76,  $CC,  $77; 8
+	dc.w   $CE,  $78,  $D0,  $79,  $D2,  $7A,  $D4,  $7B; 16
+	dc.w   $D6,  $7C,  $D9,  $7E,  $DC,  $81,  $DE,  $84; 24
+	dc.w   $E1,  $87,  $E4,  $8B,  $E7,  $8F,  $EC,  $94; 32
+	dc.w   $F0,  $99,  $F5,  $9D,  $F9,  $A4, $100,  $AC; 40
+	dc.w  $108,  $B8, $112,  $C4, $11F,  $D3, $12C,  $FA; 48
+; ===========================================================================
 byte_A602:
 	dc.b   7,  7,  7,  7,  8,  8,  8,  8,  8,  8,  8,  9,  9,  9, $A, $A
 	dc.b  $A, $B, $B, $B, $B, $B, $B, $B, $B, $B, $B, $B; 16
@@ -11794,19 +12036,14 @@ byte_A61E:
 byte_A63A:
 	dc.b $18,$18,$18,$18,$19,$19,$19,$19,$19,$19,$19,  9,  9,  9, $A, $A
 	dc.b  $A, $B, $B, $B, $B, $B, $B, $B, $B, $B, $B, $B; 16
-word_A656:
-	dc.w   $A0,  $70,  $B0,  $70,  $B6,  $71,  $BC,  $72
-	dc.w   $C4,  $74,  $C8,  $75,  $CA,  $76,  $CC,  $77; 8
-	dc.w   $CE,  $78,  $D0,  $79,  $D2,  $7A,  $D4,  $7B; 16
-	dc.w   $D6,  $7C,  $D9,  $7E,  $DC,  $81,  $DE,  $84; 24
-	dc.w   $E1,  $87,  $E4,  $8B,  $E7,  $8F,  $EC,  $94; 32
-	dc.w   $F0,  $99,  $F5,  $9D,  $F9,  $A4, $100,  $AC; 40
-	dc.w  $108,  $B8, $112,  $C4, $11F,  $D3, $12C,  $FA; 48
+
 ; ===========================================================================
 
 loc_A6C6:
 	subq.w	#1,objoff_3C(a0)
 	bmi.s	loc_A720
+	cmpi.l	#Obj_Sonic,(MainCharacter+id).w
+	bne.s   +
 	tst.b	(Super_Sonic_flag).w
 	beq.s	+	; rts
 	subq.b	#1,objoff_31(a0)
@@ -11843,8 +12080,11 @@ loc_A720:
 	clr.w	objoff_32(a0)
 	lea	(word_AD6E).l,a2
 	jsrto	(LoadChildObject).l, JmpTo_LoadChildObject
+	cmpi.l	#Obj_Sonic,(MainCharacter+id).w
+	bne.s   .NotSonic
 	tst.b	(Super_Sonic_flag).w
 	bne.w	return_A38C
+	.NotSonic:
 	lea	(word_AD6A).l,a2
 	jmpto	(LoadChildObject).l, JmpTo_LoadChildObject
 ; ===========================================================================
@@ -11926,6 +12166,8 @@ word_A822:
 ; ===========================================================================
 
 loc_A83E:
+	cmpi.l	#Obj_Sonic,(MainCharacter+id).w
+	bne.w   return_A38C
 	tst.b	(Super_Sonic_flag).w
 	beq.w	return_A38C
 	move.b	#$17,mapping_frame(a0)
@@ -11977,12 +12219,19 @@ Obj_EndingPlyer_Index:	offsetTable
 Obj_EndingPlyer_Init:
 	lea	(Obj_Cloud_SubObjData).l,a1
 	jsrto	(LoadSubObject_Part3).l, JmpTo_LoadSubObject_Part3
+	move.l	#Obj_TornadoHelixes_Map_Knuckles,mappings(a0)
+	cmpi.w	#3,(Player_mode).w
+	beq.s	+
 	move.l	#Obj_TornadoHelixes_MapUnc_ADA2,mappings(a0)
++
 	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,0,1),art_tile(a0)
 	move.w	#prio(1),priority(a0)
 	move.b	#$C,mapping_frame(a0)
-	cmpi.w	#4,(Ending_Routine).w
-	bne.s	+
+	cmpi.w    #4,(Ending_Routine).w ; Are we Tails?
+	beq.s    .TailsEnd
+	cmpi.w    #6,(Ending_Routine).w ; Are we Super Tails?
+	bne.s    +
+	.TailsEnd:
 	move.b	#$F,mapping_frame(a0)
 	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,1,1),art_tile(a0)
 +
@@ -12071,7 +12320,11 @@ Obj_TornadoHelixes_Index:	offsetTable
 Obj_TornadoHelixes_Init:
 	lea	(Obj_Cloud_SubObjData).l,a1
 	jsrto	(LoadSubObject_Part3).l, JmpTo_LoadSubObject_Part3
+	move.l	#Obj_TornadoHelixes_Map_Knuckles,mappings(a0)
+	cmpi.w	#3,(Player_mode).w
+	beq.s	+
 	move.l	#Obj_TornadoHelixes_MapUnc_ADA2,mappings(a0)
++
 	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,0,1),art_tile(a0)
 	move.w	#prio(3),priority(a0)
 	move.b	#5,mapping_frame(a0)
@@ -12322,6 +12575,9 @@ EndingSequence_LoadCharacterArt_Characters: offsetTable
 	offsetTableEntry.w EndingSequence_LoadCharacterArt_Sonic	; 0
 	offsetTableEntry.w EndingSequence_LoadCharacterArt_SuperSonic	; 2
 	offsetTableEntry.w EndingSequence_LoadCharacterArt_Tails	; 4
+	offsetTableEntry.w EndingSequence_LoadCharacterArt_Tails	; 6
+	offsetTableEntry.w EndingSequence_LoadCharacterArt_Knuckles	; 8
+	offsetTableEntry.w EndingSequence_LoadCharacterArt_Knuckles	; A
 ; ===========================================================================
 ; loc_ABF4:
 EndingSequence_LoadCharacterArt_Sonic:
@@ -12340,6 +12596,12 @@ EndingSequence_LoadCharacterArt_Tails:
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_EndingCharacter),VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_EndingTails).l,a0
 	jmpto	(NemDec).l, JmpTo_NemDec
+; ===========================================================================
+; loc_AC1C:
+EndingSequence_LoadCharacterArt_Knuckles:
+	move.l	#vdpComm(tiles_to_bytes(ArtTile_EndingCharacter),VRAM,WRITE),(VDP_control_port).l
+	lea	(ArtNem_EndingKnuckles).l,a0
+	jmpto	(NemDec).l, JmpTo_NemDec
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
@@ -12356,6 +12618,9 @@ EndingSequence_LoadFlickyArt_Flickies: offsetTable
 	offsetTableEntry.w EndingSequence_LoadFlickyArt_Bird	; 0
 	offsetTableEntry.w EndingSequence_LoadFlickyArt_Eagle	; 2
 	offsetTableEntry.w EndingSequence_LoadFlickyArt_Chicken	; 4
+	offsetTableEntry.w EndingSequence_LoadFlickyArt_Eagle	; 6
+	offsetTableEntry.w EndingSequence_LoadFlickyArt_Bird	; 8
+	offsetTableEntry.w EndingSequence_LoadFlickyArt_Eagle	; A
 ; ===========================================================================
 ; loc_AC42:
 EndingSequence_LoadFlickyArt_Bird:
@@ -12380,7 +12645,14 @@ Pal_AC9E:	BINCLUDE	"art/palettes/Ending Sonic Far.bin"
 Pal_ACDE:	BINCLUDE	"art/palettes/Ending Background.bin"
 Pal_AD1E:	BINCLUDE	"art/palettes/Ending Photos.bin"
 Pal_AD3E:	BINCLUDE	"art/palettes/Ending Super Sonic.bin"
-
+Pal_3090BC:	dc.w	 0,    0, $206,	$20C, $64E,  $80, $EEE,	$AAA, $888, $444, $8AE,	$46A,	$E,    8,  $AE,	 $8E; 0	; "art/palettes/Ending Knuckles.bin"
+		dc.w	 0,    0, $206,	$20C, $64E,  $80, $EEE,	$AAA, $888, $444, $8AE,	$46A,	$E,    8,  $AE,	 $8E; 16
+		dc.w  $AEE,    0,  $6C,	 $8E,  $AE, $8CE, $EEE,	$ECA, $EA8, $A66, $46A,	$EEC,	$E,    6,    0,	   0; 32
+		dc.w	 0,    0,    2,	 $24,  $46,  $68,  $8A,	 $CE, $ECA, $EA6, $E80,	$E64, $E40, $C00, $EEE,	  $E; 48
+		dc.w  $E44,    0, $E64,	$E86, $EA8, $ECA, $EEE,	$4EE, $2AE,  $6E,  $2C,	$444, $888, $AAA,  $E0,	$EC0; 64
+		dc.w  $EEE,    0, $222,	$444, $666, $888, $AAA,	$CCC, $EEE,    0,    0,	   0,	 0,    0,    0,	   0; 80
+		dc.w  $EEE,    0, $4CC,	$AEC, $EEE, $EEE, $EEE,	$AAA, $888, $444, $8AE,	$46A,	$E,    8,  $AE,	 $8E; 96
+	
 word_AD5E:
 	dc.w objoff_3E
 	dc.l ($00<<24)|Obj_EndingClouds
@@ -12420,6 +12692,7 @@ byte_AD9E:	dc.b   1,  5,  6,$FF
 ; sprite mappings
 ; -----------------------------------------------------------------------------
 Obj_TornadoHelixes_MapUnc_ADA2:	BINCLUDE "mappings/sprite/Obj_TornadoHelixes.bin"
+Obj_TornadoHelixes_Map_Knuckles:	BINCLUDE "mappings/sprite/Obj_TornadoHelixes Knuckles.bin"
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed art mappings
 ; "Sonic the Hedgehog 2" mappings		; MapEng_B23A:
@@ -22609,6 +22882,7 @@ PaletteChangerDataIndex: offsetTable
 	offsetTableEntry.w off_133C8	; $A
 	offsetTableEntry.w off_133D4	; $C
 	offsetTableEntry.w off_133E0	; $E
+	offsetTableEntry.w off_310678	;$10
 
 C9PalInfo macro codeptr,dataptr,loadtoOffset,length,fadeinTime,fadeinAmount
 	dc.l codeptr, dataptr
@@ -22623,6 +22897,7 @@ off_133BC:	C9PalInfo loc_1344C,  Pal_AC7E,   0,$1F,4,7
 off_133C8:	C9PalInfo loc_1344C,  Pal_ACDE, $40,$1F,4,7
 off_133D4:	C9PalInfo loc_1344C,  Pal_AD3E,   0, $F,4,7
 off_133E0:	C9PalInfo loc_1344C,  Pal_AC9E,   0,$1F,4,7
+off_310678:	C9PalInfo loc_1344C,  Pal_3090BC, 0,$1F,4,7
 
 Pal_133EC:	BINCLUDE "art/palettes/Title Sonic.bin"
 Pal_1340C:	BINCLUDE "art/palettes/Title Background.bin"
@@ -30112,7 +30387,7 @@ Obj_Sonic_Control:
 	andi.w	#$7FF,y_pos(a0) 		; perform wrapping of Sonic's y position
 +
 	bsr.s	Player_Display
-	bsr.w	Sonic_Super
+	bsr.w	Player_SuperHyper
 	bsr.w	Sonic_RecordPos
 	bsr.w	Sonic_Water
 	move.b	(Primary_Angle).w,next_tilt(a0)
@@ -31413,58 +31688,85 @@ Sonic_TurnSuper:
 
 
 ; ---------------------------------------------------------------------------
-; Subroutine doing the extra logic for Super Sonic
+; Subroutine doing the extra logic for Super Characters
 ; ---------------------------------------------------------------------------
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1ABA6:
-Sonic_Super:
-	lea	(MainCharacter).w,a1 ; a1=character ; a1=Sonic
-	cmpa.w	a1,a0
-	bne.w	return_1AC3C
-	tst.b	(Super_Sonic_flag).w	; Ignore all this code if not Super Sonic
-	beq.w	return_1AC3C
-	cmpi.b	#6,(MainCharacter+routine).w
-	bge.s	Sonic_RevertToNormal
-	tst.b	(Update_HUD_timer).w
-	beq.s	Sonic_RevertToNormal ; ?
+Tails_Super:
+;	Will add variant of character check when I get those extra bits later
+;	tst.b	(Super_Tails_flag).w
+;	beq.w	Player_SuperHyper.return
+;	bra.s	Player_SuperHyper.continued
+
+; =============== S U B R O U T I N E =======================================
+
+
+Player_SuperHyper:
+	tst.b	(Super_Sonic_flag).w
+	beq.w	.return		; If not Super/Hyper, return
+
+	.continued:
+	tst.b	(Update_HUD_timer).w	; Level over?
+	beq.s	.revertToNormal
 	subq.w	#1,(Super_Sonic_frame_count).w
-	bpl.w	return_1AC3C
+	bpl.w	.return
 	move.w	#60,(Super_Sonic_frame_count).w	; Reset frame counter to 60
 	tst.w	(Ring_count).w
-	beq.s	Sonic_RevertToNormal
+	beq.s	.revertToNormal
 	ori.b	#1,(Update_HUD_rings).w
 	cmpi.w	#1,(Ring_count).w
-	beq.s	+
+	beq.s	.resetHUD
 	cmpi.w	#10,(Ring_count).w
-	beq.s	+
+	beq.s	.resetHUD
 	cmpi.w	#100,(Ring_count).w
-	bne.s	++
-+
+	bne.s	.updateHUD
+	.resetHUD:
 	ori.b	#$80,(Update_HUD_rings).w
-+
+
+	.updateHUD:
 	subq.w	#1,(Ring_count).w
-	bne.s	return_1AC3C
-; loc_1ABF2:
-Sonic_RevertToNormal:
+	bne.w	.return	; If rings aren't depleted, we're done here
+	; If rings depleted, return to normal
+	.revertToNormal:
 	move.b	#2,(Super_Sonic_palette).w	; Remove rotating palette
 	move.w	#$28,(Palette_frame).w
 	move.b	#0,(Super_Sonic_flag).w
+;	move.b	#0,(Super_Tails_flag).w
+	move.b	#-1,(Sonic_LastLoadedDPLC).w
+	cmpi.l	#Obj_Knuckles,id(a0)	; Is this Knuckles?
+	bne.s	.notKnuckles
+	move.w	#$24,(Palette_frame).w
+	
+	.notKnuckles:
 	move.b	#1,next_anim(a0)	; Change animation back to normal ?
 	move.w	#1,invincibility_time(a0)	; Remove invincibility
+	cmpi.l	#Obj_Tails,id(a0)	; Is this Tails?
+	beq.s	.Tailsspeedsrevert
 	move.w	#$600,(Sonic_top_speed).w
 	move.w	#$C,(Sonic_acceleration).w
 	move.w	#$80,(Sonic_deceleration).w
 	btst	#6,status(a0)	; Check if underwater, return if not
-	beq.s	return_1AC3C
+	beq.s	.return
 	move.w	#$300,(Sonic_top_speed).w
 	move.w	#6,(Sonic_acceleration).w
 	move.w	#$40,(Sonic_deceleration).w
-
-return_1AC3C:
+	bra.s	.return
+	
+	.Tailsspeedsrevert:
+;	move.w	#$18,(Palette_frame_Tails).w
+	move.w	#$600,(Tails_top_speed).w
+	move.w	#$C,(Tails_acceleration).w
+	move.w	#$80,(Tails_deceleration).w
+	btst	#6,status(a0)	; Check if underwater, return if not
+	beq.s	.return
+	move.w	#$300,(Tails_top_speed).w
+	move.w	#6,(Tails_acceleration).w
+	move.w	#$40,(Tails_deceleration).w
+	.return:
 	rts
-; End of subroutine Sonic_Super
+; End of subroutine Player_SuperHyper
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to check for starting to charge a spindash
@@ -32640,7 +32942,7 @@ Obj_Tails_Control_Part2:
 	andi.w	#$7FF,y_pos(a0)                 ; perform wrapping of Sonic's y position
 +
 	jsr		Player_Display
-	bsr.w	Sonic_Super
+	bsr.w	Tails_Super
 	bsr.w	Tails_RecordPos
 	bsr.w	Tails_Water
 	move.b	(Primary_Angle).w,next_tilt(a0)
@@ -83609,6 +83911,11 @@ ArtNem_EndingSuperSonic:	BINCLUDE	"art/nemesis/Small pictures of Sonic and final
 ; Final image of Tails		; ArtNem_93F3C:
 	even
 ArtNem_EndingTails:	BINCLUDE	"art/nemesis/Final image of Tails.bin"
+;--------------------------------------------------------------------------------------
+; Nemesis compressed art
+; Final image of Knuckles		; ArtNem
+	even
+ArtNem_EndingKnuckles:	BINCLUDE	"art/nemesis/Final image of Knuckles.bin"
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (72 blocks)
 ; Sonic the Hedgehog 2 image at end of credits	; ArtNem_94B28:

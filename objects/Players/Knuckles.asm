@@ -99,7 +99,7 @@ loc_315450:
 
 loc_31545E:
 		jsr		Player_Display
-		jsr		Sonic_Super
+		jsr		Player_SuperHyper
 		jsr		Sonic_RecordPos
 		jsr		Sonic_Water
 		move.b	(Primary_Angle).w,next_tilt(a0)
