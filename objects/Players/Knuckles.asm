@@ -596,7 +596,7 @@ loc_315B22_D:
 		bra.s	loc_315B2C
 
 	ResetAniClimb:
-		move.b	#frK_Climb6,d1
+		move.b	#frK_ClimbA3,d1
 
 loc_315B2C:
 		move.b	d1,mapping_frame(a0)
