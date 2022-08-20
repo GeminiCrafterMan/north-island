@@ -1,7 +1,7 @@
 {
     "Flex": 2,
     "name": "Sonic 2",
-    "node": "4c3be765-fc3f-4245-885a-7437aa14c6a9",
+    "node": "60d42993-f6dd-49b8-80aa-01d0b5b556b6",
     "objects": [
         {
             "uuid": "fa665537-a8f6-4d0d-a1b5-2c3190bf034d",
@@ -14,7 +14,7 @@
                 "offset": 0
             },
             "mappings": {
-                "path": "mappings\\sprite\\Obj_SSResults.bin",
+                "path": "mappings/sprite/Obj_SSResults.bin",
                 "label": ""
             },
             "dplcs": {
@@ -487,7 +487,7 @@
                     "format": "Sonic 2.js",
                     "palettes": [
                         {
-                            "path": "art/palettes/SonicAndTails.bin",
+                            "path": "art/palettes/SonicAndTails2.bin",
                             "length": 1
                         }
                     ],
@@ -497,7 +497,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj36.bin",
+                        "path": "mappings/sprite/Obj_Spikes.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1085,7 +1085,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": false,
+            "expanded": true,
             "uuid": "dd09b880-aa01-40b5-b556-b686f98e2742"
         },
         {
