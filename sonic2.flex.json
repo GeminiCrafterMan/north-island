@@ -1,7 +1,7 @@
 {
     "Flex": 2,
     "name": "Sonic 2",
-    "node": "234c3be7-65fc-4f12-8588-5a7437aa14c6",
+    "node": "50b40ae3-a0e4-46ce-ae11-20e60062d5f8",
     "objects": [
         {
             "uuid": "7fffcbca-c48a-45c7-a02e-83bce4dd71a2",
@@ -175,8 +175,13 @@
                 {
                     "uuid": "4c3be765-fc3f-4245-885a-7437aa14c6a9",
                     "format": "Sonic 2.js",
-                    "name": "Tails (special) (i am confused lol)",
-                    "palettes": [],
+                    "name": "Tails (special)",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/Special Stage Main.bin",
+                            "length": 3
+                        }
+                    ],
                     "art": {
                         "path": "art/uncompressed/Tails animation frames in special stage.bin",
                         "compression": "Uncompressed",
@@ -197,7 +202,12 @@
                     "uuid": "d4cead88-eeb9-40d2-bb1e-0dec3709e9e9",
                     "format": "Sonic 2.js",
                     "name": "Tails' Tails (special) (i am confused lol)",
-                    "palettes": [],
+                    "palettes": [
+                        {
+                            "path": "art/palettes/Special Stage Main.bin",
+                            "length": 3
+                        }
+                    ],
                     "art": {
                         "path": "art/uncompressed/Tails' Tails animation frames in special stage.bin",
                         "compression": "Uncompressed",

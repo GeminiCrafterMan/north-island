@@ -62540,7 +62540,7 @@ Obj_SonicSS_Init:
 	move.b	#$E,y_radius(a0)
 	move.b	#7,x_radius(a0)
 	move.l	#Obj_SonicSS_MapUnc_34212,mappings(a0)
-	move.w	#make_art_tile(ArtTile_ArtUnc_SpecialSonic,1,0),art_tile(a0)
+	move.w	#make_art_tile(ArtTile_ArtUnc_SpecialSonic,0,0),art_tile(a0)	; Edited so you can leave Sonic's palette set in the sprite.
 	move.b	#4,render_flags(a0)
 	move.w	#prio(3),priority(a0)
 	move.w	#$6E,ss_z_pos(a0)
@@ -63417,7 +63417,7 @@ Obj_TailsSS_Init:
 	move.b	#$E,y_radius(a0)
 	move.b	#7,x_radius(a0)
 	move.l	#Obj_TailsSS_MapUnc_34B3E,mappings(a0)
-	move.w	#make_art_tile(ArtTile_ArtUnc_SpecialTails,2,0),art_tile(a0)
+	move.w	#make_art_tile(ArtTile_ArtUnc_SpecialTails,0,0),art_tile(a0)	; Edited so you can leave Tails's sprites set to the palette in the art.
 	move.b	#4,render_flags(a0)
 	move.w	#prio(2),priority(a0)
 	move.w	#$80,ss_z_pos(a0)
@@ -63448,7 +63448,7 @@ loc_34864:
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.l	#Obj_SSTailsTails_MapUnc_34DA8,mappings(a1)
-	move.w	#make_art_tile(ArtTile_ArtUnc_SpecialTails_Tails,2,0),art_tile(a1)
+	move.w	#make_art_tile(ArtTile_ArtUnc_SpecialTails_Tails,0,0),art_tile(a1)
 	move.b	#4,render_flags(a1)
 	move.w	priority(a0),priority(a1)
 	sub.w	#prlayer,priority(a1)

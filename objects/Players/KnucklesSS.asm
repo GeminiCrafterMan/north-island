@@ -44,7 +44,7 @@ Obj_KnucklesSS_Init:
 	move.b	#$E,y_radius(a0)
 	move.b	#7,x_radius(a0)
 	move.l	#Obj_KnucklesSS_MapUnc,mappings(a0)
-	move.w	#make_art_tile(ArtTile_ArtUnc_SpecialSonic,1,0),art_tile(a0)
+	move.w	#make_art_tile(ArtTile_ArtUnc_SpecialSonic,0,0),art_tile(a0)
 	move.b	#4,render_flags(a0)
 	move.w	#prio(3),priority(a0)
 	move.w	#$6E,ss_z_pos(a0)
