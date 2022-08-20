@@ -1,7 +1,7 @@
 {
     "Flex": 2,
     "name": "Sonic 2",
-    "node": "47147aaf-a967-4dcc-aad6-5b6cb379c2a8",
+    "node": "50b40ae3-a0e4-46ce-ae11-20e60062d5f8",
     "objects": [
         {
             "uuid": "fa665537-a8f6-4d0d-a1b5-2c3190bf034d",
@@ -275,7 +275,7 @@
                     "name": "Knuckles (special)",
                     "palettes": [
                         {
-                            "path": "art\\palettes\\Special Stage Knuckles.bin",
+                            "path": "art/palettes/Special Stage Knuckles.bin",
                             "length": 3
                         }
                     ],
