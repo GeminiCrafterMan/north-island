@@ -455,6 +455,7 @@ PalID_OOZ_B =	id(PalPtr_OOZ_B) ; 25
 PalID_Menu =	id(PalPtr_Menu) ; 26
 PalID_Result =	id(PalPtr_Result) ; 27
 PalID_Knux =	id(PalPtr_Knux)
+PalID_SSK =		id(PalPtr_SSK)
 
 ; PLC IDs
 offset :=	ArtLoadCues
@@ -528,6 +529,7 @@ PLCID_Capsule =		id(PLCptr_Capsule) ; 40
 PLCID_Explosion =	id(PLCptr_Explosion) ; 41
 PLCID_ResultsTails =	id(PLCptr_ResultsTails) ; 42
 PLCID_ResultsKnuckles = id(PLCptr_ResultsKnuckles)
+PLCID_SpecialStageK =	id(PLCptr_SpecialStageK) ; 3C
 
 ; 2P VS results screens
 offset := TwoPlayerResultsPointers

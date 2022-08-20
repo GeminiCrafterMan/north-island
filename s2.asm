@@ -3168,6 +3168,7 @@ PalPtr_OOZ_B:	palptr Pal_OOZ_B, 1
 PalPtr_Menu:	palptr Pal_Menu,  0
 PalPtr_Result:	palptr Pal_Result,0
 PalPtr_Knux:palptr Pal_Knux, 0
+PalPtr_SSK:	palptr Pal_SSK,    0
 
 ; ----------------------------------------------------------------------------
 ; This macro defines Pal_ABC and Pal_ABC_End, so palptr can compute the size of
@@ -3216,6 +3217,7 @@ Pal_SS2_2p:palette Special Stage 2 2p.bin ; Special Stage 2 2p palette
 Pal_SS3_2p:palette Special Stage 3 2p.bin ; Special Stage 3 2p palette
 Pal_Result:palette Special Stage Results Screen.bin ; Special Stage Results Screen palette
 Pal_Knux:  palette Knuckles.bin,SonicAndTails2.bin	; Knuckles
+Pal_SSK:   palette Special Stage Knuckles.bin ; Special Stage palette for Knuckles
 ; ===========================================================================
 
     if gameRevision<2
@@ -5594,6 +5596,10 @@ SpecialStage:
 	bsr.w	ssLdComprsdData
 	move.w	#0,(SpecialStage_CurrentSegment).w
 	moveq	#PLCID_SpecialStage,d0
+	cmpi.w	#3,(Player_mode).w
+	bne.s	+
+	moveq	#PLCID_SpecialStageK,d0
++
 	bsr.w	RunPLC_ROM
 	clr.b	(Level_started_flag).w
 	move.l	#0,(Camera_X_pos).w	; probably means something else in this context
@@ -8441,17 +8447,16 @@ Obj_SSHUD:
 	moveq	#0,d1
 	tst.b	(SS_2p_Flag).w
 	beq.s	+
-	addq.w	#6,d1
+	add.w	#$A,d1
 	tst.b	(Graphics_Flags).w
 	bpl.s	++
 	addq.w	#1,d1
 	bra.s	++
 ; ---------------------------------------------------------------------------
 +	move.w	(Player_mode).w,d1
-	andi.w	#3,d1
 	tst.b	(Graphics_Flags).w
 	bpl.s	+
-	addq.w	#3,d1 ; set special stage tails name to "TAILS" instead of MILES
+	addq.w	#5,d1 ; set special stage tails name to "TAILS" instead of MILES
 +
 	add.w	d1,d1
 	moveq	#0,d2
@@ -8477,11 +8482,15 @@ SSHUDLayout:	offsetTable
 		offsetTableEntry.w SSHUD_SonicMilesTotal	; 0
 		offsetTableEntry.w SSHUD_Sonic			; 1
 		offsetTableEntry.w SSHUD_Miles			; 2
-		offsetTableEntry.w SSHUD_SonicTailsTotal	; 3
-		offsetTableEntry.w SSHUD_Sonic_2		; 4
-		offsetTableEntry.w SSHUD_Tails			; 5
-		offsetTableEntry.w SSHUD_SonicMiles		; 6
-		offsetTableEntry.w SSHUD_SonicTails		; 7
+		offsetTableEntry.w SSHUD_Sonic			; 3 ; Knuckles
+		offsetTableEntry.w SSHUD_Sonic			; 4 ; Filler
+		offsetTableEntry.w SSHUD_SonicTailsTotal	; 5
+		offsetTableEntry.w SSHUD_Sonic_2		; 6
+		offsetTableEntry.w SSHUD_Tails			; 7
+		offsetTableEntry.w SSHUD_Sonic_2			; 8 ; Knuckles
+		offsetTableEntry.w SSHUD_Sonic_2			; 9 ; Filler
+		offsetTableEntry.w SSHUD_SonicMiles		; A
+		offsetTableEntry.w SSHUD_SonicTails		; B
 
 ; byte_7052:
 SSHUD_SonicMilesTotal:
@@ -8811,6 +8820,8 @@ loc_7480:
 	dbf	d4,-
 	cmpi.w	#1,(Player_mode).w
 	beq.s	loc_7536
+	cmpi.w	#3,(Player_mode).w
+	beq.s	loc_7536
 
 loc_74EA:
 	moveq	#0,d0
@@ -9115,6 +9126,10 @@ SSInitPalAndData:
 	move.w	d0,(a2)+
 	move.w	d0,(a2)+
 	moveq	#PalID_SS,d0
+	cmpi.w	#3,(Player_mode).w
+	bne.s	+
+	moveq	#PalID_SSK,d0
++
 	bsr.w	PalLoad_ForFade
 	lea_	SpecialStage_Palettes,a1
 	moveq	#0,d0
@@ -9173,7 +9188,7 @@ c := c+1
 
 ;word_7822:
 SpecialStage_ResultsLetters:
-	titleLetters	"ACDGHILMPRSTUW."
+	titleLetters	"ACDGHILMPRSTUW.K"
 
  charset ; revert character set
 
@@ -11146,7 +11161,14 @@ CheckCheats:	; This is called from 2 places: the options screen and the level se
 	bra.s	++
 ; ===========================================================================
 +
-	move.w	#7,(Got_Emerald).w		; Give 7 emeralds to the player
+	move.w	#6,(Got_Emerald).w		; Give 7 emeralds to the player
+;	move.b	#1,(Got_Emeralds_array).w
+	move.b	#1,(Got_Emeralds_array+1).w
+	move.b	#1,(Got_Emeralds_array+2).w
+	move.b	#1,(Got_Emeralds_array+3).w
+	move.b	#1,(Got_Emeralds_array+4).w
+	move.b	#1,(Got_Emeralds_array+5).w
+	move.b	#1,(Got_Emeralds_array+6).w
 	music	mus_Emerald			; Play the emerald jingle
 +
 	move.w	#0,(Correct_cheat_entries_2).w	; Clear the number of correct entries
@@ -23696,6 +23718,12 @@ loc_140CE:
 
 loc_14102:
 	moveq	#0,d0
+	cmpi.w	#3,(Player_mode).w
+	bne.s	Check_TailsGot
+	addq.w	#8,d0
+	addq.w	#7,d0
+	bra.s	loc_14118
+Check_TailsGot:
 	cmpi.w	#2,(Player_mode).w
 	bne.s	loc_14118
 	addq.w	#1,d0
@@ -24079,12 +24107,20 @@ Obj_SSResults_InitResultTitle:
 	beq.w	DeleteObject
 	moveq	#1,d0		; "Sonic got a"
 +
+	cmpi.w	#3,(Player_mode).w
+	beq.s	KnuxGotA
 	cmpi.w	#2,(Player_mode).w
 	bne.s	+
 	addq.w	#1,d0		; "Miles got a" or "Miles has all the"
 	btst	#7,(Graphics_Flags).w
 	beq.s	+
 	addq.w	#1,d0		; "Tails got a" or "Tails has all the"
+	bra.s	+
+KnuxGotA:
+	moveq	#$1D,d0		; "Knuckles got a"
+	cmpi.b	#7,(Emerald_count).w
+	bne.s	+
+	moveq	#$1E,d0		; "Knuckles has all the"
 +
 	move.b	d0,mapping_frame(a0)
 	bra.w	Obj_TitleCard_MoveTowardsTargetPosition
@@ -24146,22 +24182,29 @@ Obj_SSResults_P1Rings:
 ; ===========================================================================
 +
 	move.w	(Player_mode).w,d0
-	beq.s	++
-	move.w	#$120,y_pixel(a0)
-	subq.w	#1,d0
-	beq.s	++
-	moveq	#$E,d0		; "Miles rings"
-	btst	#7,(Graphics_Flags).w
 	beq.s	+
-	addq.w	#1,d0		; "Tails rings"
-+
-	lea	(Bonus_Countdown_2).w,a1
-	bra.s	loc_1455A
+	move.w	#$120,y_pixel(a0)
+	cmp.w	#1,d0 ; Sonic Alone
+	beq.s	++
+	cmp.w	#3,d0 ; Knuckles Alone
+	beq.s	++
+	moveq	#$27,d0		; "Rings"
+	lea	(Bonus_Countdown_2).w,a1 ; Tails/Miles Alone
+	bra.s	loc_1455A2
 ; ===========================================================================
 +
 	moveq	#$D,d0		; "Sonic rings"
+	lea	(Bonus_Countdown_1).w,a1 ; SonicAndTails
+	bra.s	loc_1455A
++
+	moveq	#$25,d0		; "Rings"
 	lea	(Bonus_Countdown_1).w,a1
 
+loc_1455A2:
+	tst.w	(a1)
+	bne.s	+
+	move.w	#$26,d0		; Rings text with zero points
+	bra.s	+
 loc_1455A:
 	tst.w	(a1)
 	bne.s	+
@@ -24214,8 +24257,6 @@ Obj_SSResults_TallyScore:
 	move.b	#$78,anim_frame_duration(a0)
 	tst.w	(Perfect_rings_flag).w
 	bne.s	+
-	cmpi.w	#2,(Player_mode).w
-	beq.s	++		; rts
 	tst.b	(Got_Emerald).w
 	beq.s	++		; rts
 	cmpi.b	#7,(Emerald_count).w
@@ -24265,8 +24306,6 @@ Obj_SSResults_TallyPerfect:
 	sfx	sfx_Register
 	addq.b	#4,routine(a0)
 	move.b	#$78,anim_frame_duration(a0)
-	cmpi.w	#2,(Player_mode).w
-	beq.s	+		; rts
 	tst.b	(Got_Emerald).w
 	beq.s	+		; rts
 	cmpi.b	#7,(Emerald_count).w
@@ -24290,11 +24329,23 @@ Obj_SSResults_InitAndMoveSuperMsg:
 	move.b	#$32,next_object+routine(a0)			; => Obj_SSResults_MoveToTargetPos
 	move.w	x_pos(a0),d0
 	cmp.w	objoff_32(a0),d0
-	bne.s	Obj_SSResults_MoveToTargetPos
+	bne.w	Obj_SSResults_MoveToTargetPos
 	move.b	#$14,next_object+routine(a0)			; => BranchTo3_Obj_TitleCard_MoveTowardsTargetPosition
 	subq.w	#8,next_object+y_pixel(a0)
 	move.b	#$1A,next_object+mapping_frame(a0)		; "Now Sonic can"
-	move.b	#$34,routine(a0)						; => Obj_SSResults_MoveAndDisplay
+	cmpi.w	#3,(Player_mode).w
+	beq.s	.NowKnuxCan
+	cmpi.w	#2,(Player_mode).w
+	bne.s	+
+	move.b	#$1F,next_object+mapping_frame(a0)		; "Now Miles can"
+	btst	#7,(Graphics_Flags).w
+	beq.s	+
+	move.b	#$20,next_object+mapping_frame(a0)		; "Now Tails can"
+	bra.s	+
+	.NowKnuxCan:
+	move.b	#$21,next_object+mapping_frame(a0)		; "Now Knuckles can"
++
+	move.b	#$34,routine(a0)							; => Obj_SSResults_MoveAndDisplay
 	subq.w	#8,y_pixel(a0)
 	move.b	#$1B,mapping_frame(a0)					; "Change into"
 	lea	(SpecialStageResults2).w,a1
@@ -24304,6 +24355,18 @@ Obj_SSResults_InitAndMoveSuperMsg:
 	move.w	#$B4,y_pixel(a1)
 	move.b	#$14,routine(a1)						; => BranchTo3_Obj_TitleCard_MoveTowardsTargetPosition
 	move.b	#$1C,mapping_frame(a1)					; "Super Sonic"
+	cmpi.w	#3,(Player_mode).w
+	beq.s	.SuperKnuxM
+	cmpi.w	#2,(Player_mode).w
+	bne.s	+
+	move.b	#$22,mapping_frame(a1)			; "Super Miles"
+	btst	#7,(Graphics_Flags).w
+	beq.s	+
+	move.b	#$23,mapping_frame(a1)			; "Super Tails"
+	bra.s	+
+	.SuperKnuxM:
+	move.b	#$24,mapping_frame(a1)			; "Super Knuckles"
++
 	move.l	#Obj_SSResults_MapUnc_14ED0,mappings(a1)
 	move.b	#$78,width_pixels(a1)
 	move.b	#0,render_flags(a1)
@@ -24352,191 +24415,320 @@ byte_14752:
 	results_screen_object  $340, $120, $118, $16,  $D		; Sonic Rings
 	results_screen_object  $350, $120, $128, $18,  $E		; Miles Rings
 	results_screen_object  $360, $120, $138, $1A, $10		; Gems Bonus
-; -------------------------------------------------------------------------------
-; sprite mappings
-; -------------------------------------------------------------------------------
-Obj_TitleCard_MapUnc_147BA:	offsetTable
-	offsetTableEntry.w word_147E8
-	offsetTableEntry.w word_147E8
-	offsetTableEntry.w word_147E8
-	offsetTableEntry.w word_147E8
-	offsetTableEntry.w word_14842
-	offsetTableEntry.w word_14842
-	offsetTableEntry.w word_14B24
-	offsetTableEntry.w word_14894
-	offsetTableEntry.w word_148CE
-	offsetTableEntry.w word_147E8
-	offsetTableEntry.w word_14930
-	offsetTableEntry.w word_14972
-	offsetTableEntry.w word_149C4
-	offsetTableEntry.w word_14A1E
-	offsetTableEntry.w word_14B86
-	offsetTableEntry.w word_14A88
-	offsetTableEntry.w word_14AE2
-	offsetTableEntry.w word_14BC8
-	offsetTableEntry.w word_14BEA
-	offsetTableEntry.w word_14BF4
-	offsetTableEntry.w word_14BFE
-	offsetTableEntry.w word_14C08
-	offsetTableEntry.w word_14C32
-word_147E8:	dc.w $B
-	dc.w 5,	$8580, $82C0, $FFC3
-	dc.w 9,	$85DE, $82EF, $FFD0
-	dc.w 5,	$8580, $82C0, $FFE8
-	dc.w 5,	$85E4, $82F2, $FFF8
-	dc.w 5,	$85E8, $82F4, 8
-	dc.w 5,	$85EC, $82F6, $18
-	dc.w 5,	$85F0, $82F8, $28
-	dc.w 5,	$85F4, $82FA, $48
-	dc.w 1,	$85F8, $82FC, $58
-	dc.w 5,	$85EC, $82F6, $60
-	dc.w 5,	$85EC, $82F6, $70
-word_14842:	dc.w $A
-	dc.w 9,	$85DE, $82EF, $FFE0
-	dc.w 5,	$8580, $82C0, $FFF8
-	dc.w 5,	$85E4, $82F2, 8
-	dc.w 5,	$85E8, $82F4, $18
-	dc.w 5,	$8588, $82C4, $28
-	dc.w 5,	$85EC, $82F6, $38
-	dc.w 5,	$8588, $82C4, $48
-	dc.w 5,	$85F0, $82F8, $58
-	dc.w 1,	$85F4, $82FA, $68
-	dc.w 5,	$85F6, $82FB, $70
-word_14894:	dc.w 7
-	dc.w 5,	$85DE, $82EF, 8
-	dc.w 1,	$85E2, $82F1, $18
-	dc.w 5,	$85E4, $82F2, $20
-	dc.w 5,	$85E4, $82F2, $30
-	dc.w 5,	$85E8, $82F4, $51
-	dc.w 5,	$8588, $82C4, $60
-	dc.w 5,	$85EC, $82F6, $70
-word_148CE:	dc.w $C
-	dc.w 5,	$85DE, $82EF, $FFB8
-	dc.w 1,	$85E2, $82F1, $FFC8
-	dc.w 5,	$85E4, $82F2, $FFD0
-	dc.w 5,	$85E4, $82F2, $FFE0
-	dc.w 5,	$8580, $82C0, $FFF0
-	dc.w 5,	$8584, $82C2, 0
-	dc.w 5,	$85E8, $82F4, $20
-	dc.w 5,	$85EC, $82F6, $30
-	dc.w 5,	$85F0, $82F8, $40
-	dc.w 5,	$85EC, $82F6, $50
-	dc.w 5,	$85F4, $82FA, $60
-	dc.w 5,	$8580, $82C0, $70
-word_14930:	dc.w 8
-	dc.w 5,	$8588, $82C4, $FFFB
-	dc.w 1,	$85DE, $82EF, $B
-	dc.w 5,	$85E0, $82F0, $13
-	dc.w 5,	$8588, $82C4, $33
-	dc.w 5,	$85E4, $82F2, $43
-	dc.w 5,	$8580, $82C0, $53
-	dc.w 5,	$85E8, $82F4, $60
-	dc.w 5,	$8584, $82C2, $70
-word_14972:	dc.w $A
-	dc.w 9,	$85DE, $82EF, $FFD0
-	dc.w 5,	$85E4, $82F2, $FFE8
-	dc.w 5,	$85E8, $82F4, $FFF8
-	dc.w 5,	$85EC, $82F6, 8
-	dc.w 1,	$85F0, $82F8, $18
-	dc.w 5,	$85F2, $82F9, $20
-	dc.w 5,	$85F2, $82F9, $41
-	dc.w 5,	$85F6, $82FB, $50
-	dc.w 5,	$85FA, $82FD, $60
-	dc.w 5,	$8580, $82C0, $70
-word_149C4:	dc.w $B
-	dc.w 5,	$85DE, $82EF, $FFD1
-	dc.w 5,	$85E2, $82F1, $FFE0
-	dc.w 5,	$85E6, $82F3, $FFF0
-	dc.w 1,	$85EA, $82F5, 0
-	dc.w 5,	$8584, $82C2, 8
-	dc.w 5,	$8588, $82C4, $18
-	dc.w 5,	$8584, $82C2, $38
-	dc.w 1,	$85EA, $82F5, $48
-	dc.w 5,	$85EC, $82F6, $50
-	dc.w 5,	$85F0, $82F8, $60
-	dc.w 5,	$85F4, $82FA, $70
-word_14A1E:	dc.w $D
-	dc.w 5,	$85DE, $82EF, $FFA4
-	dc.w 5,	$85E2, $82F1, $FFB4
-	dc.w 5,	$8580, $82C0, $FFC4
-	dc.w 9,	$85E6, $82F3, $FFD1
-	dc.w 1,	$85EC, $82F6, $FFE9
-	dc.w 5,	$85DE, $82EF, $FFF1
-	dc.w 5,	$85EE, $82F7, 0
-	dc.w 5,	$85F2, $82F9, $10
-	dc.w 5,	$85F6, $82FB, $31
-	dc.w 5,	$85F2, $82F9, $41
-	dc.w 5,	$85EE, $82F7, $50
-	dc.w 5,	$8584, $82C2, $60
-	dc.w 5,	$85FA, $82FD, $70
-word_14A88:	dc.w $B
-	dc.w 5,	$85DE, $82EF, $FFD2
-	dc.w 5,	$85E2, $82F1, $FFE2
-	dc.w 5,	$85E6, $82F3, $FFF2
-	dc.w 5,	$85DE, $82EF, 0
-	dc.w 5,	$85EA, $82F5, $10
-	dc.w 1,	$85EE, $82F7, $20
-	dc.w 5,	$85F0, $82F8, $28
-	dc.w 5,	$85F4, $82FA, $48
-	dc.w 5,	$85E6, $82F3, $58
-	dc.w 1,	$85EE, $82F7, $68
-	dc.w 5,	$8584, $82C2, $70
-word_14AE2:	dc.w 8
-	dc.w 5,	$85DE, $82EF, $FFF0
-	dc.w 5,	$85E2, $82F1, 0
-	dc.w 5,	$85E6, $82F3, $10
-	dc.w 5,	$85EA, $82F5, $30
-	dc.w 5,	$85EE, $82F7, $40
-	dc.w 5,	$85F2, $82F9, $50
-	dc.w 5,	$85DE, $82EF, $60
-	dc.w 5,	$8580, $82C0, $70
-word_14B24:	dc.w $C
-	dc.w 9,	$85DE, $82EF, $FFB1
-	dc.w 1,	$85E4, $82F2, $FFC8
-	dc.w 5,	$8584, $82C2, $FFD0
-	dc.w 5,	$85E6, $82F3, $FFE0
-	dc.w 5,	$85EA, $82F5, 1
-	dc.w 5,	$8588, $82C4, $10
-	dc.w 5,	$85EE, $82F7, $20
-	dc.w 5,	$85F2, $82F9, $30
-	dc.w 5,	$85EE, $82F7, $40
-	dc.w 5,	$8580, $82C0, $50
-	dc.w 5,	$85F6, $82FB, $5F
-	dc.w 5,	$85F6, $82FB, $6F
-word_14B86:	dc.w 8
-	dc.w 5,	$85DE, $82EF, $FFF2
-	dc.w 5,	$8580, $82C0, 2
-	dc.w 5,	$85E2, $82F1, $10
-	dc.w 5,	$85E6, $82F3, $20
-	dc.w 5,	$85EA, $82F5, $30
-	dc.w 5,	$8580, $82C0, $51
-	dc.w 5,	$85EE, $82F7, $60
-	dc.w 5,	$85EE, $82F7, $70
-word_14BC8:	dc.w 4
-	dc.w 5,	$858C, $82C6, 1
-	dc.w 5,	$8588, $82C4, $10
-	dc.w 5,	$8584, $82C2, $20
-	dc.w 5,	$8580, $82C0, $30
-word_14BEA:	dc.w 1
-	dc.w 7,	$A590, $A2C8, 0
-word_14BF4:	dc.w 1
-	dc.w $B, $A598,	$A2CC, 0
-word_14BFE:	dc.w 1
-	dc.w $B, $A5A4,	$A2D2, 0
-word_14C08:	dc.w 5
-	dc.w $D, $85B0,	$82D8, $FFB8
-	dc.w $D, $85B8,	$82DC, $FFD8
-	dc.w $D, $85C0,	$82E0, $FFF8
-	dc.w $D, $85C8,	$82E4, $18
-	dc.w 5,	$85D0, $82E8, $38
-word_14C32:	dc.w 7
-	dc.w $9003, $85D4, $82EA, 0
-	dc.w $B003, $85D4, $82EA, 0
-	dc.w $D003, $85D4, $82EA, 0
-	dc.w $F003, $85D4, $82EA, 0
-	dc.w $1003, $85D4, $82EA, 0
-	dc.w $3003, $85D4, $82EA, 0
-	dc.w $5003, $85D4, $82EA, 0
+	results_screen_object  $340, $120, $118, $16,  $2D		; Rings
+; ==========================================================================
+; -------------------------------------------------------------------------
+; Sonic 2 Text Code Generator (Title Card Mappings)
+; -------------------------------------------------------------------------
+; Created by: Selbi (2010-2013)
+; 
+; Thanks to:
+; - IDA, for kind of helping at converting the binary into an ASM file
+; - Xenowhirl, for his SonMapED tool
+; - shobiz, for answering some questions in the Basic Q&A thread
+; - Whoever did the Text Editing SCHG page, for saving me ages of research
+; - Irixion, for beta testing
+; -------------------------------------------------------------------------
+; ==========================================================================
+
+; -----------------------------------------------------------------------
+; Title Card Mappings
+; (Created with IDA, SonMapEd and a lot of manual typing)
+;    The marked as unused ones are basically using no text, they are
+;    pointing to EHZ's text in the original. If you are wondering, why
+;    they are named, those were the original zones.
+; -----------------------------------------------------------------------
+
+Obj_TitleCard_MapUnc_147BA:
+		dc.w TC_EHZ-Obj_TitleCard_MapUnc_147BA		; Emerald Hill Zone
+		dc.w TC_Unused1-Obj_TitleCard_MapUnc_147BA	; XXX Unknown
+		dc.w TC_Unused2-Obj_TitleCard_MapUnc_147BA	; XXX Wood Zone
+		dc.w TC_Unused3-Obj_TitleCard_MapUnc_147BA	; XXX Dust Hill Zone
+		dc.w TC_MTZ-Obj_TitleCard_MapUnc_147BA		; Metropolis Zone Act 1+2
+		dc.w TC_MT3-Obj_TitleCard_MapUnc_147BA		; Metropolis Zone Act 3
+		dc.w TC_WFZ-Obj_TitleCard_MapUnc_147BA		; Wing Fortress Zone
+		dc.w TC_HTZ-Obj_TitleCard_MapUnc_147BA		; Hill Top Zone
+		dc.w TC_HPZ-Obj_TitleCard_MapUnc_147BA		; Hidden Palace Zone
+		dc.w TC_Unused4-Obj_TitleCard_MapUnc_147BA	; XXX Genocide City Zone
+		dc.w TC_OOZ-Obj_TitleCard_MapUnc_147BA		; Oil Ocean Zone
+		dc.w TC_MCZ-Obj_TitleCard_MapUnc_147BA		; Mystic Cave Zone
+		dc.w TC_CNZ-Obj_TitleCard_MapUnc_147BA		; Casino Night Zone
+		dc.w TC_CPZ-Obj_TitleCard_MapUnc_147BA		; Chemical Plant Zone
+		dc.w TC_DEZ-Obj_TitleCard_MapUnc_147BA		; Death Egg Zone
+		dc.w TC_ARZ-Obj_TitleCard_MapUnc_147BA		; Aquatic Ruin Zone
+		dc.w TC_SCZ-Obj_TitleCard_MapUnc_147BA		; Sky Chase Zone
+
+		dc.w TC_ZONE-Obj_TitleCard_MapUnc_147BA		; "ZONE" Text
+		dc.w TC_No1-Obj_TitleCard_MapUnc_147BA		; Act Number 1
+		dc.w TC_No2-Obj_TitleCard_MapUnc_147BA		; Act Number 2
+		dc.w TC_No3-Obj_TitleCard_MapUnc_147BA		; Act Number 3
+		dc.w TC_STH-Obj_TitleCard_MapUnc_147BA		; "SONIC THE HEDGEHOG" Text
+		dc.w TC_RedStripes-Obj_TitleCard_MapUnc_147BA	; Red Stripes
+
+
+TC_EHZ:		dc.w $B				; EMERALD HILL
+		dc.w $0005, $8580, $82C0, $FFC3	; E
+		dc.w $0009, $85DE, $82EF, $FFD0	; M
+		dc.w $0005, $8580, $82C0, $FFE8	; E
+		dc.w $0005, $85E4, $82F2, $FFF8	; R
+		dc.w $0005, $85E8, $82F4, $0008	; A
+		dc.w $0005, $85EC, $82F6, $0018	; L
+		dc.w $0005, $85F0, $82F8, $0028	; D
+
+		dc.w $0005, $85F4, $82FA, $0048	; H
+		dc.w $0001, $85F8, $82FC, $0058	; I
+		dc.w $0005, $85EC, $82F6, $0060	; L
+		dc.w $0005, $85EC, $82F6, $0070	; L
+
+TC_Unused1:	dc.w $B				; EMERALD HILL
+		dc.w $0005, $8580, $82C0, $FFC3	; E
+		dc.w $0009, $85DE, $82EF, $FFD0	; M
+		dc.w $0005, $8580, $82C0, $FFE8	; E
+		dc.w $0005, $85E4, $82F2, $FFF8	; R
+		dc.w $0005, $85E8, $82F4, $0008	; A
+		dc.w $0005, $85EC, $82F6, $0018	; L
+		dc.w $0005, $85F0, $82F8, $0028	; D
+
+		dc.w $0005, $85F4, $82FA, $0048	; H
+		dc.w $0001, $85F8, $82FC, $0058	; I
+		dc.w $0005, $85EC, $82F6, $0060	; L
+		dc.w $0005, $85EC, $82F6, $0070	; L
+
+TC_Unused2:	dc.w $B				; EMERALD HILL
+		dc.w $0005, $8580, $82C0, $FFC3	; E
+		dc.w $0009, $85DE, $82EF, $FFD0	; M
+		dc.w $0005, $8580, $82C0, $FFE8	; E
+		dc.w $0005, $85E4, $82F2, $FFF8	; R
+		dc.w $0005, $85E8, $82F4, $0008	; A
+		dc.w $0005, $85EC, $82F6, $0018	; L
+		dc.w $0005, $85F0, $82F8, $0028	; D
+
+		dc.w $0005, $85F4, $82FA, $0048	; H
+		dc.w $0001, $85F8, $82FC, $0058	; I
+		dc.w $0005, $85EC, $82F6, $0060	; L
+		dc.w $0005, $85EC, $82F6, $0070	; L
+
+TC_Unused3:	dc.w $B				; EMERALD HILL
+		dc.w $0005, $8580, $82C0, $FFC3	; E
+		dc.w $0009, $85DE, $82EF, $FFD0	; M
+		dc.w $0005, $8580, $82C0, $FFE8	; E
+		dc.w $0005, $85E4, $82F2, $FFF8	; R
+		dc.w $0005, $85E8, $82F4, $0008	; A
+		dc.w $0005, $85EC, $82F6, $0018	; L
+		dc.w $0005, $85F0, $82F8, $0028	; D
+
+		dc.w $0005, $85F4, $82FA, $0048	; H
+		dc.w $0001, $85F8, $82FC, $0058	; I
+		dc.w $0005, $85EC, $82F6, $0060	; L
+		dc.w $0005, $85EC, $82F6, $0070	; L
+
+TC_MTZ:		dc.w $A				; METROPOLIS
+		dc.w $0009, $85DE, $82EF, $FFE0	; M
+		dc.w $0005, $8580, $82C0, $FFF8	; E
+		dc.w $0005, $85E4, $82F2, $0008	; T
+		dc.w $0005, $85E8, $82F4, $0018	; R
+		dc.w $0005, $8588, $82C4, $0028	; O
+		dc.w $0005, $85EC, $82F6, $0038	; P
+		dc.w $0005, $8588, $82C4, $0048	; O
+		dc.w $0005, $85F0, $82F8, $0058	; L
+		dc.w $0001, $85F4, $82FA, $0068	; I
+		dc.w $0005, $85F6, $82FB, $0070	; S
+
+TC_MT3:		dc.w $A				; METROPOLIS
+		dc.w $0009, $85DE, $82EF, $FFE0	; M
+		dc.w $0005, $8580, $82C0, $FFF8	; E
+		dc.w $0005, $85E4, $82F2, $0008	; T
+		dc.w $0005, $85E8, $82F4, $0018	; R
+		dc.w $0005, $8588, $82C4, $0028	; O
+		dc.w $0005, $85EC, $82F6, $0038	; P
+		dc.w $0005, $8588, $82C4, $0048	; O
+		dc.w $0005, $85F0, $82F8, $0058	; L
+		dc.w $0001, $85F4, $82FA, $0068	; I
+		dc.w $0005, $85F6, $82FB, $0070	; S
+
+TC_WFZ:		dc.w $C				; WING FORTRESS
+		dc.w $0009, $85DE, $82EF, $FFB1	; W
+		dc.w $0001, $85E4, $82F2, $FFC9	; I
+		dc.w $0005, $8584, $82C2, $FFD1	; N
+		dc.w $0005, $85E6, $82F3, $FFE1	; G
+
+		dc.w $0005, $85EA, $82F5, $0001	; F
+		dc.w $0005, $8588, $82C4, $0011	; O
+		dc.w $0005, $85EE, $82F7, $0021	; R
+		dc.w $0005, $85F2, $82F9, $0031	; T
+		dc.w $0005, $85EE, $82F7, $0041	; R
+		dc.w $0005, $8580, $82C0, $0051	; E
+		dc.w $0005, $85F6, $82FB, $0061	; S
+		dc.w $0005, $85F6, $82FB, $0071	; S
+
+TC_HTZ:		dc.w $7				; HILL TOP
+		dc.w $0005, $85DE, $82EF, $0008	; H
+		dc.w $0001, $85E2, $82F1, $0018	; I
+		dc.w $0005, $85E4, $82F2, $0020	; L
+		dc.w $0005, $85E4, $82F2, $0030	; L
+
+		dc.w $0005, $85E8, $82F4, $0050	; T
+		dc.w $0005, $8588, $82C4, $0060	; O
+		dc.w $0005, $85EC, $82F6, $0070	; P
+	
+TC_HPZ:		dc.w $C				; HIDDEN PALACE
+		dc.w $0005, $85DE, $82EF, $FFB8	; H
+		dc.w $0001, $85E2, $82F1, $FFC8	; I
+		dc.w $0005, $85E4, $82F2, $FFD0	; D
+		dc.w $0005, $85E4, $82F2, $FFE0	; D
+		dc.w $0005, $8580, $82C0, $FFF0	; E
+		dc.w $0005, $8584, $82C2, $000	; N
+
+		dc.w $0005, $85E8, $82F4, $0020	; P
+		dc.w $0005, $85EC, $82F6, $0030	; A
+		dc.w $0005, $85F0, $82F8, $0040	; L
+		dc.w $0005, $85EC, $82F6, $0050	; A
+		dc.w $0005, $85F4, $82FA, $0060	; C
+		dc.w $0005, $8580, $82C0, $0070	; E
+
+TC_Unused4:	dc.w $B				; EMERALD HILL
+		dc.w $0005, $8580, $82C0, $FFC3	; E
+		dc.w $0009, $85DE, $82EF, $FFD0	; M
+		dc.w $0005, $8580, $82C0, $FFE8	; E
+		dc.w $0005, $85E4, $82F2, $FFF8	; R
+		dc.w $0005, $85E8, $82F4, $0008	; A
+		dc.w $0005, $85EC, $82F6, $0018	; L
+		dc.w $0005, $85F0, $82F8, $0028	; D
+
+		dc.w $0005, $85F4, $82FA, $0048	; H
+		dc.w $0001, $85F8, $82FC, $0058	; I
+		dc.w $0005, $85EC, $82F6, $0060	; L
+		dc.w $0005, $85EC, $82F6, $0070	; L
+
+TC_OOZ:		dc.w $8				; OIL OCEAN
+		dc.w $0005, $8588, $82C4, $FFFB	; O
+		dc.w $0001, $85DE, $82EF, $000B	; I
+		dc.w $0005, $85E0, $82F0, $0013	; L
+
+		dc.w $0005, $8588, $82C4, $0033	; O
+		dc.w $0005, $85E4, $82F2, $0043	; C
+		dc.w $0005, $8580, $82C0, $0053	; E
+		dc.w $0005, $85E8, $82F4, $0063	; A
+		dc.w $0005, $8584, $82C2, $0073	; N
+
+TC_MCZ:		dc.w $A				; MYSTIC CAVE
+		dc.w $0009, $85DE, $82EF, $FFD0	; M
+		dc.w $0005, $85E4, $82F2, $FFE8	; Y
+		dc.w $0005, $85E8, $82F4, $FFF8	; S
+		dc.w $0005, $85EC, $82F6, $0008	; T
+		dc.w $0001, $85F0, $82F8, $0018	; I
+		dc.w $0005, $85F2, $82F9, $0020	; C
+
+		dc.w $0005, $85F2, $82F9, $0040	; C
+		dc.w $0005, $85F6, $82FB, $0050	; A
+		dc.w $0005, $85FA, $82FD, $0060	; V
+		dc.w $0005, $8580, $82C0, $0070	; E
+
+TC_CNZ:		dc.w $B				; CASINO NIGHT
+		dc.w $0005, $85DE, $82EF, $FFD1	; C
+		dc.w $0005, $85E2, $82F1, $FFE1	; A
+		dc.w $0005, $85E6, $82F3, $FFF1	; S
+		dc.w $0001, $85EA, $82F5, $0001	; I
+		dc.w $0005, $8584, $82C2, $009	; N
+		dc.w $0005, $8588, $82C4, $0019	; O
+
+		dc.w $0005, $8584, $82C2, $0039	; N
+		dc.w $0001, $85EA, $82F5, $0049	; I
+		dc.w $0005, $85EC, $82F6, $0051	; G
+		dc.w $0005, $85F0, $82F8, $0061	; H
+		dc.w $0005, $85F4, $82FA, $0071	; T
+
+TC_CPZ:		dc.w $D				; CHEMICAL PLANT
+		dc.w $0005, $85DE, $82EF, $FFA4	; C
+		dc.w $0005, $85E2, $82F1, $FFB4	; H
+		dc.w $0005, $8580, $82C0, $FFC4	; E
+		dc.w $0009, $85E6, $82F3, $FFD1	; M
+		dc.w $0001, $85EC, $82F6, $FFE9	; I
+		dc.w $0005, $85DE, $82EF, $FFF1	; C
+		dc.w $0005, $85EE, $82F7, $0001	; A
+		dc.w $0005, $85F2, $82F9, $0011	; L
+
+		dc.w $0005, $85F6, $82FB, $0031	; P
+		dc.w $0005, $85F2, $82F9, $0041	; L
+		dc.w $0005, $85EE, $82F7, $0051	; A
+		dc.w $0005, $8584, $82C2, $0061	; N
+		dc.w $0005, $85FA, $82FD, $0071	; T
+
+TC_DEZ:		dc.w $8				; DEATH EGG
+		dc.w $0005, $85DE, $82EF, $FFF2	; D
+		dc.w $0005, $8580, $82C0, $002	; E
+		dc.w $0005, $85E2, $82F1, $0012	; A
+		dc.w $0005, $85E6, $82F3, $0022	; T
+		dc.w $0005, $85EA, $82F5, $0032	; H
+
+		dc.w $0005, $8580, $82C0, $0052	; E
+		dc.w $0005, $85EE, $82F7, $0062	; G
+		dc.w $0005, $85EE, $82F7, $0072	; G
+
+TC_ARZ:		dc.w $B				; AQUATIC RUIN
+		dc.w $0005, $85DE, $82EF, $FFD2	; A
+		dc.w $0005, $85E2, $82F1, $FFE2	; Q
+		dc.w $0005, $85E6, $82F3, $FFF2	; U
+		dc.w $0005, $85DE, $82EF, $0002	; A
+		dc.w $0005, $85EA, $82F5, $0012	; T
+		dc.w $0001, $85EE, $82F7, $0022	; I
+		dc.w $0005, $85F0, $82F8, $002A	; C
+
+		dc.w $0005, $85F4, $82FA, $004A	; R
+		dc.w $0005, $85E6, $82F3, $005A	; U
+		dc.w $0001, $85EE, $82F7, $006A	; I
+		dc.w $0005, $8584, $82C2, $0072	; N
+
+TC_SCZ:		dc.w $8				; SKY CHASE
+		dc.w $0005, $85DE, $82EF, $FFF0	; S
+		dc.w $0005, $85E2, $82F1, $0000	; K
+		dc.w $0005, $85E6, $82F3, $0010	; Y
+
+		dc.w $0005, $85EA, $82F5, $0030	; C
+		dc.w $0005, $85EE, $82F7, $0040	; H
+		dc.w $0005, $85F2, $82F9, $0050	; A
+		dc.w $0005, $85DE, $82EF, $0060	; S
+		dc.w $0005, $8580, $82C0, $0070	; E
+
+; ===============================================
+; --- Miscellaneous Mappings ---
+; -----------------------------------------------
+
+TC_ZONE:	dc.w $4				; ZONE
+		dc.w $0005, $858C, $82C6, $0001	; Z
+		dc.w $0005, $8588, $82C4, $0010	; O
+		dc.w $0005, $8584, $82C2, $0020	; N
+		dc.w $0005, $8580, $82C0, $0030	; E
+
+TC_No1:		dc.w $1
+		dc.w $0007, $A590, $A2C8, $0000	; 1
+
+TC_No2:		dc.w $1
+		dc.w $000B, $A598, $A2CC, $0000	; 2
+
+TC_No3:		dc.w $1
+		dc.w $000B, $A5A4, $A2D2, $0000	; 3
+
+TC_STH:		dc.w $5
+		dc.w $000D, $85B0, $82D8, $FFB8
+		dc.w $000D, $85B8, $82DC, $FFD8
+		dc.w $000D, $85C0, $82E0, $FFF8
+		dc.w $000D, $85C8, $82E4, $0018
+		dc.w $0005, $85D0, $82E8, $0038
+
+TC_RedStripes:	dc.w $7
+		dc.w $9003, $85D4, $82EA, $0000
+		dc.w $B003, $85D4, $82EA, $0000
+		dc.w $D003, $85D4, $82EA, $0000
+		dc.w $F003, $85D4, $82EA, $0000
+		dc.w $1003, $85D4, $82EA, $0000
+		dc.w $3003, $85D4, $82EA, $0000
+		dc.w $5003, $85D4, $82EA, $0000
+		even
+
+; ==============================================
+; End of Title Card Mappings
+; ==============================================
 ; -------------------------------------------------------------------------------
 ; sprite mappings
 ; -------------------------------------------------------------------------------
@@ -24544,93 +24736,162 @@ Obj_GameOver_MapUnc_14C6C:	BINCLUDE "mappings/sprite/Obj_GameOver.bin"
 ; -------------------------------------------------------------------------------
 ; sprite mappings
 ; -------------------------------------------------------------------------------
-Obj_Results_MapUnc_14CBC:	offsetTable
-	offsetTableEntry.w word_14CDA
-	offsetTableEntry.w word_14D1C
-	offsetTableEntry.w word_14D5E
-	offsetTableEntry.w word_14DA0
-	offsetTableEntry.w word_14DDA
-	offsetTableEntry.w word_14BC8
-	offsetTableEntry.w word_14BEA
-	offsetTableEntry.w word_14BF4
-	offsetTableEntry.w word_14BFE
-	offsetTableEntry.w word_14DF4
-	offsetTableEntry.w word_14E1E
-	offsetTableEntry.w word_14E50
-	offsetTableEntry.w word_14E82
-	offsetTableEntry.w word_14E8C
-	offsetTableEntry.w word_14E96
-word_14CDA:	dc.w 8
-	dc.w 5,	$85D0, $82E8, $FFC0
-	dc.w 5,	$8588, $82C4, $FFD0
-	dc.w 5,	$8584, $82C2, $FFE0
-	dc.w 1,	$85C0, $82E0, $FFF0
-	dc.w 5,	$85B4, $82DA, $FFF8
-	dc.w 5,	$85B8, $82DC, $10
-	dc.w 5,	$8588, $82C4, $20
-	dc.w 5,	$85D4, $82EA, $2F
-word_14D1C:	dc.w 8
-	dc.w 9,	$85C6, $82E3, $FFBC
-	dc.w 1,	$85C0, $82E0, $FFD4
-	dc.w 5,	$85C2, $82E1, $FFDC
-	dc.w 5,	$8580, $82C0, $FFEC
-	dc.w 5,	$85D0, $82E8, $FFFC
-	dc.w 5,	$85B8, $82DC, $14
-	dc.w 5,	$8588, $82C4, $24
-	dc.w 5,	$85D4, $82EA, $33
-word_14D5E:	dc.w 8
-	dc.w 5,	$85D4, $82EA, $FFC3
-	dc.w 5,	$85B0, $82D8, $FFD0
-	dc.w 1,	$85C0, $82E0, $FFE0
-	dc.w 5,	$85C2, $82E1, $FFE8
-	dc.w 5,	$85D0, $82E8, $FFF8
-	dc.w 5,	$85B8, $82DC, $10
-	dc.w 5,	$8588, $82C4, $20
-	dc.w 5,	$85D4, $82EA, $2F
-word_14DA0:	dc.w 7
-	dc.w 5,	$85D4, $82EA, $FFC8
-	dc.w 5,	$85BC, $82DE, $FFD8
-	dc.w 5,	$85CC, $82E6, $FFE8
-	dc.w 5,	$8588, $82C4, $FFF8
-	dc.w 5,	$85D8, $82EC, 8
-	dc.w 5,	$85B8, $82DC, $18
-	dc.w 5,	$85BC, $82DE, $28
-word_14DDA:	dc.w 3
-	dc.w 5,	$85B0, $82D8, 0
-	dc.w 5,	$85B4, $82DA, $10
-	dc.w 5,	$85D4, $82EA, $1F
-word_14DF4:	dc.w 5
-	dc.w 9,	$A5E6, $A2F3, $FFB8
-	dc.w 5,	$A5EC, $A2F6, $FFD0
-	dc.w 5,	$85F0, $82F8, $FFD4
-	dc.w $D, $8520,	$8290, $38
-	dc.w 1,	$86F0, $8378, $58
-word_14E1E:	dc.w 6
-	dc.w $D, $A6DA,	$A36D, $FFA4
-	dc.w $D, $A5DE,	$A2EF, $FFCC
-	dc.w 1,	$A6CA, $A365, $FFEC
-	dc.w 5,	$85F0, $82F8, $FFE8
-	dc.w $D, $8528,	$8294, $38
-	dc.w 1,	$86F0, $8378, $58
-word_14E50:	dc.w 6
-	dc.w $D, $A6D2,	$A369, $FFA4
-	dc.w $D, $A5DE,	$A2EF, $FFCC
-	dc.w 1,	$A6CA, $A365, $FFEC
-	dc.w 5,	$85F0, $82F8, $FFE8
-	dc.w $D, $8530,	$8298, $38
-	dc.w 1,	$86F0, $8378, $58
-word_14E82:	dc.w 1
-	dc.w 6,	$85F4, $82FA, 0
-word_14E8C:	dc.w 1
-	dc.w 6,	$85FA, $82FD, 0
-word_14E96:	dc.w 7
-	dc.w $D, $A540,	$A2A0, $FF98
-	dc.w 9,	$A548, $A2A4, $FFB8
-	dc.w $D, $A5DE,	$A2EF, $FFD8
-	dc.w 1,	$A6CA, $A365, $FFF8
-	dc.w 5,	$85F0, $82F8, $FFF4
-	dc.w $D, $8538,	$829C, $38
-	dc.w 1,	$86F0, $8378, $58
+; ==========================================================================
+; -------------------------------------------------------------------------
+; Sonic 2 Text Code Generator (End Of Level Title Card Mappings)
+; -------------------------------------------------------------------------
+; Created by: Selbi (2010-2013)
+; 
+; Thanks to:
+; - IDA, for kind of helping at converting the binary into an ASM file
+; - Xenowhirl, for his SonMapED tool
+; - shobiz, for answering some questions in the Basic Q&A thread
+; - Whoever did the Text Editing SCHG page, for saving me ages of research
+; - Irixion, for beta testing
+; -------------------------------------------------------------------------
+; ==========================================================================
+
+; -----------------------------------------------------------------------
+; End of level Title Card Mappings
+; (Created with IDA and a lot of manual typing)
+;    You only need (and can) change the first five ones. I got no idea
+;    what those $FFxx's in the list are, so I didn't touch them.
+;    The labels below are pointing to miscellaneous mappings.
+;
+; Something you should know, you can only use the letters:
+;	A, C, G, H, I, L, M, R, S, T, U
+; That's because they are all included in a seperate file for the
+; "End of Level". They are not
+; being read from the same file as the Zone Title Cards.
+; -----------------------------------------------------------------------
+
+Obj_Results_MapUnc_14CBC:
+		dc.w EOL_Sonic-Obj_Results_MapUnc_14CBC	; "SONIC GOT" text
+		dc.w EOL_Miles-Obj_Results_MapUnc_14CBC	; "MILES GOT" text (Displayed instead of Tails if country is set to Japan.)
+		dc.w EOL_Tails-Obj_Results_MapUnc_14CBC	; "TAILS GOT" text
+		dc.w EOL_Through-Obj_Results_MapUnc_14CBC	; "THROUGH" text
+		dc.w EOL_Act-Obj_Results_MapUnc_14CBC		; "ACT" text
+
+		dc.w TC_ZONE-Obj_Results_MapUnc_14CBC		; "ZONE" text
+		dc.w TC_No1-Obj_Results_MapUnc_14CBC		; "1" text
+		dc.w TC_No2-Obj_Results_MapUnc_14CBC		; "2" text
+		dc.w TC_No3-Obj_Results_MapUnc_14CBC		; "3" text
+
+		dc.w EOL_Total-Obj_Results_MapUnc_14CBC	; Total text
+		dc.w EOL_TimeBonus-Obj_Results_MapUnc_14CBC	; Time Bonus text
+		dc.w EOL_RingBonus-Obj_Results_MapUnc_14CBC	; Ring Bonus text
+		dc.w EOL_SonFrame1-Obj_Results_MapUnc_14CBC	; Mini Sonic, frame 1
+		dc.w EOL_SonFrame2-Obj_Results_MapUnc_14CBC	; Mini Sonic, frame 2
+		dc.w EOL_Perfect-Obj_Results_MapUnc_14CBC	; Perfect text
+		dc.w EOL_Knuckles-Obj_Results_MapUnc_14CBC	; "KNUCKLES GOT" text
+
+EOL_Sonic:	dc.w $8				; SONIC GOT
+		dc.w $0005, $85D0, $82E8, $FFC0	; S
+		dc.w $0005, $8588, $82C4, $FFD0	; O
+		dc.w $0005, $8584, $82C2, $FFE0	; N
+		dc.w $0001, $85C0, $82E0, $FFF0	; I
+		dc.w $0005, $85B4, $82DA, $FFF8	; C
+
+		dc.w $0005, $85B8, $82DC, $0010	; G
+		dc.w $0005, $8588, $82C4, $0020	; O
+		dc.w $0005, $85D4, $82EA, $002F	; T
+
+EOL_Miles:	dc.w $8				; MILES GOT
+		dc.w $0009, $85C6, $82E3, $FFBC	; M
+		dc.w $0001, $85C0, $82E0, $FFD4	; I
+		dc.w $0005, $85C2, $82E1, $FFDC	; L
+		dc.w $0005, $8580, $82C0, $FFEC	; E
+		dc.w $0005, $85D0, $82E8, $FFFC	; S
+
+		dc.w $0005, $85B8, $82DC, $0014	; G
+		dc.w $0005, $8588, $82C4, $0024	; O
+		dc.w $0005, $85D4, $82EA, $0033	; T
+
+EOL_Tails:	dc.w $8				; TAILS GOT
+		dc.w $0005, $85D4, $82EA, $FFC3	; T
+		dc.w $0005, $85B0, $82D8, $FFD0	; A
+		dc.w $0001, $85C0, $82E0, $FFE0	; I
+		dc.w $0005, $85C2, $82E1, $FFE8	; L
+		dc.w $0005, $85D0, $82E8, $FFF8	; S
+
+		dc.w $0005, $85B8, $82DC, $0010	; G
+		dc.w $0005, $8588, $82C4, $0020	; O
+		dc.w $0005, $85D4, $82EA, $002F	; T
+
+EOL_Knuckles:	dc.w $B				; KNUCKLES GOT
+		dc.w $0005, $85C6, $82E3, $FFA4	; K
+		dc.w $0005, $8584, $82C2, $FFB4	; N
+		dc.w $0005, $85D8, $82EC, $FFC4	; U
+		dc.w $0005, $85B4, $82DA, $FFD4	; C
+		dc.w $0005, $85C6, $82E3, $FFE4	; K
+		dc.w $0005, $85C2, $82E1, $FFF4	; L
+		dc.w $0005, $8580, $82C0, $0004	; E
+		dc.w $0005, $85D0, $82E8, $0014	; S
+
+		dc.w $0005, $85B8, $82DC, $002C	; G
+		dc.w $0005, $8588, $82C4, $003C	; O
+		dc.w $0005, $85D4, $82EA, $004C	; T
+
+EOL_Through:	dc.w $7				; THROUGH
+		dc.w $0005, $85D4, $82EA, $FFC8	; T
+		dc.w $0005, $85BC, $82DE, $FFD8	; H
+		dc.w $0005, $85CC, $82E6, $FFE8	; R
+		dc.w $0005, $8588, $82C4, $FFF8	; O
+		dc.w $0005, $85D8, $82EC, $0008	; U
+		dc.w $0005, $85B8, $82DC, $0018	; G
+		dc.w $0005, $85BC, $82DE, $0028	; H
+
+EOL_Act:	dc.w $3				; ACT
+		dc.w $0005, $85B0, $82D8, $0000	; A
+		dc.w $0005, $85B4, $82DA, $0010	; C
+		dc.w $0005, $85D4, $82EA, $001F	; T
+
+; ===============================================
+; --- Miscellaneous Mappings ---
+; -----------------------------------------------
+
+EOL_Total:	dc.w $5
+		dc.w $0009, $A5E6, $A2F3, $FFB8
+		dc.w $0005, $A5EC, $A2F6, $FFD0
+		dc.w $0005, $85F0, $82F8, $FFD4
+		dc.w $000D, $8520, $8290, $0038
+		dc.w $0001, $86F0, $8378, $0058
+
+EOL_TimeBonus:	dc.w $6
+		dc.w $000D, $A6DA, $A36D, $FFA4
+		dc.w $000D, $A5DE, $A2EF, $FFCC
+		dc.w $0001, $A6CA, $A365, $FFEC
+		dc.w $0005, $85F0, $82F8, $FFE8
+		dc.w $000D, $8528, $8294, $0038
+		dc.w $0001, $86F0, $8378, $0058
+
+EOL_RingBonus:	dc.w $6
+		dc.w $000D, $A6D2, $A369, $FFA4
+		dc.w $000D, $A5DE, $A2EF, $FFCC
+		dc.w $0001, $A6CA, $A365, $FFEC
+		dc.w $0005, $85F0, $82F8, $FFE8
+		dc.w $000D, $8530, $8298, $0038
+		dc.w $0001, $86F0, $8378, $0058
+
+EOL_SonFrame1:	dc.w $1
+		dc.w $0006, $85F4, $82FA, $0000
+
+EOL_SonFrame2:	dc.w $1
+		dc.w $0006, $85FA, $82FD, $0000
+
+EOL_Perfect:	dc.w $7
+		dc.w $000D, $A540, $A2A0, $FF98
+		dc.w $0009, $A548, $A2A4, $FFB8
+		dc.w $000D, $A5DE, $A2EF, $FFD8
+		dc.w $0001, $A6CA, $A365, $FFF8
+		dc.w $0005, $85F0, $82F8, $FFF4
+		dc.w $000D, $8538, $829C, $0038
+		dc.w $0001, $86F0, $8378, $0058
+		even
+		
+; ==============================================
+; End of "End of Level" Title Card Mappings
+; ==============================================
 ; -------------------------------------------------------------------------------
 ; sprite mappings
 ; -------------------------------------------------------------------------------
@@ -64565,6 +64826,8 @@ Obj_SSMessage_RingsNeeded:
 ; ===========================================================================
 +
 	move.w	(Ring_count).w,d0
+	cmpi.w	#3,(Player_mode).w
+	beq.s	++
 	cmpi.w	#1,(Player_mode).w
 	blt.s	+
 	beq.s	++
@@ -65161,6 +65424,8 @@ Obj_SSMessage_PrintCheckpointMessage:
 	bsr.w	Obj_SSMessage_CreateCheckpointWingedHand
 	cmpi.w	#1,(Player_mode).w
 	ble.s	loc_35D6E
+	cmpi.w	#3,(Player_mode).w
+	bge.s	loc_35D6E
 	addi.w	#palette_line_1,art_tile(a1)
 	addi.w	#palette_line_1,art_tile(a2)
 
@@ -82002,6 +82267,7 @@ PLCptr_Capsule:		offsetTableEntry.w PlrList_Capsule		; 64
 PLCptr_Explosion:	offsetTableEntry.w PlrList_Explosion		; 65
 PLCptr_ResultsTails:	offsetTableEntry.w PlrList_ResultsTails		; 66
 PLCptr_ResultsKnuckles:	offsetTableEntry.w PlrList_ResultsKnuckles
+PLCptr_SpecialStageK:	offsetTableEntry.w PlrList_SpecialStageK
 
 ; macro for a pattern load request list header
 ; must be on the same line as a label that has a corresponding _End label later
@@ -82646,7 +82912,26 @@ PlrList_ResultsKnuckles: plrlistheader
 	plreq ArtTile_ArtNem_MiniCharacter, ArtNem_MiniKnuckles
 	plreq ArtTile_ArtNem_Perfect, ArtNem_Perfect
 PlrList_ResultsKnuckles_End
-
+;---------------------------------------------------------------------------------------
+; Pattern load queue
+; Special Stage Knuckles
+;---------------------------------------------------------------------------------------
+PlrList_SpecialStageK: plrlistheader
+	plreq ArtTile_ArtNem_SpecialEmerald, ArtNem_SpecialEmerald
+	plreq ArtTile_ArtNem_SpecialMessages, ArtNem_SpecialMessages
+	plreq ArtTile_ArtNem_SpecialHUD, ArtNem_SpecialHUD
+	plreq ArtTile_ArtNem_SpecialHUD, ArtNem_SpecialHUDK
+	plreq ArtTile_ArtNem_SpecialFlatShadow, ArtNem_SpecialFlatShadow
+	plreq ArtTile_ArtNem_SpecialDiagShadow, ArtNem_SpecialDiagShadow
+	plreq ArtTile_ArtNem_SpecialSideShadow, ArtNem_SpecialSideShadow
+	plreq ArtTile_ArtNem_SpecialExplosion, ArtNem_SpecialExplosion
+	plreq ArtTile_ArtNem_SpecialRings, ArtNem_SpecialRings
+	plreq ArtTile_ArtNem_SpecialStart, ArtNem_SpecialStart
+	plreq ArtTile_ArtNem_SpecialPlayerVSPlayer, ArtNem_SpecialPlayerVSPlayer
+	plreq ArtTile_ArtNem_SpecialBack, ArtNem_SpecialBack
+	plreq ArtTile_ArtNem_SpecialStars, ArtNem_SpecialStars
+	plreq ArtTile_ArtNem_SpecialTailsText, ArtNem_SpecialTailsText
+PlrList_SpecialStageK_End
 ;---------------------------------------------------------------------------------------
 ; Curve and resistance mapping
 ;---------------------------------------------------------------------------------------
@@ -84276,6 +84561,8 @@ MapEng_SpecialBackBottom:	BINCLUDE	"mappings/misc/Lower background mappings for 
 ; Sonic/Miles and number text from special stage	; ArtNem_DD48A:
 	even
 ArtNem_SpecialHUD:	BINCLUDE	"art/nemesis/Sonic and Miles number text from special stage.bin"
+	even
+ArtNem_SpecialHUDK:	BINCLUDE	"art/nemesis/Knuckles number text from special stage.bin"
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (48 blocks)
 ; "Start" and checkered flag patterns in special stage	; ArtNem_DD790:
