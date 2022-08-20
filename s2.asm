@@ -11161,8 +11161,8 @@ CheckCheats:	; This is called from 2 places: the options screen and the level se
 	bra.s	++
 ; ===========================================================================
 +
-	move.w	#6,(Got_Emerald).w		; Give 7 emeralds to the player
-;	move.b	#1,(Got_Emeralds_array).w
+	move.w	#7,(Got_Emerald).w		; Give 7 emeralds to the player
+	move.b	#1,(Got_Emeralds_array).w
 	move.b	#1,(Got_Emeralds_array+1).w
 	move.b	#1,(Got_Emeralds_array+2).w
 	move.b	#1,(Got_Emeralds_array+3).w
