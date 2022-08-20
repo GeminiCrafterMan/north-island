@@ -1,7 +1,7 @@
 {
     "Flex": 2,
     "name": "Sonic 2",
-    "node": "2af51522-af1c-4b23-84e9-2265eb7b3a32",
+    "node": "50b40ae3-a0e4-46ce-ae11-20e60062d5f8",
     "objects": [
         {
             "uuid": "7fffcbca-c48a-45c7-a02e-83bce4dd71a2",
@@ -85,8 +85,8 @@
                     "uuid": "dad6e825-1660-4429-93f6-dd09b880aa01"
                 },
                 {
-                    "uuid": "50b40ae3-a0e4-46ce-ae11-20e60062d5f8",
-                    "format": "Sonic 2 Special.js",
+                    "uuid": "3be765fc-3f12-4588-9a74-37aa14c6a925",
+                    "format": "Sonic 2.js",
                     "name": "Sonic (special)",
                     "palettes": [
                         {
@@ -95,8 +95,8 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Sonic and Tails animation frames in special stage.bin",
-                        "compression": "Nemesis",
+                        "path": "art/uncompressed/Sonic animation frames in special stage.bin",
+                        "compression": "Uncompressed",
                         "offset": 0
                     },
                     "mappings": {
@@ -143,7 +143,7 @@
                 },
                 {
                     "format": "Sonic 2.js",
-                    "name": "Tails's Tails",
+                    "name": "Tails' Tails",
                     "palettes": [
                         {
                             "path": "art/palettes/SonicAndTails.bin",
@@ -173,13 +173,13 @@
                     "uuid": "7b4b7a90-6802-40e0-b1f0-40da373a9f9b"
                 },
                 {
-                    "uuid": "d4cead88-eeb9-40d2-bb1e-0dec3709e9e9",
-                    "format": "Sonic 2 Special.js",
+                    "uuid": "4c3be765-fc3f-4245-885a-7437aa14c6a9",
+                    "format": "Sonic 2.js",
                     "name": "Tails (special) (i am confused lol)",
                     "palettes": [],
                     "art": {
-                        "path": "art/nemesis/Sonic and Tails animation frames in special stage.bin",
-                        "compression": "Nemesis",
+                        "path": "art/uncompressed/Tails animation frames in special stage.bin",
+                        "compression": "Uncompressed",
                         "offset": 0
                     },
                     "mappings": {
@@ -188,13 +188,34 @@
                     },
                     "dplcs": {
                         "enabled": true,
-                        "path": "mappings/spriteDPLC/Obj_SonicSS.bin",
+                        "path": "mappings/spriteDPLC/Obj_TailsSS.bin",
                         "label": ""
                     },
                     "expanded": true
                 },
                 {
-                    "uuid": "2af51522-af1c-4b23-84e9-2265eb7b3a32",
+                    "uuid": "d4cead88-eeb9-40d2-bb1e-0dec3709e9e9",
+                    "format": "Sonic 2.js",
+                    "name": "Tails' Tails (special) (i am confused lol)",
+                    "palettes": [],
+                    "art": {
+                        "path": "art/uncompressed/Tails' Tails animation frames in special stage.bin",
+                        "compression": "Uncompressed",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_SSTailsTails.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": true,
+                        "path": "mappings/spriteDPLC/Obj_SSTailsTails.bin",
+                        "label": ""
+                    },
+                    "expanded": true
+                },
+                {
+                    "uuid": "234c3be7-65fc-4f12-8588-5a7437aa14c6",
                     "format": "Sonic 2.js",
                     "name": "Knuckles",
                     "palettes": [
@@ -217,6 +238,32 @@
                         "path": "mappings/spriteDPLC/Knuckles.bin",
                         "label": ""
                     }
+                },
+                {
+                    "uuid": "50b40ae3-a0e4-46ce-ae11-20e60062d5f8",
+                    "format": "Sonic 2.js",
+                    "name": "Knuckles (special)",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/Special Stage Main.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/uncompressed/Knuckles animation frames in special stage.bin",
+                        "compression": "Uncompressed",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_KnucklesSS.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": true,
+                        "path": "mappings/spriteDPLC/Obj_KnucklesSS.bin",
+                        "label": ""
+                    },
+                    "expanded": true
                 },
                 {
                     "uuid": "cdccaad6-5b6c-4379-82a8-c475c6adb004",
