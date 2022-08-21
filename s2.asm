@@ -23542,13 +23542,13 @@ loc_140CE:
 
 loc_14102:
 	moveq	#0,d0
-	cmpi.w	#3,(Player_mode).w
-	blt.s	Check_TailsGot
+	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
+	bne.s	Check_TailsGot
 	addq.w	#8,d0
 	addq.w	#7,d0
 	bra.s	loc_14118
 Check_TailsGot:
-	cmpi.w	#2,(Player_mode).w
+	cmpi.l	#Obj_Tails,(MainCharacter+id).w
 	bne.s	loc_14118
 	addq.w	#1,d0
 	btst	#7,(Graphics_Flags).w
