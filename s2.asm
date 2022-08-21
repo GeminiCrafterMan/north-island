@@ -2446,7 +2446,7 @@ CyclingPal_WFZ2:
 ; sub_213E:
 PalCycle_SuperSonic:
 	cmpi.w	#3,(Player_mode).w
-	beq.w	PalCycle_SuperKnuckles
+	bge.w	PalCycle_SuperKnuckles
 	move.b	(Super_Sonic_palette).w,d0
 	beq.s	+	; rts	; return, if Sonic isn't super
 	bmi.w	PalCycle_SuperSonic_normal	; branch, if fade-in is done
@@ -3928,7 +3928,7 @@ Level:
 	blt.s	Level_ClrRam
 	moveq	#PLCID_TailsLife,d0
 	cmpi.w	#3,(Player_mode).w
-	bne.s	+
+	blt.s	+
 	moveq	#PLCID_KnucklesLife,d0
 +
 	bsr.w	LoadPLC
@@ -4043,7 +4043,7 @@ Level_TtlCard:
 +
 	moveq	#PalID_BGND,d0
 	cmpi.w	#3,(Player_mode).w
-	blo.s	+
+	blt.s	+
 	moveq	#PalID_Knux,d0
 +
 	bsr.w	PalLoad_ForFade	; load Sonic's palette line
@@ -4277,50 +4277,29 @@ Level_SetPlayerMode:
 
 ; sub_446E:
 InitPlayers:
+	moveq	#0,d0
 	move.w	(Player_mode).w,d0
-	bne.s	InitPlayers_Alone ; branch if this isn't a Sonic and Tails game
+	lsl.w	#2,d0
+	add.w	d0,d0
+	move.l	.plrIDs(pc,d0.w),(MainCharacter+id).w
+	add.w	#4,d0
+	move.l	.plrIDs(pc,d0.w),(Sidekick+id).w
+	bra.s	.cont
 
-	move.l	#Obj_Sonic,(MainCharacter+id).w ; load Obj_Sonic Sonic object at $FFFFB000
+.plrIDs:
+	dc.l	Obj_Sonic,		Obj_Tails	; S&T
+	dc.l	Obj_Sonic,		Obj_Null	; SA
+	dc.l	Obj_Tails,		Obj_Null	; TA
+	dc.l	Obj_Knuckles,	Obj_Null	; KA
+	dc.l	Obj_Knuckles,	Obj_Tails	; K&T
+
+.cont:
 	move.l	#Obj_SpindashDust,(Sonic_Dust+id).w ; load Obj_Splash Sonic's spindash dust/splash object at $FFFFD100
-
-	cmpi.b	#wing_fortress_zone,(Current_Zone).w
-	beq.s	+ ; skip loading Tails if this is WFZ
-	cmpi.b	#death_egg_zone,(Current_Zone).w
-	beq.s	+ ; skip loading Tails if this is DEZ
-	cmpi.b	#sky_chase_zone,(Current_Zone).w
-	beq.s	+ ; skip loading Tails if this is SCZ
-
-	move.l	#Obj_Tails,(Sidekick+id).w ; load Obj_Tails Tails object at $FFFFB040
 	move.w	(MainCharacter+x_pos).w,(Sidekick+x_pos).w
 	move.w	(MainCharacter+y_pos).w,(Sidekick+y_pos).w
 	subi.w	#$20,(Sidekick+x_pos).w
 	addi_.w	#4,(Sidekick+y_pos).w
 	move.l	#Obj_SpindashDust,(Tails_Dust+id).w ; load Obj_Splash Tails' spindash dust/splash object at $FFFFD140
-+
-	rts
-; ===========================================================================
-; loc_44BE:
-InitPlayers_Alone: ; either Sonic or Tails but not both
-	subq.w	#1,d0
-	bne.s	InitPlayers_TailsAlone ; branch if this is a Tails alone game
-
-	move.l	#Obj_Sonic,(MainCharacter+id).w ; load Obj_Sonic Sonic object at $FFFFB000
-	move.l	#Obj_SpindashDust,(Sonic_Dust+id).w ; load Obj_Splash Sonic's spindash dust/splash object at $FFFFD100
-	rts
-; ===========================================================================
-; loc_44D0:
-InitPlayers_TailsAlone:
-	subq.w	#1,d0
-	bne.s	InitPlayers_KnuxAlone
-
-	move.l	#Obj_Tails,(MainCharacter+id).w ; load Obj_Tails Tails object at $FFFFB000
-	move.l	#Obj_SpindashDust,(Tails_Dust+id).w ; load Obj_Splash Tails' spindash dust/splash object at $FFFFD100
-	addi_.w	#4,(MainCharacter+y_pos).w
-	rts
-; ===========================================================================
-InitPlayers_KnuxAlone:
-	move.l	#Obj_Knuckles,(MainCharacter+id).w ; load Obj_Sonic Sonic object at $FFFFB000
-	move.l	#Obj_SpindashDust,(Sonic_Dust+id).w ; load Obj_Splash Sonic's spindash dust/splash object at $FFFFD100
 	rts
 ; End of function InitPlayers
 
@@ -5597,7 +5576,7 @@ SpecialStage:
 	move.w	#0,(SpecialStage_CurrentSegment).w
 	moveq	#PLCID_SpecialStage,d0
 	cmpi.w	#3,(Player_mode).w
-	bne.s	+
+	blt.s	+
 	moveq	#PLCID_SpecialStageK,d0
 +
 	bsr.w	RunPLC_ROM
@@ -5794,37 +5773,21 @@ SpecialStage_Unpause:
 
 ; sub_446E:
 InitPlayersSS:
+	moveq	#0,d0
 	move.w	(Player_mode).w,d0
-	bne.s	InitPlayersSS_Alone ; branch if this isn't a Sonic and Tails game
-
-	move.l	#Obj_SonicSS,(MainCharacter+id).w ; load Obj_SonicSS (special stage Sonic)
-	move.l	#Obj_TailsSS,(Sidekick+id).w ; load Obj_TailsSS (special stage Tails)
+	lsl.w	#2,d0
+	add.w	d0,d0
+	move.l	.ssPlrIDs(pc,d0.w),(MainCharacter+id).w
+	add.w	#4,d0
+	move.l	.ssPlrIDs(pc,d0.w),(Sidekick+id).w
 	rts
 
-; ===========================================================================
-; loc_44BE:
-InitPlayersSS_Alone: ; either Sonic or Tails but not both
-	subq.w	#1,d0
-	bne.s	InitPlayersSS_TailsAlone ; branch if this is a Tails alone game
-
-	move.l	#Obj_SonicSS,(MainCharacter+id).w ; load Obj_SonicSS (special stage Sonic)
-	rts
-; ===========================================================================
-; loc_44D0:
-InitPlayersSS_TailsAlone:
-	subq.w	#1,d0
-	bne.s	InitPlayersSS_KnucklesAlone ; branch if this is a Knuckles alone game
-
-	move.l	#Obj_TailsSS,(Sidekick+id).w ; load Obj_TailsSS (special stage Tails)
-	rts
-; ===========================================================================
-
-InitPlayersSS_KnucklesAlone:
-;	subq.w	#1,d0
-;	bne.s	InitPlayersSS_ ; branch if this is a game
-
-	move.l	#Obj_KnucklesSS,(MainCharacter+id).w ; load Obj_KnucklesSS (special stage Knuckles)
-	rts
+.ssPlrIDs:
+	dc.l	Obj_SonicSS,	Obj_TailsSS		; S&T
+	dc.l	Obj_SonicSS,	Obj_Null		; SA
+	dc.l	Obj_TailsSS,	Obj_Null		; TA
+	dc.l	Obj_KnucklesSS,	Obj_Null		; KA
+	dc.l	Obj_KnucklesSS,	Obj_TailsSS		; K&T
 ; End of function InitPlayersSS
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -8821,7 +8784,7 @@ loc_7480:
 	cmpi.w	#1,(Player_mode).w
 	beq.s	loc_7536
 	cmpi.w	#3,(Player_mode).w
-	beq.s	loc_7536
+	bge.s	loc_7536
 
 loc_74EA:
 	moveq	#0,d0
@@ -9127,7 +9090,7 @@ SSInitPalAndData:
 	move.w	d0,(a2)+
 	moveq	#PalID_SS,d0
 	cmpi.w	#3,(Player_mode).w
-	bne.s	+
+	blt.s	+
 	moveq	#PalID_SSK,d0
 +
 	bsr.w	PalLoad_ForFade
@@ -10527,7 +10490,7 @@ OptionScreen_Controls:
 ; ===========================================================================
 ; word_917A:
 OptionScreen_Choices:
-	dc.l (4-1)<<24|(Player_option&$FFFFFF)
+	dc.l (5-1)<<24|(Player_option&$FFFFFF)
 	dc.l (2-1)<<24|(Two_player_items&$FFFFFF)	; Useless
 	dc.l (SFXlast-1)<<24|(Sound_test_sound&$FFFFFF)
 
@@ -10668,11 +10631,13 @@ off_92D2:
 	dc.l TextOptScr_SonicAlone
 	dc.l TextOptScr_MilesAlone
 	dc.l TextOptScr_KnuxAlone
+	dc.l TextOptScr_KnuxAndMiles
 off_92DE:
 	dc.l TextOptScr_SonicAndTails
 	dc.l TextOptScr_SonicAlone
 	dc.l TextOptScr_TailsAlone
 	dc.l TextOptScr_KnuxAlone
+	dc.l TextOptScr_KnuxAndTails
 off_92EA:
 	dc.l TextOptScr_AllKindsItems
 	dc.l TextOptScr_TeleportOnly
@@ -11207,6 +11172,8 @@ TextOptScr_SonicAlone:		menutxt	"SONIC ALONE    "	; byte_97FC:
 TextOptScr_MilesAlone:		menutxt	"MILES ALONE    "	; byte_980C:
 TextOptScr_TailsAlone:		menutxt	"TAILS ALONE    "	; byte_981C:
 TextOptScr_KnuxAlone:		menutxt "KNUCKLES ALONE "
+TextOptScr_KnuxAndMiles:	menutxt	"KNUX AND MILES "
+TextOptScr_KnuxAndTails:	menutxt	"KNUX AND TAILS "
 TextOptScr_VsModeItems:		menutxt	"* VS MODE ITEMS *"	; byte_982C:
 TextOptScr_AllKindsItems:	menutxt	"ALL KINDS ITEMS"	; byte_983E:
 TextOptScr_TeleportOnly:	menutxt	"TELEPORT ONLY  "	; byte_984E:
@@ -11296,7 +11263,7 @@ EndingSequence:
 	cmpi.w	#2,(Player_mode).w
 	beq.s	+
 	cmpi.w    #3,(Player_mode).w ; Check for Knuckles in the Ending
-	beq.s    KnucklesEnd		; If it's him, then go to his checks
+	bge.s    KnucklesEnd		; If it's him, then go to his checks
 	tst.b	(Super_Sonic_flag).w
 	bne.s	++ ; Super Sonic's Ending Value is Sonic's + 2
 	bra.w	+++
@@ -11933,7 +11900,7 @@ loc_A4B6:
 	clr.b	anim_frame_duration(a0)
 	move.l	#Obj_TornadoHelixes_Map_Knuckles,mappings(a0)
 	cmpi.w	#3,(Player_mode).w
-	beq.s	+
+	bge.s	+
 	move.l	#Obj_TornadoHelixes_MapUnc_ADA2,mappings(a0)
 +
 	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,0,0),art_tile(a0)
@@ -12259,7 +12226,7 @@ Obj_EndingPlyer_Init:
 	jsrto	(LoadSubObject_Part3).l, JmpTo_LoadSubObject_Part3
 	move.l	#Obj_TornadoHelixes_Map_Knuckles,mappings(a0)
 	cmpi.w	#3,(Player_mode).w
-	beq.s	+
+	bge.s	+
 	move.l	#Obj_TornadoHelixes_MapUnc_ADA2,mappings(a0)
 +
 	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,0,1),art_tile(a0)
@@ -12360,7 +12327,7 @@ Obj_TornadoHelixes_Init:
 	jsrto	(LoadSubObject_Part3).l, JmpTo_LoadSubObject_Part3
 	move.l	#Obj_TornadoHelixes_Map_Knuckles,mappings(a0)
 	cmpi.w	#3,(Player_mode).w
-	beq.s	+
+	bge.s	+
 	move.l	#Obj_TornadoHelixes_MapUnc_ADA2,mappings(a0)
 +
 	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,0,1),art_tile(a0)
@@ -23719,7 +23686,7 @@ loc_140CE:
 loc_14102:
 	moveq	#0,d0
 	cmpi.w	#3,(Player_mode).w
-	bne.s	Check_TailsGot
+	blt.s	Check_TailsGot
 	addq.w	#8,d0
 	addq.w	#7,d0
 	bra.s	loc_14118
@@ -24108,7 +24075,7 @@ Obj_SSResults_InitResultTitle:
 	moveq	#1,d0		; "Sonic got a"
 +
 	cmpi.w	#3,(Player_mode).w
-	beq.s	KnuxGotA
+	bge.s	KnuxGotA
 	cmpi.w	#2,(Player_mode).w
 	bne.s	+
 	addq.w	#1,d0		; "Miles got a" or "Miles has all the"
@@ -24334,7 +24301,7 @@ Obj_SSResults_InitAndMoveSuperMsg:
 	subq.w	#8,next_object+y_pixel(a0)
 	move.b	#$1A,next_object+mapping_frame(a0)		; "Now Sonic can"
 	cmpi.w	#3,(Player_mode).w
-	beq.s	.NowKnuxCan
+	bge.s	.NowKnuxCan
 	cmpi.w	#2,(Player_mode).w
 	bne.s	+
 	move.b	#$1F,next_object+mapping_frame(a0)		; "Now Miles can"
@@ -24356,7 +24323,7 @@ Obj_SSResults_InitAndMoveSuperMsg:
 	move.b	#$14,routine(a1)						; => BranchTo3_Obj_TitleCard_MoveTowardsTargetPosition
 	move.b	#$1C,mapping_frame(a1)					; "Super Sonic"
 	cmpi.w	#3,(Player_mode).w
-	beq.s	.SuperKnuxM
+	bge.s	.SuperKnuxM
 	cmpi.w	#2,(Player_mode).w
 	bne.s	+
 	move.b	#$22,mapping_frame(a1)			; "Super Miles"
@@ -25690,7 +25657,7 @@ Obj3C_FragmentSpeeds_RightToLeft:
 ; -------------------------------------------------------------------------------
 Obj3C_MapUnc_15ECC:	BINCLUDE "mappings/sprite/obj3C.bin"
 ; ===========================================================================
-	bra.w	ObjNull
+	bra.w	Obj_Null
 
 
 
@@ -25774,7 +25741,7 @@ RunObjectDisplayOnly:
 ; Object removed from the game. All it does is deallocate its array.
 ; ----------------------------------------------------------------------------
 
-ObjNull: ;;
+Obj_Null: ;;
 	bra.w	DeleteObject
 
 ; ---------------------------------------------------------------------------
@@ -28137,10 +28104,10 @@ ObjPtr_LauncherBall:	dc.l Obj_LauncherBall		; $48 ; Round ball thing from OOZ th
 ObjPtr_EHZWaterfall:	dc.l Obj_EHZWaterfall		; $49 ; Waterfall from EHZ
 ObjPtr_Octus:		dc.l Obj_Octus			; $4A ; Octus (octopus badnik) from OOZ
 ObjPtr_Buzzer:		dc.l Obj_Buzzer			; $4B ; Buzzer (Buzz bomber) from EHZ
-			dc.l ObjNull			; $4C ; Obj4C
-			dc.l ObjNull			; $4D ; Obj4D
-			dc.l ObjNull			; $4E ; Obj4E
-			dc.l ObjNull			; $4F ; Obj4F
+			dc.l Obj_Null			; $4C ; Obj4C
+			dc.l Obj_Null			; $4D ; Obj4D
+			dc.l Obj_Null			; $4E ; Obj4E
+			dc.l Obj_Null			; $4F ; Obj4F
 ObjPtr_Aquis:		dc.l Obj_Aquis			; $50 ; Aquis (seahorse badnik) from OOZ
 ObjPtr_CNZBoss:		dc.l Obj_CNZBoss		; $51 ; CNZ boss
 ObjPtr_HTZBoss:		dc.l Obj_HTZBoss		; $52 ; HTZ boss
@@ -28160,7 +28127,7 @@ ObjPtr_StartBanner:
 ObjPtr_EndingController:dc.l Obj_EndingController	; $5F ; Start banner/"Ending controller" from Special Stage
 ObjPtr_SSRing:		dc.l Obj_SSRing			; $60 ; Rings from Special Stage
 ObjPtr_SSBomb:		dc.l Obj_SSBomb			; $61 ; Bombs from Special Stage
-			dc.l ObjNull			; $62 ; Obj62
+			dc.l Obj_Null			; $62 ; Obj62
 ObjPtr_SSShadow:	dc.l Obj_SSShadow		; $63 ; Character shadow from Special Stage
 ObjPtr_MTZTwinStompers:	dc.l Obj_MTZTwinStompers	; $64 ; Twin stompers from MTZ
 ObjPtr_MTZLongPlatform:	dc.l Obj_MTZLongPlatform	; $65 ; Long moving platform from MTZ
@@ -28276,8 +28243,8 @@ ObjPtr_EndingSeqBird:	dc.l Obj_EndingBird		; $CD ; Birds from ending sequence
 ObjPtr_EndingSeqSonic:
 ObjPtr_EndingSeqTails:	dc.l Obj_EndingPlyer		; $CE ; Sonic and Tails jumping off the plane from ending sequence
 ObjPtr_TornadoHelixes:	dc.l Obj_TornadoHelixes		; $CF ;"Plane's helixes" from ending sequence
-			dc.l ObjNull			; $D0 ; ObjD0
-			dc.l ObjNull			; $D1 ; ObjD1
+			dc.l Obj_Null			; $D0 ; ObjD0
+			dc.l Obj_Null			; $D1 ; ObjD1
 ObjPtr_CNZRectBlocks:	dc.l Obj_CNZRectangularBlocks	; $D2 ; Flashing blocks that appear and disappear in a rectangular shape that you can walk across, from CNZ
 ObjPtr_BombPrize:	dc.l Obj_BombPrize		; $D3 ; Bomb prize from CNZ
 ObjPtr_CNZBigBlock:	dc.l Obj_CNZBigBlock		; $D4 ; Big block from CNZ that moves back and fourth
@@ -64827,7 +64794,7 @@ Obj_SSMessage_RingsNeeded:
 +
 	move.w	(Ring_count).w,d0
 	cmpi.w	#3,(Player_mode).w
-	beq.s	++
+	bge.s	++
 	cmpi.w	#1,(Player_mode).w
 	blt.s	+
 	beq.s	++
