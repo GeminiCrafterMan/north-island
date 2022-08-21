@@ -1796,9 +1796,9 @@ LoadKnucklesDynPLC:
 		bsr.w	LoadKnucklesMap
 
 LoadKnucklesDynPLC_Part2:
-		cmp.b	(Sonic_LastLoadedDPLC).w,d0
+		cmp.b	dplc_prev_frame(a0),d0
 		beq.s	.nochange
-		move.b	d0,(Sonic_LastLoadedDPLC).w
+		move.b	d0,dplc_prev_frame(a0)
 ;		tst.b	(Super_Sonic_flag).w
 ;		bne.s	.superplc
 		lea	(MapRUnc_Knuckles).l,a2

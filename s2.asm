@@ -31858,7 +31858,7 @@ Player_SuperHyper:
 	move.w	#$28,(Palette_frame).w
 	move.b	#0,(Super_Sonic_flag).w
 ;	move.b	#0,(Super_Tails_flag).w
-	move.b	#-1,(Sonic_LastLoadedDPLC).w
+	move.b	#-1,dplc_prev_frame(a0)
 	cmpi.l	#Obj_Knuckles,id(a0)	; Is this Knuckles?
 	bne.s	.notKnuckles
 	move.w	#$24,(Palette_frame).w
@@ -32874,9 +32874,9 @@ LoadSonicDynPLC:
 		bsr.w	LoadSonicMap
 
 LoadSonicDynPLC_Part2:
-		cmp.b	(Sonic_LastLoadedDPLC).w,d0
+		cmp.b	dplc_prev_frame(a0),d0
 		beq.s	.nochange
-		move.b	d0,(Sonic_LastLoadedDPLC).w
+		move.b	d0,dplc_prev_frame(a0)
 		tst.b	(Super_Sonic_flag).w
 		bne.s	.superplc
 		lea	(MapRUnc_Sonic).l,a2
@@ -32915,7 +32915,7 @@ LoadSonicDynPLC_Part2:
 
     .nochange:
 		rts	
-; End of function Sonic_LoadGfx
+; End of function LoadSonicDynPLC
 
 LoadSonicMap:
 		tst.b	(Super_Sonic_flag).w
@@ -35394,9 +35394,9 @@ LoadTailsTailsDynPLC:
 		bsr.w	LoadTailsTailsMap
 
 LoadTailsTailsDynPLC_Part2:
-		cmp.b	(TailsTails_LastLoadedDPLC).w,d0
+		cmp.b	dplc_prev_frame(a0),d0
 		beq.s	.nochange
-		move.b	d0,(TailsTails_LastLoadedDPLC).w
+		move.b	d0,dplc_prev_frame(a0)
 ;		tst.b	(Super_Sonic_flag).w
 ;		bne.s	.superplc
 		lea	(MapRUnc_TailsTails).l,a2
@@ -35435,7 +35435,7 @@ LoadTailsTailsDynPLC_Part2:
 
 	.nochange:
 		rts	
-; End of function TailsTails_LoadGfx
+; End of function LoadTailsTailsDynPLC
 
 LoadTailsTailsMap:
 ;		tst.b	(Super_Sonic_flag).w
@@ -35475,9 +35475,9 @@ LoadTailsDynPLC:
 		bsr.w	LoadTailsMap
 
 LoadTailsDynPLC_Part2:
-		cmp.b	(Tails_LastLoadedDPLC).w,d0
+		cmp.b	dplc_prev_frame(a0),d0
 		beq.s	.nochange
-		move.b	d0,(Tails_LastLoadedDPLC).w
+		move.b	d0,dplc_prev_frame(a0)
 ;		tst.b	(Super_Sonic_flag).w
 ;		bne.s	.superplc
 		lea	(MapRUnc_Tails).l,a2
@@ -35516,7 +35516,7 @@ LoadTailsDynPLC_Part2:
 
 	.nochange:
 		rts	
-; End of function Tails_LoadGfx
+; End of function LoadTailsTailsDynPLC
 
 LoadTailsMap:
 ;		tst.b	(Super_Sonic_flag).w
@@ -62665,7 +62665,7 @@ Obj_SonicSS_Init:
 	clr.b	(SS_Swap_Positions_Flag).w
 	move.w	#$400,ss_init_flip_timer(a0)
 	move.b	#$40,angle(a0)
-	move.b	#1,(Sonic_LastLoadedDPLC).w
+	move.b	#1,dplc_prev_frame(a0)
 	clr.b	ss_slide_timer(a0)
 	bclr	#6,status(a0)
 	clr.b	collision_property(a0)
@@ -62770,7 +62770,7 @@ LoadSSSonicDynPLC:
 +
 	jsrto	(DisplaySprite).l, JmpTo42_DisplaySprite
 	lea	(Obj_SonicSS_MapRUnc_345FA).l,a2
-	lea	(Sonic_LastLoadedDPLC).w,a4
+	lea	dplc_prev_frame(a0),a4
 	move.w	#tiles_to_bytes(ArtTile_ArtUnc_SpecialSonic),d4
 	move.l	#ArtUnc_SpecialSonic,d6
 	moveq	#0,d1
@@ -63547,7 +63547,7 @@ Obj_TailsSS_Init:
 loc_34864:
 	move.w	#$400,ss_init_flip_timer(a0)
 	move.b	#$40,angle(a0)
-	move.b	#1,(Tails_LastLoadedDPLC).w
+	move.b	#1,dplc_prev_frame(a0)
 	clr.b	collision_property(a0)
 	clr.b	ss_dplc_timer(a0)
 	bsr.w	LoadSSTailsDynPLC
@@ -63572,7 +63572,7 @@ loc_34864:
 	sub.w	#prlayer,priority(a1)
 	move.l	a0,ss_parent(a1)
 	movea.l	a1,a0
-	move.b	#1,(TailsTails_LastLoadedDPLC).w
+	move.b	#1,dplc_prev_frame(a0)
 	clr.b	ss_dplc_timer(a0)
 	movea.l	ss_parent(a0),a0 ; load 0bj address
 	rts
@@ -63660,7 +63660,7 @@ LoadSSTailsDynPLC:
 +
 	jsrto	(DisplaySprite).l, JmpTo43_DisplaySprite
 	lea	(Obj_TailsSS_MapRUnc).l,a2
-	lea	(Tails_LastLoadedDPLC).w,a4
+	lea	dplc_prev_frame(a0),a4
 	move.w	#tiles_to_bytes(ArtTile_ArtUnc_SpecialTails),d4
 	move.l	#ArtUnc_SpecialTails,d6
 	moveq	#0,d1
@@ -63739,7 +63739,7 @@ LoadSSTailsTailsDynPLC:
 	jsrto	(DisplaySprite).l, JmpTo43_DisplaySprite
 	move.l	#ArtUnc_SpecialTails_Tails,d6
 	lea	(Obj_SSTailsTails_MapRUnc).l,a2
-	lea	(TailsTails_LastLoadedDPLC).w,a4
+	lea	dplc_prev_frame(a0),a4
 	move.w	#tiles_to_bytes(ArtTile_ArtUnc_SpecialTails_Tails),d4
 	moveq	#0,d1
 	bra.w	LoadSSPlayerDynPLC

@@ -115,6 +115,9 @@ objoff_3F =		*+1
 parent			ds.w 1		; address of object that owns or spawned this one, if applicable
 
 priority 		ds.w 1		; address for object's target priority layer. CAN NOT BE INVALID ADDRESS, IF SPRITE IS DISPLAYED!
+
+dplc_prev_frame ds.b 1
+objoff_46		ds.b 1
 object_size =		*		; the size of an object
 next_object =		*
 ; ---------------------------------------------------------------------------
