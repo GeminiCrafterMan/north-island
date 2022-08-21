@@ -2367,10 +2367,6 @@ PalCycle_WFZ:
 +	move.w	(a0,d0.w),(Normal_palette_line3+$1E).w
 +	rts
 ; ===========================================================================
-
-; ----------------------------------------------------------------------------
-; word_1E5A:
-	BINCLUDE "art/palettes/Title Water.bin"; S1 Title Screen Water palette (unused)
 ; word_1E7A:
 CyclingPal_EHZ_ARZ_Water:
 	BINCLUDE "art/palettes/EHZ ARZ Water.bin"; Emerald Hill/Aquatic Ruin Rotating Water palette
@@ -3134,41 +3130,41 @@ PalPtr_SEGA:	palptr Pal_SEGA,  0
 PalPtr_Title:	palptr Pal_Title, 1
 PalPtr_MenuB:	palptr Pal_MenuB, 0
 PalPtr_BGND:	palptr Pal_BGND,  0
-PalPtr_EHZ:	palptr Pal_EHZ,   1
+PalPtr_EHZ:		palptr Pal_EHZ,   1
 PalPtr_EHZ2:	palptr Pal_EHZ,   1
-PalPtr_WZ:	palptr Pal_WZ,    1
+PalPtr_WZ:		palptr Pal_WZ,    1
 PalPtr_EHZ3:	palptr Pal_EHZ,   1
-PalPtr_MTZ:	palptr Pal_MTZ,   1
+PalPtr_MTZ:		palptr Pal_MTZ,   1
 PalPtr_MTZ2:	palptr Pal_MTZ,   1
-PalPtr_WFZ:	palptr Pal_WFZ,   1
-PalPtr_HTZ:	palptr Pal_HTZ,   1
-PalPtr_HPZ:	palptr Pal_HPZ,   1
+PalPtr_WFZ:		palptr Pal_WFZ,   1
+PalPtr_HTZ:		palptr Pal_HTZ,   1
+PalPtr_HPZ:		palptr Pal_HPZ,   1
 PalPtr_EHZ4:	palptr Pal_EHZ,   1
-PalPtr_OOZ:	palptr Pal_OOZ,   1
-PalPtr_MCZ:	palptr Pal_MCZ,   1
-PalPtr_CNZ:	palptr Pal_CNZ,   1
-PalPtr_CPZ:	palptr Pal_CPZ,   1
-PalPtr_DEZ:	palptr Pal_DEZ,   1
-PalPtr_ARZ:	palptr Pal_ARZ,   1
-PalPtr_SCZ:	palptr Pal_SCZ,   1
-PalPtr_SS:	palptr Pal_SS,    0
+PalPtr_OOZ:		palptr Pal_OOZ,   1
+PalPtr_MCZ:		palptr Pal_MCZ,   1
+PalPtr_CNZ:		palptr Pal_CNZ,   1
+PalPtr_CPZ:		palptr Pal_CPZ,   1
+PalPtr_DEZ:		palptr Pal_DEZ,   1
+PalPtr_ARZ:		palptr Pal_ARZ,   1
+PalPtr_SCZ:		palptr Pal_SCZ,   1
+PalPtr_SS:		palptr Pal_SS,    0
 PalPtr_MCZ_B:	palptr Pal_MCZ_B, 1
 PalPtr_CNZ_B:	palptr Pal_CNZ_B, 1
-PalPtr_SS1:	palptr Pal_SS1,   3
-PalPtr_SS2:	palptr Pal_SS2,   3
-PalPtr_SS3:	palptr Pal_SS3,   3
-PalPtr_SS4:	palptr Pal_SS4,   3
-PalPtr_SS5:	palptr Pal_SS5,   3
-PalPtr_SS6:	palptr Pal_SS6,   3
-PalPtr_SS7:	palptr Pal_SS7,   3
+PalPtr_SS1:		palptr Pal_SS1,   3
+PalPtr_SS2:		palptr Pal_SS2,   3
+PalPtr_SS3:		palptr Pal_SS3,   3
+PalPtr_SS4:		palptr Pal_SS4,   3
+PalPtr_SS5:		palptr Pal_SS5,   3
+PalPtr_SS6:		palptr Pal_SS6,   3
+PalPtr_SS7:		palptr Pal_SS7,   3
 PalPtr_SS1_2p:	palptr Pal_SS1_2p,3
 PalPtr_SS2_2p:	palptr Pal_SS2_2p,3
 PalPtr_SS3_2p:	palptr Pal_SS3_2p,3
 PalPtr_OOZ_B:	palptr Pal_OOZ_B, 1
 PalPtr_Menu:	palptr Pal_Menu,  0
 PalPtr_Result:	palptr Pal_Result,0
-PalPtr_Knux:palptr Pal_Knux, 0
-PalPtr_SSK:	palptr Pal_SSK,    0
+PalPtr_Knux:	palptr Pal_Knux,  0
+PalPtr_SSK:		palptr Pal_SSK,   0
 
 ; ----------------------------------------------------------------------------
 ; This macro defines Pal_ABC and Pal_ABC_End, so palptr can compute the size of
@@ -4721,57 +4717,6 @@ MoveSonicInDemo:
 	tst.w	(Demo_mode_flag).w	; is demo mode on?
 	bne.w	MoveDemo_On	; if yes, branch
 	rts
-; ---------------------------------------------------------------------------
-; demo recording routine
-; (unused/dead code, but obviously used during development)
-; ---------------------------------------------------------------------------
-; MoveDemo_Record: loc_4828:
-	; calculate output location of recorded player 1 demo?
-	lea	(DemoScriptPointers).l,a1
-	moveq	#0,d0
-	move.b	(Current_Zone).w,d0
-	lsl.w	#2,d0
-	movea.l	(a1,d0.w),a1
-	move.w	(Demo_button_index).w,d0
-	adda.w	d0,a1
-
-	move.b	(Ctrl_1_Held).w,d0	; load input of player 1
-	cmp.b	(a1),d0			; is same button held?
-	bne.s	+			; if not, branch
-	addq.b	#1,1(a1)		; increment press length counter
-	cmpi.b	#$FF,1(a1)		; is button held too long?
-	beq.s	+			; if yes, branch
-	bra.s	MoveDemo_Record_P2	; go to player 2
-; ===========================================================================
-+
-	move.b	d0,2(a1)		; store last button press
-	move.b	#0,3(a1)		; reset hold length counter
-	addq.w	#2,(Demo_button_index).w ; advance to next button press
-	andi.w	#$3FF,(Demo_button_index).w ; wrap at max button press changes 1024
-; loc_486A:
-MoveDemo_Record_P2:
-	cmpi.b	#emerald_hill_zone,(Current_Zone).w
-	bne.s	++	; rts
-	lea	($FEC000).l,a1		; output location of recorded player 2 demo? (unknown)
-	move.w	(Demo_button_index_2P).w,d0
-	adda.w	d0,a1
-	move.b	(Ctrl_2_Held).w,d0	; load input of player 2
-	cmp.b	(a1),d0			; is same button held?
-	bne.s	+			; if not, branch
-	addq.b	#1,1(a1)		; increment press length counter
-	cmpi.b	#$FF,1(a1)		; is button held too long?
-	beq.s	+			; if yes, branch
-	bra.s	++			; if not, return
-; ===========================================================================
-+
-	move.b	d0,2(a1)		; store last button press
-	move.b	#0,3(a1)		; reset hold length counter
-	addq.w	#2,(Demo_button_index_2P).w ; advance to next button press
-	andi.w	#$3FF,(Demo_button_index_2P).w ; wrap at max button press changes 1024
-+	rts
-	; end of inactive recording code
-; ===========================================================================
-	; continue with MoveSonicInDemo:
 
 ; loc_48AA:
 MoveDemo_On:
@@ -15438,19 +15383,6 @@ SetHorizScrollFlagsBG2:	; only used by CPZ
 +
 	rts
 ; ===========================================================================
-; Unused - dead code leftover from S1:
-	lea	(VDP_control_port).l,a5
-	lea	(VDP_data_port).l,a6
-	lea	(Scroll_flags_BG).w,a2
-	lea	(Camera_BG_X_pos).w,a3
-	lea	(Level_Layout+$80).w,a4
-	move.w	#vdpComm(VRAM_Plane_B_Name_Table,VRAM,WRITE)>>16,d2
-	bsr.w	Draw_BG1
-	lea	(Scroll_flags_BG2).w,a2
-	lea	(Camera_BG2_X_pos).w,a3
-	bra.w	Draw_BG2
-
-; ===========================================================================
 
 
 
@@ -15751,61 +15683,6 @@ SBZ_CameraSections:
 	dc.b   2	; 32
 	even
 ; ===========================================================================
-; Scrap Brain Zone 1 drawing code -- S1 left-over
-; Compare with CPZ drawing code
-; begin unused routine
-	moveq	#-$10,d4
-	bclr	#0,(a2)
-	bne.s	+
-	bclr	#1,(a2)
-	beq.s	+++
-	move.w	#$E0,d4
-+
-	lea_	SBZ_CameraSections+1,a0
-	move.w	(Camera_BG_Y_pos).w,d0
-	add.w	d4,d0
-	andi.w	#$1F0,d0
-	lsr.w	#4,d0
-	move.b	(a0,d0.w),d0
-	lea	(BGCameraLookup).l,a3
-	movea.w	(a3,d0.w),a3	; Camera, either BG, BG2 or BG3 depending on Y
-	beq.s	+
-	moveq	#-$10,d5
-	movem.l	d4-d5,-(sp)
-	bsr.w	CalcBlockVRAMPos
-	movem.l	(sp)+,d4-d5
-	bsr.w	DrawBlockRow1
-	bra.s	++
-; ===========================================================================
-+
-	moveq	#0,d5
-	movem.l	d4-d5,-(sp)
-	bsr.w	CalcBlockVRAMPos2
-	movem.l	(sp)+,d4-d5
-	moveq	#$1F,d6
-	bsr.w	DrawBlockRow2
-+
-	tst.b	(a2)
-	bne.s	+
-	rts
-; ===========================================================================
-+
-	moveq	#-$10,d4
-	moveq	#-$10,d5
-	move.b	(a2),d0
-	andi.b	#-$58,d0
-	beq.s	+
-	lsr.b	#1,d0
-	move.b	d0,(a2)
-	move.w	#320,d5
-+
-	lea_	SBZ_CameraSections,a0
-	move.w	(Camera_BG_Y_pos).w,d0
-	andi.w	#$1F0,d0
-	lsr.w	#4,d0
-	lea	(a0,d0.w),a0
-	bra.w	loc_DE86
-; end unused routine
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
@@ -17292,24 +17169,6 @@ ScrollBG:
 	rts
 ; End of function ScrollBG
 
-; ===========================================================================
-	; unused/dead code
-	; This code is probably meant for testing the background scrolling code
-	; used by HTZ and WFZ. It would allows the BG position to be shifted up
-	; and down by the second controller.
-	btst	#button_up,(Ctrl_2_Held).w
-	beq.s	+
-	tst.w	(Camera_BG_Y_offset).w
-	beq.s	+
-	subq.w	#1,(Camera_BG_Y_offset).w
-+
-	btst	#button_down,(Ctrl_2_Held).w
-	beq.s	+
-	cmpi.w	#$700,(Camera_BG_Y_offset).w
-	beq.s	+
-	addq.w	#1,(Camera_BG_Y_offset).w
-+
-	rts
 ; ===========================================================================
 
 ; sub_EBEA:
