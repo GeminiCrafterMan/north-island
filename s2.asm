@@ -4292,6 +4292,7 @@ InitPlayers:
 	dc.l	Obj_Tails,		Obj_Null	; TA
 	dc.l	Obj_Knuckles,	Obj_Null	; KA
 	dc.l	Obj_Knuckles,	Obj_Tails	; K&T
+	dc.l	Obj_Sonic,		Obj_Knuckles; S&K
 
 .cont:
 	move.l	#Obj_SpindashDust,(Sonic_Dust+id).w ; load Obj_Splash Sonic's spindash dust/splash object at $FFFFD100
@@ -5788,6 +5789,7 @@ InitPlayersSS:
 	dc.l	Obj_TailsSS,	Obj_Null		; TA
 	dc.l	Obj_KnucklesSS,	Obj_Null		; KA
 	dc.l	Obj_KnucklesSS,	Obj_TailsSS		; K&T
+	dc.l	Obj_SonicSS,	Obj_KnucklesSS	; S&K
 ; End of function InitPlayersSS
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -10490,7 +10492,7 @@ OptionScreen_Controls:
 ; ===========================================================================
 ; word_917A:
 OptionScreen_Choices:
-	dc.l (5-1)<<24|(Player_option&$FFFFFF)
+	dc.l (6-1)<<24|(Player_option&$FFFFFF)
 	dc.l (2-1)<<24|(Two_player_items&$FFFFFF)	; Useless
 	dc.l (SFXlast-1)<<24|(Sound_test_sound&$FFFFFF)
 
@@ -10632,12 +10634,14 @@ off_92D2:
 	dc.l TextOptScr_MilesAlone
 	dc.l TextOptScr_KnuxAlone
 	dc.l TextOptScr_KnuxAndMiles
+	dc.l TextOptScr_SonicAndKnux
 off_92DE:
 	dc.l TextOptScr_SonicAndTails
 	dc.l TextOptScr_SonicAlone
 	dc.l TextOptScr_TailsAlone
 	dc.l TextOptScr_KnuxAlone
 	dc.l TextOptScr_KnuxAndTails
+	dc.l TextOptScr_SonicAndKnux
 off_92EA:
 	dc.l TextOptScr_AllKindsItems
 	dc.l TextOptScr_TeleportOnly
@@ -11174,11 +11178,12 @@ TextOptScr_TailsAlone:		menutxt	"TAILS ALONE    "	; byte_981C:
 TextOptScr_KnuxAlone:		menutxt "KNUCKLES ALONE "
 TextOptScr_KnuxAndMiles:	menutxt	"KNUX AND MILES "
 TextOptScr_KnuxAndTails:	menutxt	"KNUX AND TAILS "
+TextOptScr_SonicAndKnux:	menutxt	"SONIC AND KNUX "
 TextOptScr_VsModeItems:		menutxt	"* VS MODE ITEMS *"	; byte_982C:
 TextOptScr_AllKindsItems:	menutxt	"ALL KINDS ITEMS"	; byte_983E:
 TextOptScr_TeleportOnly:	menutxt	"TELEPORT ONLY  "	; byte_984E:
 TextOptScr_SoundTest:		menutxt	"*  SOUND TEST   *"	; byte_985E:
-TextOptScr_0:			menutxt	"      00       "	; byte_9870:
+TextOptScr_0:				menutxt	"      00       "	; byte_9870:
 
 	charset ; reset character set
 
