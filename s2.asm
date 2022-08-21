@@ -3924,11 +3924,13 @@ Level:
 	bsr.w	LoadPLC
 	bsr.w	Level_SetPlayerMode
 	moveq	#PLCID_Tails1up,d0
-	cmpi.w	#2,(Player_mode).w
-	blt.s	Level_ClrRam
+	cmpi.l	#Obj_Tails,(MainCharacter+id).w
+	bne.s	.notTails
 	moveq	#PLCID_TailsLife,d0
-	cmpi.w	#3,(Player_mode).w
-	blt.s	+
+	bra.s	+
+.notTails:
+	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
+	bne.s	+
 	moveq	#PLCID_KnucklesLife,d0
 +
 	bsr.w	LoadPLC
@@ -3995,8 +3997,8 @@ Level_InitWater:
 ; loc_407C:
 Level_LoadPal:
 	moveq	#PalID_BGND,d0
-	cmpi.w	#3,(Player_mode).w
-	blt.s	.notKnux
+	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
+	bne.s	.notKnux
 	moveq	#PalID_Knux,d0
 .notKnux:
 	bsr.w	PalLoad_Now	; load Sonic's palette line
@@ -4042,8 +4044,8 @@ Level_TtlCard:
 	jsr	(Hud_Base).l
 +
 	moveq	#PalID_BGND,d0
-	cmpi.w	#3,(Player_mode).w
-	blt.s	+
+	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
+	bne.s	+
 	moveq	#PalID_Knux,d0
 +
 	bsr.w	PalLoad_ForFade	; load Sonic's palette line
@@ -4293,6 +4295,7 @@ InitPlayers:
 	dc.l	Obj_Knuckles,	Obj_Null	; KA
 	dc.l	Obj_Knuckles,	Obj_Tails	; K&T
 	dc.l	Obj_Sonic,		Obj_Knuckles; S&K
+	dc.l	Obj_Sonic,		Obj_Sonic	; S&S
 
 .cont:
 	move.l	#Obj_SpindashDust,(Sonic_Dust+id).w ; load Obj_Splash Sonic's spindash dust/splash object at $FFFFD100
@@ -5790,6 +5793,7 @@ InitPlayersSS:
 	dc.l	Obj_KnucklesSS,	Obj_Null		; KA
 	dc.l	Obj_KnucklesSS,	Obj_TailsSS		; K&T
 	dc.l	Obj_SonicSS,	Obj_KnucklesSS	; S&K
+	dc.l	Obj_SonicSS,	Obj_SonicSS		; S&S
 ; End of function InitPlayersSS
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -9518,7 +9522,7 @@ Obj_ContinueChars_Tails_Wait:
 Obj_ContinueChars_Tails_StartRunning:
 	addq.b	#2,routine(a0) ; => Obj_ContinueChars_Tails_Run
 	move.l	#MapUnc_Tails,mappings(a0)
-	move.w	#make_art_tile(ArtTile_ArtUnc_Tails,0,0),art_tile(a0)
+	jsr		ResetArtTile_a0
 	move.b	#0,anim(a0)
 	clr.w	inertia(a0)
 	sfx	sfx_Spindash
@@ -10492,7 +10496,7 @@ OptionScreen_Controls:
 ; ===========================================================================
 ; word_917A:
 OptionScreen_Choices:
-	dc.l (6-1)<<24|(Player_option&$FFFFFF)
+	dc.l (7-1)<<24|(Player_option&$FFFFFF)
 	dc.l (2-1)<<24|(Two_player_items&$FFFFFF)	; Useless
 	dc.l (SFXlast-1)<<24|(Sound_test_sound&$FFFFFF)
 
@@ -10577,20 +10581,17 @@ OptionScreen_DrawUnselected:
 
 ;loc_9268
 OptionScreen_SelectTextPtr:
-	lea	(off_92D2).l,a4
-	tst.b	(Graphics_Flags).w
-	bpl.s	+
-	lea	(off_92DE).l,a4
+	lea	(Opt_Char).l,a4
 
 +
 	tst.b	(Options_menu_box).w
 	beq.s	+
-	lea	(off_92EA).l,a4
+	lea	(Opt_2PItem).l,a4
 
 +
 	cmpi.b	#2,(Options_menu_box).w
 	bne.s	+	; rts
-	lea	(off_92F2).l,a4
+	lea	(Opt_SoundTest).l,a4
 
 +
 	rts
@@ -10628,24 +10629,18 @@ boxData macro txtlabel,vramAddr
 	boxData	TextOptScr_VsModeItems,VRAM_Plane_A_Name_Table+planeLocH40(9,11)
 	boxData	TextOptScr_SoundTest,VRAM_Plane_A_Name_Table+planeLocH40(9,19)
 
-off_92D2:
-	dc.l TextOptScr_SonicAndMiles
-	dc.l TextOptScr_SonicAlone
-	dc.l TextOptScr_MilesAlone
-	dc.l TextOptScr_KnuxAlone
-	dc.l TextOptScr_KnuxAndMiles
-	dc.l TextOptScr_SonicAndKnux
-off_92DE:
+Opt_Char:
 	dc.l TextOptScr_SonicAndTails
 	dc.l TextOptScr_SonicAlone
 	dc.l TextOptScr_TailsAlone
 	dc.l TextOptScr_KnuxAlone
 	dc.l TextOptScr_KnuxAndTails
 	dc.l TextOptScr_SonicAndKnux
-off_92EA:
+	dc.l TextOptScr_SonicAndSonic
+Opt_2PItem:
 	dc.l TextOptScr_AllKindsItems
 	dc.l TextOptScr_TeleportOnly
-off_92F2:
+Opt_SoundTest:
 	dc.l TextOptScr_0
 ; ===========================================================================
 ; loc_92F6:
@@ -11170,15 +11165,13 @@ super_sonic_cheat:	dc.b   4,   0
 	; options screen menu text
 
 TextOptScr_PlayerSelect:	menutxt	"* PLAYER SELECT *"	; byte_97CA:
-TextOptScr_SonicAndMiles:	menutxt	"SONIC AND MILES"	; byte_97DC:
 TextOptScr_SonicAndTails:	menutxt	"SONIC AND TAILS"	; byte_97EC:
 TextOptScr_SonicAlone:		menutxt	"SONIC ALONE    "	; byte_97FC:
-TextOptScr_MilesAlone:		menutxt	"MILES ALONE    "	; byte_980C:
 TextOptScr_TailsAlone:		menutxt	"TAILS ALONE    "	; byte_981C:
 TextOptScr_KnuxAlone:		menutxt "KNUCKLES ALONE "
-TextOptScr_KnuxAndMiles:	menutxt	"KNUX AND MILES "
 TextOptScr_KnuxAndTails:	menutxt	"KNUX AND TAILS "
 TextOptScr_SonicAndKnux:	menutxt	"SONIC AND KNUX "
+TextOptScr_SonicAndSonic:	menutxt "SONIC AND SONIC"
 TextOptScr_VsModeItems:		menutxt	"* VS MODE ITEMS *"	; byte_982C:
 TextOptScr_AllKindsItems:	menutxt	"ALL KINDS ITEMS"	; byte_983E:
 TextOptScr_TeleportOnly:	menutxt	"TELEPORT ONLY  "	; byte_984E:
@@ -29354,11 +29347,11 @@ Load_EndOfAct:
 	move.l	#Obj_Results,id(a1) ; load Obj_Results (end of level results screen)
 +
 	moveq	#PLCID_Results,d0
-	cmpi.w	#2,(Player_mode).w
-	blt.s	+
+	cmpi.l	#Obj_Tails,(MainCharacter+id).w
+	bne.s	+
 	moveq	#PLCID_ResultsTails,d0
-	cmpi.w	#3,(Player_mode).w
-	blt.s	+
+	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
+	bne.s	+
 	moveq	#PLCID_ResultsKnuckles,d0
 +
 	jsr	(LoadPLC2).l
@@ -30540,6 +30533,24 @@ ResetHeight_a1:
 	move.b	#9,x_radius(a1)
 	rts
 
+ResetArtTile_a0:
+	cmpa.w	#MainCharacter,a0
+	bne.s	.sidekick
+	move.w	#make_art_tile(ArtTile_ArtUnc_Sonic,0,0),art_tile(a0)
+	rts
+.sidekick:
+	move.w	#make_art_tile(ArtTile_ArtUnc_Tails,0,0),art_tile(a0)
+	rts
+
+DPLC_ArtTileSet:
+	cmpa.w	#MainCharacter,a0
+	bne.s	.sidekick
+	move.w	#tiles_to_bytes(ArtTile_ArtUnc_Sonic),d4
+	rts
+.sidekick:
+	move.w	#tiles_to_bytes(ArtTile_ArtUnc_Tails),d4
+	rts
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 01 - Sonic
@@ -30547,6 +30558,8 @@ ResetHeight_a1:
 ; Sprite_19F50: Object_Sonic:
 Obj_Sonic:
 	; a0=character
+	cmpa.w	#MainCharacter,a0
+	bne.s	Obj_Sonic_Normal
 	tst.w	(Debug_placement_mode).w	; is debug mode being used?
 	beq.s	Obj_Sonic_Normal			; if not, branch
 	jmp	(DebugMode).l
@@ -30581,7 +30594,7 @@ Obj_Sonic_Init:
 	tst.b	(Last_star_pole_hit).w
 	bne.s	Obj_Sonic_Init_Continued
 	; only happens when not starting at a checkpoint:
-	move.w	#make_art_tile(ArtTile_ArtUnc_Sonic,0,0),art_tile(a0)
+	jsr		ResetArtTile_a0
 	move.b	#$C,top_solid_bit(a0)
 	move.b	#$D,lrb_solid_bit(a0)
 	move.w	x_pos(a0),(Saved_x_pos).w
@@ -30612,6 +30625,8 @@ Obj_Sonic_Init_Continued:
 ; ---------------------------------------------------------------------------
 ; loc_1A030: Obj_01_Sub_2:
 Obj_Sonic_Control:
+	cmpa.w	#MainCharacter,a0
+	bne.s	+
 	tst.w	(Debug_mode_flag).w	; is debug cheat enabled?
 	beq.s	+			; if not, branch
 	btst	#button_B,(Ctrl_1_Press).w	; is button B pressed?
@@ -33015,7 +33030,7 @@ LoadSonicDynPLC_Part2:
 		move.w	(a2)+,d5
 		subq.w	#1,d5
 		bmi.s	.nochange
-	move.w	#tiles_to_bytes(ArtTile_ArtUnc_Sonic),d4	; Temporary
+		jsr		DPLC_ArtTileSet
 		tst.b	(Super_Sonic_flag).w
 		bne.s	.superart
 		move.l	#ArtUnc_Sonic,d6
@@ -33116,7 +33131,7 @@ Obj_Tails_Init:
 	tst.b	(Last_star_pole_hit).w
 	bne.s	Obj_Tails_Init_Continued
 	; only happens when not starting at a checkpoint:
-	move.w	#make_art_tile(ArtTile_ArtUnc_Tails,0,0),art_tile(a0)
+	jsr		ResetArtTile_a0
 	move.b	#$C,top_solid_bit(a0)
 	move.b	#$D,lrb_solid_bit(a0)
 	move.w	x_pos(a0),(Saved_x_pos).w
@@ -33127,7 +33142,7 @@ Obj_Tails_Init:
 ; ===========================================================================
 ; loc_1B952:
 Obj_Tails_Init_2Pmode:
-	move.w	#make_art_tile(ArtTile_ArtUnc_Tails,0,0),art_tile(a0)
+	jsr		ResetArtTile_a0
 	move.w	(MainCharacter+top_solid_bit).w,top_solid_bit(a0)
 	tst.w	(MainCharacter+art_tile).w
 	bpl.s	Obj_Tails_Init_Continued
@@ -35535,7 +35550,7 @@ LoadTailsTailsDynPLC_Part2:
 		move.w	(a2)+,d5
 		subq.w	#1,d5
 		bmi.s	.nochange
-		move.w	#tiles_to_bytes(ArtTile_ArtUnc_Tails_Tails),d4	; Temporary
+		jsr		TailsTailsDPLC_ArtTileSet
 ;		tst.b	(Super_Sonic_flag).w
 ;		bne.s	.superart
 		move.l	#ArtUnc_TailsTails,d6
@@ -35578,6 +35593,16 @@ LoadTailsTailsMap:
 	.skip:
 		rts
 
+TailsTailsDPLC_ArtTileSet:
+	move.w	parent(a0),a1
+	cmpa.w	#MainCharacter,a1
+	bne.s	.sidekick
+	move.w	#tiles_to_bytes(ArtTile_ArtUnc_Sonic+$10),d4
+	rts
+.sidekick:
+	move.w	#tiles_to_bytes(ArtTile_ArtUnc_Tails+$10),d4
+	rts
+
 ; ---------------------------------------------------------------------------
 ; Tails pattern loading subroutine
 ; ---------------------------------------------------------------------------
@@ -35606,7 +35631,7 @@ LoadTailsDynPLC_Part2:
 		move.w	(a2)+,d5
 		subq.w	#1,d5
 		bmi.s	.nochange
-		move.w	#tiles_to_bytes(ArtTile_ArtUnc_Tails),d4	; Temporary
+		jsr		DPLC_ArtTileSet
 ;		tst.b	(Super_Sonic_flag).w
 ;		bne.s	.superart
 		move.l	#ArtUnc_Tails,d6
@@ -35671,7 +35696,8 @@ Obj_TailsTails_parent_prev_anim = objoff_30
 Obj_TailsTails_Init:
 	addq.b	#2,routine(a0) ; => Obj_TailsTails_Main
 	move.l	#MapUnc_TailsTails,mappings(a0)
-	move.w	#make_art_tile(ArtTile_ArtUnc_Tails_Tails,0,0),art_tile(a0)
+	jsr		ResetArtTile_a0
+	add.w	#make_art_tile($10,0,0),art_tile(a0)
 	move.w	#prio(2),priority(a0)
 	move.b	#$18,width_pixels(a0)
 	move.b	#4,render_flags(a0)
@@ -81568,24 +81594,15 @@ Debug_ExitDebugMode:
 	moveq	#0,d0
 	move.w	d0,(Debug_placement_mode).w
 	lea	(MainCharacter).w,a1 ; a1=character
-; I no longer need to reset mappings -- the dynplc routines do it for me
-	cmpi.l	#Obj_Tails,id(a1)
-	bne.s	.notTails
-	move.w	#make_art_tile(ArtTile_ArtUnc_Tails,0,0),art_tile(a1)
-	bra.s	+
-.notTails:
 	move.w	#make_art_tile(ArtTile_ArtUnc_Sonic,0,0),art_tile(a1)
-+
+	bsr.s	Debug_ResetPlayerStats
+	jsr		ResetHeight_a1
+	lea	(Sidekick).w,a1 ; a1=character
+	move.w	#make_art_tile(ArtTile_ArtUnc_Tails,0,0),art_tile(a1)
 	bsr.s	Debug_ResetPlayerStats
 	jsr		ResetHeight_a1
 	move.w	(Camera_Min_Y_pos_Debug_Copy).w,(Camera_Min_Y_pos).w
 	move.w	(Camera_Max_Y_pos_Debug_Copy).w,(Camera_Max_Y_pos).w
-	; useless leftover; this is for S1's special stage
-	cmpi.b	#GameModeID_SpecialStage,(Game_Mode).w	; special stage mode?
-	bne.s	return_41CB6		; if not, branch
-	move.b	#AniIDSonAni_Roll,(MainCharacter+anim).w
-	bset	#2,(MainCharacter+status).w
-	bset	#1,(MainCharacter+status).w
 
 return_41CB6:
 	rts
@@ -82876,11 +82893,12 @@ PlrList_ResultsTails: plrlistheader
 PlrList_ResultsTails_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
-; Tails end of level results screen
+; Knuckles end of level results screen
 ;---------------------------------------------------------------------------------------
 PlrList_ResultsKnuckles: plrlistheader
 	plreq ArtTile_ArtNem_TitleCard, ArtNem_TitleCard
 	plreq ArtTile_ArtNem_ResultsText, ArtNem_ResultsText
+	plreq ArtTile_ArtNem_ResultsText+$16, ArtNem_ResultsText_K
 	plreq ArtTile_ArtNem_MiniCharacter, ArtNem_MiniKnuckles
 	plreq ArtTile_ArtNem_Perfect, ArtNem_Perfect
 PlrList_ResultsKnuckles_End
@@ -83456,6 +83474,8 @@ ArtNem_LevelSelectPics:	BINCLUDE	"art/nemesis/Pictures in level preview box from
 ; Text for Sonic or Tails Got Through Act and Bonus/Perfect	; ArtNem_7E86A:
 	even
 ArtNem_ResultsText:	BINCLUDE	"art/nemesis/End of level results text.bin"
+	even
+ArtNem_ResultsText_K:	BINCLUDE	"art/nemesis/End of level results text - K.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (72 blocks)
 ; Text for end of special stage, along with patterns for 3 emeralds.	; ArtNem_7EB58:

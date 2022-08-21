@@ -2,6 +2,8 @@ Obj_Knuckles:
 
 ; FUNCTION CHUNK AT 0033A066 SIZE 0000000E BYTES
 
+		cmpa.w	#MainCharacter,a0
+		bne.s	Obj_Knuckles_Normal
 		tst.w	(Debug_placement_mode).w
 		beq.s	Obj_Knuckles_Normal
 		jmp		DebugMode
@@ -37,7 +39,7 @@ Obj_Knuckles_Init:
 		tst.b	(Last_star_pole_hit).w
 		bne.s	Obj_Knuckles_Init_Continued
 	; only happens when not starting at a checkpoint:
-		move.w	#make_art_tile(ArtTile_ArtUnc_Sonic,0,0),art_tile(a0)
+		jsr		ResetArtTile_a0
 		move.b	#$C,top_solid_bit(a0)
 		move.b	#$D,lrb_solid_bit(a0)
 		move.w	x_pos(a0),(Saved_x_pos).w
@@ -64,6 +66,8 @@ Obj_Knuckles_Init_Continued:
 		subi_.w	#4,y_pos(a0)
 
 Obj_Knuckles_Control:
+	cmpa.w	#MainCharacter,a0
+	bne.s	loc_315422
 		tst.w	(Debug_mode_flag).w
 		beq.s	loc_315422
 		btst	#button_B,(Ctrl_1_Press).w
@@ -1807,7 +1811,7 @@ LoadKnucklesDynPLC_Part2:
 		move.w	(a2)+,d5
 		subq.w	#1,d5
 		bmi.s	.nochange
-		move.w	#tiles_to_bytes(ArtTile_ArtUnc_Sonic),d4	; Temporary
+		jsr		DPLC_ArtTileSet
 ;		tst.b	(Super_Sonic_flag).w
 ;		bne.s	.superart
 		move.l	#ArtUnc_Knuckles,d6
