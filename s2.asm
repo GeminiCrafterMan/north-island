@@ -30633,6 +30633,15 @@ Sonic_RecordPos:
 	rts
 ; End of subroutine Sonic_RecordPos
 
+PutDustIntoA1:
+	cmpa.w	#MainCharacter,a0
+	bne.s	.P2
+	lea		(Sonic_Dust).w,a1
+	rts
+.P2:
+	lea		(Tails_Dust).w,a1
+	rts
+
 ; ---------------------------------------------------------------------------
 ; Subroutine for Sonic when he's underwater
 ; ---------------------------------------------------------------------------
@@ -30651,13 +30660,16 @@ return_1A18C:
 Obj_Sonic_InWater:
 	move.w	(Water_Level_1).w,d0
 	cmp.w	y_pos(a0),d0	; is Sonic above the water?
-	bge.s	Obj_Sonic_OutWater	; if yes, branch
+	bge.w	Obj_Sonic_OutWater	; if yes, branch
 
 	bset	#6,status(a0)	; set underwater flag
 	bne.s	return_1A18C	; if already underwater, branch
 
 	movea.l	a0,a1
 	bsr.w	ResumeMusic
+
+	cmpa.w	#MainCharacter,a0
+	bne.s	.notP1
 	command	Mus_ToWater
 	move.l	#Obj_SmallBubbles,(Sonic_BreathingBubbles+id).w ; load Obj_SmallBubbles (sonic's breathing bubbles) at $FFFFD080
 	move.b	#$81,(Sonic_BreathingBubbles+subtype).w
@@ -30670,46 +30682,76 @@ Obj_Sonic_InWater:
 	move.w	#$500,(Sonic_top_speed).w
 	move.w	#$18,(Sonic_acceleration).w
 	move.w	#$80,(Sonic_deceleration).w
+	bra.s	+
+.notP1:
+	move.l	#Obj_SmallBubbles,(Tails_BreathingBubbles+id).w ; load Obj_SmallBubbles (Tails's breathing bubbles) at $FFFFD080
+	move.b	#$81,(Tails_BreathingBubbles+subtype).w
+	move.l	a0,(Tails_BreathingBubbles+objoff_3C).w
+	move.w	#$300,(Tails_top_speed).w
+	move.w	#6,(Tails_acceleration).w
+	move.w	#$40,(Tails_deceleration).w
+	tst.b	(Super_Sonic_flag).w
+	beq.s	+
+	move.w	#$500,(Tails_top_speed).w
+	move.w	#$18,(Tails_acceleration).w
+	move.w	#$80,(Tails_deceleration).w
 +
 	asr.w	x_vel(a0)
 	asr.w	y_vel(a0)	; memory operands can only be shifted one bit at a time
 	asr.w	y_vel(a0)
-	beq.s	return_1A18C
-	move.w	#$100,(Sonic_Dust+anim).w	; splash animation
+	beq.s	.ret
+	jsr		PutDustIntoA1
+	move.w	#$100,anim(a1)	; splash animation
 	sfx	sfx_Splash
+.ret:
 	rts
 ; ---------------------------------------------------------------------------
 ; loc_1A1FE:
 Obj_Sonic_OutWater:
 	bclr	#6,status(a0) ; unset underwater flag
-	beq.s	return_1A18C ; if already above water, branch
+	beq.w	.ret ; if already above water, branch
 
 	movea.l	a0,a1
 	bsr.w	ResumeMusic
+
+	cmpa.w	#MainCharacter,a0
+	bne.s	.notP1
 	command	Mus_OutWater
 	move.w	#$600,(Sonic_top_speed).w
 	move.w	#$C,(Sonic_acceleration).w
 	move.w	#$80,(Sonic_deceleration).w
 	tst.b	(Super_Sonic_flag).w
-	beq.s	+
+	beq.s	.cont
 	move.w	#$A00,(Sonic_top_speed).w
 	move.w	#$30,(Sonic_acceleration).w
 	move.w	#$100,(Sonic_deceleration).w
-+
+	bra.s	.cont
+.notP1:
+	move.w	#$600,(Tails_top_speed).w
+	move.w	#$C,(Tails_acceleration).w
+	move.w	#$80,(Tails_deceleration).w
+	tst.b	(Super_Sonic_flag).w
+	beq.s	.cont
+	move.w	#$A00,(Tails_top_speed).w
+	move.w	#$30,(Tails_acceleration).w
+	move.w	#$100,(Tails_deceleration).w
+.cont:
 	cmpi.b	#4,routine(a0)	; is Sonic falling back from getting hurt?
-	beq.s	+		; if yes, branch
+	beq.s	.hurt		; if yes, branch
 	asl	y_vel(a0)
-+
+.hurt:
 	tst.w	y_vel(a0)
-	beq.w	return_1A18C
-	move.w	#$100,(Sonic_Dust+anim).w	; splash animation
+	beq.s	.ret
+	jsr		PutDustIntoA1
+	move.w	#$100,anim(a1)	; splash animation
 	movea.l	a0,a1
 	bsr.w	ResumeMusic
 	cmpi.w	#-$1000,y_vel(a0)
-	bgt.s	+
+	bgt.s	.under1k
 	move.w	#-$1000,y_vel(a0)	; limit upward y velocity exiting the water
-+
+.under1k:
 	sfx	sfx_Splash
+.ret:
 	rts
 ; End of subroutine Sonic_Water
 
@@ -31195,8 +31237,9 @@ Sonic_TurnLeft:
 	sfx	sfx_Skid
 	cmpi.b	#$C,air_left(a0)
 	blo.s	return_1A744	; if he's drowning, branch to not make dust
-	move.b	#6,(Sonic_Dust+routine).w
-	move.b	#$15,(Sonic_Dust+mapping_frame).w
+	jsr		PutDustIntoA1
+	move.b	#6,routine(a1)
+	move.b	#$15,mapping_frame(a1)
 
 return_1A744:
 	rts
@@ -31244,8 +31287,9 @@ Sonic_TurnRight:
 	sfx	sfx_Skid
 	cmpi.b	#$C,air_left(a0)
 	blo.s	return_1A7C4	; if he's drowning, branch to not make dust
-	move.b	#6,(Sonic_Dust+routine).w
-	move.b	#$15,(Sonic_Dust+mapping_frame).w
+	jsr		PutDustIntoA1
+	move.b	#6,routine(a1)
+	move.b	#$15,mapping_frame(a1)
 
 return_1A7C4:
 	rts
@@ -31914,7 +31958,8 @@ Sonic_CheckSpindash:
 	move.w	#0,spindash_counter(a0)
 	cmpi.b	#$C,air_left(a0)	; if he's drowning, branch to not make dust
 	blo.s	+
-	move.b	#2,(Sonic_Dust+anim).w
+	jsr		PutDustIntoA1
+	move.b	#2,anim(a1)
 +
 	bsr.w	Sonic_LevelBound
 	bsr.w	AnglePos
@@ -31962,7 +32007,8 @@ Sonic_UpdateSpindash:
 	neg.w	inertia(a0)
 +
 	bset	#2,status(a0)
-	move.b	#0,(Sonic_Dust+anim).w
+	jsr		PutDustIntoA1
+	move.b	#0,anim(a1)
 	sfx	sfx_Dash
 	bra.s	Obj_Sonic_Spindash_ResetScr
 ; ===========================================================================
@@ -33068,7 +33114,7 @@ Obj_Tails_Control_Part2:
 	jsr		Player_Display
 	bsr.w	Tails_Super
 	bsr.w	Tails_RecordPos
-	bsr.w	Tails_Water
+	bsr.w	Sonic_Water
 	move.b	(Primary_Angle).w,next_tilt(a0)
 	move.b	(Secondary_Angle).w,tilt(a0)
 	tst.b	(WindTunnel_flag).w
@@ -33542,84 +33588,6 @@ Tails_RecordPos:
 
 	rts
 ; End of subroutine Tails_RecordPos
-
-; ---------------------------------------------------------------------------
-; Subroutine for Tails when he's underwater
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1BF52:
-Tails_Water:
-	tst.b	(Water_flag).w	; does level have water?
-	bne.s	Obj_Tails_InWater	; if yes, branch
-
-return_1BF58:
-	rts
-; ---------------------------------------------------------------------------
-; loc_1BF5A:
-Obj_Tails_InWater:
-	move.w	(Water_Level_1).w,d0
-	cmp.w	y_pos(a0),d0	; is Sonic above the water?
-	bge.s	Obj_Tails_OutWater	; if yes, branch
-
-	bset	#6,status(a0)	; set underwater flag
-	bne.s	return_1BF58	; if already underwater, branch
-
-	movea.l	a0,a1
-	bsr.w	ResumeMusic
-
-	cmpa.w	#MainCharacter,a0	; is this Tails alone?
-	bne.s	+			; if not, skip
-	command	Mus_ToWater		; enable underwater mode
-
-+
-	move.l	#Obj_SmallBubbles,(Tails_BreathingBubbles+id).w ; load Obj_SmallBubbles (tail's breathing bubbles) at $FFFFD0C0
-	move.b	#$81,(Tails_BreathingBubbles+subtype).w
-	move.l	a0,(Tails_BreathingBubbles+objoff_3C).w ; set its parent to be this (Obj_SmallBubbles uses $3C instead of $3E for some reason)
-	move.w	#$300,(Tails_top_speed).w
-	move.w	#6,(Tails_acceleration).w
-	move.w	#$40,(Tails_deceleration).w
-	asr	x_vel(a0)
-	asr	y_vel(a0)
-	asr	y_vel(a0)
-	beq.s	return_1BF58
-	move.w	#$100,(Tails_Dust+anim).w	; splash animation
-	sfx	sfx_Splash
-	rts
-; ---------------------------------------------------------------------------
-; loc_1BFB2:
-Obj_Tails_OutWater:
-	bclr	#6,status(a0)	; unset underwater flag
-	beq.s	return_1BF58	; if already above water, branch
-
-	movea.l	a0,a1
-	bsr.w	ResumeMusic
-	move.w	#$600,(Tails_top_speed).w
-	move.w	#$C,(Tails_acceleration).w
-	move.w	#$80,(Tails_deceleration).w
-
-	cmpa.w	#MainCharacter,a0	; is this Tails alone?
-	bne.s	+			; if not, skip
-	command	Mus_OutWater		; disable underwater mode
-
-+
-	cmpi.b	#4,routine(a0)		; is Tails falling back from getting hurt?
-	beq.s	+			; if yes, branch
-	asl	y_vel(a0)
-+
-	tst.w	y_vel(a0)
-	beq.w	return_1BF58
-	move.w	#$100,(Tails_Dust+anim).w	; splash animation
-	movea.l	a0,a1
-	bsr.w	ResumeMusic
-	cmpi.w	#-$1000,y_vel(a0)
-	bgt.s	+
-	move.w	#-$1000,y_vel(a0)	; limit upward y velocity exiting the water
-+
-	sfx	sfx_Splash
-	rts
-; End of subroutine Tails_Water
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -36397,7 +36365,7 @@ Obj_Splash_Init:
 	cmpa.w	#Sonic_Dust,a0
 	beq.s	+
 	move.b	#1,objoff_34(a0)
-	cmpi.w	#2,(Player_mode).w
+	cmpi.l	#Obj_Tails,(MainCharacter+id).w
 	beq.s	+
 	move.w	#make_art_tile(ArtTile_ArtNem_TailsDust,0,0),art_tile(a0)
 	move.w	#Sidekick,parent(a0)
@@ -36444,6 +36412,8 @@ Obj_Splash_MdSpindashDust:
 	andi.b	#1,status(a0)
 	tst.b	objoff_34(a0)
 	beq.s	+
+	cmpi.l	#Obj_Tails,id(a2)
+	bne.s	+
 	subi_.w	#4,y_pos(a0)
 +
 	tst.b	next_anim(a0)
@@ -36504,6 +36474,8 @@ Obj_Splash_SkidDust:
 	add.w	d1,y_pos(a1)
 	tst.b	objoff_34(a0)
 	beq.s	+
+	cmpi.l	#Obj_Tails,id(a2)
+	bne.s	+
 	subi_.w	#4,y_pos(a1)
 +
 	move.b	#0,status(a1)

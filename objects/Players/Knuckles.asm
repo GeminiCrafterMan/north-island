@@ -255,8 +255,9 @@ loc_315780:
 		move.b	#0,anim_frame(a0)
 		cmp.b	#$C,air_left(a0)
 		bcs.s	return_3157AC
-		move.b	#6,(Sonic_Dust+routine).w
-		move.b	#$15,(Sonic_Dust+mapping_frame).w
+		jsr		PutDustIntoA1
+		move.b	#6,routine(a1)
+		move.b	#$15,mapping_frame(a1)
 
 return_3157AC:
 		rts
