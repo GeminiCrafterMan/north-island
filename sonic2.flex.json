@@ -1,7 +1,7 @@
 {
     "Flex": 2,
     "name": "Sonic 2",
-    "node": "22b0afa6-9274-4903-87db-1c9b9c7d7180",
+    "node": "07db1c9b-9c7d-4180-a3f8-c8e6949b36cb",
     "objects": [
         {
             "uuid": "fa665537-a8f6-4d0d-a1b5-2c3190bf034d",
@@ -1073,7 +1073,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj91.bin",
+                        "path": "mappings/sprite/Obj_ChopChop.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1400,7 +1400,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj9E.bin",
+                        "path": "mappings/sprite/Obj_CrawlTon.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1429,7 +1429,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objA3.bin",
+                        "path": "mappings/sprite/Obj_Flasher.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1582,7 +1582,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objC8.bin",
+                        "path": "mappings/sprite/Obj_Crawl.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2228,7 +2228,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objA0.bin",
+                        "path": "mappings/sprite/Obj_ShellcrackerClaw.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2257,7 +2257,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objA2.bin",
+                        "path": "mappings/sprite/Obj_SlicerPincers.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2286,7 +2286,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objA4.bin",
+                        "path": "mappings/sprite/Obj_Asteron.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2683,7 +2683,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "91f0d4fc-0ab4-4256-95b9-ebb70958c194"
         },
         {
@@ -2998,7 +2998,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj4A.bin",
+                        "path": "mappings/sprite/Obj_Octus.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -3027,7 +3027,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj50.bin",
+                        "path": "mappings/sprite/Obj_Aquis.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -3122,7 +3122,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objC7.bin",
+                        "path": "mappings/sprite/Obj_Eggrobo.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -3556,7 +3556,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "697e22b0-afa6-4274-8903-07db1c9b9c7d"
         },
         {
@@ -3668,7 +3668,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objAE.bin",
+                        "path": "mappings/sprite/Obj_Clucker.bin",
                         "label": ""
                     },
                     "dplcs": {
