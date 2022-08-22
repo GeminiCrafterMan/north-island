@@ -29228,6 +29228,7 @@ Load_EndOfAct:
 	move.w	d0,(Bonus_Countdown_2).w
 	move.b	#1,(Victory_flag).w
 	move.b	#1,(Control_Locked).w
+	move.b	#1,(Control_Locked_P2).w
 	move.w	#0,(Ctrl_1_Logical).w	; Stop.
 	clr.w	(Total_Bonus_Countdown).w
 	clr.w	(Bonus_Countdown_3).w
@@ -70177,10 +70178,10 @@ Obj_GrabberString_MapUnc_39228: offsetTable
 	offsetTableEntry.w word_392C6	; 3
 	offsetTableEntry.w word_392D8	; 4
 	; Unused - The spider badnik never goes down enough for these to appear
-	offsetTableEntry.w word_3930C	; 5	; This is in the wrong place - this should be frame 6
-	offsetTableEntry.w word_392F2	; 6	; This is in the wrong place - this should be frame 5
+	offsetTableEntry.w word_392F2	; 5
+	offsetTableEntry.w word_3930C	; 6
 	offsetTableEntry.w word_3932E	; 7
-	offsetTableEntry.w word_3932E	; 8	; This should point to word_39350
+	offsetTableEntry.w word_39350	; 8	; This should point to word_39350
 word_3923A:
 	dc.w 3
 	dc.w $F801,    0,    0,$FFE5
@@ -70242,8 +70243,7 @@ word_3932E:
 	dc.w $2003,   $B,    5,$FFFC; 4
 	dc.w $4003,   $B,    5,$FFFC; 8
 	dc.w $6003,   $B,    5,$FFFC; 12
-; Unused frame
-;word_39350:
+word_39350:
 	dc.w 5
 	dc.w	 1,   $B,    5,$FFFC
 	dc.w $1003,   $B,    5,$FFFC; 4
