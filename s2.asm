@@ -69661,7 +69661,7 @@ Ani_SpinyShot:	offsetTable
 ; ------------------------------------------------------------------------------
 ; sprite mappings
 ; ------------------------------------------------------------------------------
-Obj_Spiny_Obj_SpinyOnWall_Obj_Projectile_MapUnc_38CCA:	BINCLUDE "mappings/sprite/Obj_SpinyOnWall.bin"
+Obj_Spiny_Obj_SpinyOnWall_Obj_Projectile_MapUnc_38CCA:	BINCLUDE "mappings/sprite/Obj_Spiny.bin"
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object A7 - Grabber (spider badnik) from CPZ
@@ -70074,7 +70074,12 @@ Obj_Grabber_CheckExplode:
 	move.b	objoff_2B(a0),objoff_2A(a0)
 	subq.b	#1,objoff_2B(a0)
 	beq.s	Obj_Grabber_Poof
-	bchg	#palette_bit_0,art_tile(a0)
+	cmpi.b	#1,mapping_frame(a0)
+	beq.s	.chgToF5
+	move.b	#1,mapping_frame(a0)
+	bra.s	+
+.chgToF5:
+	move.b	#5,mapping_frame(a0)
 +
 	rts
 ; ---------------------------------------------------------------------------
@@ -70140,13 +70145,13 @@ word_391E8:
 	dc.l ($3C<<24)|Obj_GrabberString
 ; off_391EC:
 Obj_Grabber_SubObjData:
-	SubObjData Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A,make_art_tile(ArtTile_ArtNem_Grabber,1,1),4,4,$10,$B
+	SubObjData Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A,make_art_tile(ArtTile_ArtNem_Grabber,0,1),4,4,$10,$B
 ; off_391F6:
 Obj_Grabber_SubObjData2:
-	SubObjData Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A,make_art_tile(ArtTile_ArtNem_Grabber,1,1),4,1,$10,$D7
+	SubObjData Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A,make_art_tile(ArtTile_ArtNem_Grabber,0,1),4,1,$10,$D7
 ; off_39200:
 Obj_GrabberLegs_SubObjData:
-	SubObjData Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A,make_art_tile(ArtTile_ArtNem_Grabber,1,1),4,4,4,0
+	SubObjData Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A,make_art_tile(ArtTile_ArtNem_Grabber,0,1),4,4,4,0
 ; off_3920A:
 Obj_GrabberLegs_SubObjData2:
 	SubObjData Obj_GrabberString_MapUnc_39228,make_art_tile(ArtTile_ArtNem_Grabber,1,1),4,5,4,0
@@ -70160,96 +70165,11 @@ byte_39216:
 ; ----------------------------------------------------------------------------
 ; sprite mappings - Obj_Grabber,Obj_GrabberLegs,Obj_GrabberBox
 ; ----------------------------------------------------------------------------
-Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A: offsetTable
-	offsetTableEntry.w word_3923A	; 0
-	offsetTableEntry.w word_39254	; 1
-	offsetTableEntry.w word_3926E	; 2
-	offsetTableEntry.w word_39278	; 3
-	offsetTableEntry.w word_39282	; 4
-	offsetTableEntry.w word_3928C	; 5
-	offsetTableEntry.w word_39296	; 6
+Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A: BINCLUDE	"mappings/sprite/Obj_Grabber.bin"
 ; -------------------------------------------------------------------------------
 ; sprite mappings - Obj_GrabberString (string of various lengths)
 ; -------------------------------------------------------------------------------
-Obj_GrabberString_MapUnc_39228: offsetTable
-	offsetTableEntry.w word_392A0	; 0
-	offsetTableEntry.w word_392AA	; 1
-	offsetTableEntry.w word_392B4	; 2
-	offsetTableEntry.w word_392C6	; 3
-	offsetTableEntry.w word_392D8	; 4
-	; Unused - The spider badnik never goes down enough for these to appear
-	offsetTableEntry.w word_392F2	; 5
-	offsetTableEntry.w word_3930C	; 6
-	offsetTableEntry.w word_3932E	; 7
-	offsetTableEntry.w word_39350	; 8	; This should point to word_39350
-word_3923A:
-	dc.w 3
-	dc.w $F801,    0,    0,$FFE5
-	dc.w $F80D,    2,    1,$FFED; 4
-	dc.w  $809,  $1D,   $E,$FFF1; 8
-word_39254:
-	dc.w 3
-	dc.w $F801,    0,    0,$FFE5
-	dc.w $F80D,    2,    1,$FFED; 4
-	dc.w  $80D,  $23,  $11,$FFF1; 8
-word_3926E:
-	dc.w 1
-	dc.w $FC00,   $A,    5,$FFFC
-word_39278:
-	dc.w 1
-	dc.w $F809,   $F,    7,$FFF9
-word_39282:
-	dc.w 1
-	dc.w $F80D,  $15,   $A,$FFF9
-word_3928C:
-	dc.w 1
-	dc.w $FC00,  $2B,  $15,$FFFC
-word_39296:
-	dc.w 1
-	dc.w $FC00,  $2C,  $16,$FFFC
-word_392A0:
-	dc.w 1
-	dc.w	 1,   $B,    5,$FFFC
-word_392AA:
-	dc.w 1
-	dc.w	 3,   $B,    5,$FFFC
-word_392B4:
-	dc.w 2
-	dc.w	 1,   $B,    5,$FFFC
-	dc.w $1003,   $B,    5,$FFFC; 4
-word_392C6:
-	dc.w 2
-	dc.w	 3,   $B,    5,$FFFC
-	dc.w $2003,   $B,    5,$FFFC; 4
-word_392D8:
-	dc.w 3
-	dc.w	 1,   $B,    5,$FFFC
-	dc.w $1003,   $B,    5,$FFFC; 4
-	dc.w $3003,   $B,    5,$FFFC; 8
-word_392F2:
-	dc.w 3
-	dc.w	 3,   $B,    5,$FFFC
-	dc.w $2003,   $B,    5,$FFFC; 4
-	dc.w $4003,   $B,    5,$FFFC; 8
-word_3930C:
-	dc.w 4
-	dc.w	 1,   $B,    5,$FFFC
-	dc.w $1003,   $B,    5,$FFFC; 4
-	dc.w $3003,   $B,    5,$FFFC; 8
-	dc.w $5003,   $B,    5,$FFFC; 12
-word_3932E:
-	dc.w 4
-	dc.w	 3,   $B,    5,$FFFC
-	dc.w $2003,   $B,    5,$FFFC; 4
-	dc.w $4003,   $B,    5,$FFFC; 8
-	dc.w $6003,   $B,    5,$FFFC; 12
-word_39350:
-	dc.w 5
-	dc.w	 1,   $B,    5,$FFFC
-	dc.w $1003,   $B,    5,$FFFC; 4
-	dc.w $3003,   $B,    5,$FFFC; 8
-	dc.w $5003,   $B,    5,$FFFC; 12
-	dc.w $7003,   $B,    5,$FFFC; 16
+Obj_GrabberString_MapUnc_39228: BINCLUDE	"mappings/sprite/Obj_GrabberString.bin"
 
 
 
@@ -81841,7 +81761,7 @@ DbgObjList_CPZ: dbglistheader
 	dbglistobj Obj_Springboard,	Obj_SpringBoard_MapUnc_265F4,   1,   0, make_art_tile(ArtTile_ArtNem_LeverSpring,0,0)
 	dbglistobj Obj_Spiny,		Obj_Spiny_Obj_SpinyOnWall_Obj_Projectile_MapUnc_38CCA, $32,   0, make_art_tile(ArtTile_ArtNem_Spiny,1,0)
 	dbglistobj Obj_SpinyOnWall,	Obj_Spiny_Obj_SpinyOnWall_Obj_Projectile_MapUnc_38CCA, $32,   3, make_art_tile(ArtTile_ArtNem_Spiny,1,0)
-	dbglistobj Obj_Grabber,		Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A, $36,   0, make_art_tile(ArtTile_ArtNem_Grabber,1,1)
+	dbglistobj Obj_Grabber,		Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A, $36,   0, make_art_tile(ArtTile_ArtNem_Grabber,0,1)
 	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
 DbgObjList_CPZ_End
 

@@ -1,7 +1,7 @@
 {
     "Flex": 2,
     "name": "Sonic 2",
-    "node": "c1948cfc-3e7e-4281-a97a-e05095157bb9",
+    "node": "22b0afa6-9274-4903-87db-1c9b9c7d7180",
     "objects": [
         {
             "uuid": "fa665537-a8f6-4d0d-a1b5-2c3190bf034d",
@@ -2323,7 +2323,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj0B.bin",
+                        "path": "mappings/sprite/Obj_TippingFloor.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2347,12 +2347,12 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Large moving platform from CNZ.bin",
+                        "path": "art/nemesis/Large moving platform from CPZ.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj19.bin",
+                        "path": "mappings/sprite/Obj_FloatingPlatform2.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2381,7 +2381,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj1B.bin",
+                        "path": "mappings/sprite/Obj_SpeedBooster.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2410,7 +2410,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj1D.bin",
+                        "path": "mappings/sprite/Obj_BlueBalls.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2439,7 +2439,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj2D.bin",
+                        "path": "mappings/sprite/Obj_Barrier.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2468,7 +2468,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj32_b.bin",
+                        "path": "mappings/sprite/Obj_BreakableBlock_b.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2497,7 +2497,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj40.bin",
+                        "path": "mappings/sprite/Obj_SpringBoard.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2526,7 +2526,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj6B.bin",
+                        "path": "mappings/sprite/Obj_CPZSquarePlatform.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2555,7 +2555,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj7A.bin",
+                        "path": "mappings/sprite/Obj_SidewaysPlatform.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2584,7 +2584,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj7B.bin",
+                        "path": "mappings/sprite/Obj_PipeExitSpring.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2613,7 +2613,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/Obj_SpinyOnWall.bin",
+                        "path": "mappings/sprite/Obj_Spiny.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2642,7 +2642,36 @@
                         "offset": 0
                     },
                     "mappings": {
+                        "path": "mappings/sprite/Obj_Grabber.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
                         "path": "",
+                        "label": ""
+                    },
+                    "uuid": "1b91867c-b5e7-474b-82f3-dfd6370e0775"
+                },
+                {
+                    "name": "Grabber String",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Spider badnik from CPZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_GrabberString.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -3365,12 +3394,12 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/EHZ_HTZ.bin",
+                        "path": "art/kosinski/EHZ.bin",
                         "compression": "Kosinski",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj18_a.bin",
+                        "path": "mappings/sprite/Obj_FloatingPlatform_a.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -3399,7 +3428,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj11_b.bin",
+                        "path": "mappings/sprite/Obj_Bridge_b.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -3428,7 +3457,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj49.bin",
+                        "path": "mappings/sprite/Obj_EHZWaterfall.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -3457,7 +3486,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj4B.bin",
+                        "path": "mappings/sprite/Obj_Buzzer.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -3486,7 +3515,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj5C.bin",
+                        "path": "mappings/sprite/Obj_Masher.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -3515,7 +3544,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj9D.bin",
+                        "path": "mappings/sprite/Obj_Coconuts.bin",
                         "label": ""
                     },
                     "dplcs": {

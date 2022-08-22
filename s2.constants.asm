@@ -1916,7 +1916,7 @@ ArtTile_ArtNem_CPZStairBlock          = $0418
 ArtTile_ArtNem_CPZMetalBlock          = $0430
 ArtTile_ArtNem_CPZDroplet             = $043C
 ArtTile_ArtNem_Grabber                = $0500
-ArtTile_ArtNem_Spiny                  = $052D
+ArtTile_ArtNem_Spiny                  = $0533
 
 ; DEZ
 ArtTile_ArtUnc_DEZAnimBack            = $0326
