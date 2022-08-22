@@ -3879,6 +3879,14 @@ MusicList: zoneOrderedTable 1,2
 	even
 ; ===========================================================================
 
+LoadPlayerPal:
+	moveq	#PalID_BGND,d0
+	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
+	bne.s	+
+	moveq	#PalID_Knux,d0
++
+	rts
+
 ; ---------------------------------------------------------------------------
 ; Level
 ; DEMO AND ZONE LOOP (MLS values $08, $0C; bit 7 set indicates that load routine is running)
@@ -3919,6 +3927,7 @@ Level:
 	moveq	#PLCID_Std2,d0
 	bsr.w	LoadPLC
 	bsr.w	Level_SetPlayerMode
+	bsr.w	InitPlayers	; called here to allow 1up shit to work
 	moveq	#PLCID_Tails1up,d0
 	cmpi.l	#Obj_Tails,(MainCharacter+id).w
 	bne.s	.notTails
@@ -3930,6 +3939,8 @@ Level:
 	moveq	#PLCID_KnucklesLife,d0
 +
 	bsr.w	LoadPLC
+	bsr.w	Level_SetPlayerMode
+
 ; loc_3F48:
 Level_ClrRam:
 	clearRAM Sprite_Table_Input,Sprite_Table_Input_End
@@ -3993,10 +4004,6 @@ Level_InitWater:
 ; loc_407C:
 Level_LoadPal:
 	moveq	#PalID_BGND,d0
-	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
-	bne.s	.notKnux
-	moveq	#PalID_Knux,d0
-.notKnux:
 	bsr.w	PalLoad_Now	; load Sonic's palette line
 	tst.b	(Water_flag).w	; does level have water?
 	beq.s	Level_GetBgm	; if not, branch
@@ -4040,10 +4047,6 @@ Level_TtlCard:
 	jsr	(Hud_Base).l
 +
 	moveq	#PalID_BGND,d0
-	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
-	bne.s	+
-	moveq	#PalID_Knux,d0
-+
 	bsr.w	PalLoad_ForFade	; load Sonic's palette line
 	jsr	LevelSizeLoad
 	jsrto	(DeformBgLayer).l, JmpTo_DeformBgLayer
@@ -4060,6 +4063,10 @@ Level_TtlCard:
 	bsr.w	LoadCollisionIndexes
 	bsr.w	WaterEffects
 	bsr.w	InitPlayers
+	jsr		LoadPlayerPal
+	bsr.w	PalLoad_ForFade
+	jsr		LoadPlayerPal
+	bsr.w	PalLoad_Now
 	move.w	#0,(Ctrl_1_Logical).w
 	move.w	#0,(Ctrl_2_Logical).w
 	move.w	#0,(Ctrl_1).w
@@ -29196,6 +29203,7 @@ Load_EndOfAct:
 	cmpi.l	#Obj_Tails,(MainCharacter+id).w
 	bne.s	+
 	moveq	#PLCID_ResultsTails,d0
++
 	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
 	bne.s	+
 	moveq	#PLCID_ResultsKnuckles,d0
