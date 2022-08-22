@@ -21873,15 +21873,8 @@ shield_monitor:
 	addq.w	#1,(a2)
 	bset	#status_sec_hasShield,status_secondary(a1)	; give shield status
 	sfx	sfx_Shield
-	tst.b	parent+1(a0)
-	bne.s	+
 	move.l	#Obj_Shield,(Sonic_Shield+id).w ; load Obj_Shield (shield) at $FFFFD180
 	move.w	a1,(Sonic_Shield+parent).w
-	rts
-; ---------------------------------------------------------------------------
-+	; give shield to sidekick
-	move.l	#Obj_Shield,(Tails_Shield+id).w ; load Obj_Shield (shield) at $FFFFD1C0
-	move.w	a1,(Tails_Shield+parent).w
 	rts
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -33060,8 +33053,15 @@ Obj_Tails_Init_Continued:
 	move.w	#0,(Tails_CPU_routine).w	; set AI state to TailsCPU_Init
 	move.w	#0,(Tails_control_counter).w
 	move.w	#0,(Tails_respawn_counter).w
-	move.l	#Obj_TailsTails,(Tails_Tails+id).w ; load Obj_TailsTails (Tails' Tails) at $FFFFD000
-	move.w	a0,(Tails_Tails+parent).w ; set its parent object to this
+	cmpa.w	#MainCharacter,a0
+	bne.s	.notP1
+	lea		(P1_FollowObject).w,a1
+	bra.s	.cont
+.notP1:
+	lea		(P2_FollowObject).w,a1
+.cont:
+	move.l	#Obj_TailsTails,id(a1) ; load Obj_TailsTails (Tails' Tails) at $FFFFD000
+	move.w	a0,parent(a1) ; set its parent object to this
 
 ; ---------------------------------------------------------------------------
 ; Normal state for Tails
@@ -35518,7 +35518,8 @@ Obj_TailsTails_parent_prev_anim = objoff_30
 Obj_TailsTails_Init:
 	addq.b	#2,routine(a0) ; => Obj_TailsTails_Main
 	move.l	#MapUnc_TailsTails,mappings(a0)
-	jsr		ResetArtTile_a0
+	movea.w	parent(a0),a2 ; a2=character
+	move.w	art_tile(a2),art_tile(a0)
 	add.w	#make_art_tile($10,0,0),art_tile(a0)
 	move.w	#prio(2),priority(a0)
 	move.b	#$18,width_pixels(a0)

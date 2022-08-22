@@ -713,7 +713,9 @@ Dynamic_Object_RAM_2P_End:	; SingleObjLoad stops searching here in 2P mode
 Dynamic_Object_RAM_End:
 
 LevelOnly_Object_RAM:
-Tails_Tails:			; address of the Tail's Tails object
+P1_FollowObject:
+				ds.b object_size
+P2_FollowObject:			; address of the Tail's Tails object
 				ds.b object_size
 SuperSonicStars:
 				ds.b object_size
@@ -726,8 +728,6 @@ Sonic_Dust:			; Sonic's spin dash dust
 Tails_Dust:			; Tails' spin dash dust
 				ds.b object_size
 Sonic_Shield:
-				ds.b object_size
-Tails_Shield:
 				ds.b object_size
 Sonic_InvincibilityStars:
 				ds.b object_size
