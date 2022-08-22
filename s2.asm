@@ -16385,12 +16385,6 @@ loadZoneBlockMaps:
 	movea.l	d0,a0
 	lea	(Block_Table).w,a1
 	jsrto	(KosDec).l, JmpTo_KosDec	; load block maps
-	cmpi.b	#hill_top_zone,(Current_Zone).w
-	bne.s	+
-	lea	(Block_Table+$980).w,a1
-	lea	(BM16_HTZ).l,a0
-	jsrto	(KosDec).l, JmpTo_KosDec	; patch for Hill Top Zone block map
-+
 	move.l	(a2)+,d0
 	andi.l	#$FFFFFF,d0	; pointer to chunk mappings
 	movea.l	d0,a0
@@ -81966,7 +81960,7 @@ LevelArtPointers:
 	levartptrs PLCID_Mtz1,     PLCID_Mtz2,      PalID_MTZ,  ArtKos_MTZ, BM16_MTZ, BM128_MTZ ;   4 ; MTZ  ; METROPOLIS ZONE ACTS 1 & 2
 	levartptrs PLCID_Mtz1,     PLCID_Mtz2,      PalID_MTZ,  ArtKos_MTZ, BM16_MTZ, BM128_MTZ ;   5 ; MTZ3 ; METROPOLIS ZONE ACT 3
 	levartptrs PLCID_Wfz1,     PLCID_Wfz2,      PalID_WFZ,  ArtKos_SCZ, BM16_WFZ, BM128_WFZ ;   6 ; WFZ  ; WING FORTRESS ZONE
-	levartptrs PLCID_Htz1,     PLCID_Htz2,      PalID_HTZ,  ArtKos_HTZ, BM16_EHZ, BM128_EHZ ;   7 ; HTZ  ; HILL TOP ZONE
+	levartptrs PLCID_Htz1,     PLCID_Htz2,      PalID_HTZ,  ArtKos_HTZ, BM16_HTZ, BM128_HTZ ;   7 ; HTZ  ; HILL TOP ZONE
 	levartptrs PLCID_Hpz1,     PLCID_Hpz2,      PalID_HPZ,  ArtKos_HPZ, BM16_HPZ, BM128_HPZ ;   8 ; HPZ  ; HIDDEN PALACE ZONE (UNUSED)
 	levartptrs PLCID_Unused3,  PLCID_Unused4,   PalID_EHZ4, ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   9 ; LEV9 ; LEVEL 9 (UNUSED)
 	levartptrs PLCID_Ooz1,     PLCID_Ooz2,      PalID_OOZ,  ArtKos_OOZ, BM16_OOZ, BM128_OOZ ;  $A ; OOZ  ; OIL OCEAN ZONE
@@ -84060,19 +84054,22 @@ ArtNem_EndingTitle:	BINCLUDE	"art/nemesis/Sonic the Hedgehog 2 image at end of c
 ; EHZ 16x16 block mappings (Kosinski compression) ; was: (Kozinski compression)
 BM16_EHZ:	BINCLUDE	"mappings/16x16/EHZ.bin"
 ;-----------------------------------------------------------------------------------
-; EHZ/HTZ main level patterns (Kosinski compression)
+; EHZ main level patterns (Kosinski compression)
 ; ArtKoz_95C24:
-ArtKos_EHZ:	BINCLUDE	"art/kosinski/EHZ_HTZ.bin"
+ArtKos_EHZ:	BINCLUDE	"art/kosinski/EHZ.bin"
 ;-----------------------------------------------------------------------------------
 ; HTZ 16x16 block mappings (Kosinski compression)
 BM16_HTZ:	BINCLUDE	"mappings/16x16/HTZ.bin"
 ;-----------------------------------------------------------------------------------
-; HTZ pattern suppliment to EHZ level patterns (Kosinski compression)
+; HTZ main level patterns (Kosinski compression)
 ; ArtKoz_98AB4:
 ArtKos_HTZ:	BINCLUDE	"art/kosinski/HTZ.bin"
 ;-----------------------------------------------------------------------------------
-; EHZ/HTZ 128x128 block mappings (Kosinski compression)
-BM128_EHZ:	BINCLUDE	"mappings/128x128/EHZ_HTZ.bin"
+; EHZ 128x128 block mappings (Kosinski compression)
+BM128_EHZ:	BINCLUDE	"mappings/128x128/EHZ.bin"
+;-----------------------------------------------------------------------------------
+; HTZ 128x128 block mappings (Kosinski compression)
+BM128_HTZ:	BINCLUDE	"mappings/128x128/HTZ.bin"
 ;-----------------------------------------------------------------------------------
 ; MTZ 16x16 block mappings (Kosinski compression)
 BM16_MTZ:	BINCLUDE	"mappings/16x16/MTZ.bin"
