@@ -4868,14 +4868,14 @@ LoadCollisionIndexes:
 ; level. 1 pointer for each level, pointing the primary collision index.
 ; ---------------------------------------------------------------------------
 Off_ColP: zoneOrderedTable 4,1
-	zoneTableEntry.l ColP_EHZHTZ
+	zoneTableEntry.l ColP_EHZ
 	zoneTableEntry.l ColP_Invalid	; 1
 	zoneTableEntry.l ColP_MTZ	; 2
 	zoneTableEntry.l ColP_Invalid	; 3
 	zoneTableEntry.l ColP_MTZ	; 4
 	zoneTableEntry.l ColP_MTZ	; 5
 	zoneTableEntry.l ColP_WFZSCZ	; 6
-	zoneTableEntry.l ColP_EHZHTZ	; 7
+	zoneTableEntry.l ColP_HTZ	; 7
 	zoneTableEntry.l ColP_HPZ	; 8
 	zoneTableEntry.l ColP_Invalid	; 9
 	zoneTableEntry.l ColP_OOZ	; 10
@@ -4895,14 +4895,14 @@ Off_ColP: zoneOrderedTable 4,1
 ; index.
 ; ---------------------------------------------------------------------------
 Off_ColS: zoneOrderedTable 4,1
-	zoneTableEntry.l ColS_EHZHTZ
+	zoneTableEntry.l ColS_EHZ
 	zoneTableEntry.l ColP_Invalid	; 1
 	zoneTableEntry.l ColP_MTZ	; 2
 	zoneTableEntry.l ColP_Invalid	; 3
 	zoneTableEntry.l ColP_MTZ	; 4
 	zoneTableEntry.l ColP_MTZ	; 5
 	zoneTableEntry.l ColS_WFZSCZ	; 6
-	zoneTableEntry.l ColS_EHZHTZ	; 7
+	zoneTableEntry.l ColS_HTZ	; 7
 	zoneTableEntry.l ColS_HPZ	; 8
 	zoneTableEntry.l ColP_Invalid	; 9
 	zoneTableEntry.l ColP_OOZ	; 10
@@ -82690,12 +82690,20 @@ ColArray:	BINCLUDE	"collision/Collision array 1.bin"
 ColArray2:	BINCLUDE	"collision/Collision array 2.bin"
 	even
 ;---------------------------------------------------------------------------------------
-; EHZ and HTZ primary 16x16 collision index (Kosinski compression)
-ColP_EHZHTZ:	BINCLUDE	"collision/EHZ and HTZ primary 16x16 collision index.bin"
+; EHZ primary 16x16 collision index (Kosinski compression)
+ColP_EHZ:	BINCLUDE	"collision/EHZ primary 16x16 collision index.bin"
 	even
 ;---------------------------------------------------------------------------------------
-; EHZ and HTZ secondary 16x16 collision index (Kosinski compression)
-ColS_EHZHTZ:	BINCLUDE	"collision/EHZ and HTZ secondary 16x16 collision index.bin"
+; EHZ secondary 16x16 collision index (Kosinski compression)
+ColS_EHZ:	BINCLUDE	"collision/EHZ secondary 16x16 collision index.bin"
+	even
+;---------------------------------------------------------------------------------------
+; HTZ primary 16x16 collision index (Kosinski compression)
+ColP_HTZ:	BINCLUDE	"collision/HTZ primary 16x16 collision index.bin"
+	even
+;---------------------------------------------------------------------------------------
+; HTZ secondary 16x16 collision index (Kosinski compression)
+ColS_HTZ:	BINCLUDE	"collision/HTZ secondary 16x16 collision index.bin"
 	even
 ;---------------------------------------------------------------------------------------
 ; MTZ primary 16x16 collision index (Kosinski compression)
