@@ -24258,7 +24258,7 @@ byte_14752:
 ; -----------------------------------------------------------------------
 
 Obj_TitleCard_MapUnc_147BA:
-		dc.w TC_EHZ-Obj_TitleCard_MapUnc_147BA		; Emerald Hill Zone
+		dc.w TC_SSLZ-Obj_TitleCard_MapUnc_147BA		; Emerald Hill Zone
 		dc.w TC_Unused1-Obj_TitleCard_MapUnc_147BA	; XXX Unknown
 		dc.w TC_Unused2-Obj_TitleCard_MapUnc_147BA	; XXX Wood Zone
 		dc.w TC_Unused3-Obj_TitleCard_MapUnc_147BA	; XXX Dust Hill Zone
@@ -24284,19 +24284,19 @@ Obj_TitleCard_MapUnc_147BA:
 		dc.w TC_RedStripes-Obj_TitleCard_MapUnc_147BA	; Red Stripes
 
 
-TC_EHZ:		dc.w $B				; EMERALD HILL
-		dc.w $0005, $8580, $82C0, $FFC3	; E
-		dc.w $0009, $85DE, $82EF, $FFD0	; M
-		dc.w $0005, $8580, $82C0, $FFE8	; E
-		dc.w $0005, $85E4, $82F2, $FFF8	; R
-		dc.w $0005, $85E8, $82F4, $0008	; A
-		dc.w $0005, $85EC, $82F6, $0018	; L
-		dc.w $0005, $85F0, $82F8, $0028	; D
+TC_SSLZ:		dc.w $B				; SEASIDE LAND
+		dc.w $0005, $85DE, $82EF, $FFC0	; S
+		dc.w $0005, $8580, $82C0, $FFD0	; E
+		dc.w $0005, $85E2, $82F1, $FFE0	; A
+		dc.w $0005, $85DE, $82EF, $FFF0	; S
+		dc.w $0001, $85E6, $82F3, $0000	; I
+		dc.w $0005, $85E8, $82F4, $0008	; D
+		dc.w $0005, $8580, $82C0, $0018	; E
 
-		dc.w $0005, $85F4, $82FA, $0048	; H
-		dc.w $0001, $85F8, $82FC, $0058	; I
-		dc.w $0005, $85EC, $82F6, $0060	; L
-		dc.w $0005, $85EC, $82F6, $0070	; L
+		dc.w $0005, $85EC, $82F6, $0038	; L
+		dc.w $0005, $85E2, $82F1, $0048	; A
+		dc.w $0005, $8584, $82C2, $0058	; N
+		dc.w $0005, $85E8, $82F4, $0068	; D
 
 TC_Unused1:	dc.w $B				; EMERALD HILL
 		dc.w $0005, $8580, $82C0, $FFC3	; E
@@ -24965,7 +24965,7 @@ loc_1581A:
 ; ===========================================================================
 ; byte_15820:
 Off_TitleCardLetters:
-	dc.b TitleCardLetters_EHZ - TitleCardLetters	; 0
+	dc.b TitleCardLetters_SSLZ - TitleCardLetters	; 0
 	dc.b TitleCardLetters_EHZ - TitleCardLetters	; 1
 	dc.b TitleCardLetters_EHZ - TitleCardLetters	; 2
 	dc.b TitleCardLetters_EHZ - TitleCardLetters	; 3
@@ -24999,6 +24999,8 @@ Off_TitleCardLetters:
 ; word_15832:
 TitleCardLetters:
 
+TitleCardLetters_SSLZ:
+	titleLetters	"SEASIDE LAND"
 TitleCardLetters_EHZ:
 	titleLetters	"EMERALD HILL"
 TitleCardLetters_MTZ:
