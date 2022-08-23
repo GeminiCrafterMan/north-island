@@ -7,7 +7,7 @@
     </ImageFromMappings>
     <ImageFromMappings id="sonic">
       <ArtFile filename="../art/nemesis/Monitor and contents.bin" />
-      <ArtFile filename="../art/nemesis/HUD - Sonic Lives.bin" offset="10880" />
+      <ArtFile filename="../art/nemesis/HUD - Sonic Lives.bin" offset="10944" />
       <MapFile type="Binary" filename="../mappings/sprite/Obj_Monitor.bin" frame="2" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="tails">
