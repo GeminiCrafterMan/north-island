@@ -44,7 +44,7 @@ addsubOptimize =	1
 relativeLea =		1
 ;	| If 1, makes some instructions use pc-relative addressing, instead of absolute long
 ;
-useFullWaterTables =	0
+useFullWaterTables =	1
 ;	| If 1, zone offset tables for water levels cover all level slots instead of only slots 8-$F
 ;	| Set to 1 if you've shifted level IDs around or you want water in levels with a level slot below 8
 
@@ -36108,14 +36108,14 @@ Obj_Shield_Main:
 	move.b	#4,render_flags(a0)
 	move.w	#prio(1),priority(a0)
 	move.b	#$18,width_pixels(a0)
-	move.w	#make_art_tile(ArtTile_ArtNem_Shield,0,0),art_tile(a0)
+	move.w	#make_art_tile(ArtTile_ArtUnc_Shield,0,0),art_tile(a0)
 ; loc_1D92C:
 Obj_Shield_Shield:
 	movea.w	parent(a0),a2 ; a2=character
 	btst	#status_sec_isInvincible,status_secondary(a2)
 	bne.s	return_1D976
 	btst	#status_sec_hasShield,status_secondary(a2)
-	beq.s	JmpTo7_DeleteObject
+	jeq		DeleteObject
 	move.w	x_pos(a2),x_pos(a0)
 	move.w	y_pos(a2),y_pos(a0)
 	move.b	status(a2),status(a0)
@@ -36127,6 +36127,7 @@ Obj_Shield_Shield:
 Obj_Shield_Display:
 	lea	(Ani_Obj_Shield).l,a1
 	jsr	(AnimateSprite).l
+	bsr.s	LoadShieldDynPLC
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
@@ -36134,8 +36135,59 @@ return_1D976:
 	rts
 ; ===========================================================================
 
-JmpTo7_DeleteObject ; JmpTo
-	jmp	(DeleteObject).l
+LoadShieldDynPLC:
+		moveq	#0,d0
+		move.b	mapping_frame(a0),d0	; load frame number
+		bsr.w	LoadShieldMap
+
+LoadShieldDynPLC_Part2:
+		cmp.b	dplc_prev_frame(a0),d0
+		beq.s	.nochange
+		move.b	d0,dplc_prev_frame(a0)
+		lea	(Obj_Shield_MapRUnc).l,a2
+		add.w	d0,d0
+		adda.w	(a2,d0.w),a2
+		move.w	(a2)+,d5
+		subq.w	#1,d5
+		bmi.s	.nochange
+		move.w	#tiles_to_bytes(ArtTile_ArtUnc_Shield),d4
+		move.l	#ArtUnc_Shield,d6
+
+    .readentry:
+		moveq	#0,d1
+		move.w	(a2)+,d1
+		move.w	d1,d3
+		lsr.w	#8,d3
+		andi.w	#$F0,d3
+		addi.w	#$10,d3
+		andi.w	#$FFF,d1
+		lsl.l	#5,d1
+		add.l	d6,d1
+		move.w	d4,d2
+		add.w	d3,d4
+		add.w	d3,d4
+		jsr	(QueueDMATransfer).l
+		dbf	d5,.readentry	; repeat for number of entries
+
+    .nochange:
+		rts	
+; End of function LoadShieldDynPLC
+
+LoadShieldMap:
+		rts
+
+; animation script
+; byte_1DBD6
+Ani_Obj_Shield:	offsetTable
+		offsetTableEntry.w +	; loop here
++		dc.b   0,  1,  0,  2,  0,  3,  0,  4,  0,  5,  0,	6,	0,	7,afBack,	10
+
+; -------------------------------------------------------------------------------
+; sprite mappings
+; -------------------------------------------------------------------------------
+Obj_Shield_MapUnc_1DBE4:	BINCLUDE "mappings/sprite/Obj_Shield.bin"
+Obj_Shield_MapRUnc:			BINCLUDE "mappings/spriteDPLC/Obj_Shield.bin"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 35 - Invincibility Stars
@@ -36326,16 +36378,6 @@ byte_1DBBD:	dc.b   7,  6,  5,  4,  3,  2,  1,  2,  3,  4,  5,  6,$FF
 		dc.b   1,  2,  3,  4,  5,  6,  7,  6,  5,  4,  3,  2
 	even
 
-; animation script
-; byte_1DBD6
-Ani_Obj_Shield:	offsetTable
-		offsetTableEntry.w +	; 0
-+		dc.b   0,  5,  0,  5,  1,  5,  2,  5,  3,  5,  4,$FF
-
-; -------------------------------------------------------------------------------
-; sprite mappings
-; -------------------------------------------------------------------------------
-Obj_Shield_MapUnc_1DBE4:	BINCLUDE "mappings/sprite/Obj_Shield.bin"
 ; -------------------------------------------------------------------------------
 ; sprite mappings
 ; -------------------------------------------------------------------------------
@@ -82047,7 +82089,6 @@ PlrList_Std1_End
 PlrList_Std2: plrlistheader
 	plreq ArtTile_ArtNem_Checkpoint, ArtNem_Checkpoint
 	plreq ArtTile_ArtNem_Powerups, ArtNem_Powerups
-	plreq ArtTile_ArtNem_Shield, ArtNem_Shield
 	plreq ArtTile_ArtNem_Invincible_stars, ArtNem_Invincible_stars
 PlrList_Std2_End
 ;---------------------------------------------------------------------------------------
@@ -82087,6 +82128,7 @@ PlrList_Ehz2: plrlistheader
 	plreq ArtTile_ArtNem_DignlSprng, ArtNem_DignlSprng
 	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
 	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
+	plreq ArtTile_ArtNem_WaterSurface, ArtNem_WaterSurface
 PlrList_Ehz2_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
@@ -82159,9 +82201,6 @@ PlrList_Wfz1: plrlistheader
 	plreq ArtTile_ArtNem_BreakPanels, ArtNem_BreakPanels
 	plreq ArtTile_ArtNem_WfzScratch, ArtNem_WfzScratch
 	plreq ArtTile_ArtNem_WfzTiltPlatforms, ArtNem_WfzTiltPlatforms
-	; These two are already in the list, so this is redundant
-	plreq ArtTile_ArtNem_Tornado, ArtNem_Tornado
-	plreq ArtTile_ArtNem_Clouds, ArtNem_Clouds
 PlrList_Wfz1_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
@@ -83000,7 +83039,7 @@ MapRUnc_Knuckles:	BINCLUDE	"mappings/spriteDPLC/Knuckles.bin"
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Shield			; ArtNem_71D8E:
-ArtNem_Shield:	BINCLUDE	"art/nemesis/Shield.bin"
+ArtUnc_Shield:	BINCLUDE	"art/uncompressed/Shield.bin"
 	even
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (34 blocks)

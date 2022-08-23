@@ -1,7 +1,7 @@
 {
     "Flex": 2,
     "name": "Sonic 2",
-    "node": "f6dd09b8-80aa-41d0-b5b5-56b686f98e27",
+    "node": "cdccaad6-5b6c-4379-82a8-c475c6adb004",
     "objects": [
         {
             "uuid": "fa665537-a8f6-4d0d-a1b5-2c3190bf034d",
@@ -310,8 +310,8 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Shield.bin",
-                        "compression": "Nemesis",
+                        "path": "art/uncompressed/Shield.bin",
+                        "compression": "Uncompressed",
                         "offset": 0
                     },
                     "mappings": {
@@ -319,8 +319,8 @@
                         "label": ""
                     },
                     "dplcs": {
-                        "enabled": false,
-                        "path": "",
+                        "enabled": true,
+                        "path": "mappings/spriteDPLC/Obj_Shield.bin",
                         "label": ""
                     }
                 },
@@ -615,6 +615,602 @@
             "isDirectory": true,
             "expanded": true,
             "uuid": "a898dad6-e825-4660-9429-93f6dd09b880"
+        },
+        {
+            "name": "EHZ",
+            "children": [
+                {
+                    "name": "Bridge",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/EHZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/EHZ bridge.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Bridge_b.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "22b0afa6-9274-4903-87db-1c9b9c7d7180"
+                },
+                {
+                    "name": "Platform",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/EHZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/kosinski/EHZ.bin",
+                        "compression": "Kosinski",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_FloatingPlatform_a.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "b0afa692-7449-4307-9b1c-9b9c7d7180e3"
+                },
+                {
+                    "name": "Bridge Stake",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/EHZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/EHZ bridge.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Bridge_b.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "afa69274-4903-47db-9c9b-9c7d7180e3f8"
+                },
+                {
+                    "name": "Waterfall",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/EHZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Waterfall tiles.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_EHZWaterfall.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "a6927449-0307-4b1c-9b9c-7d7180e3f8c8"
+                },
+                {
+                    "name": "Buzzer",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/EHZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Buzzer enemy.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Buzzer.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "92744903-07db-4c9b-9c7d-7180e3f8c8e6"
+                },
+                {
+                    "name": "Masher",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/EHZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/EHZ Pirahna badnik.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Masher.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "74490307-db1c-4b9c-bd71-80e3f8c8e694"
+                },
+                {
+                    "name": "Coconuts",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/EHZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Coconuts badnik from EHZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Coconuts.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "490307db-1c9b-4c7d-b180-e3f8c8e6949b"
+                }
+            ],
+            "isDirectory": true,
+            "expanded": true,
+            "uuid": "697e22b0-afa6-4274-8903-07db1c9b9c7d"
+        },
+        {
+            "name": "CPZ",
+            "children": [
+                {
+                    "name": "Section of Pipe",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Small yellow moving platform from CPZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_TippingFloor.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "f0d4fc0a-b492-4655-b9eb-b70958c1948c"
+                },
+                {
+                    "name": "Platform",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Large moving platform from CPZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_FloatingPlatform2.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "d4fc0ab4-9256-45b9-abb7-0958c1948cfc"
+                },
+                {
+                    "name": "Speed Booster",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Speed booster from CPZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_SpeedBooster.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "fc0ab492-5655-49eb-b709-58c1948cfc3e"
+                },
+                {
+                    "name": "Blue Worm Thing",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/CPZ worm enemy.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_BlueBalls.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "0ab49256-55b9-4bb7-8958-c1948cfc3e7e"
+                },
+                {
+                    "name": "One-Way Barrier",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Stripy blocks from CPZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Barrier.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "b4925655-b9eb-4709-98c1-948cfc3e7e62"
+                },
+                {
+                    "name": "Tube Cap",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/CPZ large moving platform blocks.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_BreakableBlock_b.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "925655b9-ebb7-4958-8194-8cfc3e7e6281"
+                },
+                {
+                    "name": "Pressure Spring",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Lever spring.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_SpringBoard.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "5655b9eb-b709-48c1-948c-fc3e7e6281a9"
+                },
+                {
+                    "name": "Stairs",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Moving block from CPZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_CPZSquarePlatform.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "b9ebb709-58c1-448c-bc3e-7e6281a97ae0"
+                },
+                {
+                    "name": "Platform That Moves Back and Forth",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Moving block from CPZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_SidewaysPlatform.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "ebb70958-c194-4cfc-be7e-6281a97ae050"
+                },
+                {
+                    "name": "Exit Spring",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/CPZ spintube exit cover.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_PipeExitSpring.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "b70958c1-948c-4c3e-be62-81a97ae05095"
+                },
+                {
+                    "name": "Spiny",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Weird crawling badnik from CPZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Spiny.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "0958c194-8cfc-4e7e-a281-a97ae0509515"
+                },
+                {
+                    "name": "Grabber",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Spider badnik from CPZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Grabber.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "1b91867c-b5e7-474b-82f3-dfd6370e0775"
+                },
+                {
+                    "name": "Grabber String",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CPZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Spider badnik from CPZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_GrabberString.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "c1948cfc-3e7e-4281-a97a-e05095157bb9"
+                }
+            ],
+            "isDirectory": true,
+            "expanded": true,
+            "uuid": "91f0d4fc-0ab4-4256-95b9-ebb70958c194"
         },
         {
             "name": "ARZ",
@@ -1089,6 +1685,399 @@
             "uuid": "dd09b880-aa01-40b5-b556-b686f98e2742"
         },
         {
+            "name": "CNZ",
+            "children": [
+                {
+                    "name": "Round Bumper",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CNZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Round bumper from CNZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/obj44.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "fa71485e-9b5f-4444-b54e-810f67fd89e3"
+                },
+                {
+                    "name": "Pinball Mode",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CNZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Ring.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/obj03.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "71485e9b-5fd4-44f5-8e81-0f67fd89e390"
+                },
+                {
+                    "name": "Pressure Spring",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CNZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Vertical impulse spring.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/obj85_a.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "485e9b5f-d444-454e-810f-67fd89e390e7"
+                },
+                {
+                    "name": "Flipper",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CNZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Flippers.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/obj86.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "5e9b5fd4-44f5-4e81-8f67-fd89e390e762"
+                },
+                {
+                    "name": "Crawl",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CNZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Bouncer badnik from CNZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Crawl.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "9b5fd444-f54e-410f-a7fd-89e390e76219"
+                },
+                {
+                    "name": "Flashing Blocks",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CNZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Caterpiller platforms from CNZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/objD2.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "5fd444f5-4e81-4f67-bd89-e390e7621990"
+                },
+                {
+                    "name": "Big Moving Block",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CNZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Moving block from CNZ and CPZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/objD4.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "d444f54e-810f-47fd-89e3-90e76219903d"
+                },
+                {
+                    "name": "Elevator",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CNZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/CNZ elevator.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/objD5.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "44f54e81-0f67-4d89-a390-e76219903de8"
+                },
+                {
+                    "name": "Cage",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CNZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/CNZ slot machine bars.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/objD6_b.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "f54e810f-67fd-49e3-90e7-6219903de83e"
+                },
+                {
+                    "name": "Bumper",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CNZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Hexagonal bumper from CNZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/objD7.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "4e810f67-fd89-4390-a762-19903de83e73"
+                },
+                {
+                    "name": "Colored Point Block",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CNZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Drop target from CNZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/objD8.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "810f67fd-89e3-40e7-a219-903de83e7325"
+                }
+            ],
+            "isDirectory": true,
+            "expanded": false,
+            "uuid": "28fa7148-5e9b-4fd4-84f5-4e810f67fd89"
+        },
+        {
+            "name": "HTZ",
+            "children": [
+                {
+                    "uuid": "a68f3c4e-fba6-4d37-a28c-a8da9a6fa0e7",
+                    "format": "Sonic 2.js",
+                    "name": "Rexon",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/HTZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Rexxon (lava snake) from HTZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_RexonHead.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    }
+                },
+                {
+                    "uuid": "bfa68f3c-4efb-464d-b722-8ca8da9a6fa0",
+                    "format": "Sonic 2.js",
+                    "name": "Sol",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/HTZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Sol badnik from HTZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Seesaw_b.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    }
+                }
+            ],
+            "isDirectory": true,
+            "expanded": true,
+            "uuid": "92c297f2-124d-4d3d-ba79-169a63351830"
+        },
+        {
             "name": "MCZ",
             "children": [
                 {
@@ -1445,28 +2434,28 @@
             "uuid": "d8f766c5-d0d8-4c24-9628-32b57c402228"
         },
         {
-            "name": "CNZ",
+            "name": "OOZ",
             "children": [
                 {
-                    "name": "Round Bumper",
+                    "name": "SwingingPlatform",
+                    "format": "Sonic 2.js",
                     "palettes": [
                         {
                             "path": "art/palettes/SonicAndTails.bin",
                             "length": 1
                         },
                         {
-                            "path": "art/palettes/CNZ.bin",
+                            "path": "art/palettes/OOZ.bin",
                             "length": 3
                         }
                     ],
-                    "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Round bumper from CNZ.bin",
+                        "path": "art/nemesis/Swinging platform from OOZ.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj44.bin",
+                        "path": "mappings/sprite/obj15_a.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1474,28 +2463,28 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "fa71485e-9b5f-4444-b54e-810f67fd89e3"
+                    "uuid": "8cfc3e7e-6281-497a-a050-95157bb9408e"
                 },
                 {
-                    "name": "Pinball Mode",
-                    "format": "Sonic 2.js",
+                    "name": "Rising Platform When Sonic Stands On It",
                     "palettes": [
                         {
                             "path": "art/palettes/SonicAndTails.bin",
                             "length": 1
                         },
                         {
-                            "path": "art/palettes/CNZ.bin",
+                            "path": "art/palettes/OOZ.bin",
                             "length": 3
                         }
                     ],
+                    "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Ring.bin",
+                        "path": "art/nemesis/Rising platform from OOZ.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj03.bin",
+                        "path": "mappings/sprite/obj19.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1503,10 +2492,10 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "71485e9b-5fd4-44f5-8e81-0f67fd89e390"
+                    "uuid": "fc3e7e62-81a9-4ae0-9095-157bb9408e1e"
                 },
                 {
-                    "name": "Pressure Spring",
+                    "name": "Falling Oil",
                     "format": "Sonic 2.js",
                     "palettes": [
                         {
@@ -1514,17 +2503,17 @@
                             "length": 1
                         },
                         {
-                            "path": "art/palettes/CNZ.bin",
+                            "path": "art/palettes/OOZ.bin",
                             "length": 3
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Vertical impulse spring.bin",
+                        "path": "art/nemesis/Cascading oil from OOZ.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj85_a.bin",
+                        "path": "mappings/sprite/obj1C_c.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1532,28 +2521,28 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "485e9b5f-d444-454e-810f-67fd89e390e7"
+                    "uuid": "3e7e6281-a97a-4050-9515-7bb9408e1ee0"
                 },
                 {
-                    "name": "Flipper",
-                    "format": "Sonic 2.js",
+                    "name": "Breaking Floor",
                     "palettes": [
                         {
                             "path": "art/palettes/SonicAndTails.bin",
                             "length": 1
                         },
                         {
-                            "path": "art/palettes/CNZ.bin",
+                            "path": "art/palettes/OOZ.bin",
                             "length": 3
                         }
                     ],
+                    "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Flippers.bin",
+                        "path": "art/nemesis/OOZ collapsing platform.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj86.bin",
+                        "path": "mappings/sprite/obj1F_b.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1561,28 +2550,28 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "5e9b5fd4-44f5-4e81-8f67-fd89e390e762"
+                    "uuid": "7e6281a9-7ae0-4095-957b-b9408e1ee0bb"
                 },
                 {
-                    "name": "Crawl",
+                    "name": "Burner Lid",
                     "palettes": [
                         {
                             "path": "art/palettes/SonicAndTails.bin",
                             "length": 1
                         },
                         {
-                            "path": "art/palettes/CNZ.bin",
+                            "path": "art/palettes/OOZ.bin",
                             "length": 3
                         }
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Bouncer badnik from CNZ.bin",
+                        "path": "art/nemesis/Burner Platform from OOZ.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/Obj_Crawl.bin",
+                        "path": "mappings/sprite/obj33_a.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1590,28 +2579,28 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "9b5fd444-f54e-410f-a7fd-89e390e76219"
+                    "uuid": "6281a97a-e050-4515-bbb9-408e1ee0bb7f"
                 },
                 {
-                    "name": "Flashing Blocks",
+                    "name": "Breakable Block",
                     "palettes": [
                         {
                             "path": "art/palettes/SonicAndTails.bin",
                             "length": 1
                         },
                         {
-                            "path": "art/palettes/CNZ.bin",
+                            "path": "art/palettes/OOZ.bin",
                             "length": 3
                         }
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Caterpiller platforms from CNZ.bin",
+                        "path": "art/nemesis/Striped blocks from CPZ.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objD2.bin",
+                        "path": "mappings/sprite/obj3D.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1619,28 +2608,28 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "5fd444f5-4e81-4f67-bd89-e390e7621990"
+                    "uuid": "81a97ae0-5095-457b-b940-8e1ee0bb7f26"
                 },
                 {
-                    "name": "Big Moving Block",
+                    "name": "Fan",
+                    "format": "Sonic 2.js",
                     "palettes": [
                         {
                             "path": "art/palettes/SonicAndTails.bin",
                             "length": 1
                         },
                         {
-                            "path": "art/palettes/CNZ.bin",
+                            "path": "art/palettes/OOZ.bin",
                             "length": 3
                         }
                     ],
-                    "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Moving block from CNZ and CPZ.bin",
+                        "path": "art/nemesis/Fan from OOZ.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objD4.bin",
+                        "path": "mappings/sprite/obj3F_a.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1648,28 +2637,28 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "d444f54e-810f-47fd-89e3-90e76219903d"
+                    "uuid": "a97ae050-9515-4bb9-808e-1ee0bb7f2620"
                 },
                 {
-                    "name": "Elevator",
+                    "name": "Spiky Thing",
                     "palettes": [
                         {
                             "path": "art/palettes/SonicAndTails.bin",
                             "length": 1
                         },
                         {
-                            "path": "art/palettes/CNZ.bin",
+                            "path": "art/palettes/OOZ.bin",
                             "length": 3
                         }
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/CNZ elevator.bin",
+                        "path": "art/nemesis/Spiked ball from OOZ.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objD5.bin",
+                        "path": "mappings/sprite/obj43.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1677,28 +2666,28 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "44f54e81-0f67-4d89-a390-e76219903de8"
+                    "uuid": "7ae05095-157b-4940-8e1e-e0bb7f26205b"
                 },
                 {
-                    "name": "Cage",
-                    "format": "Sonic 2.js",
+                    "name": "Push Spring",
                     "palettes": [
                         {
                             "path": "art/palettes/SonicAndTails.bin",
                             "length": 1
                         },
                         {
-                            "path": "art/palettes/CNZ.bin",
+                            "path": "art/palettes/OOZ.bin",
                             "length": 3
                         }
                     ],
+                    "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/CNZ slot machine bars.bin",
+                        "path": "art/nemesis/Push spring from OOZ.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objD6_b.bin",
+                        "path": "mappings/sprite/obj45.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1706,10 +2695,10 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "f54e810f-67fd-49e3-90e7-6219903de83e"
+                    "uuid": "e0509515-7bb9-408e-9ee0-bb7f26205b0b"
                 },
                 {
-                    "name": "Bumper",
+                    "name": "Ball Launcher",
                     "format": "Sonic 2.js",
                     "palettes": [
                         {
@@ -1717,17 +2706,17 @@
                             "length": 1
                         },
                         {
-                            "path": "art/palettes/CNZ.bin",
+                            "path": "art/palettes/OOZ.bin",
                             "length": 3
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Hexagonal bumper from CNZ.bin",
+                        "path": "art/nemesis/Transporter ball from OOZ.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objD7.bin",
+                        "path": "mappings/sprite/obj48.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1735,28 +2724,28 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "4e810f67-fd89-4390-a762-19903de83e73"
+                    "uuid": "5095157b-b940-4e1e-a0bb-7f26205b0b69"
                 },
                 {
-                    "name": "Colored Point Block",
+                    "name": "Octus",
                     "palettes": [
                         {
                             "path": "art/palettes/SonicAndTails.bin",
                             "length": 1
                         },
                         {
-                            "path": "art/palettes/CNZ.bin",
+                            "path": "art/palettes/OOZ.bin",
                             "length": 3
                         }
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Drop target from CNZ.bin",
+                        "path": "art/nemesis/Octopus badnik from OOZ.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objD8.bin",
+                        "path": "mappings/sprite/Obj_Octus.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1764,12 +2753,41 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "810f67fd-89e3-40e7-a219-903de83e7325"
+                    "uuid": "95157bb9-408e-4ee0-bb7f-26205b0b697e"
+                },
+                {
+                    "name": "Aquis",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/OOZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Seahorse from OOZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Aquis.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "157bb940-8e1e-40bb-bf26-205b0b697e22"
                 }
             ],
             "isDirectory": true,
             "expanded": false,
-            "uuid": "28fa7148-5e9b-4fd4-84f5-4e810f67fd89"
+            "uuid": "948cfc3e-7e62-41a9-bae0-5095157bb940"
         },
         {
             "name": "MTZ",
@@ -2302,842 +3320,6 @@
             "uuid": "0f67fd89-e390-4762-9990-3de83e73254b"
         },
         {
-            "name": "CPZ",
-            "children": [
-                {
-                    "name": "Section of Pipe",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Small yellow moving platform from CPZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_TippingFloor.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "f0d4fc0a-b492-4655-b9eb-b70958c1948c"
-                },
-                {
-                    "name": "Platform",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Large moving platform from CPZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_FloatingPlatform2.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "d4fc0ab4-9256-45b9-abb7-0958c1948cfc"
-                },
-                {
-                    "name": "Speed Booster",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Speed booster from CPZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_SpeedBooster.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "fc0ab492-5655-49eb-b709-58c1948cfc3e"
-                },
-                {
-                    "name": "Blue Worm Thing",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/CPZ worm enemy.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_BlueBalls.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "0ab49256-55b9-4bb7-8958-c1948cfc3e7e"
-                },
-                {
-                    "name": "One-Way Barrier",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Stripy blocks from CPZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Barrier.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "b4925655-b9eb-4709-98c1-948cfc3e7e62"
-                },
-                {
-                    "name": "Tube Cap",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/CPZ large moving platform blocks.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_BreakableBlock_b.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "925655b9-ebb7-4958-8194-8cfc3e7e6281"
-                },
-                {
-                    "name": "Pressure Spring",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Lever spring.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_SpringBoard.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "5655b9eb-b709-48c1-948c-fc3e7e6281a9"
-                },
-                {
-                    "name": "Stairs",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Moving block from CPZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_CPZSquarePlatform.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "b9ebb709-58c1-448c-bc3e-7e6281a97ae0"
-                },
-                {
-                    "name": "Platform That Moves Back and Forth",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Moving block from CPZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_SidewaysPlatform.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "ebb70958-c194-4cfc-be7e-6281a97ae050"
-                },
-                {
-                    "name": "Exit Spring",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/CPZ spintube exit cover.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_PipeExitSpring.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "b70958c1-948c-4c3e-be62-81a97ae05095"
-                },
-                {
-                    "name": "Spiny",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Weird crawling badnik from CPZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Spiny.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "0958c194-8cfc-4e7e-a281-a97ae0509515"
-                },
-                {
-                    "name": "Grabber",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Spider badnik from CPZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Grabber.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "1b91867c-b5e7-474b-82f3-dfd6370e0775"
-                },
-                {
-                    "name": "Grabber String",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Spider badnik from CPZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_GrabberString.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "c1948cfc-3e7e-4281-a97a-e05095157bb9"
-                }
-            ],
-            "isDirectory": true,
-            "expanded": false,
-            "uuid": "91f0d4fc-0ab4-4256-95b9-ebb70958c194"
-        },
-        {
-            "name": "OOZ",
-            "children": [
-                {
-                    "name": "SwingingPlatform",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/OOZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Swinging platform from OOZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/obj15_a.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "8cfc3e7e-6281-497a-a050-95157bb9408e"
-                },
-                {
-                    "name": "Rising Platform When Sonic Stands On It",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/OOZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Rising platform from OOZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/obj19.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "fc3e7e62-81a9-4ae0-9095-157bb9408e1e"
-                },
-                {
-                    "name": "Falling Oil",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/OOZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Cascading oil from OOZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/obj1C_c.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "3e7e6281-a97a-4050-9515-7bb9408e1ee0"
-                },
-                {
-                    "name": "Breaking Floor",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/OOZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/OOZ collapsing platform.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/obj1F_b.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "7e6281a9-7ae0-4095-957b-b9408e1ee0bb"
-                },
-                {
-                    "name": "Burner Lid",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/OOZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Burner Platform from OOZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/obj33_a.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "6281a97a-e050-4515-bbb9-408e1ee0bb7f"
-                },
-                {
-                    "name": "Breakable Block",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/OOZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Striped blocks from CPZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/obj3D.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "81a97ae0-5095-457b-b940-8e1ee0bb7f26"
-                },
-                {
-                    "name": "Fan",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/OOZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Fan from OOZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/obj3F_a.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "a97ae050-9515-4bb9-808e-1ee0bb7f2620"
-                },
-                {
-                    "name": "Spiky Thing",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/OOZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Spiked ball from OOZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/obj43.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "7ae05095-157b-4940-8e1e-e0bb7f26205b"
-                },
-                {
-                    "name": "Push Spring",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/OOZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Push spring from OOZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/obj45.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "e0509515-7bb9-408e-9ee0-bb7f26205b0b"
-                },
-                {
-                    "name": "Ball Launcher",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/OOZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Transporter ball from OOZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/obj48.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "5095157b-b940-4e1e-a0bb-7f26205b0b69"
-                },
-                {
-                    "name": "Octus",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/OOZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Octopus badnik from OOZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Octus.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "95157bb9-408e-4ee0-bb7f-26205b0b697e"
-                },
-                {
-                    "name": "Aquis",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/OOZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Seahorse from OOZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Aquis.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "157bb940-8e1e-40bb-bf26-205b0b697e22"
-                }
-            ],
-            "isDirectory": true,
-            "expanded": false,
-            "uuid": "948cfc3e-7e62-41a9-bae0-5095157bb940"
-        },
-        {
-            "name": "DEZ",
-            "children": [
-                {
-                    "name": "One-Way Barrier",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/DEZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Stripy blocks from CPZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/obj2D.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "b9408e1e-e0bb-4f26-a05b-0b697e22b0af"
-                },
-                {
-                    "name": "Eggman",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/DEZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Robotnik's head.bin:40960",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/objC6_a.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "408e1ee0-bb7f-4620-9b0b-697e22b0afa6"
-                },
-                {
-                    "name": "Giant Mech",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/DEZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Eggrobo.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Eggrobo.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "8e1ee0bb-7f26-405b-8b69-7e22b0afa692"
-                }
-            ],
-            "isDirectory": true,
-            "expanded": false,
-            "uuid": "7bb9408e-1ee0-4b7f-a620-5b0b697e22b0"
-        },
-        {
             "name": "SCZ",
             "children": [
                 {
@@ -3347,217 +3529,6 @@
             "isDirectory": true,
             "expanded": false,
             "uuid": "1ee0bb7f-2620-4b0b-a97e-22b0afa69274"
-        },
-        {
-            "name": "EHZ",
-            "children": [
-                {
-                    "name": "Bridge",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/EHZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/EHZ bridge.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Bridge_b.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "22b0afa6-9274-4903-87db-1c9b9c7d7180"
-                },
-                {
-                    "name": "Platform",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/EHZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/kosinski/EHZ.bin",
-                        "compression": "Kosinski",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_FloatingPlatform_a.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "b0afa692-7449-4307-9b1c-9b9c7d7180e3"
-                },
-                {
-                    "name": "Bridge Stake",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/EHZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/EHZ bridge.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Bridge_b.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "afa69274-4903-47db-9c9b-9c7d7180e3f8"
-                },
-                {
-                    "name": "Waterfall",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/EHZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Waterfall tiles.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_EHZWaterfall.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "a6927449-0307-4b1c-9b9c-7d7180e3f8c8"
-                },
-                {
-                    "name": "Buzzer",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/EHZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Buzzer enemy.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Buzzer.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "92744903-07db-4c9b-9c7d-7180e3f8c8e6"
-                },
-                {
-                    "name": "Masher",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/EHZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/EHZ Pirahna badnik.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Masher.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "74490307-db1c-4b9c-bd71-80e3f8c8e694"
-                },
-                {
-                    "name": "Coconuts",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/EHZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Coconuts badnik from EHZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Coconuts.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "490307db-1c9b-4c7d-b180-e3f8c8e6949b"
-                }
-            ],
-            "isDirectory": true,
-            "expanded": false,
-            "uuid": "697e22b0-afa6-4274-8903-07db1c9b9c7d"
         },
         {
             "name": "WFZ",
@@ -4088,6 +4059,101 @@
             "isDirectory": true,
             "expanded": false,
             "uuid": "0307db1c-9b9c-4d71-80e3-f8c8e6949b36"
+        },
+        {
+            "name": "DEZ",
+            "children": [
+                {
+                    "name": "One-Way Barrier",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/DEZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Stripy blocks from CPZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/obj2D.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "b9408e1e-e0bb-4f26-a05b-0b697e22b0af"
+                },
+                {
+                    "name": "Eggman",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/DEZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Robotnik's head.bin:40960",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/objC6_a.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "408e1ee0-bb7f-4620-9b0b-697e22b0afa6"
+                },
+                {
+                    "name": "Giant Mech",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/DEZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Eggrobo.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Eggrobo.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "8e1ee0bb-7f26-405b-8b69-7e22b0afa692"
+                }
+            ],
+            "isDirectory": true,
+            "expanded": false,
+            "uuid": "7bb9408e-1ee0-4b7f-a620-5b0b697e22b0"
         }
     ]
 }
