@@ -3163,6 +3163,7 @@ PalPtr_SS3_2p:	palptr Pal_SS3_2p,3
 PalPtr_OOZ_B:	palptr Pal_OOZ_B, 1
 PalPtr_Menu:	palptr Pal_Menu,  0
 PalPtr_Result:	palptr Pal_Result,0
+PalPtr_Sonic:	palptr Pal_Sonic, 0
 PalPtr_Knux:	palptr Pal_Knux,  0
 PalPtr_SSK:		palptr Pal_SSK,   0
 
@@ -3212,7 +3213,8 @@ Pal_SS1_2p:palette Special Stage 1 2p.bin ; Special Stage 1 2p palette
 Pal_SS2_2p:palette Special Stage 2 2p.bin ; Special Stage 2 2p palette
 Pal_SS3_2p:palette Special Stage 3 2p.bin ; Special Stage 3 2p palette
 Pal_Result:palette Special Stage Results Screen.bin ; Special Stage Results Screen palette
-Pal_Knux:  palette Knuckles.bin,SonicAndTails2.bin	; Knuckles
+Pal_Sonic: palette SonicAndTails.bin ; Sonic & Tails
+Pal_Knux:  palette Knuckles.bin	; Knuckles
 Pal_SSK:   palette Special Stage Knuckles.bin ; Special Stage palette for Knuckles
 ; ===========================================================================
 
@@ -3880,7 +3882,7 @@ MusicList: zoneOrderedTable 1,2
 ; ===========================================================================
 
 LoadPlayerPal:
-	moveq	#PalID_BGND,d0
+	moveq	#PalID_Sonic,d0
 	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
 	bne.s	+
 	moveq	#PalID_Knux,d0

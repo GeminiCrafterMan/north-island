@@ -457,6 +457,7 @@ PalID_SS3_2p =	id(PalPtr_SS3_2p) ; 24
 PalID_OOZ_B =	id(PalPtr_OOZ_B) ; 25
 PalID_Menu =	id(PalPtr_Menu) ; 26
 PalID_Result =	id(PalPtr_Result) ; 27
+PalID_Sonic =	id(PalPtr_Sonic)
 PalID_Knux =	id(PalPtr_Knux)
 PalID_SSK =		id(PalPtr_SSK)
 
