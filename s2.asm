@@ -3860,7 +3860,7 @@ JmpTo_SwScrl_Title ; JmpTo
 ;----------------------------------------------------------------------------
 ; byte_3EA0:
 MusicList: zoneOrderedTable 1,2
-	zoneTableEntry.b mus_EHZ, mus_EHZDelta	; 0 ; EHZ
+	zoneTableEntry.b mus_EHZ, mus_EHZ2P		; 0 ; EHZ
 	zoneTableEntry.b mus_EHZ, mus_EHZ2P		; 1
 	zoneTableEntry.b mus_MTZ, mus_MTZ		; 2
 	zoneTableEntry.b mus_OOZ, mus_EHZ		; 3
