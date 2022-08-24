@@ -25622,7 +25622,20 @@ ObjectMoveAndFall:
 	rts
 ; End of function ObjectMoveAndFall
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+; =============== S U B R O U T I N E =======================================
 
+ObjectMoveAndFall2: ; MoveSprite2
+	move.w	x_vel(a0),d0	; load horizontal speed
+	ext.l	d0
+	lsl.l	#8,d0		; shift velocity to line up with the middle 16 bits of the 32-bit position
+	add.l	d0,x_pos(a0)	; add to x-axis position	; note this affects the subpixel position x_sub(a0) = 2+x_pos(a0)
+	move.w	y_vel(a0),d0	; load vertical speed
+	ext.l	d0
+	lsl.l	#8,d0		; shift velocity to line up with the middle 16 bits of the 32-bit position
+	add.l	d0,y_pos(a0)	; add to y-axis position	; note this affects the subpixel position y_sub(a0) = 2+y_pos(a0)
+	rts
+; End of function ObjectMoveAndFall2
+; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; ---------------------------------------------------------------------------
 ; Subroutine translating object speed to update object position
 ; This moves the object horizontally and vertically
@@ -31837,6 +31850,8 @@ Sonic_TurnSuper:
 	cmpi.w	#2,(Player_mode).w
 	bne.s	.Sonic
 .Tails:
+	move.b	#$F,(Palette_timer_Tails).w
+	move.b	#1,(Super_Tails_flag).w
 	move.w	#$A00,(Tails_top_speed).w
 	move.w	#$30,(Tails_acceleration).w
 	move.w	#$100,(Tails_deceleration).w
@@ -33061,8 +33076,14 @@ Obj_Tails_Init_Continued:
 	move.b	#0,flips_remaining(a0)
 	move.b	#4,flip_speed(a0)
 	move.b	#0,(Super_Sonic_flag).w
+	move.b	#0,(Super_Tails_flag).w
 	move.b	#$1E,air_left(a0)
+	cmpi.w	#$20,(Tails_CPU_routine).w
+	beq.s	loc_137A4
+	cmpi.w	#$12,(Tails_CPU_routine).w
+	beq.s	loc_137A4
 	move.w	#0,(Tails_CPU_routine).w	; set AI state to TailsCPU_Init
+loc_137A4:
 	move.w	#0,(Tails_control_counter).w
 	move.w	#0,(Tails_respawn_counter).w
 	cmpa.w	#MainCharacter,a0
@@ -33107,7 +33128,18 @@ Obj_Tails_Control_Joypad2:
 ; loc_1B9EA:
 Obj_Tails_Control_Part2:
 	btst	#0,obj_control(a0)	; is Tails flying, or interacting with another object that holds him in place or controls his movement somehow?
-	bne.s	+			; if yes, branch to skip Tails' control
+	beq.s	loc_13872			; if yes, branch to skip Tails' control
+	move.b	#0,double_jump_flag(a0)
+	tst.b	(Flying_carrying_Sonic_flag).w
+	beq.s	+
+	lea	(MainCharacter).w,a1
+	clr.b	obj_control(a1)
+	bset	#1,status(a1)
+	clr.w	(Flying_carrying_Sonic_flag).w
+	bra.s	+
+; ---------------------------------------------------------------------------
+
+loc_13872:
 	moveq	#0,d0
 	move.b	status(a0),d0
 	andi.w	#6,d0	; %0000 %0110
@@ -33172,6 +33204,19 @@ TailsCPU_States: offsetTable
 	offsetTableEntry.w TailsCPU_Flying	; 4
 	offsetTableEntry.w TailsCPU_Normal	; 6
 	offsetTableEntry.w TailsCPU_Panic	; 8
+	offsetTableEntry.w return_1BF36	; $A
+	offsetTableEntry.w loc_13FC2	; $C
+	offsetTableEntry.w loc_13FFA	; $E
+	offsetTableEntry.w loc_1408A	; $10
+	offsetTableEntry.w loc_140C6	; $12
+	offsetTableEntry.w loc_140CET	; $14
+	offsetTableEntry.w loc_14106	; $16
+	offsetTableEntry.w loc_1414C	; $18
+	offsetTableEntry.w loc_141F2	; $1A
+	offsetTableEntry.w loc_1421C	; $1C
+	offsetTableEntry.w loc_14254	; $1E
+	offsetTableEntry.w loc_1425C	; $20
+	offsetTableEntry.w loc_14286	; $22
 
 ; ===========================================================================
 ; initial AI State
@@ -33193,18 +33238,18 @@ TailsCPU_Init:
 ; ---------------------------------------------------------------------------
 ; loc_1BB30:
 TailsCPU_Spawning:
-	move.b	(Ctrl_2_Held_Logical).w,d0
+	move.b	(Ctrl_2_Logical).w,d0
 	andi.b	#button_B_mask|button_C_mask|button_A_mask|button_start_mask,d0
 	bne.s	TailsCPU_Respawn
 	move.w	(Timer_frames).w,d0
 	andi.w	#$3F,d0
-	bne.s	return_1BB88
+	bne.w	return_1BB88
 	tst.b	obj_control(a1)
-	bne.s	return_1BB88
+	bmi.w	return_1BB88
 	move.b	status(a1),d0
-	andi.b	#$D2,d0
-	bne.s	return_1BB88
-; loc_1BB54:
+	andi.b	#$80,d0
+	bne.w	return_1BB88
+
 TailsCPU_Respawn:
 	move.w	#4,(Tails_CPU_routine).w	; => TailsCPU_Flying
 	move.w	x_pos(a1),d0
@@ -33213,14 +33258,40 @@ TailsCPU_Respawn:
 	move.w	y_pos(a1),d0
 	move.w	d0,(Tails_CPU_target_y).w
 	subi.w	#$C0,d0
+
+loc_13B78:
 	move.w	d0,y_pos(a0)
 	ori.w	#high_priority,art_tile(a0)
-	move.b	#0,spindash_flag(a0)
-	move.w	#0,spindash_counter(a0)
+	move.b	#2,priority(a0)
+	moveq	#0,d0
+	move.w	#0,x_vel(a0)
+	move.w	#0,y_vel(a0)
+	move.w	d0,inertia(a0)
+	move.b	d0,flip_turned(a0)
+	move.b	d0,double_jump_flag(a0)
+	move.b	#2,status(a0)
+	move.b	#$1E,air_left(a0)	
+	move.b	#$81,obj_control(a0)
+	move.b	d0,flips_remaining(a0)
+	move.b	d0,flip_speed(a0)
+	move.w	d0,move_lock(a0)
+	move.b	d0,invulnerable_time(a0)
+	move.b	d0,invincibility_time(a0)
+	move.b	d0,speedshoes_time(a0)
+	move.b	d0,(Tails_Look_delay_counter).w
+	move.w	d0,next_tilt(a0)
+	move.b	d0,stick_to_convex(a0)
+	move.b	d0,spindash_flag(a0)
+	move.b	d0,pinball_mode(a0)
+	move.w	d0,spindash_counter(a0)
+	move.b	d0,jumping(a0)
+	move.b	d0,jumping+1(a0)
+	move.b	#-$10,double_jump_property(a0)
+	bsr.w	Tails_Set_Flying_Animation
+	rts
 
 return_1BB88:
 	rts
-
 ; ===========================================================================
 ; AI State where Tails pretends to be a helicopter
 ; ---------------------------------------------------------------------------
@@ -33229,20 +33300,25 @@ TailsCPU_Flying:
 	tst.b	render_flags(a0)
 	bmi.s	TailsCPU_FlyingOnscreen
 	addq.w	#1,(Tails_respawn_counter).w
-	cmpi.w	#$12C,(Tails_respawn_counter).w
+	cmpi.w	#300,(Tails_respawn_counter).w
 	blo.s	TailsCPU_Flying_Part2
 	move.w	#0,(Tails_respawn_counter).w
-	move.w	#2,(Tails_CPU_routine).w	; => TailsCPU_Spawning
+	move.w	#2,(Tails_CPU_routine).w
 	move.b	#$81,obj_control(a0)
 	move.b	#2,status(a0)
 	move.w	#0,x_pos(a0)
 	move.w	#0,y_pos(a0)
-	move.b	#AniIDTailsAni_Fly,anim(a0)
+	move.b	#-$10,double_jump_property(a0)
+	bsr.w	Tails_Set_Flying_Animation
 	rts
 ; ---------------------------------------------------------------------------
-; loc_1BBC8:
+
 TailsCPU_FlyingOnscreen:
+	move.b	#-$10,double_jump_property(a0)
+	ori.b	#2,status(a0)
+	bsr.w	Tails_Set_Flying_Animation
 	move.w	#0,(Tails_respawn_counter).w
+
 ; loc_1BBCE:
 TailsCPU_Flying_Part2:
 	lea	(Sonic_Pos_Record_Buf).w,a2
@@ -33253,90 +33329,92 @@ TailsCPU_Flying_Part2:
 	sub.b	d2,d3
 	move.w	(a2,d3.w),(Tails_CPU_target_x).w
 	move.w	2(a2,d3.w),(Tails_CPU_target_y).w
-	tst.b	(Water_flag).w
-	beq.s	+
-	move.w	(Water_Level_1).w,d0
-	subi.w	#$10,d0
-	cmp.w	(Tails_CPU_target_y).w,d0
-	bge.s	+
-	move.w	d0,(Tails_CPU_target_y).w
-+
 	move.w	x_pos(a0),d0
 	sub.w	(Tails_CPU_target_x).w,d0
-	beq.s	loc_1BC54
-	mvabs.w	d0,d2
+	beq.s	loc_13CBE
+	move.w	d0,d2
+	bpl.s	loc_13C7E
+	neg.w	d2
+
+loc_13C7E:
 	lsr.w	#4,d2
 	cmpi.w	#$C,d2
-	blo.s	+
+	blo.s	loc_13C88
 	moveq	#$C,d2
-+
-	mvabs.b	x_vel(a1),d1
+
+loc_13C88:
+	move.b	x_vel(a1),d1
+	bpl.s	loc_13C90
+	neg.b	d1
+
+loc_13C90:
 	add.b	d1,d2
 	addq.w	#1,d2
 	tst.w	d0
-	bmi.s	loc_1BC40
+	bmi.s	loc_13CAA
 	bset	#0,status(a0)
 	cmp.w	d0,d2
-	blo.s	+
+	blo.s	loc_13CA6
 	move.w	d0,d2
 	moveq	#0,d0
-+
+
+loc_13CA6:
 	neg.w	d2
-	bra.s	loc_1BC50
+	bra.s	loc_13CBA
 ; ---------------------------------------------------------------------------
 
-loc_1BC40:
+loc_13CAA:
 	bclr	#0,status(a0)
 	neg.w	d0
 	cmp.w	d0,d2
-	blo.s	loc_1BC50
+	blo.s	loc_13CBA
 	move.b	d0,d2
 	moveq	#0,d0
 
-loc_1BC50:
+loc_13CBA:
 	add.w	d2,x_pos(a0)
 
-loc_1BC54:
+loc_13CBE:
 	moveq	#1,d2
 	move.w	y_pos(a0),d1
 	sub.w	(Tails_CPU_target_y).w,d1
-	beq.s	loc_1BC68
-	bmi.s	loc_1BC64
+	beq.s	loc_13CD2
+	bmi.s	loc_13CCE
 	neg.w	d2
 
-loc_1BC64:
+loc_13CCE:
 	add.w	d2,y_pos(a0)
 
-loc_1BC68:
+loc_13CD2:
 	lea	(Sonic_Stat_Record_Buf).w,a2
 	move.b	2(a2,d3.w),d2
-	andi.b	#$D2,d2
-	bne.s	return_1BCDE
+	andi.b	#$80,d2
+	bne.s	loc_13D42
 	or.w	d0,d1
-	bne.s	return_1BCDE
+	bne.s	loc_13D42
+	cmpi.b	#6,(MainCharacter+routine).w
+	bhs.s	loc_13D42
 	move.w	#6,(Tails_CPU_routine).w	; => TailsCPU_Normal
 	move.b	#0,obj_control(a0)
-	move.b	#AniIDTailsAni_Walk,anim(a0)
+	move.b	#AniIDTailsAni_Roll,anim(a0)
 	move.w	#0,x_vel(a0)
 	move.w	#0,y_vel(a0)
 	move.w	#0,inertia(a0)
-	move.b	#2,status(a0)
+	andi.b	#$40,status(a0)
+	ori.b	#2,status(a0)
 	move.w	#0,move_lock(a0)
 	andi.w	#drawing_mask,art_tile(a0)
 	tst.b	art_tile(a1)
-	bpl.s	+
+	bpl.s	loc_13D34
 	ori.w	#high_priority,art_tile(a0)
-+
+loc_13D34:
 	move.b	top_solid_bit(a1),top_solid_bit(a0)
 	move.b	lrb_solid_bit(a1),lrb_solid_bit(a0)
-	cmpi.b	#AniIDTailsAni_Spindash,anim(a1)
-	beq.s	return_1BCDE
-	move.b	spindash_flag(a0),d0
-	beq.s	return_1BCDE
-	move.b	d0,spindash_flag(a1)
-	bsr.w	loc_212C4
+	rts
+; ---------------------------------------------------------------------------
 
-return_1BCDE:
+loc_13D42:
+	move.b	#$81,obj_control(a0)
 	rts
 
 ; ===========================================================================
@@ -33375,6 +33453,13 @@ TailsCPU_Normal_SonicOK:
 	move.w	(Sonic_Pos_Record_Index).w,d0
 	sub.b	d1,d0
 	move.w	(a1,d0.w),d2	; d2 = earlier x position of Sonic
+	btst	#3,status(a1)
+	bne.s	loc_13DD0
+	cmpi.w	#$400,inertia(a1)
+	bge.s	loc_13DD0
+	subi.w	#$20,d2
+
+loc_13DD0:
 	move.w	2(a1,d0.w),d3	; d3 = earlier y position of Sonic
 	lea	(Sonic_Stat_Record_Buf).w,a1
 	move.w	(a1,d0.w),d1	; d1 = earlier input of Sonic
@@ -33393,7 +33478,7 @@ TailsCPU_Normal_SonicOK:
 
 ; Tails wants to go left because that's where Sonic is
 ; loc_1BD76: TailsCPU_Normal_FollowLeft:
-	cmpi.w	#$10,d2
+	cmpi.w	#$30,d2
 	blo.s	+
 	andi.w	#~(((button_left_mask|button_right_mask)<<8)|(button_left_mask|button_right_mask)),d1	; AND out Sonic's left/right input...
 	ori.w	#(button_left_mask<<8)|button_left_mask,d1	; ...and give Tails his own
@@ -33402,13 +33487,15 @@ TailsCPU_Normal_SonicOK:
 	beq.s	TailsCPU_Normal_FilterAction
 	btst	#0,status(a0)
 	beq.s	TailsCPU_Normal_FilterAction
+	btst	#0,obj_control(a0)
+	bne.s	TailsCPU_Normal_FilterAction
 	subq.w	#1,x_pos(a0)
 	bra.s	TailsCPU_Normal_FilterAction
 ; ===========================================================================
 ; Tails wants to go right because that's where Sonic is
 ; loc_1BD98:
 TailsCPU_Normal_FollowRight:
-	cmpi.w	#$10,d2
+	cmpi.w	#$30,d2
 	blo.s	+
 	andi.w	#~(((button_left_mask|button_right_mask)<<8)|(button_left_mask|button_right_mask)),d1	; AND out Sonic's left/right input
 	ori.w	#(button_right_mask<<8)|button_right_mask,d1	; ...and give Tails his own
@@ -33416,6 +33503,8 @@ TailsCPU_Normal_FollowRight:
 	tst.w	inertia(a0)
 	beq.s	TailsCPU_Normal_FilterAction
 	btst	#0,status(a0)
+	bne.s	TailsCPU_Normal_FilterAction
+	btst	#0,obj_control(a0)
 	bne.s	TailsCPU_Normal_FilterAction
 	addq.w	#1,x_pos(a0)
 	bra.s	TailsCPU_Normal_FilterAction
@@ -33488,7 +33577,7 @@ TailsCPU_Despawn:
 	move.b	#2,status(a0)
 	move.w	#$4000,x_pos(a0)
 	move.w	#0,y_pos(a0)
-	move.b	#AniIDTailsAni_Fly,anim(a0)
+	move.b	#0,double_jump_flag(a0)
 	rts
 ; ===========================================================================
 ; sub_1BE66:
@@ -33499,7 +33588,14 @@ TailsCPU_CheckDespawn:
 	beq.s	TailsCPU_TickRespawnTimer
 
 	moveq	#0,d0
-	move.w	interact(a0),a3
+	move.b	interact(a0),d0
+    if object_size=$40
+	lsl.w	#6,d0
+    else
+	mulu.w	#object_size,d0
+    endif
+	addi.l	#Object_RAM,d0
+	movea.l	d0,a3	; a3=object
 	move.b	(Tails_interact_ID).w,d0
 	cmp.b	(a3),d0
 	bne.s	BranchTo_TailsCPU_Despawn
@@ -33507,10 +33603,10 @@ TailsCPU_CheckDespawn:
 ; loc_1BE8C:
 TailsCPU_TickRespawnTimer:
 	addq.w	#1,(Tails_respawn_counter).w
-	cmpi.w	#$12C,(Tails_respawn_counter).w
+	cmpi.w	#$300,(Tails_respawn_counter).w
 	blo.s	TailsCPU_UpdateObjInteract
 
-BranchTo_TailsCPU_Despawn ; BranchTo
+BranchTo_TailsCPU_Despawn
 	bra.w	TailsCPU_Despawn
 ; ===========================================================================
 ; loc_1BE9C:
@@ -33518,9 +33614,19 @@ TailsCPU_ResetRespawnTimer:
 	move.w	#0,(Tails_respawn_counter).w
 ; loc_1BEA2:
 TailsCPU_UpdateObjInteract:
-	moveq	#0,d0
-	move.w	interact(a0),a3
+	btst	#3,status(a0)
+	beq.s	locret_13F3E
+;	moveq	#0,d0
+	move.b	interact(a0),d0
+    if object_size=$40
+	lsl.w	#6,d0
+    else
+	mulu.w	#object_size,d0
+    endif
+	addi.l	#Object_RAM,d0
+	movea.l	d0,a3	; a3=object
 	move.b	(a3),(Tails_interact_ID).w
+locret_13F3E:
 	rts
 
 ; ===========================================================================
@@ -33535,9 +33641,9 @@ TailsCPU_Panic:
 	bne.s	return_1BF36
 	tst.b	spindash_flag(a0)
 	bne.s	TailsCPU_Panic_ChargingDash
-
 	tst.w	inertia(a0)
 	bne.s	return_1BF36
+	
 	bclr	#0,status(a0)
 	move.w	x_pos(a0),d0
 	sub.w	x_pos(a1),d0
@@ -33578,6 +33684,478 @@ return_1BF36:
 ; End of function TailsCPU_Control
 
 
+loc_13FC2:
+	move.b	#1,double_jump_flag(a0)
+	move.b	#-$10,double_jump_property(a0)
+	move.b	#2,status(a0)
+	move.w	#$100,x_vel(a0)
+	move.w	#0,y_vel(a0)
+	move.w	#0,inertia(a0)
+	lea	(MainCharacter).w,a1
+	bsr.w	sub_1459E
+	move.b	#1,(Flying_carrying_Sonic_flag).w
+	move.w	#$E,(Tails_CPU_routine).w
+
+loc_13FFA:
+	move.w	#0,(Tails_control_counter).w
+	move.w	#0,(Ctrl_2_Logical).w
+	move.b	(Timer_frames+1).w,d0
+	andi.b	#$1F,d0
+	bne.s	loc_14016
+	ori.w	#(button_right_mask<<8)|button_right_mask,(Ctrl_2_Logical).w
+
+loc_14016:
+	lea	(Flying_carrying_Sonic_flag).w,a2
+	lea	(MainCharacter).w,a1
+	btst	#1,status(a1)
+	bne.s	loc_14082
+	move.w	#6,(Tails_CPU_routine).w
+	move.b	#0,obj_control(a0)
+	move.b	#0,anim(a0)
+	move.w	#0,x_vel(a0)
+	move.w	#0,y_vel(a0)
+	move.w	#0,inertia(a0)
+	move.b	#2,status(a0)
+	move.w	#0,move_lock(a0)
+	andi.w	#drawing_mask,art_tile(a0)
+	tst.b	art_tile(a1)
+	bpl.s	loc_14068
+	ori.w	#high_priority,art_tile(a0)
+
+loc_14068:
+	move.b	top_solid_bit(a1),top_solid_bit(a0)
+	move.b	lrb_solid_bit(a1),lrb_solid_bit(a0)
+loc_14082:
+	move.w	(Ctrl_1).w,d0
+	bra.w	Tails_Carry_Sonic
+; ---------------------------------------------------------------------------
+
+loc_1408A:
+	move.w	#0,(Tails_control_counter).w
+	move.b	#$F0,double_jump_property(a0)
+	move.w	#0,(Ctrl_2_Logical).w
+	move.b	(Timer_frames+1).w,d0
+	andi.b	#$F,d0
+	bne.s	loc_140ACT
+	ori.w	#((button_B_mask|button_C_mask|button_A_mask|button_right_mask)<<8)|(button_B_mask|button_C_mask|button_A_mask|button_right_mask),(Ctrl_2_Logical).w
+loc_140ACT:
+	tst.b	render_flags(a0)
+	bmi.s	locret_140C4
+	moveq	#0,d0
+	move.l	d0,(a0)
+	move.w	d0,x_pos(a0)
+	move.w	d0,y_pos(a0)
+	move.w	#$A,(Tails_CPU_routine).w
+
+locret_140C4:
+	rts
+; ---------------------------------------------------------------------------
+
+loc_140C6:
+	move.w	#0,(Ctrl_2_Logical).w
+	rts
+; ---------------------------------------------------------------------------
+
+loc_140CET:
+	move.b	#1,double_jump_flag(a0)
+	move.b	#-$10,double_jump_property(a0)
+	move.b	#2,status(a0)
+	move.w	#0,x_vel(a0)
+	move.w	#0,y_vel(a0)
+	move.w	#0,inertia(a0)
+	lea	(MainCharacter).w,a1
+	bsr.w	sub_1459E
+	move.b	#1,(Flying_carrying_Sonic_flag).w
+	move.w	#$16,(Tails_CPU_routine).w
+
+loc_14106:
+	move.w	#0,(Tails_control_counter).w
+	move.b	#$F0,double_jump_property(a0)
+	move.w	#0,(Ctrl_2_Logical).w
+	move.b	(Timer_frames+1).w,d0
+	andi.b	#7,d0
+	bne.s	loc_14128
+	ori.w	#((button_B_mask|button_C_mask|button_A_mask)<<8)|(button_B_mask|button_C_mask|button_A_mask),(Ctrl_2_Logical).w
+
+loc_14128:
+	move.w	(Camera_Y_pos).w,d0
+	addi.w	#$90,d0
+	cmp.w	y_pos(a0),d0
+	blo.s	loc_1413C
+	move.w	#$18,(Tails_CPU_routine).w
+
+loc_1413C:
+	lea	(Flying_carrying_Sonic_flag).w,a2
+	lea	(MainCharacter).w,a1
+	move.w	(Ctrl_1).w,d0
+	bra.w	Tails_Carry_Sonic
+; ---------------------------------------------------------------------------
+
+loc_1414C:
+	move.b	#$F0,double_jump_property(a0)
+	tst.w	(Tails_control_counter).w
+	beq.s	loc_14164
+	tst.b	(Flying_carrying_Sonic_flag).w
+	bne.w	loc_141E2
+	bra.w	loc_142E2T
+; ---------------------------------------------------------------------------
+
+loc_14164:
+	move.w	#0,(Ctrl_2_Logical).w
+	tst.b	(Flying_carrying_Sonic_flag).w
+	beq.w	loc_142E2T
+	clr.b	($FFFFF7A3).w
+	btst	#1,(Ctrl_1).w
+	beq.s	loc_14198
+	addq.b	#1,($FFFFF7A2).w
+	cmpi.b	#-$40,($FFFFF7A2).w
+	blo.s	loc_141D2
+	move.b	#0,($FFFFF7A2).w
+	ori.w	#((button_B_mask|button_C_mask|button_A_mask)<<8)|(button_B_mask|button_C_mask|button_A_mask),(Ctrl_2_Logical).w
+	bra.s	loc_141D2
+; ---------------------------------------------------------------------------
+
+loc_14198:
+	btst	#0,(Ctrl_1).w
+	beq.s	loc_141BA
+	addq.b	#1,($FFFFF7A2).w
+	cmpi.b	#$20,($FFFFF7A2).w
+	blo.s	loc_141D2
+	move.b	#0,($FFFFF7A2).w
+	ori.w	#((button_B_mask|button_C_mask|button_A_mask)<<8)|(button_B_mask|button_C_mask|button_A_mask),(Ctrl_2_Logical).w
+	bra.s	loc_141D2
+; ---------------------------------------------------------------------------
+
+loc_141BA:
+	addq.b	#1,($FFFFF7A2).w
+	cmpi.b	#$58,($FFFFF7A2).w
+	blo.s	loc_141D2
+	move.b	#0,($FFFFF7A2).w
+	ori.w	#((button_B_mask|button_C_mask|button_A_mask)<<8)|(button_B_mask|button_C_mask|button_A_mask),(Ctrl_2_Logical).w
+
+loc_141D2:
+	move.b	(Ctrl_1).w,d0
+	andi.b	#$C,d0
+	or.b	(Ctrl_2_Logical).w,d0
+	move.b	d0,(Ctrl_2_Logical).w
+
+loc_141E2:
+	lea	(Flying_carrying_Sonic_flag).w,a2
+	lea	(MainCharacter).w,a1
+	move.w	(Ctrl_1).w,d0
+	bra.w	Tails_Carry_Sonic
+; ---------------------------------------------------------------------------
+
+loc_141F2:
+	move.b	#1,double_jump_flag(a0)
+	move.b	#-$10,double_jump_property(a0)
+	move.b	#2,status(a0)
+	move.w	#0,x_vel(a0)
+	move.w	#0,y_vel(a0)
+	move.w	#0,inertia(a0)
+	move.w	#$1C,(Tails_CPU_routine).w
+
+loc_1421C:
+	move.w	#0,(Tails_control_counter).w
+	move.b	#$F0,double_jump_property(a0)
+	move.w	#0,(Ctrl_2_Logical).w
+	move.b	(Timer_frames+1).w,d0
+	andi.b	#7,d0
+	bne.s	loc_1423E
+	ori.w	#((button_B_mask|button_C_mask|button_A_mask)<<8)|(button_B_mask|button_C_mask|button_A_mask),(Ctrl_2_Logical).w
+
+loc_1423E:
+	move.w	(Camera_Y_pos).w,d0
+	addi.w	#$90,d0
+	cmp.w	y_pos(a0),d0
+	blo.s	locret_14252
+	move.w	#$1E,(Tails_CPU_routine).w
+
+locret_14252:
+	rts
+; ---------------------------------------------------------------------------
+
+loc_14254:
+	move.b	#-$10,double_jump_property(a0)
+	rts
+; ---------------------------------------------------------------------------
+
+loc_1425C:
+	move.b	#1,double_jump_flag(a0)
+	move.b	#-$10,double_jump_property(a0)
+	move.b	#2,status(a0)
+	move.w	#$100,x_vel(a0)
+	move.w	#0,y_vel(a0)
+	move.w	#0,inertia(a0)
+	move.w	#$22,(Tails_CPU_routine).w
+
+loc_14286:
+	move.w	#0,(Tails_control_counter).w
+	move.w	#0,(Ctrl_2_Logical).w
+	move.b	(Timer_frames+1).w,d0
+	andi.b	#$1F,d0
+	bne.s	loc_142A2
+	ori.w	#(button_right_mask<<8)|button_right_mask,(Ctrl_2_Logical).w
+
+loc_142A2:
+	btst	#1,status(a0)
+	bne.s	locret_142E0
+	move.w	#6,(Tails_CPU_routine).w
+	move.b	#0,obj_control(a0)
+	move.b	#0,anim(a0)
+	move.w	#0,x_vel(a0)
+	move.w	#0,y_vel(a0)
+	move.w	#0,inertia(a0)
+	move.b	#2,status(a0)
+	move.w	#0,move_lock(a0)
+	andi.w	#$7FFF,art_tile(a0)
+
+locret_142E0:
+	rts
+; ---------------------------------------------------------------------------
+
+loc_142E2T:
+	tst.b	($FFFFF7A3).w
+	bne.s	loc_14362
+	lea	(MainCharacter).w,a1
+	tst.b	render_flags(a1)
+	bpl.s	loc_14330
+	tst.w	(Tails_control_counter).w
+	bne.w	loc_143AA
+	cmpi.w	#$300,y_vel(a1)
+	bge.s	loc_14330
+	move.w	#0,x_vel(a0)
+	move.w	#0,(Ctrl_2_Logical).w
+	cmpi.w	#$200,y_vel(a0)
+	bge.s	loc_14328
+	addq.b	#1,($FFFFF7A2).w
+	cmpi.b	#$58,($FFFFF7A2).w
+	blo.s	loc_1432E
+	move.b	#0,($FFFFF7A2).w
+
+loc_14328:
+	ori.w	#((button_B_mask|button_C_mask|button_A_mask)<<8)|(button_B_mask|button_C_mask|button_A_mask),(Ctrl_2_Logical).w
+
+loc_1432E:
+	bra.s	loc_143AA
+; ---------------------------------------------------------------------------
+
+loc_14330:
+	st	($FFFFF7A3).w
+	move.w	y_pos(a1),d1
+	sub.w	y_pos(a0),d1
+	bpl.s	loc_14340
+	neg.w	d1
+
+loc_14340:
+	lsr.w	#2,d1
+	move.w	d1,d2
+	lsr.w	#1,d2
+	add.w	d2,d1
+	move.w	d1,($FFFFF7A0).w
+	move.w	x_pos(a1),d1
+	sub.w	x_pos(a0),d1
+	bpl.s	loc_14358
+	neg.w	d1
+
+loc_14358:
+	lsr.w	#2,d1
+	move.w	d1,($FFFFF79E).w
+	bra.w	loc_143AA
+; ---------------------------------------------------------------------------
+
+loc_14362:
+	move.w	#0,(Ctrl_2_Logical).w
+	lea	(MainCharacter).w,a1
+	move.w	x_pos(a0),d0
+	move.w	y_pos(a0),d1
+	subi.w	#$10,d1
+	move.w	($FFFFF79E).w,d2
+	bclr	#0,status(a0)
+	cmp.w	x_pos(a1),d0
+	blo.s	loc_14390
+	bset	#0,status(a0)
+	neg.w	d2
+
+loc_14390:
+	add.w	d2,x_vel(a0)
+	cmp.w	y_pos(a1),d1
+	bhs.s	loc_143AA
+	move.w	($FFFFF7A0).w,d2
+	cmp.w	y_pos(a1),d1
+	blo.s	loc_143A6
+	neg.w	d2
+
+loc_143A6:
+	add.w	d2,y_vel(a0)
+
+loc_143AA:
+	lea	(Flying_carrying_Sonic_flag).w,a2
+	lea	(MainCharacter).w,a1
+	move.w	(Ctrl_1).w,d0
+	bra.w	Tails_Carry_Sonic
+
+; =============== S U B R O U T I N E =======================================
+
+
+Tails_Carry_Sonic:
+	tst.b	(a2)
+	beq.w	loc_14534
+	cmpi.b	#4,routine(a1)
+	bhs.w	loc_14466
+	btst	#1,status(a1)
+	beq.w	loc_1445A
+	move.w	($FFFFF79A).w,d1
+	cmp.w	x_vel(a1),d1
+	bne.w	loc_1445A
+	move.w	($FFFFF79C).w,d1
+	cmp.w	y_vel(a1),d1
+	bne.w	loc_14460
+	tst.b	obj_control(a1)
+	bmi.w	loc_1446A
+	btst	#button_down,(Ctrl_1_Logical).w	; is down being pressed?
+	beq.w	loc_14474
+	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
+	beq.w	loc_14474
+	clr.b	obj_control(a1)
+	clr.b	(a2)
+	move.b	#$12,1(a2)
+	andi.w	#$F00,d0
+	beq.w	loc_14410
+	move.b	#$3C,1(a2)
+
+loc_14410:
+	btst	#$A,d0
+	beq.s	loc_1441C
+	move.w	#-$200,x_vel(a1)
+
+loc_1441C:
+	btst	#$B,d0
+	beq.s	loc_14428
+	move.w	#$200,x_vel(a1)
+
+loc_14428:
+	move.w	#-$380,y_vel(a1)
+	bset	#1,status(a1)
+	move.b	#1,jumping(a1)
+	move.b	#$E,y_radius(a1)
+	move.b	#7,x_radius(a1)
+	move.b	#AniIDSonAni_Roll,anim(a1)
+	bset	#2,status(a1)
+	bclr	#4,status(a1)
+	rts
+; ---------------------------------------------------------------------------
+
+loc_1445A:
+	move.w	#-$100,y_vel(a1)
+
+loc_14460:
+	move.b	#0,jumping(a1)
+
+loc_14466:
+	clr.b	obj_control(a1)
+
+loc_1446A:
+	clr.b	(a2)
+	move.b	#$3C,1(a2)
+	rts
+; ---------------------------------------------------------------------------
+
+loc_14474:
+	move.w	x_pos(a0),x_pos(a1)
+	move.w	y_pos(a0),y_pos(a1)
+	addi.w	#$1C,y_pos(a1)
+
+loc_14492:
+	andi.b	#-4,render_flags(a1)
+	andi.b	#-2,status(a1)
+	move.b	status(a0),d0
+	andi.b	#1,d0
+	or.b	d0,render_flags(a1)
+	or.b	d0,status(a1)
+
+loc_144F8:
+	move.w	x_vel(a0),(MainCharacter+x_vel).w
+	move.w	x_vel(a0),($FFFFF79A).w
+	move.w	y_vel(a0),(MainCharacter+y_vel).w
+	move.w	y_vel(a0),($FFFFF79C).w
+	movem.l	d0-a6,-(sp)
+	lea	(MainCharacter).w,a0
+	bsr.w	Sonic_DoLevelCollision
+	movem.l	(sp)+,d0-a6
+	rts
+; ---------------------------------------------------------------------------
+
+loc_14534:
+	tst.b	1(a2)
+	beq.s	loc_14542
+	subq.b	#1,1(a2)
+	bne.w	locret_1459C
+
+loc_14542:
+	move.w	x_pos(a1),d0
+	sub.w	x_pos(a0),d0
+	addi.w	#$10,d0
+	cmpi.w	#$20,d0
+	bhs.w	locret_1459C
+	move.w	y_pos(a1),d1
+	sub.w	y_pos(a0),d1
+	subi.w	#$20,d1
+
+loc_1456C:
+	cmpi.w	#$10,d1
+	bhs.w	locret_1459C
+	tst.b	obj_control(a1)
+	bne.s	locret_1459C
+	cmpi.b	#4,routine(a1)
+	bhs.s	locret_1459C
+	tst.w	(Debug_placement_mode).w
+	bne.s	locret_1459C
+	tst.b	spindash_flag(a1)
+	bne.s	locret_1459C
+	bsr.s	sub_1459E
+	sfx		sfx_Grab
+	move.b	#1,(a2)
+
+locret_1459C:
+	rts
+; End of function Tails_Carry_Sonic
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1459E:
+	clr.w	x_vel(a1)
+	clr.w	y_vel(a1)
+	clr.w	inertia(a1)
+	clr.w	angle(a1)
+	move.w	x_pos(a0),x_pos(a1)
+	move.w	y_pos(a0),y_pos(a1)
+	addi.w	#$1C,y_pos(a1)
+	move.w	#$1400,anim(a1)
+	move.b	#0,anim_frame_duration(a1)
+	move.b	#0,anim_frame(a1)
+	move.b	#3,obj_control(a1)
+	bset	#1,status(a1)
+	bclr	#4,status(a1)
+	move.b	#0,spindash_flag(a1)
+	andi.b	#-4,render_flags(a1)
+	andi.b	#-2,status(a1)
+	move.b	status(a0),d0
+	andi.b	#1,d0
+	or.b	d0,render_flags(a1)
+	or.b	d0,status(a1)
+	move.w	x_vel(a0),($FFFFF79A).w
+	move.w	x_vel(a0),x_vel(a1)
+	move.w	y_vel(a0),($FFFFF79C).w
+	move.w	y_vel(a0),y_vel(a1)
+
+locret_14630:
+	rts
+; End of function sub_1459E
+
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to record Tails' previous positions for invincibility stars
 ; ---------------------------------------------------------------------------
@@ -33603,6 +34181,14 @@ Tails_RecordPos:
 ; ---------------------------------------------------------------------------
 ; loc_1C00A:
 Obj_Tails_MdNormal:
+	tst.b	(Flying_carrying_Sonic_flag).w
+	beq.s	loc_14760
+	lea	(MainCharacter).w,a1
+	clr.b	obj_control(a1)
+	bset	#1,status(a1)
+	clr.w	(Flying_carrying_Sonic_flag).w
+
+loc_14760:
 	bsr.w	Tails_CheckSpindash
 	bsr.w	Tails_Jump
 	bsr.w	Tails_SlopeResist
@@ -33625,6 +34211,8 @@ Obj_Tails_MdAir:
 	blt.s	+
 	move.b	#AniIDTailsAni_Fall,anim(a0)
 +
+	tst.b	double_jump_flag(a0)
+	bne.s	Tails_FlyingSwimming
 	bsr.w	Tails_AirRoll
 	bsr.w	Tails_JumpHeight
 	bsr.w	Tails_ChgJumpDir
@@ -33637,11 +34225,174 @@ Obj_Tails_MdAir:
 	bsr.w	Tails_JumpAngle
 	bra.w	Tails_DoLevelCollision
 ; End of subroutine Obj_Tails_MdAir
+; ---------------------------------------------------------------------------
+
+Tails_FlyingSwimming:
+	bsr.w	Tails_Move_FlySwim
+	bsr.w	Tails_ChgJumpDir
+	bsr.w	Tails_LevelBound
+	jsr	(ObjectMoveAndFall2).l
+	bsr.w	Tails_JumpAngle
+	bsr.w	Tails_DoLevelCollision
+	cmpa.w	#MainCharacter,a0
+	beq.s	locret_14820
+	lea	(Flying_carrying_Sonic_flag).w,a2
+	lea	(MainCharacter).w,a1
+	move.w	(Ctrl_1).w,d0
+	bsr.w	Tails_Carry_Sonic
+
+locret_14820:
+	rts
+
+; =============== S U B R O U T I N E =======================================
+
+
+Tails_Move_FlySwim:
+	move.b	(Timer_frames+1).w,d0
+	andi.b	#1,d0
+	beq.s	loc_14836
+	tst.b	double_jump_property(a0)
+	beq.s	loc_14836
+	subq.b	#1,double_jump_property(a0)
+
+loc_14836:
+	cmpi.b	#1,double_jump_flag(a0)
+	beq.s	loc_14860
+	cmpi.w	#-$100,y_vel(a0)
+	blt.s	loc_14858
+	subi.w	#$20,y_vel(a0)
+	addq.b	#1,double_jump_flag(a0)
+	cmpi.b	#$20,double_jump_flag(a0)
+	bne.s	loc_1485E
+
+loc_14858:
+	move.b	#1,double_jump_flag(a0)
+
+loc_1485E:
+	bra.s	loc_14892
+; ---------------------------------------------------------------------------
+
+loc_14860:
+	tst.w	(Tails_control_counter).w
+	bne.s	Player2_ContFlight
+	tst.b	(Flying_carrying_Sonic_flag).w
+	bne.s	Player1_ContFlight
+Player2_ContFlight:
+	move.b	(Ctrl_2_Press_Logical).w,d0
+	bra.s	ComparePressT
+Player1_ContFlight:
+	move.b	(Ctrl_1_Press_Logical).w,d0
+ComparePressT:
+	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
+	beq.s	loc_1488C
+	tst.b	double_jump_property(a0)
+	beq.s	loc_1488C
+	btst	#6,status(a0)
+	beq.s	loc_14886
+	tst.b	(Flying_carrying_Sonic_flag).w
+	bne.s	loc_1488C
+
+loc_14886:
+	move.b	#2,double_jump_flag(a0)
+
+loc_1488C:
+	addi.w	#8,y_vel(a0)
+
+loc_14892:
+	move.w	(Camera_Min_Y_pos).w,d0
+	addi.w	#$10,d0
+	cmp.w	y_pos(a0),d0
+	blt.s	Tails_Set_Flying_Animation
+	tst.w	y_vel(a0)
+	bpl.s	Tails_Set_Flying_Animation
+	move.w	#0,y_vel(a0)
+; End of function Tails_Move_FlySwim
+
+
+; =============== S U B R O U T I N E =======================================
+
+Tails_Set_Flying_Animation:
+	btst	#6,status(a0)
+	bne.s	loc_14914
+	moveq	#AniIDTailsAni_Fly,d0
+	tst.w	(Two_player_mode).w
+	bne.s	loc_148F4
+	tst.w	y_vel(a0)
+	bpl.s	loc_148C4
+	moveq	#AniIDTailsAni_Fly2,d0
+
+loc_148C4:
+	tst.b	(Flying_carrying_Sonic_flag).w
+	beq.s	loc_148CC
+	addq.b	#3,d0
+
+loc_148CC:
+	tst.b	double_jump_property(a0)
+	bne.s	loc_148F4
+	moveq	#AniIDTailsAni_Tired,d0
+	tst.b	(Flying_carrying_Sonic_flag).w
+	beq.s	+
+	moveq	#AniIDTailsAni_CarryTired,d0		
++
+	move.b	d0,anim(a0)
+	tst.b	render_flags(a0)
+	bpl.s	locret_148F2
+	move.b	(Timer_frames+1).w,d0
+	addq.b	#8,d0
+	andi.b	#$F,d0
+;	bne.s	locret_148F2
+;	sfx	sfx_FlyTired
+
+locret_148F2:
+	rts
+; ---------------------------------------------------------------------------
+
+loc_148F4:
+	move.b	d0,anim(a0)
+	tst.b	render_flags(a0)
+	bpl.s	locret_14912
+	move.b	(Timer_frames+1).w,d0
+	addq.b	#8,d0
+	andi.b	#$F,d0
+;	bne.s	locret_14912
+;	sfx	sfx_Flying
+	
+locret_14912:
+	rts
+; ---------------------------------------------------------------------------
+
+loc_14914:
+	moveq	#AniIDTailsAni_Swim,d0
+	tst.w	y_vel(a0)
+	bpl.s	loc_1491E
+	moveq	#AniIDTailsAni_Swim2,d0
+
+loc_1491E:
+	tst.b	(Flying_carrying_Sonic_flag).w
+	beq.s	loc_14926
+	moveq	#AniIDTailsAni_SwimCarry,d0
+
+loc_14926:
+	tst.b	double_jump_property(a0)
+	bne.s	loc_1492E
+	moveq	#AniIDTailsAni_SwimTired,d0
+loc_1492E:
+	move.b	d0,anim(a0)
+	rts
+; End of function Tails_Set_Flying_Animation
 ; ===========================================================================
 ; Start of subroutine Obj_Tails_MdRoll
 ; Called if Tails is in a ball, but not airborne (thus, probably rolling)
 ; loc_1C05C:
 Obj_Tails_MdRoll:
+	tst.b	(Flying_carrying_Sonic_flag).w
+	beq.s	loc_1494C
+	lea	(MainCharacter).w,a1
+	clr.b	obj_control(a1)
+	bset	#1,status(a1)
+	clr.w	(Flying_carrying_Sonic_flag).w
+
+loc_1494C:
 	tst.b	pinball_mode(a0)
 	bne.s	+
 	bsr.w	Tails_Jump
@@ -33661,6 +34412,14 @@ Obj_Tails_MdRoll:
 ;        Why they gave it a separate copy of the code, I don't know.
 ; loc_1C082: Obj_Tails_MdJump2:
 Obj_Tails_MdJump:
+	tst.b	(Flying_carrying_Sonic_flag).w
+	beq.s	loc_149BA
+	lea	(MainCharacter).w,a1
+	clr.b	obj_control(a1)
+	bset	#1,status(a1)
+	clr.w	(Flying_carrying_Sonic_flag).w
+
+loc_149BA:
 	bsr.w	Tails_JumpHeight
 	bsr.w	Tails_ChgJumpDir
 	bsr.w	Tails_LevelBound
@@ -34165,7 +34924,16 @@ Tails_ChgJumpDir:
 	btst	#4,status(a0)		; did Tails jump from rolling?
 	bne.s	Obj_Tails_Jump_ResetScr	; if yes, branch to skip midair control
 	move.w	x_vel(a0),d0
+	tst.w	(Tails_control_counter).w
+	bne.s	Player2_ContFlight2
+	tst.b	(Flying_carrying_Sonic_flag).w
+	bne.s	Player1_ContFlight2
+Player2_ContFlight2:
 	btst	#button_left,(Ctrl_2_Held_Logical).w
+	bra.s	ComparePressT2
+Player1_ContFlight2:
+	btst	#button_left,(Ctrl_1_Held_Logical).w
+ComparePressT2:
 	beq.s	+	; if not holding left, branch
 
 	bset	#0,status(a0)
@@ -34176,7 +34944,16 @@ Tails_ChgJumpDir:
 	bgt.s	+	; if new speed is less than the maximum, branch
 	move.w	d1,d0	; limit speed in air going left, even if Tails was already going faster (speed limit/cap)
 +
+	tst.w	(Tails_control_counter).w
+	bne.s	Player2_ContFlight3
+	tst.b	(Flying_carrying_Sonic_flag).w
+	bne.s	Player1_ContFlight3
+Player2_ContFlight3:
 	btst	#button_right,(Ctrl_2_Held_Logical).w
+	bra.s	ComparePressT3
+Player1_ContFlight3:
+	btst	#button_right,(Ctrl_1_Held_Logical).w
+ComparePressT3:
 	beq.s	+	; if not holding right, branch
 
 	bclr	#0,status(a0)
@@ -34398,7 +35175,7 @@ Tails_JumpHeight:
 	move.w	#-$200,d1
 +
 	cmp.w	y_vel(a0),d1	; is Tails going up faster than d1?
-	ble.s	+		; if not, branch
+	ble.s	Tails_Test_For_Flight		; if not, branch
 	move.b	(Ctrl_2_Held_Logical).w,d0
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0 ; is a jump button pressed?
 	bne.s	+		; if yes, branch
@@ -34416,7 +35193,65 @@ Tails_UpVelCap:
 
 return_1C70C:
 	rts
-; End of subroutine Tails_JumpHeight
+; ---------------------------------------------------------------------------
+Tails_Test_For_Flight:
+	tst.b	double_jump_flag(a0)
+	bne.w	locret_151A2
+	move.b	(Ctrl_2_Press_Logical).w,d0
+	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
+	beq.w	locret_151A2
+	cmpi.w	#2,(Player_mode).w
+	bne.s	loc_15156
+	bclr	#4,status(a0)
+	tst.b	(Super_Tails_flag).w	; check Super-state
+	beq.s	Tails_CheckTransform		; if not in a super-state, branch
+	bra.s	loc_1515C
+; ---------------------------------------------------------------------------
+; ---------------------------------------------------------------------------
+; Code that transforms Tails into Super Tails
+; if he has enough rings and emeralds
+; ---------------------------------------------------------------------------
+
+Tails_CheckTransform:
+	cmpi.b	#7,(Emerald_count).w		; does Tails have all 7 Chaos Emeralds?
+	blo.s	loc_1515C		; if not, branch:
+	cmpi.w	#50,(Ring_count).w	; does Tails have at least 50 rings?
+	blo.s	loc_1515C	; if not, Fly/Swim
+	tst.b	(Update_HUD_timer).w
+	bne.w	Sonic_TurnSuper
+	bra.s	loc_1515C
+; ---------------------------------------------------------------------------
+
+loc_15156:
+	move.b	(Ctrl_1_Logical).w,d0
+	andi.b	#button_up_mask,d0
+	bne.w	loc_1515C
+	tst.w	(Tails_control_counter).w
+	beq.s	locret_151A2
+
+loc_1515C:
+	btst	#2,status(a0)
+	beq.s	loc_1518C
+	bclr	#2,status(a0)
+	move.b	y_radius(a0),d1
+	move.b	#$F,y_radius(a0)
+	move.b	#9,x_radius(a0)
+	sub.b	#$F,d1
+	ext.w	d1
+
+loc_15188:
+	add.w	d1,y_pos(a0)
+
+loc_1518C:
+	bclr	#4,status(a0)
+	move.b	#1,double_jump_flag(a0)
+	move.b	#-$10,double_jump_property(a0)
+	bsr.w	Tails_Set_Flying_Animation
+
+locret_151A2:
+	rts
+; ---------------------------------------------------------------------------
+; End of function Tails_JumpHeight
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to check for starting to charge a spindash
@@ -34908,6 +35743,7 @@ Tails_ResetOnFloor_Part3:
 	bclr	#5,status(a0)
 	bclr	#4,status(a0)
 	move.b	#0,jumping(a0)
+	move.b	#0,double_jump_flag(a0)
 	move.w	#0,(Chain_Bonus_counter).w
 	move.b	#0,flip_angle(a0)
 	move.b	#0,flip_turned(a0)
@@ -34927,6 +35763,26 @@ return_1CBC4:
 ; ---------------------------------------------------------------------------
 ; loc_1CBC6:
 Obj_Tails_Hurt:
+	cmpa.w	#MainCharacter,a0
+	bne.s	Obj02_Hurt_Normal
+	tst.w	(Debug_mode_flag).w
+	beq.s	Obj02_Hurt_Normal
+	btst	#button_B,(Ctrl_1_Press).w
+	beq.s	Obj02_Hurt_Normal
+	move.w	#1,(Debug_placement_mode).w
+	clr.b	(Control_Locked).w
+	rts
+; ---------------------------------------------------------------------------
+; loc_1B13A:
+Obj02_Hurt_Normal:
+	tst.b	(Flying_carrying_Sonic_flag).w
+	beq.s	loc_156D6
+	lea	(MainCharacter).w,a1
+	clr.b	obj_control(a1)
+	bset	#1,status(a1)
+	clr.w	(Flying_carrying_Sonic_flag).w
+
+loc_156D6:
 	jsr	(ObjectMove).l
 	addi.w	#$30,y_vel(a0)
 	btst	#6,status(a0)
@@ -34975,6 +35831,24 @@ return_1CC4E:
 
 ; loc_1CC50:
 Obj_Tails_Dead:
+	cmpi.w	#2,(Player_mode).w
+	bne.s	+
+	tst.w	(Debug_mode_flag).w
+	beq.s	+
+	btst	#button_B,(Ctrl_1_Press).w
+	beq.s	+
+	move.w	#1,(Debug_placement_mode).w
+	clr.b	(Control_Locked).w
+	rts
++
+	tst.b	(Flying_carrying_Sonic_flag).w
+	beq.s	loc_157C8
+	lea	(MainCharacter).w,a1
+	clr.b	obj_control(a1)
+	bset	#1,status(a1)
+	clr.w	(Flying_carrying_Sonic_flag).w
+
+loc_157C8:
 	bsr.w	Obj_Tails_CheckGameOver
 	jsr	(ObjectMoveAndFall).l
 	bsr.w	Tails_RecordPos
@@ -35608,11 +36482,13 @@ Obj_TailsTailsAniSelection:
 	dc.b	0	; TailsAni_Blank	->
 	dc.b	0,0	; TailsAni_Dummy4,5	->
 	dc.b	0	; TailsAni_HaulAss	->
-	dc.b	0	; TailsAni_Fly		->
-	dc.b	0,0,0,0	; four dummy animations
+	dc.b	$B	; TailsAni_Fly		->
+	dc.b	$B,$B,$B,$B	; four Fly animations
 	dc.b	3	; TailsAni_AirRoll	-> Directional
 	dc.b	0	; TailsAni_Fall		-> Nothing
 	dc.b	0	; TailsAni_Victory	-> nothing
+	dc.b	$B	; TailsAni_CarryTired	->
+	dc.b	0,0,0,0	; four Swim animations
 	even
 
 	include	"animations/Tails's Tails.asm"
@@ -36280,13 +37156,13 @@ loc_1DA44:
 loc_1DA74:
 	add.b	d0,objoff_34(a0)
 	move.w	#prio(1),a1
-	bra.w	DisplaySprite3
+	jmp	(DisplaySprite3).l
 ; ===========================================================================
 
 loc_1DA80:
 	movea.w	parent(a0),a1 ; a1=character
 	btst	#status_sec_isInvincible,status_secondary(a1)
-	beq.w	DeleteObject
+	jeq	DeleteObject
 	cmpi.w	#2,(Player_mode).w
 	beq.s	loc_1DAA4
 	lea	(Sonic_Pos_Record_Index).w,a5
@@ -36347,7 +37223,7 @@ loc_1DAE4:
 loc_1DB20:
 	add.b	d0,objoff_34(a0)
 	move.w	#prio(1),a1
-	bra.w	DisplaySprite3
+	jmp	(DisplaySprite3).l
 ; ===========================================================================
 
 loc_1DB2C:
@@ -36493,7 +37369,7 @@ Obj_Splash_ResetDisplayMode:
 ; ===========================================================================
 
 BranchTo16_DeleteObject
-	bra.w	DeleteObject
+	jmp	(DeleteObject).l
 ; ===========================================================================
 ; loc_1DE4A:
 Obj_Splash_CheckSkid:
@@ -38506,7 +39382,7 @@ Obj_Starpost_MakeSpecialStars:
 	moveq	#4-1,d1 ; execute the loop 4 times (1 for each star)
 	moveq	#0,d2
 
--	bsr.w	SingleObjLoad2
+-	jsr	(SingleObjLoad2).l
 	bne.s	+	; rts
 	_move.l	id(a0),id(a1) ; load Obj_Starpost
 	move.l	#Obj_Starpost_MapUnc_1F4A0,mappings(a1)
@@ -38810,7 +39686,7 @@ Obj_RoundBumper_BumpCharacter:
 	moveq	#1,d0
 	movea.w	a1,a3
 	jsr	(AddPoints).l
-	bsr.w	SingleObjLoad
+	jsr	(SingleObjLoad).l
 	bne.s	return_1F83C
 	_move.l	#Obj_Points,id(a1) ; load Obj_Points
 	move.w	x_pos(a0),x_pos(a1)
@@ -39003,7 +39879,7 @@ loc_1FA2A:
 	jsr	(RandomNumber).l
 	andi.w	#$1F,d0
 	move.w	d0,objoff_38(a0)
-	bsr.w	SingleObjLoad
+	jsr	(SingleObjLoad).l
 	bne.s	loc_1FAA6
 	_move.l	id(a0),id(a1) ; load Obj_ARZBubbles
 	move.w	x_pos(a0),x_pos(a1)
@@ -40225,7 +41101,7 @@ Obj_InvisibleBlock_Main:
 	move.w	d2,d3
 	addq.w	#1,d3
 	move.w	x_pos(a0),d4
-	bsr.w	SolidObject_Always
+	jsr	(SolidObject_Always).l
 	move.w	x_pos(a0),d0
 	andi.w	#$FF80,d0
 	sub.w	(Camera_X_pos_coarse).w,d0
@@ -40775,7 +41651,7 @@ loc_21562:
 	bhs.s	return_215BE
 	tst.b	obj_control(a1)
 	bne.s	return_215BE
-	bsr.w	RideObject_SetRide
+	jsr	(RideObject_SetRide).l
 	rts
 ; ---------------------------------------------------------------------------
 
@@ -40803,7 +41679,7 @@ loc_215A8:
 	subi.w	#$10,d1
 	cmpi.w	#$30,d1
 	bhs.s	return_215BE
-	bsr.w	RideObject_SetRide
+	jsr	(RideObject_SetRide).l
 
 return_215BE:
 	rts
@@ -40969,7 +41845,7 @@ Obj_Spiral_Cylinder:
 	addq.w	#3,d2
 	move.w	d2,y_pos(a1)
 	move.b	#1,flip_turned(a1) ; face the other way
-	bsr.w	RideObject_SetRide
+	jsr	(RideObject_SetRide).l
 	move.w	#AniIDSonAni_Run,anim(a1)
 	move.b	#0,(a2)
 	tst.w	inertia(a1)

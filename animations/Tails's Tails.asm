@@ -15,6 +15,7 @@ Obj_TailsTailsAniData:	offsetTable
 		offsetTableEntry.w Obj_TailsTailsAni_Skidding	;  8
 		offsetTableEntry.w Obj_TailsTailsAni_Pushing	;  9
 		offsetTableEntry.w Obj_TailsTailsAni_Hanging	; $A
+		offsetTableEntry.w Obj_TailsTailsAni_Fly		; $B
 
 Obj_TailsTailsAni_Blank:		dc.b $20,  frTT_Null,$FF
 	rev02even
@@ -37,6 +38,8 @@ Obj_TailsTailsAni_Skidding:	dc.b   2,frTT_Pushing1,frTT_Pushing2,frTT_Pushing3,f
 Obj_TailsTailsAni_Pushing:	dc.b   9,frTT_Pushing1,frTT_Pushing2,frTT_Pushing3,frTT_Pushing4,$FF
 	rev02even
 Obj_TailsTailsAni_Hanging:	dc.b   9,frTT_Spindash1,frTT_Spindash2,frTT_Spindash3,frTT_Spindash4,$FF
+	rev02even
+Obj_TailsTailsAni_Fly:	dc.b   1,frTT_Fly1,frTT_Fly2,$FF
 	even
 
 ; Frame IDs
@@ -76,5 +79,8 @@ frTT_Pushing1	ds.b 1
 frTT_Pushing2	ds.b 1
 frTT_Pushing3	ds.b 1
 frTT_Pushing4	ds.b 1
+
+frTT_Fly1	ds.b 1
+frTT_Fly2	ds.b 1
 	even
 	dephase

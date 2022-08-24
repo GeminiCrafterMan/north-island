@@ -627,10 +627,18 @@ AniIDTailsAni_Dummy4		= id(TailsAni_Dummy4_ptr)		; 29 ; $1D
 AniIDTailsAni_Dummy5		= id(TailsAni_Dummy5_ptr)		; 30 ; $1E
 AniIDTailsAni_HaulAss		= id(TailsAni_HaulAss_ptr)		; 31 ; $1F
 AniIDTailsAni_Fly			= id(TailsAni_Fly_ptr)			; 32 ; $20
-AniIDTailsAni_AirRoll		= id(TailsAni_AirRoll_ptr)		; 33 ; $21
-AniIDTailsAni_Fall			= id(TailsAni_Fall_ptr)			; 34 ; $22
+AniIDTailsAni_Fly2			= id(TailsAni_Fly2_ptr)			; 33 ; $21
+AniIDTailsAni_Tired			= id(TailsAni_Tired_ptr)			; 34 ; $22
+AniIDTailsAni_Carry			= id(TailsAni_Carry_ptr)			; 35 ; $23
+AniIDTailsAni_CarryUp		= id(TailsAni_CarryUp_ptr)			; 36 ; $24
+AniIDTailsAni_AirRoll		= id(TailsAni_AirRoll_ptr)		; 37 ; $25
+AniIDTailsAni_Fall			= id(TailsAni_Fall_ptr)			; 38 ; $26
 AniIDTailsAni_Victory		= id(TailsAni_Victory_ptr)
-
+AniIDTailsAni_CarryTired	= id(TailsAni_CarryTired_ptr)			; 39 ; $27
+AniIDTailsAni_Swim			= id(TailsAni_Swim_ptr)			; 40 ; $28
+AniIDTailsAni_Swim2			= id(TailsAni_Swim2_ptr)			; 41 ; $29
+AniIDTailsAni_SwimTired		= id(TailsAni_SwimTired_ptr)			; 42 ; $2A
+AniIDTailsAni_SwimCarry		= id(TailsAni_SwimCarry_ptr)			; 43 ; $2B
 
 ; Other sizes
 palette_line_size =	$10*2	; 16 word entries
@@ -932,7 +940,9 @@ PalCycle_Frame_CNZ:		ds.w 1
 PalCycle_Frame2:		ds.w 1
 PalCycle_Frame3:		ds.w 1
 PalCycle_Frame2_CNZ:		ds.w 1
-				ds.b 4		; $FFFFF658-$FFFFF65B ; seems unused
+Flying_carrying_Sonic_flag:	ds.b	2 ; byte ; set when Tails carries Sonic in a Sonic and Tails game ; Made it 2 bytes for Flying_picking_Sonic_timer
+Super_Tails_flag:	ds.b	1 ; byte
+				ds.b 1		; $FFFFF65B ; seems unused
 Palette_frame:			ds.w 1
 Palette_timer:			ds.b 1		; was "Palette_frame_count"
 Super_Sonic_palette:		ds.b 1
@@ -1198,7 +1208,9 @@ Ring_spill_anim_frame:		ds.b 1
 Ring_spill_anim_accum:		ds.w 1
 				ds.b 6		; $FFFFFEA9-$FFFFFEAF ; seems unused, but cleared once
 Oscillating_variables_End
-				ds.b $10	; $FFFFFEB0-$FFFFFEBF ; seems unused
+Palette_frame_Tails:			ds.w	1	; Tails would use Palette_frame and Palette_timer, but they're reserved for his Super Flickies
+Palette_timer_Tails:			ds.b	1
+				ds.b	$D	; $FFFFFEB3-$FFFFFEBF ; seems unused
 
 ; values for the second player (some of these only apply to 2-player games)
 Tails_top_speed:		ds.w 1		; Tails_max_vel
