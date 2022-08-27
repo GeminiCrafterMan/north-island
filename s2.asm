@@ -30463,10 +30463,10 @@ Obj_Sonic_Init:
 	move.w	#$600,(Sonic_top_speed).w	; set Sonic's top speed
 	move.w	#$C,(Sonic_acceleration).w	; set Sonic's acceleration
 	move.w	#$80,(Sonic_deceleration).w	; set Sonic's deceleration
+	jsr		ResetArtTile_a0
 	tst.b	(Last_star_pole_hit).w
 	bne.s	Obj_Sonic_Init_Continued
 	; only happens when not starting at a checkpoint:
-	jsr		ResetArtTile_a0
 	move.b	#$C,top_solid_bit(a0)
 	move.b	#$D,lrb_solid_bit(a0)
 	move.w	x_pos(a0),(Saved_x_pos).w
@@ -33046,12 +33046,12 @@ Obj_Tails_Init:
 	move.w	#$600,(Tails_top_speed).w	; set Tails' top speed
 	move.w	#$C,(Tails_acceleration).w	; set Tails' acceleration
 	move.w	#$80,(Tails_deceleration).w	; set Tails' deceleration
-	cmpi.w	#2,(Player_mode).w
+	jsr		ResetArtTile_a0
+	cmpa.w	#MainCharacter,a0
 	bne.s	Obj_Tails_Init_2Pmode
 	tst.b	(Last_star_pole_hit).w
 	bne.s	Obj_Tails_Init_Continued
 	; only happens when not starting at a checkpoint:
-	jsr		ResetArtTile_a0
 	move.b	#$C,top_solid_bit(a0)
 	move.b	#$D,lrb_solid_bit(a0)
 	move.w	x_pos(a0),(Saved_x_pos).w
@@ -33062,7 +33062,6 @@ Obj_Tails_Init:
 ; ===========================================================================
 ; loc_1B952:
 Obj_Tails_Init_2Pmode:
-	jsr		ResetArtTile_a0
 	move.w	(MainCharacter+top_solid_bit).w,top_solid_bit(a0)
 	tst.w	(MainCharacter+art_tile).w
 	bpl.s	Obj_Tails_Init_Continued
@@ -34340,8 +34339,8 @@ loc_148CC:
 	move.b	(Timer_frames+1).w,d0
 	addq.b	#8,d0
 	andi.b	#$F,d0
-;	bne.s	locret_148F2
-;	sfx	sfx_FlyTired
+	bne.s	locret_148F2
+	sfx		sfx_FlyTired
 
 locret_148F2:
 	rts
@@ -34354,8 +34353,8 @@ loc_148F4:
 	move.b	(Timer_frames+1).w,d0
 	addq.b	#8,d0
 	andi.b	#$F,d0
-;	bne.s	locret_14912
-;	sfx	sfx_Flying
+	bne.s	locret_14912
+	sfx		sfx_Fly
 	
 locret_14912:
 	rts
@@ -37118,7 +37117,7 @@ loc_1D9A4:
 loc_1DA0C:
 	movea.w	parent(a0),a1 ; a1=character
 	btst	#status_sec_isInvincible,status_secondary(a1)
-	beq.w	DeleteObject
+	jeq		DeleteObject
 	move.w	x_pos(a1),d0
 	move.w	d0,x_pos(a0)
 	move.w	y_pos(a1),d1

@@ -36,10 +36,10 @@ Obj_Knuckles_Init:
 		move.w	#$600,(Sonic_top_speed).w
 		move.w	#$C,(Sonic_acceleration).w
 		move.w	#$80,(Sonic_deceleration).w
+		jsr		ResetArtTile_a0
 		tst.b	(Last_star_pole_hit).w
 		bne.s	Obj_Knuckles_Init_Continued
 	; only happens when not starting at a checkpoint:
-		jsr		ResetArtTile_a0
 		move.b	#$C,top_solid_bit(a0)
 		move.b	#$D,lrb_solid_bit(a0)
 		move.w	x_pos(a0),(Saved_x_pos).w
