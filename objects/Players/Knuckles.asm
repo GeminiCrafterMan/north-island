@@ -78,11 +78,19 @@ Obj_Knuckles_Control:
 ; ---------------------------------------------------------------------------
 
 loc_315422:
-		tst.b	(Control_Locked).w
-		bne.s	loc_31542E
-		move.w	(Ctrl_1_Held).w,(Ctrl_1_Held_Logical).w
-
-loc_31542E:
+	cmpa.w	#MainCharacter,a0
+	bne.s	.p2
+	tst.b	(Control_Locked).w	; are controls locked?
+	bne.s	.doneController			; if yes, branch
+	move.w	(Ctrl_1).w,(Ctrl_1_Logical).w	; copy new held buttons, to enable joypad control
+	bra.s	.doneController
+.p2:
+	tst.b	(Control_Locked_P2).w
+	bne.s	.cpu
+	move.w	(Ctrl_2).w,(Ctrl_2_Logical).w
+.cpu:
+	jsr		TailsCPU_Control
+.doneController:
 		btst	#0,obj_control(a0)
 		beq.s	loc_31543E
 		move.b	#0,double_jump_flag(a0)
@@ -137,7 +145,7 @@ Obj_Knuckles_MdNormal:
 		bsr.w	Knuckles_Jump
 		jsr		Sonic_SlopeResist
 		jsr		Sonic_Move
-		jsr		Sonic_Roll
+		jsr		Player_Roll
 		jsr		Sonic_LevelBound
 		jsr		ObjectMove		  ; AKA	SpeedToPos in Sonic 1
 		jsr		AnglePos
@@ -158,8 +166,8 @@ Obj_Knuckles_MdAir:
 		blt.s	+
 		move.b	#AniIDSonAni_Fall,anim(a0)
 +
-		jsr		SonicKnux_AirRoll
-		jsr		Sonic_JumpHeight
+		jsr		Player_AirRoll
+		jsr		Player_JumpHeight
 		jsr		Sonic_ChgJumpDir
 		jsr		Sonic_LevelBound
 		jsr		ObjectMoveAndFall
@@ -210,7 +218,7 @@ Knuckles_NormalGlide:
 		jsr		ResetHeight_a0
 		btst	#1,(Gliding_collision_flags).w
 		beq.s	Knuckles_BeginSlide
-		move.b	(Ctrl_1_Held_Logical).w,d0
+		jsr		GetCtrlHeldLogical
 		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		bne.s	loc_31574C
 		move.b	#2,double_jump_flag(a0)
@@ -263,6 +271,8 @@ return_3157AC:
 ; ---------------------------------------------------------------------------
 
 Knuckles_BeginClimb:
+		tst.w	(Tails_control_counter).w
+		bne.w	loc_31587A
 		tst.b	(Disable_wall_grab).w
 		bmi.w	loc_31587A
 		move.b	lrb_solid_bit(a0),d5
@@ -378,7 +388,7 @@ return_315900:
 ; ---------------------------------------------------------------------------
 
 Knuckles_Sliding:
-		move.b	(Ctrl_1_Held_Logical).w,d0
+		jsr		GetCtrlHeldLogical
 		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		beq.s	loc_315926
 		tst.w	x_vel(a0)
@@ -457,7 +467,8 @@ loc_3159F0:
 		move.b	#$A,y_radius(a0)
 		move.b	#$A,x_radius(a0)
 		moveq	#0,d1
-		btst	#button_up,(Ctrl_1_Held_Logical).w
+		jsr		GetCtrlHeldLogical
+		btst	#button_up,d0
 		beq.w	loc_315A76
 		move.w	y_pos(a0),d2
 		sub.w	#$B,d2
@@ -497,7 +508,8 @@ loc_315A54:
 ; ---------------------------------------------------------------------------
 
 loc_315A76:
-		btst	#button_down,(Ctrl_1_Held_Logical).w
+		jsr		GetCtrlHeldLogical
+		btst	#button_down,d0
 		beq.w	loc_315B04
 		cmp.b	#frK_Climb6+1,mapping_frame(a0)
 		bne.s	loc_315AA2
@@ -553,7 +565,7 @@ loc_315B02:
 		moveq	#-1,d1
 
 loc_315B04:
-		move.b	(Ctrl_1_Held_Logical).w,d0
+		jsr		GetCtrlHeldLogical
 		andi.b	#button_right,d0	; ???
 		bne.s	loc_16E34
 		move.b	top_solid_bit(a0),d5
@@ -571,9 +583,10 @@ loc_16E34:
 		bpl.s	loc_315B30
 		move.b	#3,double_jump_property(a0)
 		add.b	mapping_frame(a0),d1
-		btst	#button_up,(Ctrl_1_Held_Logical).w
+		jsr		GetCtrlHeldLogical
+		btst	#button_up,d0
 		bne.s	ClimbUpAni
-		btst	#button_down,(Ctrl_1_Held_Logical).w
+		btst	#button_down,d0
 		bne.s	ClimbDownAni
 		bra.s	ResetAniClimb
 
@@ -609,7 +622,7 @@ loc_315B30:
 		move.b	#$20,anim_frame_duration(a0)
 		move.b	#0,anim_frame(a0)
 		jsr		ResetHeight_a0
-		move.w	(Ctrl_1_Held_Logical).w,d0
+		jsr		GetCtrlHeldLogical
 		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		beq.s	return_315B94
 		move.w	#$FC80,y_vel(a0)
@@ -803,7 +816,8 @@ loc_315CE2:
 loc_315CFC:
 		move.w	d0,inertia(a0)
 		move.b	double_jump_property(a0),d0
-		btst	#button_left,(Ctrl_1_Held_Logical).w
+		jsr		GetCtrlHeldLogical.d2
+		btst	#button_left,d2
 		beq.s	loc_315D1C
 		cmp.b	#$80,d0
 		beq.s	loc_315D1C
@@ -817,7 +831,8 @@ loc_315D18:
 ; ---------------------------------------------------------------------------
 
 loc_315D1C:
-		btst	#button_right,(Ctrl_1_Held_Logical).w
+		jsr		GetCtrlHeldLogical.d2
+		btst	#button_right,d2
 		beq.s	loc_315D30
 		tst.b	d0
 		beq.s	loc_315D30
@@ -882,7 +897,7 @@ Obj_Knuckles_MdRoll:
 		bsr.w	Knuckles_Jump
 
 loc_315DA6:
-		jsr	Sonic_RollRepel
+		jsr	Player_RollRepel
 		jsr	Sonic_RollSpeed
 		jsr	Sonic_LevelBound
 		jsr	ObjectMove		  ; AKA	SpeedToPos in Sonic 1
@@ -898,7 +913,7 @@ Obj_Knuckles_MdJump:
 		blt.s	+
 		move.b	#AniIDSonAni_Fall,anim(a0)
 +
-		jsr		Sonic_JumpHeight
+		jsr		Player_JumpHeight
 		jsr		Sonic_ChgJumpDir
 		jsr		Sonic_LevelBound
 		jsr		ObjectMoveAndFall
@@ -914,7 +929,7 @@ Obj_Knuckles_MdJump:
 
 
 Knuckles_Jump:
-		move.b	(Ctrl_1_Press_Logical).w,d0
+		jsr		GetCtrlPressLogical
 		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		beq.w	return_3164EC
 		moveq	#0,d0
@@ -975,7 +990,7 @@ Knuckles_CheckGlide:
 		bne.w	return_3165D2
 		tst.b	double_jump_flag(a0)
 		bne.w	return_3165D2
-		move.b	(Ctrl_1_Press_Logical).w,d0
+		jsr		GetCtrlPressLogical
 		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		beq.w	return_3165D2
 		tst.b	(Super_Sonic_flag).w

@@ -1143,6 +1143,7 @@ locret_14630:
 	rts
 ; End of function sub_1459E
 
+; End of Tails CPU stuff
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to record Tails' previous positions for invincibility stars
@@ -1181,7 +1182,7 @@ loc_14760:
 	bsr.w	Tails_Jump
 	bsr.w	Tails_SlopeResist
 	bsr.w	Tails_Move
-	bsr.w	Tails_Roll
+	bsr.w	Player_Roll
 	bsr.w	Tails_LevelBound
 	jsr	(ObjectMove).l
 	bsr.w	AnglePos
@@ -1201,8 +1202,8 @@ Obj_Tails_MdAir:
 +
 	tst.b	double_jump_flag(a0)
 	bne.s	Tails_FlyingSwimming
-	bsr.w	Tails_AirRoll
-	bsr.w	Tails_JumpHeight
+	bsr.w	Player_AirRoll
+	bsr.w	Player_JumpHeight
 	bsr.w	Tails_ChgJumpDir
 	bsr.w	Tails_LevelBound
 	jsr	(ObjectMoveAndFall).l
@@ -1260,7 +1261,7 @@ loc_1485E:
 	bra.s	loc_14892
 ; ---------------------------------------------------------------------------
 
-loc_14860:
+loc_14860:  ; Come back to this one
 	tst.w	(Tails_control_counter).w
 	bne.s	Player2_ContFlight
 	tst.b	(Flying_carrying_Sonic_flag).w
@@ -1385,7 +1386,7 @@ loc_1494C:
 	bne.s	+
 	bsr.w	Tails_Jump
 +
-	bsr.w	Tails_RollRepel
+	bsr.w	Player_RollRepel
 	bsr.w	Tails_RollSpeed
 	bsr.w	Tails_LevelBound
 	jsr	(ObjectMove).l
@@ -1408,7 +1409,7 @@ Obj_Tails_MdJump:
 	clr.w	(Flying_carrying_Sonic_flag).w
 
 loc_149BA:
-	bsr.w	Tails_JumpHeight
+	bsr.w	Player_JumpHeight
 	bsr.w	Tails_ChgJumpDir
 	bsr.w	Tails_LevelBound
 	jsr	(ObjectMoveAndFall).l
@@ -1441,12 +1442,13 @@ Tails_Move:
     endif
 	tst.w	move_lock(a0)
 	bne.w	Obj_Tails_ResetScr
-	btst	#button_left,(Ctrl_2_Held_Logical).w	; is left being pressed?
+	jsr		GetCtrlHeldLogical.d2
+	btst	#button_left,d2	; is left being pressed?
 	beq.s	Obj_Tails_NotLeft			; if not, branch
 	bsr.w	Tails_MoveLeft
 ; loc_1C0D4:
 Obj_Tails_NotLeft:
-	btst	#button_right,(Ctrl_2_Held_Logical).w	; is right being pressed?
+	btst	#button_right,d2	; is right being pressed?
 	beq.s	Obj_Tails_NotRight			; if not, branch
 	bsr.w	Tails_MoveRight
 ; loc_1C0E0:
@@ -1511,7 +1513,8 @@ Tails_BalanceDone:
 ; ---------------------------------------------------------------------------
 ; loc_1C174:
 Tails_Lookup:
-	btst	#button_up,(Ctrl_2_Held_Logical).w	; is up being pressed?
+	jsr		GetCtrlHeldLogical
+	btst	#button_up,d0	; is up being pressed?
 	beq.s	Tails_Duck			; if not, branch
 	move.b	#AniIDTailsAni_LookUp,anim(a0)			; use "looking up" animation
 	addq.w	#1,(Tails_Look_delay_counter).w
@@ -1525,7 +1528,7 @@ Tails_Lookup:
 ; ---------------------------------------------------------------------------
 ; loc_1C1A2:
 Tails_Duck:
-	btst	#button_down,(Ctrl_2_Held_Logical).w	; is down being pressed?
+	btst	#button_down,d0	; is down being pressed?
 	beq.s	Obj_Tails_ResetScr			; if not, branch
 	move.b	#AniIDTailsAni_Duck,anim(a0)			; use "ducking" animation
 	addq.w	#1,(Tails_Look_delay_counter).w
@@ -1555,7 +1558,7 @@ Obj_Tails_ResetScr_Part2:
 ; ---------------------------------------------------------------------------
 ; loc_1C1E8:
 Obj_Tails_UpdateSpeedOnGround:
-	move.b	(Ctrl_2_Held_Logical).w,d0
+	jsr		GetCtrlHeldLogical
 	andi.b	#button_left_mask|button_right_mask,d0		; is left/right pressed?
 	bne.s	Obj_Tails_Traction	; if yes, branch
 	move.w	inertia(a0),d0
@@ -1769,11 +1772,12 @@ Tails_RollSpeed:
     endif
 	tst.w	move_lock(a0)
 	bne.s	Tails_ApplyRollSpeed
-	btst	#button_left,(Ctrl_2_Held_Logical).w	; is left being pressed?
+	jsr		GetCtrlHeldLogical
+	btst	#button_left,d0	; is left being pressed?
 	beq.s	+				; if not, branch
 	bsr.w	Tails_RollLeft
 +
-	btst	#button_right,(Ctrl_2_Held_Logical).w	; is right being pressed?
+	btst	#button_right,d0	; is right being pressed?
 	beq.s	Tails_ApplyRollSpeed		; if not, branch
 	bsr.w	Tails_RollRight
 
@@ -1905,13 +1909,14 @@ Tails_BrakeRollingLeft:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1C4CE:
-Tails_ChgJumpDir:
+Tails_ChgJumpDir:   ; I don't think this'll really ever be combined, but oh well.
 	move.w	(Tails_top_speed).w,d6
 	move.w	(Tails_acceleration).w,d5
 	asl.w	#1,d5
 	btst	#4,status(a0)		; did Tails jump from rolling?
 	bne.s	Obj_Tails_Jump_ResetScr	; if yes, branch to skip midair control
 	move.w	x_vel(a0),d0
+    ; Also come back to this one
 	tst.w	(Tails_control_counter).w
 	bne.s	Player2_ContFlight2
 	tst.b	(Flying_carrying_Sonic_flag).w
@@ -1936,6 +1941,7 @@ ComparePressT2:
 	bne.s	Player2_ContFlight3
 	tst.b	(Flying_carrying_Sonic_flag).w
 	bne.s	Player1_ContFlight3
+    ; Come back to this one
 Player2_ContFlight3:
 	btst	#button_right,(Ctrl_2_Held_Logical).w
 	bra.s	ComparePressT3
@@ -2041,58 +2047,6 @@ Tails_Boundary_Sides:
 ; ===========================================================================
 
 ; ---------------------------------------------------------------------------
-; Subroutine allowing Tails to start rolling when he's moving
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1C5B8:
-Tails_Roll:
-    if status_sec_isSliding = 7
-	tst.b	status_secondary(a0)
-	bmi.s	Obj_Tails_NoRoll
-    else
-	btst	#status_sec_isSliding,status_secondary(a0)
-	bne.w	Obj_Tails_NoRoll
-    endif
-	mvabs.w	inertia(a0),d0
-	cmpi.w	#$80,d0		; is Tails moving at $80 speed or faster?
-	blo.s	Obj_Tails_NoRoll	; if not, branch
-	move.b	(Ctrl_2_Held_Logical).w,d0
-	andi.b	#button_left_mask|button_right_mask,d0		; is left/right being pressed?
-	bne.s	Obj_Tails_NoRoll	; if yes, branch
-	btst	#button_down,(Ctrl_2_Held_Logical).w	; is down being pressed?
-	bne.s	Obj_Tails_ChkRoll			; if yes, branch
-; return_1C5DE:
-Obj_Tails_NoRoll:
-	rts
-
-; ---------------------------------------------------------------------------
-; loc_1C5E0:
-Obj_Tails_ChkRoll:
-	btst	#2,status(a0)	; is Tails already rolling?
-	beq.s	Obj_Tails_DoRoll	; if not, branch
-	rts
-
-; ---------------------------------------------------------------------------
-; loc_1C5EA:
-Obj_Tails_DoRoll:
-	bset	#2,status(a0)
-	move.b	#$E,y_radius(a0)
-	move.b	#7,x_radius(a0)
-	move.b	#AniIDTailsAni_Roll,anim(a0)	; use "rolling" animation
-	addq.w	#1,y_pos(a0)
-	sfx	sfx_Roll			; play rolling sound
-	tst.w	inertia(a0)
-	bne.s	return_1C61C
-	move.w	#$200,inertia(a0)
-
-return_1C61C:
-	rts
-; End of function Tails_Roll
-
-
-; ---------------------------------------------------------------------------
 ; Subroutine allowing Tails to jump
 ; ---------------------------------------------------------------------------
 
@@ -2100,7 +2054,7 @@ return_1C61C:
 
 ; loc_1C61E:
 Tails_Jump:
-	move.b	(Ctrl_2_Press_Logical).w,d0
+	jsr		GetCtrlPressLogical
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0 ; is A, B or C pressed?
 	beq.w	return_1C6C2	; if not, return
 	moveq	#0,d0
@@ -2152,40 +2106,10 @@ Tails_RollJump:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; ===========================================================================
-; loc_1C6CC:
-Tails_JumpHeight:
-	tst.b	jumping(a0)	; is Tails jumping?
-	beq.s	Tails_UpVelCap	; if not, branch
-
-	move.w	#-$400,d1
-	btst	#6,status(a0)	; is Tails underwater?
-	beq.s	+		; if not, branch
-	move.w	#-$200,d1
-+
-	cmp.w	y_vel(a0),d1	; is Tails going up faster than d1?
-	ble.s	Tails_Test_For_Flight		; if not, branch
-	move.b	(Ctrl_2_Held_Logical).w,d0
-	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0 ; is a jump button pressed?
-	bne.s	+		; if yes, branch
-	move.w	d1,y_vel(a0)	; immediately reduce Tails's upward speed to d1
-+
-	rts
-; ---------------------------------------------------------------------------
-; loc_1C6F8:
-Tails_UpVelCap:
-	tst.b	pinball_mode(a0)	; is Tails charging a spindash or in a rolling-only area?
-	bne.s	return_1C70C		; if yes, return
-	cmpi.w	#-$FC0,y_vel(a0)	; is Tails moving up really fast?
-	bge.s	return_1C70C		; if not, return
-	move.w	#-$FC0,y_vel(a0)	; cap upward speed
-
-return_1C70C:
-	rts
-; ---------------------------------------------------------------------------
 Tails_Test_For_Flight:
 	tst.b	double_jump_flag(a0)
 	bne.w	locret_151A2
-	move.b	(Ctrl_2_Press_Logical).w,d0
+    jsr		GetCtrlPressLogical
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.w	locret_151A2
 	cmpi.w	#2,(Player_mode).w
@@ -2239,7 +2163,7 @@ loc_1518C:
 locret_151A2:
 	rts
 ; ---------------------------------------------------------------------------
-; End of function Tails_JumpHeight
+; End of function Tails_Test_For_Flight
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to check for starting to charge a spindash
@@ -2248,12 +2172,12 @@ locret_151A2:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1C70E:
-Tails_CheckSpindash:
+Tails_CheckSpindash:    ; Remove this eventually. For now, I'll just fix its controls.
 	tst.b	spindash_flag(a0)
 	bne.s	Tails_UpdateSpindash
 	cmpi.b	#AniIDTailsAni_Duck,anim(a0)
 	bne.s	return_1C75C
-	move.b	(Ctrl_2_Press_Logical).w,d0
+    jsr		GetCtrlPressLogical
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.w	return_1C75C
 	move.b	#AniIDTailsAni_Spindash,anim(a0)
@@ -2282,7 +2206,7 @@ return_1C75C:
 
 ; loc_1C75E:
 Tails_UpdateSpindash:
-	move.b	(Ctrl_2_Held_Logical).w,d0
+    jsr		GetCtrlHeldLogical
 	btst	#button_down,d0
 	bne.s	Tails_ChargingSpindash
 
@@ -2335,7 +2259,7 @@ Tails_ChargingSpindash:			; If still charging the dash...
 	move.w	#0,spindash_counter(a0)
 
 loc_1C7F8:
-	move.b	(Ctrl_2_Press_Logical).w,d0
+    jsr		GetCtrlPressLogical
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.w	loc_1C828
 	move.w	#(AniIDTailsAni_Spindash<<8),anim(a0)
@@ -2392,45 +2316,6 @@ loc_1C876:
 return_1C87A:
 	rts
 ; End of subroutine Tails_SlopeResist
-
-; ---------------------------------------------------------------------------
-; Subroutine to push Tails down a slope while he's rolling
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1C87C:
-Tails_RollRepel:
-	move.b	angle(a0),d0
-	addi.b	#$60,d0
-	cmpi.b	#-$40,d0
-	bhs.s	return_1C8B6
-	move.b	angle(a0),d0
-	jsr	(CalcSine).l
-	muls.w	#$50,d0
-	asr.l	#8,d0
-	tst.w	inertia(a0)
-	bmi.s	loc_1C8AC
-	tst.w	d0
-	bpl.s	loc_1C8A6
-	asr.l	#2,d0
-
-loc_1C8A6:
-	add.w	d0,inertia(a0)
-	rts
-; ===========================================================================
-
-loc_1C8AC:
-	tst.w	d0
-	bmi.s	loc_1C8B2
-	asr.l	#2,d0
-
-loc_1C8B2:
-	add.w	d0,inertia(a0)
-
-return_1C8B6:
-	rts
-; End of function Tails_RollRepel
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to return Tails' angle to 0 as he jumps
@@ -2813,8 +2698,7 @@ return_1CC4E:
 ; ===========================================================================
 
 ; ---------------------------------------------------------------------------
-; Tails when he dies
-; .
+; Tails when he dies.
 ; ---------------------------------------------------------------------------
 
 ; loc_1CC50:
@@ -2831,43 +2715,21 @@ Obj_Tails_Dead:
 +
 	tst.b	(Flying_carrying_Sonic_flag).w
 	beq.s	loc_157C8
-	lea	(MainCharacter).w,a1
+	lea	    (MainCharacter).w,a1
 	clr.b	obj_control(a1)
 	bset	#1,status(a1)
 	clr.w	(Flying_carrying_Sonic_flag).w
 
 loc_157C8:
-	bsr.w	Obj_Tails_CheckGameOver
-	jsr	(ObjectMoveAndFall).l
+	jsr 	CheckGameOver
+	jsr	    (ObjectMoveAndFall).l
 	bsr.w	Tails_RecordPos
 	bsr.w	Tails_Animate
 	bsr.w	LoadTailsDynPLC
-	jmp	(DisplaySprite).l
+	jmp	    (DisplaySprite).l
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; loc_1CC6C:
-Obj_Tails_CheckGameOver:
-	cmpa.w	#MainCharacter,a0	; is it a Tails Alone game?
-	beq.w	CheckGameOver		; if yes, branch... goodness, code reuse
-	move.b	#1,(Scroll_lock_P2).w
-	move.b	#0,spindash_flag(a0)
-	move.w	(Tails_Max_Y_pos).w,d0
-	addi.w	#$100,d0
-	cmp.w	y_pos(a0),d0
-	bge.w	return_1CD8E
-	move.b	#2,routine(a0)
-	bra.w	TailsCPU_Despawn
-; ---------------------------------------------------------------------------
-; loc_1CCCC:
 Obj_Tails_Finished:
-	clr.b	(Update_HUD_timer).w
-	clr.b	(Update_HUD_timer_2P).w
-	move.b	#8,routine(a0)
-	music	mus_GameOver
-	moveq	#PLCID_GameOver,d0
-	jmp	(LoadPLC).l
-; End of function Obj_Tails_CheckGameOver
+    jmp     Obj_Sonic_Finished
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------

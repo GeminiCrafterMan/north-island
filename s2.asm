@@ -30413,6 +30413,40 @@ DPLC_ArtTileSet:
 	move.w	#tiles_to_bytes(ArtTile_ArtUnc_Tails),d4
 	rts
 
+GetCtrlPressLogical:
+	cmpa.w	#MainCharacter,a0
+	bne.s	.sidekick
+	move.b	(Ctrl_1_Press_Logical).w,d0
+	rts
+.sidekick:
+	move.b	(Ctrl_2_Press_Logical).w,d0
+	rts
+.d2:
+	cmpa.w	#MainCharacter,a0
+	bne.s	+
+	move.b	(Ctrl_1_Press_Logical).w,d2
+	rts
++
+	move.b	(Ctrl_2_Press_Logical).w,d2
+	rts
+
+GetCtrlHeldLogical:
+	cmpa.w	#MainCharacter,a0
+	bne.s	.sidekick
+	move.b	(Ctrl_1_Held_Logical).w,d0
+	rts
+.sidekick:
+	move.b	(Ctrl_2_Held_Logical).w,d0
+	rts
+.d2:
+	cmpa.w	#MainCharacter,a0
+	bne.s	+
+	move.b	(Ctrl_1_Held_Logical).w,d2
+	rts
++
+	move.b	(Ctrl_2_Held_Logical).w,d2
+	rts
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 01 - Sonic
@@ -30497,10 +30531,20 @@ Obj_Sonic_Control:
 	clr.b	(Control_Locked).w		; unlock control
 	rts
 ; -----------------------------------------------------------------------
-+	tst.b	(Control_Locked).w	; are controls locked?
-	bne.s	+			; if yes, branch
-	move.w	(Ctrl_1).w,(Ctrl_1_Logical).w	; copy new held buttons, to enable joypad control
 +
+	cmpa.w	#MainCharacter,a0
+	bne.s	.p2
+	tst.b	(Control_Locked).w	; are controls locked?
+	bne.s	.doneController			; if yes, branch
+	move.w	(Ctrl_1).w,(Ctrl_1_Logical).w	; copy new held buttons, to enable joypad control
+	bra.s	.doneController
+.p2:
+	tst.b	(Control_Locked_P2).w
+	bne.s	.cpu
+	move.w	(Ctrl_2).w,(Ctrl_2_Logical).w
+.cpu:
+	bsr.w	TailsCPU_Control
+.doneController:
 	btst	#0,obj_control(a0)	; is Sonic interacting with another object that holds him in place or controls his movement somehow?
 	bne.s	+			; if yes, branch to skip Sonic's control
 	moveq	#0,d0
@@ -30765,7 +30809,7 @@ Obj_Sonic_OutWater:
 ; ---------------------------------------------------------------------------
 ; loc_1A26E:
 Obj_Sonic_MdNormal_Checks:
-	move.b	(Ctrl_1_Press_Logical).w,d0
+	jsr		GetCtrlPressLogical
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	bne.s	Obj_Sonic_MdNormal
 	tst.b	(Victory_flag).w
@@ -30781,7 +30825,7 @@ Obj_Sonic_MdNormal_Checks:
 	bne.s	Obj_Sonic_MdNormal
 	cmpi.b	#$1E,anim_frame(a0)
 	blo.s	Obj_Sonic_MdNormal
-	move.b	(Ctrl_1_Held_Logical).w,d0
+	jsr		GetCtrlHeldLogical
 	andi.b	#button_up_mask|button_down_mask|button_left_mask|button_right_mask|button_B_mask|button_C_mask|button_A_mask,d0
 	beq.s	return_1A2DE
 	move.b	#AniIDSonAni_Blink,anim(a0)
@@ -30796,7 +30840,7 @@ Obj_Sonic_MdNormal:
 	bsr.w	Sonic_Jump
 	bsr.w	Sonic_SlopeResist
 	bsr.w	Sonic_Move
-	bsr.w	Sonic_Roll
+	bsr.w	Player_Roll
 	bsr.w	Sonic_LevelBound
 	jsr	(ObjectMove).l
 	bsr.w	AnglePos
@@ -30816,8 +30860,8 @@ Obj_Sonic_MdAir:
 	blt.s	+
 	move.b	#AniIDSonAni_Fall,anim(a0)
 +
-	bsr.w	SonicKnux_AirRoll
-	bsr.w	Sonic_JumpHeight
+	bsr.w	Player_AirRoll
+	bsr.w	Player_JumpHeight
 	bsr.w	Sonic_ChgJumpDir
 	bsr.w	Sonic_LevelBound
 	jsr	(ObjectMoveAndFall).l
@@ -30838,7 +30882,7 @@ Obj_Sonic_MdRoll:
 	bne.s	+
 	bsr.w	Sonic_Jump
 +
-	bsr.w	Sonic_RollRepel
+	bsr.w	Player_RollRepel
 	bsr.w	Sonic_RollSpeed
 	bsr.w	Sonic_LevelBound
 	jsr	(ObjectMove).l
@@ -30853,7 +30897,7 @@ Obj_Sonic_MdRoll:
 ;        Why they gave it a separate copy of the code, I don't know.
 ; loc_1A330: Obj_Sonic_MdJump2:
 Obj_Sonic_MdJump:
-	bsr.w	Sonic_JumpHeight
+	bsr.w	Player_JumpHeight
 	bsr.w	Sonic_ChgJumpDir
 	bsr.w	Sonic_LevelBound
 	jsr	(ObjectMoveAndFall).l
@@ -30886,12 +30930,13 @@ Sonic_Move:
     endif
 	tst.w	move_lock(a0)
 	bne.w	Obj_Sonic_ResetScr
-	btst	#button_left,(Ctrl_1_Held_Logical).w	; is left being pressed?
+	jsr		GetCtrlHeldLogical.d2
+	btst	#button_left,d2	; is left being pressed?
 	beq.s	Obj_Sonic_NotLeft			; if not, branch
 	bsr.w	Sonic_MoveLeft
 ; loc_1A382:
 Obj_Sonic_NotLeft:
-	btst	#button_right,(Ctrl_1_Held_Logical).w	; is right being pressed?
+	btst	#button_right,d2	; is right being pressed?
 	beq.s	Obj_Sonic_NotRight			; if not, branch
 	bsr.w	Sonic_MoveRight
 ; loc_1A38E:
@@ -31056,7 +31101,8 @@ loc_1A57C:
 ; ---------------------------------------------------------------------------
 ; loc_1A584:
 Sonic_Lookup:
-	btst	#button_up,(Ctrl_1_Held_Logical).w	; is up being pressed?
+	jsr		GetCtrlHeldLogical
+	btst	#button_up,d0	; is up being pressed?
 	beq.s	Sonic_Duck			; if not, branch
 	move.b	#AniIDSonAni_LookUp,anim(a0)			; use "looking up" animation
 	addq.w	#1,(Sonic_Look_delay_counter).w
@@ -31070,7 +31116,7 @@ Sonic_Lookup:
 ; ---------------------------------------------------------------------------
 ; loc_1A5B2:
 Sonic_Duck:
-	btst	#button_down,(Ctrl_1_Held_Logical).w	; is down being pressed?
+	btst	#button_down,d0	; is down being pressed?
 	beq.s	Obj_Sonic_ResetScr			; if not, branch
 	move.b	#AniIDSonAni_Duck,anim(a0)			; use "ducking" animation
 	addq.w	#1,(Sonic_Look_delay_counter).w
@@ -31104,7 +31150,7 @@ Obj_Sonic_UpdateSpeedOnGround:
 	beq.w	+
 	move.w	#$C,d5
 +
-	move.b	(Ctrl_1_Held_Logical).w,d0
+	jsr		GetCtrlHeldLogical
 	andi.b	#button_left_mask|button_right_mask,d0 ; is left/right pressed?
 	bne.s	Obj_Sonic_Traction	; if yes, branch
 	move.w	inertia(a0),d0
@@ -31322,11 +31368,12 @@ Sonic_RollSpeed:
     endif
 	tst.w	move_lock(a0)
 	bne.s	Sonic_ApplyRollSpeed
-	btst	#button_left,(Ctrl_1_Held_Logical).w	; is left being pressed?
+	jsr		GetCtrlHeldLogical
+	btst	#button_left,d0	; is left being pressed?
 	beq.s	+				; if not, branch
 	bsr.w	Sonic_RollLeft
 +
-	btst	#button_right,(Ctrl_1_Held_Logical).w	; is right being pressed?
+	btst	#button_right,d0	; is right being pressed?
 	beq.s	Sonic_ApplyRollSpeed		; if not, branch
 	bsr.w	Sonic_RollRight
 
@@ -31465,7 +31512,8 @@ Sonic_ChgJumpDir:
 	btst	#4,status(a0)		; did Sonic jump from rolling?
 	bne.s	Obj_Sonic_Jump_ResetScr	; if yes, branch to skip midair control
 	move.w	x_vel(a0),d0
-	btst	#button_left,(Ctrl_1_Held_Logical).w
+	jsr		GetCtrlHeldLogical.d2
+	btst	#button_left,d2
 	beq.s	+	; if not holding left, branch
 
 	bset	#0,status(a0)
@@ -31476,7 +31524,7 @@ Sonic_ChgJumpDir:
 	bgt.s	+	; if new speed is less than the maximum, branch
 	move.w	d1,d0	; limit speed in air going left, even if Sonic was already going faster (speed limit/cap)
 +
-	btst	#button_right,(Ctrl_1_Held_Logical).w
+	btst	#button_right,d2
 	beq.s	+	; if not holding right, branch
 
 	bclr	#0,status(a0)
@@ -31582,7 +31630,7 @@ Sonic_Boundary_Sides:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1A9D2:
-Sonic_Roll:
+Player_Roll:
     if status_sec_isSliding = 7
 	tst.b	status_secondary(a0)
 	bmi.s	Obj_Sonic_NoRoll
@@ -31593,10 +31641,11 @@ Sonic_Roll:
 	mvabs.w	inertia(a0),d0
 	cmpi.w	#$80,d0		; is Sonic moving at $80 speed or faster?
 	blo.s	Obj_Sonic_NoRoll	; if not, branch
-	move.b	(Ctrl_1_Held_Logical).w,d0
+	jsr		GetCtrlHeldLogical
 	andi.b	#button_left_mask|button_right_mask,d0 ; is left/right being pressed?
 	bne.s	Obj_Sonic_NoRoll	; if yes, branch
-	btst	#button_down,(Ctrl_1_Held_Logical).w ; is down being pressed?
+	jsr		GetCtrlHeldLogical
+	btst	#button_down,d0 ; is down being pressed?
 	bne.s	Obj_Sonic_ChkRoll			; if yes, branch
 ; return_1A9F8:
 Obj_Sonic_NoRoll:
@@ -31617,6 +31666,10 @@ Obj_Sonic_DoRoll:
 	move.b	#7,x_radius(a0)
 	move.b	#AniIDSonAni_Roll,anim(a0)	; use "rolling" animation
 	addq.w	#5,y_pos(a0)
+	cmpi.l	#Obj_Tails,id(a0)
+	bne.s	.cont
+	subq.w	#4,y_pos(a0)
+.cont:
 	sfx	sfx_Roll			; play rolling sound
 	tst.w	inertia(a0)
 	bne.s	return_1AA36
@@ -31624,7 +31677,7 @@ Obj_Sonic_DoRoll:
 
 return_1AA36:
 	rts
-; End of function Sonic_Roll
+; End of function Player_Roll
 
 
 ; ---------------------------------------------------------------------------
@@ -31635,7 +31688,7 @@ return_1AA36:
 
 ; loc_1AA38:
 Sonic_Jump:
-	move.b	(Ctrl_1_Press_Logical).w,d0
+	jsr		GetCtrlPressLogical
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0 ; is A, B or C pressed?
 	beq.w	return_1AAE6	; if not, return
 	moveq	#0,d0
@@ -31688,7 +31741,7 @@ Sonic_RollJump:
 	rts
 ; End of function Sonic_Jump
 
-SonicKnux_AirRoll:
+Player_AirRoll:
 	btst	#1,status(a0)	; is Sonic in the air?
 	beq.s	.nope	; if not, branch
 	cmpi.b	#AniIDSonAni_Roll,anim(a0)
@@ -31697,7 +31750,7 @@ SonicKnux_AirRoll:
 	beq.s	.nope
 	tst.b	double_jump_flag(a0)
 	bne.s	.nope
-	move.b	(Ctrl_1_Held_Logical).w,d0
+	jsr		GetCtrlHeldLogical
 	tst.b	(Debug_mode_flag).w
 	beq.s	.notDebug
 	andi.b	#button_C_mask|button_A_mask,d0 ; is a jump button pressed?
@@ -31712,36 +31765,10 @@ SonicKnux_AirRoll:
 
 .nope:
 	rts
-; End of function Sonic_AirRoll
-
-Tails_AirRoll:
-	btst	#1,status(a0)	; is Tails in the air?
-	beq.s	.nope	; if not, branch
-	cmpi.b	#AniIDTailsAni_Roll,anim(a0)
-	beq.s	.nope
-	cmpi.b	#AniIDTailsAni_Roll2,anim(a0)
-	beq.s	.nope
-	tst.b	double_jump_flag(a0)
-	bne.s	.nope
-	move.b	(Ctrl_2_Held_Logical).w,d0
-	tst.b	(Debug_mode_flag).w
-	beq.s	.notDebug
-	andi.b	#button_C_mask|button_A_mask,d0 ; is a jump button pressed?
-	bra.s	.debugDone
-.notDebug:
-	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0 ; is a jump button pressed?
-.debugDone:
-	beq.s	.nope	; if not, branch
-	move.b	#AniIDTailsAni_AirRoll,anim(a0)	; use "rolling"	animation
-	bset	#2,status(a0)	; force Tails to roll
-	sfx		sfx_AirRoll
-
-.nope:
-	rts
-; End of function Tails_AirRoll
+; End of function Player_AirRoll
 
 ; ---------------------------------------------------------------------------
-; Subroutine letting Sonic control the height of the jump
+; Subroutine letting the player control the height of the jump
 ; when the jump button is released
 ; ---------------------------------------------------------------------------
 
@@ -31749,7 +31776,7 @@ Tails_AirRoll:
 
 ; ===========================================================================
 ; loc_1AAF0:
-Sonic_JumpHeight:
+Player_JumpHeight:
 	tst.b	jumping(a0)	; is Sonic jumping?
 	beq.w	Sonic_UpVelCap	; if not, branch
 
@@ -31760,7 +31787,7 @@ Sonic_JumpHeight:
 +
 	cmp.w	y_vel(a0),d1	; is Sonic going up faster than d1?
 	ble.s	+		; if not, branch
-	move.b	(Ctrl_1_Held_Logical).w,d0
+	jsr		GetCtrlHeldLogical
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0 ; is a jump button pressed?
 	bne.s	+		; if yes, branch
 	move.w	d1,y_vel(a0)	; immediately reduce Sonic's upward speed to d1
@@ -31772,8 +31799,8 @@ DoubleJumpMoves:
 	; Okay, I was GOING to make a LUT, but then I realized that that doesn't work here!!
 	cmpi.l	#Obj_Sonic,id(a0)
 	jeq		Sonic_DJMoves
-;	cmpi.l	#Obj_Tails,id(a0)
-;	jeq		Tails_CheckFlight	; Nonexistent!
+	cmpi.l	#Obj_Tails,id(a0)
+	jeq		Tails_Test_For_Flight
 	cmpi.l	#Obj_Knuckles,id(a0)
 	jeq		Knuckles_CheckGlide
 .ret:
@@ -31789,14 +31816,14 @@ Sonic_UpVelCap:
 
 return_1AB36:
 	rts
-; End of subroutine Sonic_JumpHeight
+; End of subroutine Player_JumpHeight
 
 Sonic_DJMoves:
 	tst.w	(Demo_mode_flag).w
 	bne.w	.ret
 	tst.b	double_jump_flag(a0)
 	bne.w	.ret
-	move.b	(Ctrl_1_Press_Logical).w,d0
+	jsr		GetCtrlPressLogical
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.w	.ret
 	tst.b	(Super_Sonic_flag).w	; is Sonic already Super?
@@ -31955,7 +31982,7 @@ Sonic_CheckSpindash:
 	bne.s	Sonic_UpdateSpindash
 	cmpi.b	#AniIDSonAni_Duck,anim(a0)
 	bne.s	return_1AC8C
-	move.b	(Ctrl_1_Press_Logical).w,d0
+	jsr		GetCtrlPressLogical
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.w	return_1AC8C
 	move.b	#AniIDSonAni_Spindash,anim(a0)
@@ -31984,7 +32011,7 @@ return_1AC8C:
 
 ; loc_1AC8E:
 Sonic_UpdateSpindash:
-	move.b	(Ctrl_1_Held_Logical).w,d0
+	jsr		GetCtrlHeldLogical
 	btst	#button_down,d0
 	bne.w	Sonic_ChargingSpindash
 
@@ -32052,7 +32079,7 @@ Sonic_ChargingSpindash:			; If still charging the dash...
 	bcc.s	+
 	move.w	#0,spindash_counter(a0)
 +
-	move.b	(Ctrl_1_Press_Logical).w,d0
+	jsr		GetCtrlPressLogical
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.w	Obj_Sonic_Spindash_ResetScr
 	move.w	#(AniIDSonAni_Spindash<<8),anim(a0)
@@ -32118,7 +32145,7 @@ return_1ADCA:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1ADCC:
-Sonic_RollRepel:
+Player_RollRepel:
 	move.b	angle(a0),d0
 	addi.b	#$60,d0
 	cmpi.b	#$C0,d0
@@ -32148,7 +32175,7 @@ loc_1AE02:
 
 return_1AE06:
 	rts
-; End of function Sonic_RollRepel
+; End of function Player_RollRepel
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to push any player down a slope
@@ -32576,12 +32603,13 @@ Sonic_HurtInstantRecover:
 ; ===========================================================================
 
 ; ---------------------------------------------------------------------------
-; Sonic when he dies
-; ...poor Sonic
+; Sonic when he dies.
 ; ---------------------------------------------------------------------------
 
 ; loc_1B1E6: Obj_01_Sub_6:
 Obj_Sonic_Dead:
+	cmpa.w	#MainCharacter,a0
+	bne.s	+
 	tst.w	(Debug_mode_flag).w
 	beq.s	+
 	btst	#button_B,(Ctrl_1_Press).w
@@ -32601,6 +32629,18 @@ Obj_Sonic_Dead:
 
 ; loc_1B21C:
 CheckGameOver:
+	cmpa.w	#MainCharacter,a0
+	beq.s	.p1
+; bro idfk what this even does lmao
+	move.b	#1,(Scroll_lock_P2).w
+	move.b	#0,spindash_flag(a0)
+	move.w	(Tails_Max_Y_pos).w,d0
+	addi.w	#$100,d0
+	cmp.w	y_pos(a0),d0
+	bge.w	return_1B31A
+	move.b	#2,routine(a0)
+	bra.w	TailsCPU_Despawn
+.p1:
 	move.b	#1,(Scroll_lock).w
 	move.b	#0,spindash_flag(a0)
 	move.w	(Camera_Max_Y_pos_now).w,d0
