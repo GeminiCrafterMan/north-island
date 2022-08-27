@@ -164,13 +164,12 @@ Obj_Knuckles_MdAir:
 		jsr		Sonic_LevelBound
 		jsr		ObjectMoveAndFall
 		btst	#6,status(a0)
-		beq.s	loc_31569C
+		beq.s	.cont
 		sub.w	#$28,y_vel(a0)
 
-loc_31569C:
+	.cont:
 		jsr		Sonic_JumpAngle
-		bsr.w	Knuckles_DoLevelCollision
-		rts
+		jmp		Knuckles_DoLevelCollision
 ; ---------------------------------------------------------------------------
 
 Obj_Knuckles_MdAir_Gliding:
@@ -904,13 +903,12 @@ Obj_Knuckles_MdJump:
 		jsr		Sonic_LevelBound
 		jsr		ObjectMoveAndFall
 		btst	#6,status(a0)
-		beq.s	loc_315DE2
+		beq.s	.cont
 		sub.w	#$28,y_vel(a0)
 
-loc_315DE2:
-		jsr	Sonic_JumpAngle
-		bsr.w	Knuckles_DoLevelCollision
-		rts
+	.cont:
+		jsr		Sonic_JumpAngle
+		jmp		Knuckles_DoLevelCollision
 
 ; =============== S U B	R O U T	I N E =======================================
 
