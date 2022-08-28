@@ -2045,7 +2045,7 @@ PalCycle_Load:
 ; ===========================================================================
 ; off_19F4:
 PalCycle: zoneOrderedOffsetTable 2,1
-	zoneOffsetTableEntry.w PalCycle_EHZ	; 0
+	zoneOffsetTableEntry.w PalCycle_Null	; 0
 	zoneOffsetTableEntry.w PalCycle_Null	; 1
 	zoneOffsetTableEntry.w PalCycle_WZ	; 2
 	zoneOffsetTableEntry.w PalCycle_Null	; 3
@@ -2068,20 +2068,6 @@ PalCycle: zoneOrderedOffsetTable 2,1
 ; return_1A16:
 PalCycle_Null:
 	rts
-; ===========================================================================
-
-PalCycle_EHZ:
-	lea	(CyclingPal_EHZ_ARZ_Water).l,a0
-	subq.w	#1,(PalCycle_Timer).w
-	bpl.s	+	; rts
-	move.w	#7,(PalCycle_Timer).w
-	move.w	(PalCycle_Frame).w,d0
-	addq.w	#1,(PalCycle_Frame).w
-	andi.w	#3,d0
-	lsl.w	#3,d0
-	move.l	(a0,d0.w),(Normal_palette_line2+6).w
-	move.l	4(a0,d0.w),(Normal_palette_line2+$1C).w
-+	rts
 ; ===========================================================================
 
 ; PalCycle_Level2:
@@ -2302,7 +2288,7 @@ PalCycle_CPZ:
 ; ===========================================================================
 
 PalCycle_ARZ:
-	lea	(CyclingPal_EHZ_ARZ_Water).l,a0
+	lea	(CyclingPal_ARZ_Water).l,a0
 	subq.w	#1,(PalCycle_Timer).w
 	bpl.s	+	; rts
 	move.w	#5,(PalCycle_Timer).w
@@ -2357,8 +2343,8 @@ PalCycle_WFZ:
 +	rts
 ; ===========================================================================
 ; word_1E7A:
-CyclingPal_EHZ_ARZ_Water:
-	BINCLUDE "art/palettes/EHZ ARZ Water.bin"; Emerald Hill/Aquatic Ruin Rotating Water palette
+CyclingPal_ARZ_Water:
+	BINCLUDE "art/palettes/ARZ Water.bin"; Aquatic Ruin Rotating Water palette
 ; word_1E9A:
 CyclingPal_Lava:
 	BINCLUDE "art/palettes/Hill Top Lava.bin"; Hill Top Lava palette
@@ -13495,8 +13481,40 @@ SwScrl_Title:
 
 	rts
 ; ===========================================================================
-; loc_C57E:
 SwScrl_EHZ:
+	tst.w	(Two_player_mode).w
+	bne.w	SwScrl_EHZ_2P
+	lea		.ParallaxScriptSSLZ,a1
+	jmp		ExecuteParallaxScript
+
+; ---------------------------------------------------------------
+
+.ParallaxScriptSSLZ:
+
+_normal = $0000
+_moving = $0200
+_linear = $0400
+
+;			Mode			Speed/dist		Number of lines		What's moving?
+	dc.w	_normal,		$0000,			8					; nothing
+	dc.w	_moving,		$0008,			40					; clouds 7
+	dc.w	_normal,		$0000,			16					; nothing
+	dc.w	_moving+2,		$0008,			24					; clouds 6
+	dc.w	_moving+4,		$0008,			24					; clouds 5
+;							bottom half of clouds
+	dc.w	_moving+6,		$0008,			16					; clouds 4
+	dc.w	_moving+8,		$0008,			16					; clouds 3
+	dc.w	_normal,		$0000,			8					; nothing
+	dc.w	_moving+10,		$0008,			8					; clouds 2
+	dc.w	_moving+12,		$0008,			8					; clouds 1
+	dc.w	_normal,		$0001,			8					; mountains
+	dc.w	_linear+2,		$0001,			80					; ocean
+	dc.w	-1
+; End of function Deform_BGZ
+; ===========================================================================
+; loc_C57E:
+; SwScrl_EHZ
+SwScrl_EHZ_2P:
 	move.w	(Camera_BG_Y_pos).w,(Vscroll_Factor_BG).w
 	lea	(Horiz_Scroll_Buf).w,a1
 	move.w	(Camera_X_pos).w,d0
@@ -16417,6 +16435,7 @@ loadLevelLayout:
 	jmpto	(KosDec).l, JmpTo_KosDec
 ; End of function loadLevelLayout
 
+; is this dead code, or what?
 ; ===========================================================================
 	lea	(Level_Layout).w,a3
 	move.w	#bytesToLcnt(Level_Layout_End-Level_Layout),d1
@@ -16575,7 +16594,7 @@ JmpTo_KosDec ; JmpTo
     endif
 
 
-
+	include	"misc/Parallax Engine.asm"
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
