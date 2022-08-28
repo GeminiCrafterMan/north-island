@@ -30505,10 +30505,15 @@ Obj_Sonic_Init_Continued:
 	move.b	#$1E,air_left(a0)
 	subi.w	#$20,x_pos(a0)
 	addi_.w	#4,y_pos(a0)
+	cmpa.w	#MainCharacter,a0
+	bne.s	.p2
 	move.w	#0,(Sonic_Pos_Record_Index).w
-
+	bra.s	.cont
+.p2:
+	move.w	#0,(Tails_Pos_Record_Index).w
+.cont:
 	move.w	#$3F,d2
--	bsr.w	Sonic_RecordPos
+-	bsr.w	P1_RecordPos
 	subq.w	#4,a1
 	move.l	#0,(a1)
 	dbf	d2,-
@@ -30559,7 +30564,7 @@ Obj_Sonic_Control:
 +
 	bsr.s	Player_Display
 	bsr.w	Player_SuperHyper
-	bsr.w	Sonic_RecordPos
+	bsr.w	P1_RecordPos
 	bsr.w	Sonic_Water
 	move.b	(Primary_Angle).w,next_tilt(a0)
 	move.b	(Secondary_Angle).w,tilt(a0)
@@ -30664,7 +30669,9 @@ Obj_Sonic_ExitChk:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1A15C:
-Sonic_RecordPos:
+P1_RecordPos:
+	cmpa.w	#MainCharacter,a0
+	jne		P2_RecordPos
 	move.w	(Sonic_Pos_Record_Index).w,d0
 	lea	(Sonic_Pos_Record_Buf).w,a1
 	lea	(a1,d0.w),a1
@@ -30678,7 +30685,7 @@ Sonic_RecordPos:
 	move.w	status(a0),(a1)+
 
 	rts
-; End of subroutine Sonic_RecordPos
+; End of subroutine P1_RecordPos
 
 PutDustIntoA1:
 	cmpa.w	#MainCharacter,a0
@@ -32092,6 +32099,8 @@ Sonic_ChargingSpindash:			; If still charging the dash...
 ; loc_1AD78:
 Obj_Sonic_Spindash_ResetScr:
 	addq.l	#4,sp
+	cmpa.w	#MainCharacter,a0
+	bne.s	loc_1AD8C	; just don't do it at all, we're removing p2 camera bias anyway
 	cmpi.w	#(224/2)-16,(Camera_Y_pos_bias).w
 	beq.s	loc_1AD8C
 	bhs.s	+
@@ -32562,7 +32571,7 @@ Obj_Sonic_Hurt_Normal:
 +
 	bsr.w	Sonic_HurtStop
 	bsr.w	Sonic_LevelBound
-	bsr.w	Sonic_RecordPos
+	bsr.w	P1_RecordPos
 	bsr.w	Sonic_Animate
 	bsr.w	LoadSonicDynPLC
 	jmp	(DisplaySprite).l
@@ -32596,7 +32605,7 @@ return_1B1C8:
 Sonic_HurtInstantRecover:
 	subq.b	#2,routine(a0)	; => Obj_Sonic_Control
 	move.b	#0,routine_secondary(a0)
-	bsr.w	Sonic_RecordPos
+	bsr.w	P1_RecordPos
 	bsr.w	Sonic_Animate
 	bsr.w	LoadSonicDynPLC
 	jmp	(DisplaySprite).l
@@ -32620,7 +32629,7 @@ Obj_Sonic_Dead:
 +
 	bsr.w	CheckGameOver
 	jsr	(ObjectMoveAndFall).l
-	bsr.w	Sonic_RecordPos
+	bsr.w	P1_RecordPos
 	bsr.w	Sonic_Animate
 	bsr.w	LoadSonicDynPLC
 	jmp	(DisplaySprite).l
@@ -33708,8 +33717,8 @@ loc_1DA80:
 	movea.w	parent(a0),a1 ; a1=character
 	btst	#status_sec_isInvincible,status_secondary(a1)
 	jeq	DeleteObject
-	cmpi.w	#2,(Player_mode).w
-	beq.s	loc_1DAA4
+	cmpa.w	#MainCharacter,a1
+	bne.s	loc_1DAA4
 	lea	(Sonic_Pos_Record_Index).w,a5
 	lea	(Sonic_Pos_Record_Buf).w,a6
 	tst.b	parent+1(a0)

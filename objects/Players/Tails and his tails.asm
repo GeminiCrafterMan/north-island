@@ -140,7 +140,7 @@ loc_13872:
 +
 	jsr		Player_Display
 	bsr.w	Tails_Super
-	bsr.w	Tails_RecordPos
+	jsr		P1_RecordPos
 	bsr.w	Sonic_Water
 	move.b	(Primary_Angle).w,next_tilt(a0)
 	move.b	(Secondary_Angle).w,tilt(a0)
@@ -250,7 +250,7 @@ TailsCPU_Respawn:
 loc_13B78:
 	move.w	d0,y_pos(a0)
 	ori.w	#high_priority,art_tile(a0)
-	move.b	#2,priority(a0)
+	move.w	#prio(2),priority(a0)
 	moveq	#0,d0
 	move.w	#0,x_vel(a0)
 	move.w	#0,y_vel(a0)
@@ -1152,7 +1152,7 @@ locret_14630:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; loc_1BF38:
-Tails_RecordPos:
+P2_RecordPos:
 	move.w	(Tails_Pos_Record_Index).w,d0
 	lea	(Tails_Pos_Record_Buf).w,a1
 	lea	(a1,d0.w),a1
@@ -1161,7 +1161,7 @@ Tails_RecordPos:
 	addq.b	#4,(Tails_Pos_Record_Index+1).w
 
 	rts
-; End of subroutine Tails_RecordPos
+; End of subroutine P2_RecordPos
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -2234,7 +2234,7 @@ Tails_UpdateSpindash:
 	bset	#2,status(a0)
 	move.b	#0,(Tails_Dust+anim).w
 	sfx	sfx_Dash
-	bra.s	loc_1C828
+	bra.s	Obj_Tails_Spindash_ResetScr
 ; ===========================================================================
 ; word_1C7CE:
 Tails_SpindashSpeeds:
@@ -2251,25 +2251,24 @@ Tails_SpindashSpeeds:
 ; loc_1C7E0:
 Tails_ChargingSpindash:			; If still charging the dash...
 	tst.w	spindash_counter(a0)
-	beq.s	loc_1C7F8
+	beq.s	+
 	move.w	spindash_counter(a0),d0
 	lsr.w	#5,d0
 	sub.w	d0,spindash_counter(a0)
-	bcc.s	loc_1C7F8
+	bcc.s	+
 	move.w	#0,spindash_counter(a0)
-
-loc_1C7F8:
++
     jsr		GetCtrlPressLogical
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
-	beq.w	loc_1C828
+	beq.w	Obj_Tails_Spindash_ResetScr
 	move.w	#(AniIDTailsAni_Spindash<<8),anim(a0)
 	sfx	sfx_Spindash
 	addi.w	#$200,spindash_counter(a0)
 	cmpi.w	#$800,spindash_counter(a0)
-	blo.s	loc_1C828
+	blo.s	Obj_Tails_Spindash_ResetScr
 	move.w	#$800,spindash_counter(a0)
 
-loc_1C828:
+Obj_Tails_Spindash_ResetScr:
 	addq.l	#4,sp
 	cmpi.w	#(224/2)-16,(Camera_Y_pos_bias_P2).w
 	beq.s	loc_1C83C
@@ -2668,7 +2667,7 @@ loc_156D6:
 +
 	bsr.w	Tails_HurtStop
 	bsr.w	Tails_LevelBound
-	bsr.w	Tails_RecordPos
+	jsr		P1_RecordPos
 	bsr.w	Tails_Animate
 	bsr.w	LoadTailsDynPLC
 	jmp	(DisplaySprite).l
@@ -2723,7 +2722,7 @@ Obj_Tails_Dead:
 loc_157C8:
 	jsr 	CheckGameOver
 	jsr	    (ObjectMoveAndFall).l
-	bsr.w	Tails_RecordPos
+	jsr		P1_RecordPos
 	bsr.w	Tails_Animate
 	bsr.w	LoadTailsDynPLC
 	jmp	    (DisplaySprite).l

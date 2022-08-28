@@ -54,10 +54,15 @@ Obj_Knuckles_Init_Continued:
 		move.b	#$1E,air_left(a0)
 		subi.w	#$20,x_pos(a0)
 		addi_.w	#4,y_pos(a0)
+		cmpa.w	#MainCharacter,a0
+		bne.s	.p2
 		move.w	#0,(Sonic_Pos_Record_Index).w
-
+		bra.s	.cont
+	.p2:
+		move.w	#0,(Tails_Pos_Record_Index).w
+	.cont:
 		move.w	#$3F,d2
--		jsr		Sonic_RecordPos
+-		jsr		P1_RecordPos
 		subq.w	#4,a1
 		move.l	#0,(a1)
 		dbf	d2,-
@@ -66,8 +71,8 @@ Obj_Knuckles_Init_Continued:
 		subi_.w	#4,y_pos(a0)
 
 Obj_Knuckles_Control:
-	cmpa.w	#MainCharacter,a0
-	bne.s	loc_315422
+		cmpa.w	#MainCharacter,a0
+		bne.s	loc_315422
 		tst.w	(Debug_mode_flag).w
 		beq.s	loc_315422
 		btst	#button_B,(Ctrl_1_Press).w
@@ -112,7 +117,7 @@ loc_315450:
 loc_31545E:
 		jsr		Player_Display
 		jsr		Player_SuperHyper
-		jsr		Sonic_RecordPos
+		jsr		P1_RecordPos
 		jsr		Sonic_Water
 		move.b	(Primary_Angle).w,next_tilt(a0)
 		move.b	(Secondary_Angle).w,tilt(a0)
@@ -1474,7 +1479,7 @@ loc_316DA0:
 loc_316DAE:
 		bsr.w	Knuckles_HurtStop
 		jsr		Sonic_LevelBound
-		jsr		Sonic_RecordPos
+		jsr		P1_RecordPos
 		bsr.w	Knuckles_Animate
 		bsr.w	LoadKnucklesDynPLC
 		jmp		DisplaySprite
@@ -1516,7 +1521,7 @@ JmpTo3_KillCharacter:
 Knuckles_HurtInstantRecover:
 		subq.b	#2,routine(a0)
 		move.b	#0,routine_secondary(a0)
-		jsr	Sonic_RecordPos
+		jsr	P1_RecordPos
 		bsr.w	Knuckles_Animate
 		bsr.w	LoadKnucklesDynPLC
 		jmp	DisplaySprite
@@ -1538,7 +1543,7 @@ Obj_Knuckles_Dead:
 loc_316E4A:
 		jsr	CheckGameOver
 		jsr	ObjectMoveAndFall
-		jsr	Sonic_RecordPos
+		jsr	P1_RecordPos
 		bsr.w	Knuckles_Animate
 		bsr.w	LoadKnucklesDynPLC
 		jmp	DisplaySprite
