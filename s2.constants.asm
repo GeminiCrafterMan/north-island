@@ -786,10 +786,8 @@ Camera_Y_pos_P2:		ds.l 1
 Camera_BG_X_pos_P2:		ds.l 1		; only used sometimes as the layer deformation makes it sort of redundant
 Camera_BG_Y_pos_P2:		ds.l 1
 Camera_BG2_X_pos_P2:		ds.w 1		; unused (only initialised at beginning of level)?
-				ds.w 1		; $FFFFEE32-$FFFFEE33 ; seems unused
 Camera_BG2_Y_pos_P2:		ds.l 1
 Camera_BG3_X_pos_P2:		ds.w 1		; unused (only initialised at beginning of level)?
-				ds.w 1		; $FFFFEE3A-$FFFFEE3B ; seems unused
 Camera_BG3_Y_pos_P2:		ds.l 1
 Horiz_block_crossed_flag:	ds.b 1		; toggles between 0 and $10 when you cross a block boundary horizontally
 Verti_block_crossed_flag:	ds.b 1		; toggles between 0 and $10 when you cross a block boundary vertically
@@ -942,7 +940,7 @@ PalCycle_Frame3:		ds.w 1
 PalCycle_Frame2_CNZ:		ds.w 1
 Flying_carrying_Sonic_flag:	ds.b	2 ; byte ; set when Tails carries Sonic in a Sonic and Tails game ; Made it 2 bytes for Flying_picking_Sonic_timer
 Super_Tails_flag:	ds.b	1 ; byte
-				ds.b 1		; $FFFFF65B ; seems unused
+Tails_CPU_auto_fly_timer:	ds.b 1	; byte
 Palette_frame:			ds.w 1
 Palette_timer:			ds.b 1		; was "Palette_frame_count"
 Super_Sonic_palette:		ds.b 1
@@ -989,13 +987,15 @@ Plc_Buffer_End:
 
 
 Misc_Variables:
+				ds.w 1		; unused, but might use this for main character and sidekick IDs
 Gliding_collision_flags:ds.b 1
 Disable_wall_grab:		ds.b 1
 
 ; extra variables for the second player (CPU) in 1-player mode
 Tails_control_counter:		ds.w 1		; how long until the CPU takes control
 Tails_respawn_counter:		ds.w 1
-				ds.w 1		; unused
+Carried_character_x_vel:	ds.w 1	; known as _unkF744 in skdisasm
+Carried_character_y_vel:	ds.w 1	; known as _unkF74C in skdisasm
 Tails_CPU_routine:		ds.w 1
 Tails_CPU_target_x:		ds.w 1
 Tails_CPU_target_y:		ds.w 1

@@ -81,7 +81,7 @@ loc_137A4:
 .notP1:
 	lea		(P2_FollowObject).w,a1
 .cont:
-	move.l	#Obj_TailsTails,id(a1) ; load Obj_TailsTails (Tails' Tails) at $FFFFD000
+	move.l	#Obj_TailsTails,id(a1) ; load Obj_TailsTails (Tails' Tails) at the specified offset
 	move.w	a0,parent(a1) ; set its parent object to this
 
 ; ---------------------------------------------------------------------------
@@ -792,13 +792,12 @@ loc_14164:
 	move.w	#0,(Ctrl_2_Logical).w
 	tst.b	(Flying_carrying_Sonic_flag).w
 	beq.w	loc_142E2T
-	clr.b	($FFFFF7A3).w
 	btst	#1,(Ctrl_1).w
 	beq.s	loc_14198
-	addq.b	#1,($FFFFF7A2).w
-	cmpi.b	#-$40,($FFFFF7A2).w
+	addq.b	#1,(Tails_CPU_auto_fly_timer).w
+	cmpi.b	#-$40,(Tails_CPU_auto_fly_timer).w
 	blo.s	loc_141D2
-	move.b	#0,($FFFFF7A2).w
+	move.b	#0,(Tails_CPU_auto_fly_timer).w
 	ori.w	#((button_B_mask|button_C_mask|button_A_mask)<<8)|(button_B_mask|button_C_mask|button_A_mask),(Ctrl_2_Logical).w
 	bra.s	loc_141D2
 ; ---------------------------------------------------------------------------
@@ -806,19 +805,19 @@ loc_14164:
 loc_14198:
 	btst	#0,(Ctrl_1).w
 	beq.s	loc_141BA
-	addq.b	#1,($FFFFF7A2).w
-	cmpi.b	#$20,($FFFFF7A2).w
+	addq.b	#1,(Tails_CPU_auto_fly_timer).w
+	cmpi.b	#$20,(Tails_CPU_auto_fly_timer).w
 	blo.s	loc_141D2
-	move.b	#0,($FFFFF7A2).w
+	move.b	#0,(Tails_CPU_auto_fly_timer).w
 	ori.w	#((button_B_mask|button_C_mask|button_A_mask)<<8)|(button_B_mask|button_C_mask|button_A_mask),(Ctrl_2_Logical).w
 	bra.s	loc_141D2
 ; ---------------------------------------------------------------------------
 
 loc_141BA:
-	addq.b	#1,($FFFFF7A2).w
-	cmpi.b	#$58,($FFFFF7A2).w
+	addq.b	#1,(Tails_CPU_auto_fly_timer).w
+	cmpi.b	#$58,(Tails_CPU_auto_fly_timer).w
 	blo.s	loc_141D2
-	move.b	#0,($FFFFF7A2).w
+	move.b	#0,(Tails_CPU_auto_fly_timer).w
 	ori.w	#((button_B_mask|button_C_mask|button_A_mask)<<8)|(button_B_mask|button_C_mask|button_A_mask),(Ctrl_2_Logical).w
 
 loc_141D2:
@@ -903,79 +902,24 @@ locret_142E0:
 ; ---------------------------------------------------------------------------
 
 loc_142E2T:
-	tst.b	($FFFFF7A3).w
-	bne.s	loc_14362
 	lea	(MainCharacter).w,a1
 	tst.b	render_flags(a1)
-	bpl.s	loc_14330
+	bpl.s	loc_143AA
 	tst.w	(Tails_control_counter).w
 	bne.w	loc_143AA
 	cmpi.w	#$300,y_vel(a1)
-	bge.s	loc_14330
+	bge.w	loc_143AA
 	move.w	#0,x_vel(a0)
 	move.w	#0,(Ctrl_2_Logical).w
 	cmpi.w	#$200,y_vel(a0)
 	bge.s	loc_14328
-	addq.b	#1,($FFFFF7A2).w
-	cmpi.b	#$58,($FFFFF7A2).w
-	blo.s	loc_1432E
-	move.b	#0,($FFFFF7A2).w
+	addq.b	#1,(Tails_CPU_auto_fly_timer).w
+	cmpi.b	#$58,(Tails_CPU_auto_fly_timer).w
+	blo.s	loc_143AA
+	move.b	#0,(Tails_CPU_auto_fly_timer).w
 
 loc_14328:
 	ori.w	#((button_B_mask|button_C_mask|button_A_mask)<<8)|(button_B_mask|button_C_mask|button_A_mask),(Ctrl_2_Logical).w
-
-loc_1432E:
-	bra.s	loc_143AA
-; ---------------------------------------------------------------------------
-
-loc_14330:
-	st	($FFFFF7A3).w
-	move.w	y_pos(a1),d1
-	sub.w	y_pos(a0),d1
-	bpl.s	loc_14340
-	neg.w	d1
-
-loc_14340:
-	lsr.w	#2,d1
-	move.w	d1,d2
-	lsr.w	#1,d2
-	add.w	d2,d1
-	move.w	d1,($FFFFF7A0).w
-	move.w	x_pos(a1),d1
-	sub.w	x_pos(a0),d1
-	bpl.s	loc_14358
-	neg.w	d1
-
-loc_14358:
-	lsr.w	#2,d1
-	move.w	d1,($FFFFF79E).w
-	bra.w	loc_143AA
-; ---------------------------------------------------------------------------
-
-loc_14362:
-	move.w	#0,(Ctrl_2_Logical).w
-	lea	(MainCharacter).w,a1
-	move.w	x_pos(a0),d0
-	move.w	y_pos(a0),d1
-	subi.w	#$10,d1
-	move.w	($FFFFF79E).w,d2
-	bclr	#0,status(a0)
-	cmp.w	x_pos(a1),d0
-	blo.s	loc_14390
-	bset	#0,status(a0)
-	neg.w	d2
-
-loc_14390:
-	add.w	d2,x_vel(a0)
-	cmp.w	y_pos(a1),d1
-	bhs.s	loc_143AA
-	move.w	($FFFFF7A0).w,d2
-	cmp.w	y_pos(a1),d1
-	blo.s	loc_143A6
-	neg.w	d2
-
-loc_143A6:
-	add.w	d2,y_vel(a0)
 
 loc_143AA:
 	lea	(Flying_carrying_Sonic_flag).w,a2
@@ -993,12 +937,14 @@ Tails_Carry_Sonic:
 	bhs.w	loc_14466
 	btst	#1,status(a1)
 	beq.w	loc_1445A
-	move.w	($FFFFF79A).w,d1
+
+	move.w	(Carried_character_x_vel).w,d1
 	cmp.w	x_vel(a1),d1
 	bne.w	loc_1445A
-	move.w	($FFFFF79C).w,d1
+	move.w	(Carried_character_y_vel).w,d1
 	cmp.w	y_vel(a1),d1
 	bne.w	loc_14460
+
 	tst.b	obj_control(a1)
 	bmi.w	loc_1446A
 	btst	#button_down,(Ctrl_1_Logical).w	; is down being pressed?
@@ -1054,6 +1000,8 @@ loc_14474:
 	move.w	y_pos(a0),y_pos(a1)
 	addi.w	#$1C,y_pos(a1)
 
+; this used to have something about reversed gravity between these, loc_144F8
+
 loc_14492:
 	andi.b	#-4,render_flags(a1)
 	andi.b	#-2,status(a1)
@@ -1061,12 +1009,13 @@ loc_14492:
 	andi.b	#1,d0
 	or.b	d0,render_flags(a1)
 	or.b	d0,status(a1)
+; more reverse gravity stuff, there was an eori.b #2,render_flags(a1) here, presumably flipping the sprites
 
 loc_144F8:
 	move.w	x_vel(a0),(MainCharacter+x_vel).w
-	move.w	x_vel(a0),($FFFFF79A).w
+	move.w	x_vel(a0),(Carried_character_x_vel).w
 	move.w	y_vel(a0),(MainCharacter+y_vel).w
-	move.w	y_vel(a0),($FFFFF79C).w
+	move.w	y_vel(a0),(Carried_character_y_vel).w
 	movem.l	d0-a6,-(sp)
 	lea	(MainCharacter).w,a0
 	bsr.w	Sonic_DoLevelCollision
@@ -1121,7 +1070,7 @@ sub_1459E:
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	addi.w	#$1C,y_pos(a1)
-	move.w	#$1400,anim(a1)
+	move.w	#$1400,anim(a1)	; move.b #AniIDSonAni_Hang2,anim(a1)
 	move.b	#0,anim_frame_duration(a1)
 	move.b	#0,anim_frame(a1)
 	move.b	#3,obj_control(a1)
@@ -1134,9 +1083,9 @@ sub_1459E:
 	andi.b	#1,d0
 	or.b	d0,render_flags(a1)
 	or.b	d0,status(a1)
-	move.w	x_vel(a0),($FFFFF79A).w
+	move.w	x_vel(a0),(Carried_character_x_vel).w
 	move.w	x_vel(a0),x_vel(a1)
-	move.w	y_vel(a0),($FFFFF79C).w
+	move.w	y_vel(a0),(Carried_character_y_vel).w
 	move.w	y_vel(a0),y_vel(a1)
 
 locret_14630:
@@ -1220,9 +1169,12 @@ Tails_FlyingSwimming:
 	bsr.w	Tails_Move_FlySwim
 	bsr.w	Tails_ChgJumpDir
 	bsr.w	Tails_LevelBound
-	jsr	(ObjectMoveAndFall2).l
+;	jsr		(ObjectMove).l	; old SNI
+	jsr	(ObjectMoveAndFall2).l	; new
 	bsr.w	Tails_JumpAngle
+;	movem.l	a4-a6,-(sp)		; old SNI
 	bsr.w	Tails_DoLevelCollision
+;	movem.l	(sp)+,a4-a6		; old SNI
 	cmpa.w	#MainCharacter,a0
 	beq.s	locret_14820
 	lea	(Flying_carrying_Sonic_flag).w,a2
@@ -1274,6 +1226,8 @@ Player1_ContFlight:
 ComparePressT:
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.s	loc_1488C
+;	cmpi.w	#-$100,y_vel(a0)	; old SNI
+;	blt.s	loc_1488C			; old SNI
 	tst.b	double_jump_property(a0)
 	beq.s	loc_1488C
 	btst	#6,status(a0)
@@ -1313,7 +1267,7 @@ Tails_Set_Flying_Animation:
 loc_148C4:
 	tst.b	(Flying_carrying_Sonic_flag).w
 	beq.s	loc_148CC
-	addq.b	#3,d0
+	addq.b	#3,d0	; was #7 in old SNI, but that's due to animation ID differences so it doesn't matter
 
 loc_148CC:
 	tst.b	double_jump_property(a0)

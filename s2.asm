@@ -4276,6 +4276,7 @@ InitPlayers:
 	dc.l	Obj_Knuckles,	Obj_Tails	; K&T
 	dc.l	Obj_Sonic,		Obj_Knuckles; S&K
 	dc.l	Obj_Sonic,		Obj_Sonic	; S&S
+	dc.l	Obj_Tails,		Obj_Tails	; T&T
 
 .cont:
 	move.l	#Obj_SpindashDust,(Sonic_Dust+id).w ; load Obj_Splash Sonic's spindash dust/splash object at $FFFFD100
@@ -5723,6 +5724,7 @@ InitPlayersSS:
 	dc.l	Obj_KnucklesSS,	Obj_TailsSS		; K&T
 	dc.l	Obj_SonicSS,	Obj_KnucklesSS	; S&K
 	dc.l	Obj_SonicSS,	Obj_SonicSS		; S&S
+	dc.l	Obj_TailsSS,	Obj_TailsSS		; T&T
 ; End of function InitPlayersSS
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -8688,7 +8690,7 @@ loc_7480:
 	lea	sub2_x_pos(a0),a1
 	movea.l	a1,a2
 	addq.w	#5,a2	; a2 = sub2_mapframe(a0)
-	cmpi.w	#2,(Player_mode).w
+	cmpi.l	#Obj_TailsSS,(MainCharacter+id).w
 	beq.s	loc_74EA
 	move.b	(MainCharacter+ss_rings_hundreds).w,d0
 	beq.s	+
@@ -8709,17 +8711,15 @@ loc_7480:
 	move.w	d3,d4
 	subq.w	#1,d4
 	move.w	#$48,d1
-	tst.w	(Player_mode).w
-	beq.s	+
+	tst.l	(Sidekick+id).w	; sonic & tails originally, we have more multi-character combos so
+	bne.s	+
 	addi.w	#$54,d1
 /	move.w	d1,(a1,d5.w)
 	addi_.w	#8,d1
 	addq.w	#next_subspr,d5
 	dbf	d4,-
-	cmpi.w	#1,(Player_mode).w
+	tst.l	(Sidekick+id).w	; sonic & tails originally, we have more multi-character combos so
 	beq.s	loc_7536
-	cmpi.w	#3,(Player_mode).w
-	bge.s	loc_7536
 
 loc_74EA:
 	moveq	#0,d0
@@ -8743,8 +8743,8 @@ loc_74EA:
 	add.w	d4,d3
 	subq.w	#1,d4
 	move.w	#$E0,d1
-	tst.w	(Player_mode).w
-	beq.s	+
+	tst.l	(Sidekick+id).w	; sonic & tails originally, we have more multi-character combos so
+	bne.s	+
 	subi.w	#$44,d1
 /	move.w	d1,(a1,d5.w)
 	addi_.w	#8,d1
@@ -8928,8 +8928,8 @@ SSStartNewAct:
 	add.w	d0,d0
 	add.w	d0,d0
 	add.w	d1,d0
-	tst.w	(Player_mode).w
-	bne.s	+
+	tst.l	(Sidekick+id).w	; sonic & tails originally, we have more multi-character combos so
+	beq.s	+
 	move.b	SpecialStage_RingReq_Team(pc,d0.w),d1
 	bra.s	++
 ; ===========================================================================
@@ -9024,8 +9024,9 @@ SSInitPalAndData:
 	move.w	d0,(a2)+
 	move.w	d0,(a2)+
 	moveq	#PalID_SS,d0
-	cmpi.w	#3,(Player_mode).w
-	blt.s	+
+; TODO: split off special stage palettes and make this load each character's individually
+	cmpi.l	#Obj_KnucklesSS,(MainCharacter+id).w
+	bne.s	+
 	moveq	#PalID_SSK,d0
 +
 	bsr.w	PalLoad_ForFade
@@ -10425,7 +10426,7 @@ OptionScreen_Controls:
 ; ===========================================================================
 ; word_917A:
 OptionScreen_Choices:
-	dc.l (7-1)<<24|(Player_option&$FFFFFF)
+	dc.l (8-1)<<24|(Player_option&$FFFFFF)
 	dc.l (2-1)<<24|(Two_player_items&$FFFFFF)	; Useless
 	dc.l (SFXlast-1)<<24|(Sound_test_sound&$FFFFFF)
 
@@ -10566,6 +10567,7 @@ Opt_Char:
 	dc.l TextOptScr_KnuxAndTails
 	dc.l TextOptScr_SonicAndKnux
 	dc.l TextOptScr_SonicAndSonic
+	dc.l TextOptScr_TailsAndTails
 Opt_2PItem:
 	dc.l TextOptScr_AllKindsItems
 	dc.l TextOptScr_TeleportOnly
@@ -11101,6 +11103,7 @@ TextOptScr_KnuxAlone:		menutxt "KNUCKLES ALONE "
 TextOptScr_KnuxAndTails:	menutxt	"KNUX AND TAILS "
 TextOptScr_SonicAndKnux:	menutxt	"SONIC AND KNUX "
 TextOptScr_SonicAndSonic:	menutxt "SONIC AND SONIC"
+TextOptScr_TailsAndTails:	menutxt "TAILS AND TAILS"
 TextOptScr_VsModeItems:		menutxt	"* VS MODE ITEMS *"	; byte_982C:
 TextOptScr_AllKindsItems:	menutxt	"ALL KINDS ITEMS"	; byte_983E:
 TextOptScr_TeleportOnly:	menutxt	"TELEPORT ONLY  "	; byte_984E:

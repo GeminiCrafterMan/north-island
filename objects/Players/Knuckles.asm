@@ -182,7 +182,7 @@ Obj_Knuckles_MdAir:
 
 	.cont:
 		jsr		Sonic_JumpAngle
-		jmp		Knuckles_DoLevelCollision
+		jmp		Sonic_DoLevelCollision
 ; ---------------------------------------------------------------------------
 
 Obj_Knuckles_MdAir_Gliding:
@@ -276,8 +276,11 @@ return_3157AC:
 ; ---------------------------------------------------------------------------
 
 Knuckles_BeginClimb:
+		cmpa.w	#MainCharacter,a0
+		beq.s	.notSidekick
 		tst.w	(Tails_control_counter).w
 		bne.w	loc_31587A
+	.notSidekick:
 		tst.b	(Disable_wall_grab).w
 		bmi.w	loc_31587A
 		move.b	lrb_solid_bit(a0),d5
@@ -627,7 +630,9 @@ loc_315B30:
 		move.b	#$20,anim_frame_duration(a0)
 		move.b	#0,anim_frame(a0)
 		jsr		ResetHeight_a0
-		jsr		GetCtrlHeldLogical
+	; why the original code moved the held button as a word to d0
+	; to accomplish the same thing, i will never know
+		jsr		GetCtrlPressLogical
 		andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 		beq.s	return_315B94
 		move.w	#$FC80,y_vel(a0)
@@ -928,7 +933,7 @@ Obj_Knuckles_MdJump:
 
 	.cont:
 		jsr		Sonic_JumpAngle
-		jmp		Knuckles_DoLevelCollision
+		jmp		Sonic_DoLevelCollision
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -1045,10 +1050,9 @@ return_3165D2:
 Knuckles_DoLevelCollision2:
 		move.l	#Primary_Collision,(Collision_addr).w
 		cmp.b	#$C,top_solid_bit(a0)
-		beq.s	loc_31694E
+		beq.s	+
 		move.l	#Secondary_Collision,(Collision_addr).w
-
-loc_31694E:
++
 		move.b	lrb_solid_bit(a0),d5
 		move.w	x_vel(a0),d1
 		move.w	y_vel(a0),d2
@@ -1063,20 +1067,18 @@ loc_31694E:
 		beq.w	Knuckles_HitRightWall2
 		jsr	CheckLeftWallDist
 		tst.w	d1
-		bpl.s	loc_316998
+		bpl.s	+
 		sub.w	d1,x_pos(a0)
 		move.w	#0,x_vel(a0)
 		bset	#5,(Gliding_collision_flags).w
-
-loc_316998:
++
 		jsr	CheckRightWallDist
 		tst.w	d1
-		bpl.s	loc_3169B0
+		bpl.s	+
 		add.w	d1,x_pos(a0)
 		move.w	#0,x_vel(a0)
 		bset	#5,(Gliding_collision_flags).w
-
-loc_3169B0:
++
 		jsr	Player_CheckFloor
 		tst.w	d1
 		bpl.s	return_3169CC
@@ -1203,209 +1205,6 @@ return_316ADE:
 		rts
 ; End of function Knuckles_DoLevelCollision2
 
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-Knuckles_DoLevelCollision:
-		move.l	#Primary_Collision,(Collision_addr).w
-		cmp.b	#$C,top_solid_bit(a0)
-		beq.s	loc_316AF8
-		move.l	#Secondary_Collision,(Collision_addr).w
-
-loc_316AF8:
-		move.b	lrb_solid_bit(a0),d5
-		move.w	x_vel(a0),d1
-		move.w	y_vel(a0),d2
-		jsr	CalcAngle
-		sub.b	#$20,d0
-		and.b	#$C0,d0
-		cmp.b	#$40,d0
-		beq.w	Knuckles_HitLeftWall
-		cmp.b	#$80,d0
-		beq.w	Knuckles_HitCeilingAndWalls
-		cmp.b	#$C0,d0
-		beq.w	Knuckles_HitRightWall
-		jsr	CheckLeftWallDist
-		tst.w	d1
-		bpl.s	loc_316B3C
-		sub.w	d1,x_pos(a0)
-		move.w	#0,x_vel(a0)
-
-loc_316B3C:
-		jsr	CheckRightWallDist
-		tst.w	d1
-		bpl.s	loc_316B4E
-		add.w	d1,x_pos(a0)
-		move.w	#0,x_vel(a0)
-
-loc_316B4E:
-		jsr	Player_CheckFloor
-		tst.w	d1
-		bpl.s	return_316BC0
-		move.b	y_vel(a0),d2
-		addq.b	#8,d2
-		neg.b	d2
-		cmp.b	d2,d1
-		bge.s	loc_316B66
-		cmp.b	d2,d0
-		blt.s	return_316BC0
-
-loc_316B66:
-		add.w	d1,y_pos(a0)
-		move.b	d3,angle(a0)
-		jsr		Player_ResetOnFloor
-		move.b	d3,d0
-		add.b	#$20,d0
-		and.b	#$40,d0
-		bne.s	loc_316B9E
-		move.b	d3,d0
-		add.b	#$10,d0
-		and.b	#$20,d0
-		beq.s	loc_316B90
-		asr	y_vel(a0)
-		bra.s	loc_316BB2
-; ---------------------------------------------------------------------------
-
-loc_316B90:
-		move.w	#0,y_vel(a0)
-		move.w	x_vel(a0),inertia(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-loc_316B9E:
-		move.w	#0,x_vel(a0)
-		cmp.w	#$FC0,y_vel(a0)
-		ble.s	loc_316BB2
-		move.w	#$FC0,y_vel(a0)
-
-loc_316BB2:
-		move.w	y_vel(a0),inertia(a0)
-		tst.b	d3
-		bpl.s	return_316BC0
-		neg.w	inertia(a0)
-
-return_316BC0:
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_HitLeftWall:
-		jsr	CheckLeftWallDist
-		tst.w	d1
-		bpl.s	Knuckles_HitCeiling
-		sub.w	d1,x_pos(a0)
-		move.w	#0,x_vel(a0)
-		move.w	y_vel(a0),inertia(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_HitCeiling:
-		jsr	Player_CheckCeiling
-		tst.w	d1
-		bpl.s	Knuckles_HitFloor_0
-		sub.w	d1,y_pos(a0)
-		tst.w	y_vel(a0)
-		bpl.s	return_316BF4
-		move.w	#0,y_vel(a0)
-
-return_316BF4:
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_HitFloor_0:
-		tst.w	y_vel(a0)
-		bmi.s	return_316C1C
-		jsr	Player_CheckFloor
-		tst.w	d1
-		bpl.s	return_316C1C
-		add.w	d1,y_pos(a0)
-		move.b	d3,angle(a0)
-		jsr		Player_ResetOnFloor
-		move.w	#0,y_vel(a0)
-		move.w	x_vel(a0),inertia(a0)
-
-return_316C1C:
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_HitCeilingAndWalls:
-		jsr	CheckLeftWallDist
-		tst.w	d1
-		bpl.s	loc_316C30
-		sub.w	d1,x_pos(a0)
-		move.w	#0,x_vel(a0)
-
-loc_316C30:
-		jsr	CheckRightWallDist
-		tst.w	d1
-		bpl.s	loc_316C42
-		add.w	d1,x_pos(a0)
-		move.w	#0,x_vel(a0)
-
-loc_316C42:
-		jsr	Player_CheckCeiling
-		tst.w	d1
-		bpl.s	return_316C78
-		sub.w	d1,y_pos(a0)
-		move.b	d3,d0
-		add.b	#$20,d0
-		and.b	#$40,d0
-		bne.s	loc_316C62
-		move.w	#0,y_vel(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-loc_316C62:
-		move.b	d3,angle(a0)
-		jsr		Player_ResetOnFloor
-		move.w	y_vel(a0),inertia(a0)
-		tst.b	d3
-		bpl.s	return_316C78
-		neg.w	inertia(a0)
-
-return_316C78:
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_HitRightWall:
-		jsr	CheckRightWallDist
-		tst.w	d1
-		bpl.s	Knuckles_HitCeiling2
-		add.w	d1,x_pos(a0)
-		move.w	#0,x_vel(a0)
-		move.w	y_vel(a0),inertia(a0)
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_HitCeiling2:
-		jsr	Player_CheckCeiling
-		tst.w	d1
-		bpl.s	Knuckles_HitFloor2
-		sub.w	d1,y_pos(a0)
-		tst.w	y_vel(a0)
-		bpl.s	return_316CAC
-		move.w	#0,y_vel(a0)
-
-return_316CAC:
-		rts
-; ---------------------------------------------------------------------------
-
-Knuckles_HitFloor2:
-		tst.w	y_vel(a0)
-		bmi.s	return_316CD4
-		jsr	Player_CheckFloor
-		tst.w	d1
-		bpl.s	return_316CD4
-		add.w	d1,y_pos(a0)
-		move.b	d3,angle(a0)
-		jsr		Player_ResetOnFloor
-		move.w	#0,y_vel(a0)
-		move.w	x_vel(a0),inertia(a0)
-
-return_316CD4:
-		rts
-; End of function Knuckles_DoLevelCollision
-
 ; =============== S U B	R O U T	I N E =======================================
 
 
@@ -1494,7 +1293,7 @@ Knuckles_HurtStop:
 		add.w	#$E0,d0
 		cmp.w	y_pos(a0),d0
 		blt.w	JmpTo3_KillCharacter
-		bsr.w	Knuckles_DoLevelCollision
+		jsr		Sonic_DoLevelCollision
 		btst	#1,status(a0)
 		bne.s	return_316E0C
 		moveq	#0,d0
