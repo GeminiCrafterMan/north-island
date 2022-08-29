@@ -52513,17 +52513,17 @@ Obj_Buzzer_ShootProjectile:
 ; animation script
 ; off_2D2CE:
 Ani_Obj_Buzzer:	offsetTable
-		offsetTableEntry.w byte_2D2D6	; 0
-		offsetTableEntry.w byte_2D2D9	; 1
-		offsetTableEntry.w byte_2D2DD	; 2
-		offsetTableEntry.w byte_2D2E1	; 3
-byte_2D2D6:	dc.b	$0F, $00, $FF
+		offsetTableEntry.w .idle	; 0
+		offsetTableEntry.w .jet		; 1
+		offsetTableEntry.w .fireball; 2
+		offsetTableEntry.w .firing	; 3
+.idle:		dc.b	$F, 0, afEnd
 	rev02even
-byte_2D2D9:	dc.b	$02, $03, $04, $FF
+.jet:		dc.b	2, 2, 3, afEnd
 	rev02even
-byte_2D2DD:	dc.b	$03, $05, $06, $FF
+.fireball:	dc.b	3, 4, 5, afEnd
 	rev02even
-byte_2D2E1:	dc.b	$09, $01, $01, $01, $01, $01, $FD, $00
+.firing:	dc.b	9, 1, 1, 1, 1, 1, afChange, 0
 	even
 ; ----------------------------------------------------------------------------
 ; sprite mappings -- Buzz Bomber Sprite Table
@@ -63749,10 +63749,6 @@ Obj_DeleteOffScreen:
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
-    if removeJmpTos
-JmpTo65_DeleteObject ; JmpTo
-    endif
-
 JmpTo64_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 
@@ -64084,7 +64080,7 @@ Obj_GrounderRocks_Directions:
 Obj_GrounderWall_Move:
 Obj_GrounderRocks_Move:
 	tst.b	render_flags(a0)
-	bpl.w	JmpTo65_DeleteObject
+	jpl		DeleteObject
 	jsrto	(ObjectMoveAndFall).l, JmpTo8_ObjectMoveAndFall
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
 ; ===========================================================================
@@ -64528,7 +64524,7 @@ Obj_SpikerDrill_Init:
 
 loc_37028:
 	tst.b	render_flags(a0)
-	bpl.w	JmpTo65_DeleteObject
+	jpl		DeleteObject
 	bchg	#0,render_flags(a0)
 	jsrto	(ObjectMove).l, JmpTo26_ObjectMove
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
@@ -64699,7 +64695,7 @@ Obj_Sol_FireballUpdate:
 	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
 	movea.l	objoff_3C(a0),a1 ; a1=object
 	_cmpi.l	#Obj_Sol,id(a1) ; check if parent object is still alive
-	bne.w	JmpTo65_DeleteObject
+	jne		DeleteObject
 	cmpi.b	#2,mapping_frame(a1)
 	bne.s	Obj_Sol_FireballOrbit
 	cmpi.b	#$40,angle(a0)
@@ -64737,7 +64733,7 @@ Obj_Sol_FireballOrbit:
 loc_372B8:
 	jsrto	(ObjectMove).l, JmpTo26_ObjectMove
 	tst.b	render_flags(a0)
-	bpl.w	JmpTo65_DeleteObject
+	jpl		DeleteObject
 	lea	(Ani_Obj_Sol_b).l,a1
 	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
@@ -64996,7 +64992,7 @@ Obj_RexonHead_DeathDrop:
 	move.w	(Camera_Max_Y_pos_now).w,d0
 	addi.w	#$E0,d0
 	cmp.w	y_pos(a0),d0
-	blo.w	JmpTo65_DeleteObject
+	jlo		DeleteObject
 	jsrto	(ObjectMoveAndFall).l, JmpTo8_ObjectMoveAndFall
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
 ; ===========================================================================
@@ -65219,7 +65215,7 @@ Obj_Projectile_Init: ;;
 ; loc_376FE:
 Obj_Projectile_Main:
 	tst.b	render_flags(a0)
-	bpl.w	JmpTo65_DeleteObject
+	jpl		DeleteObject
 	movea.l	objoff_2A(a0),a1
 	jsr	(a1)	; dynamic call! to Obj_Projectile_NebulaBombFall, Obj_Projectile_TurtloidShotMove, Obj_Projectile_CoconutFall, Obj_Projectile_CluckerShotMove, Obj_Projectile_SpinyShotFall, or Obj_Projectile_WallTurretShotMove, assuming the code hasn't been changed
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
@@ -65573,7 +65569,7 @@ Obj_BalkiryJet_Main:
 	movea.w	objoff_2C(a0),a1 ; a1=object
 	move.l	objoff_32(a0),d0
 	cmp.l	(a1),d0
-	bne.w	JmpTo65_DeleteObject
+	jne		DeleteObject
 	move.l	x_pos(a1),x_pos(a0)
 	move.l	y_pos(a1),y_pos(a0)
 	movea.l	objoff_2E(a0),a1
@@ -65743,7 +65739,7 @@ Obj_Coconuts_Climbing:
 	subq.b	#1,Obj_Coconuts_timer(a0)
 	beq.s	Obj_Coconuts_StopClimbing	; branch, if done moving
 	jsrto	(ObjectMove).l, JmpTo26_ObjectMove	; else, keep moving
-	lea	(Ani_Obj_SonicSS).l,a1
+	lea	(Ani_Obj_Coconuts).l,a1
 	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
 ; ===========================================================================
@@ -65824,7 +65820,7 @@ Obj_Coconuts_SubObjData:
 
 ; animation script
 ; off_37D88:
-Ani_Obj_SonicSS:	offsetTable
+Ani_Obj_Coconuts:	offsetTable
 		offsetTableEntry.w byte_37D8C	; 0
 		offsetTableEntry.w byte_37D90	; 1
 byte_37D8C:	dc.b   5,  0,  1,$FF
@@ -65834,7 +65830,7 @@ byte_37D90:	dc.b   9,  1,  2,  1,$FF
 ; sprite mappings
 ; ------------------------------------------------------------------------
 Obj_Coconuts_Obj_Projectile_MapUnc_37D96:	BINCLUDE "mappings/sprite/Obj_Coconuts.bin"
-
+	even
 
 
 
@@ -65940,7 +65936,7 @@ loc_37ED4:
 loc_37EFC:
 	movea.w	parent(a0),a1 ; a1=object
 	cmpi.l	#Obj_Crawlton,id(a1)
-	bne.w	JmpTo65_DeleteObject
+	jne		DeleteObject
 	bclr	#0,render_flags(a0)
 	btst	#0,render_flags(a1)
 	beq.s	+
@@ -66325,13 +66321,13 @@ loc_38266:
 
 loc_3827A:
 	addq.w	#4,sp
-	bra.w	JmpTo65_DeleteObject
+	jmp		DeleteObject
 ; ===========================================================================
 
 loc_38280:
 	jsrto	(ObjectMoveAndFall).l, JmpTo8_ObjectMoveAndFall
 	subi_.w	#1,objoff_2A(a0)
-	bmi.w	JmpTo65_DeleteObject
+	jmi		DeleteObject
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
 ; ===========================================================================
 
@@ -66516,7 +66512,7 @@ Obj_SlicerPincers_Init:
 
 Obj_SlicerPincers_Main:
 	tst.b	render_flags(a0)
-	bpl.w	JmpTo65_DeleteObject
+	jpl		DeleteObject
 	subq.w	#1,objoff_2A(a0)
 	bmi.s	loc_3851A
 	movea.w	objoff_2C(a0),a1 ; a1=object
@@ -66553,7 +66549,7 @@ loc_3851A:
 
 Obj_SlicerPincers_Main2:
 	subq.w	#1,objoff_2A(a0)
-	bmi.w	JmpTo65_DeleteObject
+	jmi		DeleteObject
 	jsrto	(ObjectMoveAndFall).l, JmpTo8_ObjectMoveAndFall
 	lea	(Ani_Obj_SlicerPincers).l,a1
 	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
@@ -66681,7 +66677,7 @@ loc_38794:
 	subq.w	#1,objoff_30(a0)
 	bmi.s	loc_387FC
 	move.w	objoff_2A(a0),d0
-	bmi.w	JmpTo65_DeleteObject
+	jmi		DeleteObject
 	bclr	#0,render_flags(a0)
 	bclr	#0,status(a0)
 	tst.w	x_vel(a0)
@@ -67364,7 +67360,7 @@ Obj_GrabberLegs_Init:
 loc_38F88:
 	movea.w	objoff_2C(a0),a1 ; a1=object
 	cmpi.l	#Obj_Grabber,id(a1)
-	bne.w	JmpTo65_DeleteObject
+	jne		DeleteObject
 	bsr.w	InheritParentXYFlip
 	movea.w	objoff_2C(a0),a1 ; a1=object
 	move.b	mapping_frame(a1),d0
@@ -67410,7 +67406,7 @@ loc_38FE8:
 loc_3900A:
 	move.b	#0,obj_control(a2)
 	bset	#1,status(a2)
-	bra.w	JmpTo65_DeleteObject
+	jmp		DeleteObject
 ; ===========================================================================
 
 loc_3901A:
@@ -67421,7 +67417,7 @@ loc_3901A:
 loc_39022:
 	movea.w	objoff_2C(a0),a1 ; a1=object
 	cmpi.l	#Obj_Grabber,id(a1) ; compare to Obj_Grabber
-	bne.w	JmpTo65_DeleteObject
+	jne		DeleteObject
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -67450,7 +67446,7 @@ Obj_GrabberBox_Init:
 Obj_GrabberBox_Main:
 	movea.w	objoff_2C(a0),a1 ; a1=object
 	cmpi.l	#Obj_Grabber,id(a1) ; compare to Obj_Grabber (grabber badnik)
-	bne.w	JmpTo65_DeleteObject
+	jne		DeleteObject
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -67478,7 +67474,7 @@ Obj_GrabberString_Init:
 Obj_GrabberString_Main:
 	movea.w	objoff_2C(a0),a1 ; a1=object
 	cmpi.l	#Obj_Grabber,id(a1) ; compare to Obj_Grabber (grabber badnik)
-	bne.w	JmpTo65_DeleteObject
+	jne		DeleteObject
 	move.w	y_pos(a1),d0
 	sub.w	y_pos(a0),d0
 	bmi.s	+
@@ -67634,7 +67630,7 @@ loc_39182:
 	jsrto	(DeleteObject2).l, JmpTo6_DeleteObject2
 	dbf	d6,-
 
-	bra.w	JmpTo65_DeleteObject
+	jmp		DeleteObject
 ; End of subroutine loc_39182
 
 ; ===========================================================================
@@ -68361,7 +68357,7 @@ loc_39BA4:
 	addq.b	#2,(Dynamic_Resize_Routine).w
 	move.w	(Level_Music).w,d0
 	move.b	d0,mQueue+1.w
-	bra.w	JmpTo65_DeleteObject
+	jmp		DeleteObject
 ; ===========================================================================
 
 loc_39BBA:
@@ -70764,7 +70760,7 @@ Obj_VerticalLaser_Init:
 ; loc_3B8C4:
 Obj_VerticalLaser_Main:
 	subq.b	#1,objoff_2A(a0)
-	beq.w	JmpTo65_DeleteObject
+	jeq		DeleteObject
 	bchg	#0,objoff_2B(a0)
 	beq.w	return_37A48
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
@@ -70927,7 +70923,7 @@ loc_3BAF8:
 	move.w	(Camera_X_pos).w,d1
 	subi.w	#$40,d1
 	cmp.w	d1,d0
-	blt.w	JmpTo65_DeleteObject
+	jlt		DeleteObject
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 ; off_3BB0E:
@@ -71026,7 +71022,7 @@ Obj_WFZShipFire_Main:
 	move.w	objoff_2C(a0),d0
 	move.w	(Camera_BG_X_offset).w,d1
 	cmpi.w	#$380,d1
-	bhs.w	JmpTo65_DeleteObject
+	jhs		DeleteObject
 	add.w	d1,d0
 	move.w	d0,x_pos(a0)
 	bchg	#0,objoff_2A(a0)
@@ -71135,7 +71131,7 @@ loc_3BCCC:
 
 loc_3BCD6:
 	bsr.w	loc_3B7BC
-	bra.w	JmpTo65_DeleteObject
+	jmp		DeleteObject
 ; ===========================================================================
 
 loc_3BCDE:
@@ -71591,7 +71587,7 @@ Obj_BreakablePlating_Breakup:
 	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
 +
 	tst.b	render_flags(a0)
-	bpl.w	JmpTo65_DeleteObject
+	jpl		DeleteObject
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 ; animation script
@@ -71765,7 +71761,7 @@ Obj_TornadoSmoke_Main:
 	move.b	#7,anim_frame_duration(a0)
 	addq.b	#1,mapping_frame(a0)
 	cmpi.b	#5,mapping_frame(a0)
-	beq.w	JmpTo65_DeleteObject
+	jeq		DeleteObject
 +
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -72080,7 +72076,7 @@ Obj_WFZBoss_End:	; play music and change camera speed
 	move.w	#$720,d0
 	move.w	d0,(Camera_Max_Y_pos_now).w
 	move.w	d0,(Camera_Max_Y_pos).w
-	bsr.w	JmpTo65_DeleteObject
+	jsr		DeleteObject
 	addq.w	#4,sp
 	rts
 ; ===========================================================================
@@ -72139,7 +72135,7 @@ Obj_WFZBoss_LaserWallDelete:
 	move.b	#$10,objoff_30(a0)
 	addq.b	#1,d1
 	cmpi.b	#5,d1
-	bhs.w	JmpTo65_DeleteObject
+	jhs		DeleteObject
 	move.b	d1,anim_frame(a0)
 	move.b	d1,anim_frame_duration(a0)
 
@@ -72233,7 +72229,7 @@ Obj_WFZBoss_PlatformReleaserDestroyP: 	; P=Platforms
 Obj_WFZBoss_PlatformReleaserDelete:
 	movea.w	objoff_2C(a0),a1 ; a1=object
 	cmpi.l	#Obj_WFZBoss,id(a1)
-	bne.w	JmpTo65_DeleteObject
+	jne		DeleteObject
 	jsrto	(Boss_LoadExplosion).l, JmpTo_Boss_LoadExplosion
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -72345,7 +72341,7 @@ Obj_WFZBoss_PlatformHurtCollision:
 Obj_WFZBoss_PlatformHurtFollowPlatform:
 	movea.w	objoff_2C(a0),a1 ; a1=object (platform)
 	btst	#5,status(a1)
-	bne.w	JmpTo65_DeleteObject
+	jne		DeleteObject
 	move.w	x_pos(a1),x_pos(a0)
 	move.w	y_pos(a1),d0
 	addi.w	#$C,d0
@@ -72356,7 +72352,7 @@ Obj_WFZBoss_PlatformHurtFollowPlatform:
 Obj_WFZBoss_LaserShooter:
 	movea.w	objoff_2C(a0),a1 ; a1=object (laser case)
 	btst	#5,status(a1)
-	bne.w	JmpTo65_DeleteObject
+	jne		DeleteObject
 	moveq	#0,d0
 	move.b	routine_secondary(a0),d0
 	move.w	Obj_WFZBoss_LaserShooterIndex(pc,d0.w),d1
@@ -72390,7 +72386,7 @@ Obj_WFZBoss_LaserShooterDown:
 Obj_WFZBoss_Laser:
 	movea.w	objoff_2C(a0),a1 ; a1=object
 	btst	#5,status(a1)
-	bne.w	JmpTo65_DeleteObject
+	jne		DeleteObject
 	moveq	#0,d0
 	move.b	routine_secondary(a0),d0
 	move.w	Obj_WFZBoss_LaserIndex(pc,d0.w),d1
@@ -72547,7 +72543,7 @@ Obj_WFZBoss_RobotnikDown:
 Obj_WFZBoss_RobotnikDelete:		; Deletes robotnik and the platform he's on
 	movea.w	parent(a0),a1 ; a1=object (Robotnik Platform)
 	jsrto	(DeleteObject2).l, JmpTo6_DeleteObject2
-	bra.w	JmpTo65_DeleteObject
+	jmp		DeleteObject
 ; ===========================================================================
 
 Obj_WFZBoss_RobotnikPlatform:	; Just displays the platform and move accordingly to the robotnik object
@@ -72792,7 +72788,7 @@ loc_3CFC0:
 ; loc_3CFF6:
 Obj_Eggman_State2_State5:
 	subq.w	#1,objoff_2A(a0)
-	bmi.w	JmpTo65_DeleteObject
+	jmi		DeleteObject
 	addi.w	#$10,y_vel(a0)
 	jsrto	(ObjectMove).l, JmpTo26_ObjectMove
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
@@ -72844,7 +72840,7 @@ Obj_Eggman_State3_State2:
 Obj_Eggman_State3_State3:
 	lea	(MainCharacter).w,a1 ; a1=character
 	bclr	#5,status(a1)
-	bra.w	JmpTo65_DeleteObject
+	jmp		DeleteObject
 ; ===========================================================================
 
 loc_3D086:
@@ -72858,7 +72854,7 @@ loc_3D086:
 ; loc_3D09C:
 Obj_Eggman_State4:
 	subq.w	#1,objoff_2A(a0)
-	bmi.w	JmpTo65_DeleteObject
+	jmi		DeleteObject
 	addi.w	#$10,y_vel(a0)
 	jsrto	(ObjectMove).l, JmpTo26_ObjectMove
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
@@ -73655,7 +73651,7 @@ loc_3D9D6:
 
 	command	Mus_FadeOut
 	move.b	#GameModeID_EndingSequence,(Game_Mode).w ; => EndingSequence
-	bra.w	JmpTo65_DeleteObject
+	jmp		DeleteObject
 ; ===========================================================================
 
 Obj_Eggrobo_Shoulder:
@@ -74132,7 +74128,7 @@ loc_3DE0A:
 	move.w	x_pos(a1),x_pos(a0)
 	move.w	y_pos(a1),y_pos(a0)
 	lea	(ChildObj_Eggrobo_TargettingLock).l,a2
-	bsr.w	LoadChildObject
+	jsr		LoadChildObject
 	clr.w	x_vel(a0)
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -74154,7 +74150,7 @@ loc_3DE3C:
 loc_3DE62:
 	movea.w	objoff_2C(a0),a1 ; a1=object
 	move.w	x_pos(a0),objoff_40(a1)
-	bra.w	JmpTo65_DeleteObject
+	jmp		DeleteObject
 ; ===========================================================================
 ;loc_3DE70
 Obj_Eggrobo_TargettingLock:
@@ -74180,7 +74176,7 @@ loc_3DE82:
 loc_3DEA2:
 	movea.w	objoff_2C(a0),a1 ; a1=object
 	tst.b	(a1)
-	beq.w	JmpTo65_DeleteObject
+	jeq		DeleteObject
 	subq.w	#1,objoff_2A(a0)
 	bne.s	+
 	move.w	#4,objoff_2A(a0)
@@ -74265,14 +74261,14 @@ loc_3DF80:
 	blo.s	+
 	clr.b	collision_flags(a0)
 	cmpi.b	#7,mapping_frame(a0)
-	beq.w	JmpTo65_DeleteObject
+	jeq		DeleteObject
 +
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 ;loc_3DFAA
 Obj_Eggrobo_FallingPieces:
 	subq.w	#1,objoff_2A(a0)
-	bmi.w	JmpTo65_DeleteObject
+	jmi		DeleteObject
 	jsrto	(ObjectMoveAndFall).l, JmpTo8_ObjectMoveAndFall
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -74449,7 +74445,7 @@ CreateEggmanBombs:
 	moveq	#1,d6
 
 -	lea	(ChildObj_Eggrobo_EggmanBomb).l,a2
-	bsr.w	LoadChildObject
+	jsr		LoadChildObject
 	move.w	(a3)+,d0
 	btst	#0,render_flags(a0)
 	beq.s	+
@@ -75287,8 +75283,6 @@ JmpTo5_DisplaySprite3 ; JmpTo
 	jmp	(DisplaySprite3).l
 JmpTo45_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo65_DeleteObject ; JmpTo
-	jmp	(DeleteObject).l
 JmpTo19_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
 JmpTo39_MarkObjGone ; JmpTo
