@@ -832,8 +832,9 @@ Screen_Shaking_Flag_HTZ:	ds.b 1		; activates screen shaking code in HTZ's layer 
 Screen_Shaking_Flag:		ds.b 1		; activates screen shaking code (if existent) in layer deformation routine
 Scroll_lock:			ds.b 1		; set to 1 to stop all scrolling for P1
 Scroll_lock_P2:			ds.b 1		; set to 1 to stop all scrolling for P2
-unk_EEC0:			ds.l 1		; unused, except on write in LevelSizeLoad...
+					ds.l 1		; unused
 unk_EEC4:			ds.w 1		; same as above. The write being a long also overwrites the address below
+; i want to remove eec4 so badly, but can't because of this bullshit
 Camera_Max_Y_pos:		ds.w 1
 Camera_Min_X_pos:		ds.w 1
 Camera_Max_X_pos:		ds.w 1
@@ -841,10 +842,10 @@ Camera_Min_Y_pos:		ds.w 1
 Camera_Max_Y_pos_now:		ds.w 1		; was "Camera_max_scroll_spd"...
 Horiz_scroll_delay_val:		ds.w 1		; if its value is a, where a != 0, X scrolling will be based on the player's X position a-1 frames ago
 Sonic_Pos_Record_Index:		ds.w 1		; into Sonic_Pos_Record_Buf and Sonic_Stat_Record_Buf
-Horiz_scroll_delay_val_P2:	ds.w 1
+							ds.w 1		; unused, was Horiz_scroll_delay_val_P2
 Tails_Pos_Record_Index:		ds.w 1		; into Tails_Pos_Record_Buf
 Camera_Y_pos_bias:		ds.w 1		; added to y position for lookup/lookdown, $60 is center
-Camera_Y_pos_bias_P2:		ds.w 1		; for Tails
+						ds.w 1		; unused, used to be Camera_Y_pos_bias_P2
 Deform_lock:			ds.b 1		; set to 1 to stop all deformation
 				ds.b 1		; $FFFFEEDD ; seems unused
 Camera_Max_Y_Pos_Changing:	ds.b 1
@@ -1290,7 +1291,7 @@ SlotMachine_Slot3Rout:		ds.b 1
 Player_mode:			ds.w 1		; 0 = Sonic and Tails, 1 = Sonic, 2 = Tails
 Player_option:			ds.w 1		; 0 = Sonic and Tails, 1 = Sonic, 2 = Tails
 
-Two_player_items:		ds.w 1
+Music_option:			ds.w 1
 				ds.b $A		; $FFFFFF76-$FFFFFF7F ; seems unused
 
 LevSel_HoldTimer:		ds.w 1

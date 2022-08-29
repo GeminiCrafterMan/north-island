@@ -49,13 +49,13 @@ TailsAni_Swim2_ptr:	offsetTableEntry.w TailsAni_Swim2	; 42 ; $2A
 TailsAni_SwimTired_ptr:	offsetTableEntry.w TailsAni_SwimTired	; 43 ; $2B
 TailsAni_SwimCarry_ptr:	offsetTableEntry.w TailsAni_SwimCarry		; 44 ; $2C
 
-TailsAni_Walk:	dc.b $FF,frT_Walk13,frT_Walk14,frT_Walk15,frT_Walk16,frT_Walk17,frT_Walk18, frT_Walk11, frT_Walk12,afEnd
+TailsAni_Walk:		dc.b $FF,	frT_Walk13,	frT_Walk14,	frT_Walk15,	frT_Walk16,	frT_Walk17,	frT_Walk18,	frT_Walk11,	frT_Walk12,	afEnd
 	rev02even
-TailsAni_Run:	dc.b $FF,frT_Run11,frT_Run12,frT_Run13,frT_Run14,afEnd,afEnd,afEnd,afEnd,afEnd
+TailsAni_Run:		dc.b $FF,	frT_Run11,	frT_Run12,	frT_Run13,	frT_Run14,	afEnd,		afEnd,		afEnd,		afEnd,		afEnd
 	rev02even
 TailsAni_Roll:	dc.b   1,frT_Roll3,frT_Roll2,frT_Roll1,afEnd
 	rev02even
-TailsAni_Roll2:	dc.b   1,frT_Roll3,frT_Roll2,frT_Roll1,afEnd
+TailsAni_Roll2:	dc.b   1,frT_Choke,afEnd
 	rev02even
 TailsAni_Push:	dc.b $FD,frT_Push1,frT_Push2,frT_Push3,frT_Push4,afEnd,afEnd,afEnd,afEnd,afEnd
 	rev02even
@@ -106,7 +106,7 @@ TailsAni_Slide:		dc.b   9,frT_Slide,frT_Hurt,afEnd
 	rev02even
 TailsAni_Blank:		dc.b $77,  frT_Null,afChange,  0
 	rev02even
-TailsAni_HaulAss:	dc.b $FF,frT_Mach11,frT_Mach12,afEnd,afEnd,afEnd,afEnd,afEnd,afEnd,afEnd
+TailsAni_HaulAss:	dc.b $FF,	frT_Mach11,	frT_Mach12,	frT_Mach13,	frT_Mach14,	afEnd,		afEnd,		afEnd,		afEnd,		afEnd
 	rev02even
 TailsAni_Fly:		dc.b   1,frT_Fly1,afEnd
 	rev02even
@@ -168,15 +168,17 @@ frT_Run11	ds.b 1
 frT_Run12	ds.b 1
 frT_Run13	ds.b 1
 frT_Run14	ds.b 1
+frT_Run2X	ds.b 4
+frT_Run3X	ds.b 4
+frT_Run4X	ds.b 4
+; fester
 frT_Mach11	ds.b 1
 frT_Mach12	ds.b 1
-; don't care about these, define them for the sake of keeping the number up
-frT_Run2X	ds.b 4
-frT_Mach2X	ds.b 2
-frT_Run3X	ds.b 4
-frT_Mach3X	ds.b 2
-frT_Run4X	ds.b 4
-frT_Mach4X	ds.b 2
+frT_Mach13	ds.b 1
+frT_Mach14	ds.b 1
+frT_Mach2X	ds.b 4
+frT_Mach3X	ds.b 4
+frT_Mach4X	ds.b 4
 ; speeeeeeeeeeeeEEEEEEEEEEEN
 frT_Roll1	ds.b 1
 frT_Roll2	ds.b 1

@@ -1226,8 +1226,10 @@ Player1_ContFlight:
 ComparePressT:
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.s	loc_1488C
-;	cmpi.w	#-$100,y_vel(a0)	; old SNI
-;	blt.s	loc_1488C			; old SNI
+; old SNI, but genuinely a good idea
+	cmpi.w	#-$100,y_vel(a0)
+	blt.s	loc_1488C
+
 	tst.b	double_jump_property(a0)
 	beq.s	loc_1488C
 	btst	#6,status(a0)
@@ -1475,9 +1477,12 @@ Tails_Lookup:
 	cmpi.w	#$78,(Tails_Look_delay_counter).w
 	blo.s	Obj_Tails_ResetScr_Part2
 	move.w	#$78,(Tails_Look_delay_counter).w
-	cmpi.w	#$C8,(Camera_Y_pos_bias_P2).w
+	cmpa.w	#MainCharacter,a0
+	bne.s	+
+	cmpi.w	#$C8,(Camera_Y_pos_bias).w
 	beq.s	Obj_Tails_UpdateSpeedOnGround
-	addq.w	#2,(Camera_Y_pos_bias_P2).w
+	addq.w	#2,(Camera_Y_pos_bias).w
++
 	bra.s	Obj_Tails_UpdateSpeedOnGround
 ; ---------------------------------------------------------------------------
 ; loc_1C1A2:
@@ -1489,9 +1494,12 @@ Tails_Duck:
 	cmpi.w	#$78,(Tails_Look_delay_counter).w
 	blo.s	Obj_Tails_ResetScr_Part2
 	move.w	#$78,(Tails_Look_delay_counter).w
-	cmpi.w	#8,(Camera_Y_pos_bias_P2).w
+	cmpa.w	#MainCharacter,a0
+	bne.s	+
+	cmpi.w	#8,(Camera_Y_pos_bias).w
 	beq.s	Obj_Tails_UpdateSpeedOnGround
-	subq.w	#2,(Camera_Y_pos_bias_P2).w
+	subq.w	#2,(Camera_Y_pos_bias).w
++
 	bra.s	Obj_Tails_UpdateSpeedOnGround
 
 ; ===========================================================================
@@ -1501,11 +1509,13 @@ Obj_Tails_ResetScr:
 	move.w	#0,(Tails_Look_delay_counter).w
 ; loc_1C1D6:
 Obj_Tails_ResetScr_Part2:
-	cmpi.w	#(224/2)-16,(Camera_Y_pos_bias_P2).w	; is screen in its default position?
+	cmpa.w	#MainCharacter,a0
+	bne.s	Obj_Tails_UpdateSpeedOnGround
+	cmpi.w	#(224/2)-16,(Camera_Y_pos_bias).w	; is screen in its default position?
 	beq.s	Obj_Tails_UpdateSpeedOnGround	; if yes, branch.
 	bhs.s	+				; depending on the sign of the difference,
-	addq.w	#4,(Camera_Y_pos_bias_P2).w	; either add 2
-+	subq.w	#2,(Camera_Y_pos_bias_P2).w	; or subtract 2
+	addq.w	#4,(Camera_Y_pos_bias).w	; either add 2
++	subq.w	#2,(Camera_Y_pos_bias).w	; or subtract 2
 
 ; ---------------------------------------------------------------------------
 ; updates Tails' speed on the ground
@@ -1646,8 +1656,9 @@ Tails_TurnLeft:
 	sfx	sfx_Skid
 	cmpi.b	#$C,air_left(a0)
 	blo.s	return_1C328	; if he's drowning, branch to not make dust
-	move.b	#6,(Tails_Dust+routine).w
-	move.b	#$15,(Tails_Dust+mapping_frame).w
+	jsr		PutDustIntoA1
+	move.b	#6,routine(a1)
+	move.b	#$15,mapping_frame(a1)
 
 return_1C328:
 	rts
@@ -1695,8 +1706,9 @@ Tails_TurnRight:
 	sfx	sfx_Skid
 	cmpi.b	#$C,air_left(a0)
 	blo.s	return_1C3A8	; if he's drowning, branch to not make dust
-	move.b	#6,(Tails_Dust+routine).w
-	move.b	#$15,(Tails_Dust+mapping_frame).w
+	jsr		PutDustIntoA1
+	move.b	#6,routine(a1)
+	move.b	#$15,mapping_frame(a1)
 
 return_1C3A8:
 	rts
@@ -1782,11 +1794,13 @@ Tails_KeepRolling:
 ; resets the screen to normal while rolling, like Obj_Tails_ResetScr
 ; loc_1C440:
 Obj_Tails_Roll_ResetScr:
-	cmpi.w	#(224/2)-16,(Camera_Y_pos_bias_P2).w	; is screen in its default position?
+	cmpa.w	#MainCharacter,a0
+	bne.s	Tails_SetRollSpeed
+	cmpi.w	#(224/2)-16,(Camera_Y_pos_bias).w	; is screen in its default position?
 	beq.s	Tails_SetRollSpeed		; if yes, branch
 	bhs.s	+				; depending on the sign of the difference,
-	addq.w	#4,(Camera_Y_pos_bias_P2).w	; either add 2
-+	subq.w	#2,(Camera_Y_pos_bias_P2).w	; or subtract 2
+	addq.w	#4,(Camera_Y_pos_bias).w	; either add 2
++	subq.w	#2,(Camera_Y_pos_bias).w	; or subtract 2
 
 ; loc_1C452:
 Tails_SetRollSpeed:
@@ -1914,11 +1928,13 @@ ComparePressT3:
 
 ; loc_1C518: Obj_Tails_ResetScr2:
 Obj_Tails_Jump_ResetScr:
-	cmpi.w	#(224/2)-16,(Camera_Y_pos_bias_P2).w	; is screen in its default position?
+	cmpa.w	#MainCharacter,a0
+	bne.s	Tails_JumpPeakDecelerate
+	cmpi.w	#(224/2)-16,(Camera_Y_pos_bias).w	; is screen in its default position?
 	beq.s	Tails_JumpPeakDecelerate			; if yes, branch
 	bhs.s	+				; depending on the sign of the difference,
-	addq.w	#4,(Camera_Y_pos_bias_P2).w	; either add 2
-+	subq.w	#2,(Camera_Y_pos_bias_P2).w	; or subtract 2
+	addq.w	#4,(Camera_Y_pos_bias).w	; either add 2
++	subq.w	#2,(Camera_Y_pos_bias).w	; or subtract 2
 
 ; loc_1C52A:
 Tails_JumpPeakDecelerate:
@@ -2140,10 +2156,10 @@ Tails_CheckSpindash:    ; Remove this eventually. For now, I'll just fix its con
 	move.b	#1,spindash_flag(a0)
 	move.w	#0,spindash_counter(a0)
 	cmpi.b	#$C,air_left(a0)	; if he's drowning, branch to not make dust
-	blo.s	loc_1C754
-	move.b	#2,(Tails_Dust+anim).w
-
-loc_1C754:
+	blo.s	+
+	jsr		PutDustIntoA1
+	move.b	#2,anim(a1)
++
 	bsr.w	Tails_LevelBound
 	bsr.w	AnglePos
 
@@ -2162,7 +2178,7 @@ return_1C75C:
 Tails_UpdateSpindash:
     jsr		GetCtrlHeldLogical
 	btst	#button_down,d0
-	bne.s	Tails_ChargingSpindash
+	bne.w	Tails_ChargingSpindash
 
 	; unleash the charged spindash and start rolling quickly:
 	move.b	#$E,y_radius(a0)
@@ -2174,19 +2190,23 @@ Tails_UpdateSpindash:
 	move.b	spindash_counter(a0),d0
 	add.w	d0,d0
 	move.w	Tails_SpindashSpeeds(pc,d0.w),inertia(a0)
+	cmpa.w	#MainCharacter,a0
+	bne.s	+
 	move.w	inertia(a0),d0
 	subi.w	#$800,d0
 	add.w	d0,d0
 	andi.w	#$1F00,d0
 	neg.w	d0
 	addi.w	#$2000,d0
-	move.w	d0,(Horiz_scroll_delay_val_P2).w
+	move.w	d0,(Horiz_scroll_delay_val).w
++
 	btst	#0,status(a0)
 	beq.s	+
 	neg.w	inertia(a0)
 +
 	bset	#2,status(a0)
-	move.b	#0,(Tails_Dust+anim).w
+	jsr		PutDustIntoA1
+	move.b	#0,anim(a1)
 	sfx	sfx_Dash
 	bra.s	Obj_Tails_Spindash_ResetScr
 ; ===========================================================================
@@ -2224,11 +2244,13 @@ Tails_ChargingSpindash:			; If still charging the dash...
 
 Obj_Tails_Spindash_ResetScr:
 	addq.l	#4,sp
-	cmpi.w	#(224/2)-16,(Camera_Y_pos_bias_P2).w
+	cmpa.w	#MainCharacter,a0
+	bne.s	loc_1C83C	; just don't do it at all, we're removing p2 camera bias anyway
+	cmpi.w	#(224/2)-16,(Camera_Y_pos_bias).w
 	beq.s	loc_1C83C
 	bhs.s	+
-	addq.w	#4,(Camera_Y_pos_bias_P2).w
-+	subq.w	#2,(Camera_Y_pos_bias_P2).w
+	addq.w	#4,(Camera_Y_pos_bias).w
++	subq.w	#2,(Camera_Y_pos_bias).w
 
 loc_1C83C:
 	bsr.w	Tails_LevelBound
@@ -2883,27 +2905,30 @@ TAnim_WalkRunZoom: ; a0=character
 	beq.w	+
     endif
 	add.w	d2,d2
-+
-	move.b	d0,d3
-	add.b	d3,d3
-	add.b	d3,d3
-	lea	(TailsAni_Walk).l,a1
-
-	cmpi.w	#$600,d2		; is Tails going pretty fast?
-	blo.s	TAnim_SpeedSelected	; if not, branch
++	; @nomodspeed
+	lea	(TailsAni_HaulAss).l,a1
+	cmpi.w	#$700,d2		; is Tails going really fast?
+	bhs.s	+				; if yes, branch
 	lea	(TailsAni_Run).l,a1
-	move.b	d0,d1
-	lsr.b	#1,d1
-	add.b	d1,d0
+	cmpi.w	#$600,d2		; is Tails going pretty fast?
+	bhs.s	+	; if not, branch
+	lea	(TailsAni_Walk).l,a1
+	add.b	d0,d0
++	; @running
 	add.b	d0,d0
 	move.b	d0,d3
-
-	cmpi.w	#$700,d2		; is Tails going really fast?
-	blo.s	TAnim_SpeedSelected	; if not, branch
-	lea	(TailsAni_HaulAss).l,a1
-
-; loc_1CEEE:
-TAnim_SpeedSelected:
+	moveq	#0,d1
+	move.b	anim_frame(a0),d1
+	move.b	1(a1,d1.w),d0
+	cmpi.b	#-1,d0
+	bne.s	+
+	move.b	#0,anim_frame(a0)
+	move.b	1(a1),d0
++
+	move.b	d0,mapping_frame(a0)
+	add.b	d3,mapping_frame(a0)
+	subq.b	#1,anim_frame_duration(a0)
+	bpl.s	returnT_1B4AC
 	neg.w	d2
 	addi.w	#$800,d2
 	bpl.s	+
@@ -2911,8 +2936,9 @@ TAnim_SpeedSelected:
 +
 	lsr.w	#8,d2
 	move.b	d2,anim_frame_duration(a0)	; modify frame duration
-	bsr.w	TAnim_Do2
-	add.b	d3,mapping_frame(a0)
+	addq.b	#1,anim_frame(a0)		; modify frame number
+
+returnT_1B4AC:
 	rts
 ; ===========================================================================
 ; loc_1CF08
@@ -3265,7 +3291,7 @@ Obj_TailsTails_Main:
 Obj_TailsTailsAniSelection:
 	dc.b	0,0	; TailsAni_Walk,Run	->
 	dc.b	3	; TailsAni_Roll		-> Directional
-	dc.b	3	; TailsAni_Roll2	-> Directional
+	dc.b	$E	; TailsAni_Roll2	-> Directional Fast
 	dc.b	9	; TailsAni_Push		-> Pushing
 	dc.b	1	; TailsAni_Wait		-> Swish
 	dc.b	9	; TailsAni_Balance	-> Pushing
@@ -3285,12 +3311,11 @@ Obj_TailsTailsAniSelection:
 	dc.b	0	; TailsAni_Blank	->
 	dc.b	0,0	; TailsAni_Dummy4,5	->
 	dc.b	0	; TailsAni_HaulAss	->
-	dc.b	$B	; TailsAni_Fly		->
-	dc.b	$B,$B,$B,$B	; four Fly animations
+	dc.b	$B,$C,$D,$B,$C	; flying animations (fly, fly2, tired, carry, carryup)
 	dc.b	3	; TailsAni_AirRoll	-> Directional
 	dc.b	0	; TailsAni_Fall		-> Nothing
 	dc.b	0	; TailsAni_Victory	-> nothing
-	dc.b	$B	; TailsAni_CarryTired	->
+	dc.b	$D	; TailsAni_CarryTired	-> tired
 	dc.b	0,0,0,0	; four Swim animations
 	even
 

@@ -10427,7 +10427,7 @@ OptionScreen_Controls:
 ; word_917A:
 OptionScreen_Choices:
 	dc.l (8-1)<<24|(Player_option&$FFFFFF)
-	dc.l (2-1)<<24|(Two_player_items&$FFFFFF)	; Useless
+	dc.l (2-1)<<24|(Music_option&$FFFFFF)	; Used to be Two_player_items, now turns music on and off.
 	dc.l (SFXlast-1)<<24|(Sound_test_sound&$FFFFFF)
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
@@ -10516,7 +10516,7 @@ OptionScreen_SelectTextPtr:
 +
 	tst.b	(Options_menu_box).w
 	beq.s	+
-	lea	(Opt_2PItem).l,a4
+	lea	(Opt_Music).l,a4
 
 +
 	cmpi.b	#2,(Options_menu_box).w
@@ -10556,7 +10556,7 @@ boxData macro txtlabel,vramAddr
     endm
 
 	boxData	TextOptScr_PlayerSelect,VRAM_Plane_A_Name_Table+planeLocH40(9,3)
-	boxData	TextOptScr_VsModeItems,VRAM_Plane_A_Name_Table+planeLocH40(9,11)
+	boxData	TextOptScr_Music,VRAM_Plane_A_Name_Table+planeLocH40(9,11)
 	boxData	TextOptScr_SoundTest,VRAM_Plane_A_Name_Table+planeLocH40(9,19)
 
 Opt_Char:
@@ -10568,9 +10568,9 @@ Opt_Char:
 	dc.l TextOptScr_SonicAndKnux
 	dc.l TextOptScr_SonicAndSonic
 	dc.l TextOptScr_TailsAndTails
-Opt_2PItem:
-	dc.l TextOptScr_AllKindsItems
-	dc.l TextOptScr_TeleportOnly
+Opt_Music:
+	dc.l TextOptScr_On
+	dc.l TextOptScr_Off
 Opt_SoundTest:
 	dc.l TextOptScr_0
 ; ===========================================================================
@@ -11104,9 +11104,9 @@ TextOptScr_KnuxAndTails:	menutxt	"KNUX AND TAILS "
 TextOptScr_SonicAndKnux:	menutxt	"SONIC AND KNUX "
 TextOptScr_SonicAndSonic:	menutxt "SONIC AND SONIC"
 TextOptScr_TailsAndTails:	menutxt "TAILS AND TAILS"
-TextOptScr_VsModeItems:		menutxt	"* VS MODE ITEMS *"	; byte_982C:
-TextOptScr_AllKindsItems:	menutxt	"ALL KINDS ITEMS"	; byte_983E:
-TextOptScr_TeleportOnly:	menutxt	"TELEPORT ONLY  "	; byte_984E:
+TextOptScr_Music:			menutxt	"*    MUSIC      *"	; byte_982C:
+TextOptScr_On:				menutxt	"      ON       "	; byte_983E:
+TextOptScr_Off:				menutxt	"      OFF      "	; byte_984E:
 TextOptScr_SoundTest:		menutxt	"*  SOUND TEST   *"	; byte_985E:
 TextOptScr_0:				menutxt	"      00       "	; byte_9870:
 
@@ -12982,7 +12982,6 @@ LevelSizeLoad:
 	lea	LevelSize(pc,d0.w),a0
 	move.l	(a0)+,d0
 	move.l	d0,(Camera_Min_X_pos).w
-	move.l	d0,(unk_EEC0).w	; unused besides this one write...
 	move.l	d0,(Tails_Min_X_pos).w
 	move.l	(a0)+,d0
 	move.l	d0,(Camera_Min_Y_pos).w
@@ -12992,7 +12991,6 @@ LevelSizeLoad:
 	move.l	d0,(Tails_Min_Y_pos).w
 	move.w	#$1010,(Horiz_block_crossed_flag).w
 	move.w	#(224/2)-16,(Camera_Y_pos_bias).w
-	move.w	#(224/2)-16,(Camera_Y_pos_bias_P2).w
 	bra.w	+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -13378,11 +13376,6 @@ DeformBgLayer:
 	lea	(Camera_X_pos_diff).w,a4
 	lea	(Horiz_scroll_delay_val).w,a5
 	lea	(Sonic_Pos_Record_Buf).w,a6
-	cmpi.w	#2,(Player_mode).w
-	bne.s	+
-	lea	(Horiz_scroll_delay_val_P2).w,a5
-	lea	(Tails_Pos_Record_Buf).w,a6
-+
 	bsr.w	ScrollHoriz
 	lea	(Horiz_block_crossed_flag).w,a2
 	bsr.w	SetHorizScrollFlags
@@ -13390,10 +13383,6 @@ DeformBgLayer:
 	lea	(Camera_Min_X_pos).w,a2
 	lea	(Camera_Y_pos_diff).w,a4
 	move.w	(Camera_Y_pos_bias).w,d3
-	cmpi.w	#2,(Player_mode).w
-	bne.s	+
-	move.w	(Camera_Y_pos_bias_P2).w,d3
-+
 	bsr.w	ScrollVerti
 	lea	(Verti_block_crossed_flag).w,a2
 	bsr.w	SetVertiScrollFlags
@@ -21764,7 +21753,7 @@ Obj_MonitorContents_Raise:
 Obj_MonitorContents_Types:	offsetTable
 		offsetTableEntry.w robotnik_monitor	; 0 - Static
 		offsetTableEntry.w sonic_1up		; 1 - Sonic 1-up
-		offsetTableEntry.w tails_1up		; 2 - Tails 1-up
+		offsetTableEntry.w magnet_monitor	; 2 - Magnet
 		offsetTableEntry.w robotnik_monitor	; 3 - Robotnik
 		offsetTableEntry.w super_ring		; 4 - Super Ring
 		offsetTableEntry.w super_shoes		; 5 - Speed Shoes
@@ -21795,17 +21784,15 @@ sonic_1up:
 	rts	; Play extra life music
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Tails 1up Monitor
-; gives Tails an extra life in two player mode
+; Magnet monitor
+; just turns on stick_to_convex
 ; ---------------------------------------------------------------------------
-tails_1up:
-	addq.w	#1,(Monitors_Broken_2P).w
-	addq.b	#1,(Life_count_2P).w
-	addq.b	#1,(Update_HUD_lives_2P).w
-	move.b	#emotion_angry,(Current_emotion).w	; "the fuck is this?"
-	jsr		UpdateEmotionWindow
-	music	mus_ExtraLife
-	rts	; Play extra life music
+magnet_monitor:
+; has nothing to turn it off atm, but you can just jump lol
+	addq.w	#1,(a2)
+	move.b	#1,stick_to_convex(a1)
+	sfx		sfx_Electricity
+	rts
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Super Ring Monitor
@@ -21841,21 +21828,14 @@ super_ring:
 	cmpi.w	#100,(a2)
 	blo.s	+		; branch, if player has less than 100 rings
 	bset	#1,(a4)		; set flag for first 1up
-	beq.s	ChkPlayer_1up	; branch, if not yet set
+	beq.w	sonic_1up	; branch, if not yet set
 	cmpi.w	#200,(a2)
 	blo.s	+		; branch, if player has less than 200 rings
 	bset	#2,(a4)		; set flag for second 1up
-	beq.s	ChkPlayer_1up	; branch, if not yet set
+	beq.w	sonic_1up	; branch, if not yet set
 +
 	sfx	sfx_RingRight
 	rts
-; ---------------------------------------------------------------------------
-;loc_129D4:
-ChkPlayer_1up:
-	; give 1up to correct player
-	cmpa.w	#MainCharacter,a1
-	beq.w	sonic_1up
-	bra.w	tails_1up
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Super Sneakers Monitor
@@ -33866,9 +33846,6 @@ Obj_Splash_Init:
 	move.w	#tiles_to_bytes(ArtTile_ArtNem_SonicDust),objoff_3C(a0)
 	cmpa.w	#Sonic_Dust,a0
 	beq.s	+
-	move.b	#1,objoff_34(a0)
-	cmpi.l	#Obj_Tails,(MainCharacter+id).w
-	beq.s	+
 	move.w	#make_art_tile(ArtTile_ArtNem_TailsDust,0,0),art_tile(a0)
 	move.w	#Sidekick,parent(a0)
 	move.w	#tiles_to_bytes(ArtTile_ArtNem_TailsDust),objoff_3C(a0)
@@ -33912,8 +33889,6 @@ Obj_Splash_MdSpindashDust:
 	move.w	y_pos(a2),y_pos(a0)
 	move.b	status(a2),status(a0)
 	andi.b	#1,status(a0)
-	tst.b	objoff_34(a0)
-	beq.s	+
 	cmpi.l	#Obj_Tails,id(a2)
 	bne.s	+
 	subi_.w	#4,y_pos(a0)
@@ -33974,8 +33949,6 @@ Obj_Splash_SkidDust:
 	move.w	x_pos(a2),x_pos(a1)
 	move.w	y_pos(a2),y_pos(a1)
 	add.w	d1,y_pos(a1)
-	tst.b	objoff_34(a0)
-	beq.s	+
 	cmpi.l	#Obj_Tails,id(a2)
 	bne.s	+
 	subi_.w	#4,y_pos(a1)

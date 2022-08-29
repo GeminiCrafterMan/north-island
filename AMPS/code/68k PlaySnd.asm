@@ -213,6 +213,10 @@ dPlaySnd:
 ; ---------------------------------------------------------------------------
 
 dPlaySnd_Music:
+		tst.w	(Music_option).w
+		beq.s	.musicIsOn
+		rts
+.musicIsOn
 ; ---------------------------------------------------------------------------
 ; To save few cycles, we don't directly substract the music offset from
 ; the ID, and instead offset the table position. In practice this will
