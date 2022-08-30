@@ -31751,8 +31751,8 @@ Sonic_RollJump:
 ; End of function Sonic_Jump
 
 Player_AirRoll:
-	btst	#1,status(a0)	; is Sonic in the air?
-	beq.s	.nope	; if not, branch
+	btst	#1,status(a0)	; is the player in the air?
+	beq.s	.nope			; if not, branch
 	cmpi.b	#AniIDSonAni_Roll,anim(a0)
 	beq.s	.nope
 	cmpi.b	#AniIDSonAni_Roll2,anim(a0)
@@ -31769,7 +31769,7 @@ Player_AirRoll:
 .debugDone:
 	beq.s	.nope	; if not, branch
 	move.b	#AniIDSonAni_AirRoll,anim(a0)	; use "rolling"	animation
-	bset	#2,status(a0)	; force Sonic to roll
+	bset	#2,status(a0)	; force the player to roll
 	sfx		sfx_AirRoll
 
 .nope:

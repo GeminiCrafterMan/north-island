@@ -1226,6 +1226,18 @@ Player1_ContFlight:
 ComparePressT:
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.s	loc_1488C
+
+; expanded version of the flight cancel I wrote for SHIMA
+	jsr		GetCtrlHeldLogical
+	andi.b	#button_down_mask,d0
+	beq.s	.cont
+	clr.b	(Flying_carrying_Sonic_flag).w
+	move.b	#AniIDTailsAni_AirRoll,anim(a0)
+	bset	#2,status(a0)
+	sfx		sfx_AirRoll
+	move.b	#1,jumping(a0)
+	rts
+.cont:
 ; old SNI, but genuinely a good idea
 	cmpi.w	#-$100,y_vel(a0)
 	blt.s	loc_1488C
@@ -2082,7 +2094,7 @@ Tails_Test_For_Flight:
     jsr		GetCtrlPressLogical
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.w	locret_151A2
-	cmpi.w	#2,(Player_mode).w
+	cmpa.w	#MainCharacter,a0
 	bne.s	loc_15156
 	bclr	#4,status(a0)
 	tst.b	(Super_Tails_flag).w	; check Super-state
@@ -2116,8 +2128,7 @@ loc_1515C:
 	beq.s	loc_1518C
 	bclr	#2,status(a0)
 	move.b	y_radius(a0),d1
-	move.b	#$F,y_radius(a0)
-	move.b	#9,x_radius(a0)
+	jsr		ResetHeight_a0
 	sub.b	#$F,d1
 	ext.w	d1
 
