@@ -3435,7 +3435,7 @@ Sega_WaitPalette:
 	if customAMPS
 		move.w	#30,(Demo_Time_left).w		; half a second
 	else
-		move.w	#3*60,(Demo_Time_left).w	; 3 seconds
+		move.w	#4*60,(Demo_Time_left).w	; 3 seconds
 	endif
 
 ; loc_3940:

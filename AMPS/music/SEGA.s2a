@@ -11,12 +11,7 @@
 
 	sComm	0, $00		; indicate sample is playing
 	dc.b nC4, $7F		; C4 is the base pitch (pitch $100) note for DAC
-
-	if customAMPS
-	.loop:
-		dc.b sHold, $7F
-		sJump		.loop
-	endif
+	dc.b sHold, $7F
 
 	sComm	0, $01		; indicate sample has ended
 .DAC2	sStop

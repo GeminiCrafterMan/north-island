@@ -133,7 +133,7 @@ SampleList:
 	sample $0100, CrashCymbal, Stop			; 99 - Crash Cymbal
 	sample $0100, ComeOn, Stop			; B5 - Come On
 
-	sample $0100, SEGA, Stop		; 92 - SEGA
+	sample $0100, SEGA, Stop		; 92 - SEGA, but it's the John Tay "short" WAV version of the Mobile intro
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Define volume envelopes and their data
