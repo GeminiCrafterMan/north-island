@@ -541,11 +541,9 @@ loc_315AA2:
 		bsr.w	sub_318FF6
 		tst.w	d1
 		bpl.s	loc_315AF4
-	; where the victory shit would go, ref: shima
-	; fuck you, delta. if you want to steal from megamix,
-	; i'm going to steal from you. kiss my ass.
-	; to other contributors of this repo:
-	; yes, i'm still mad about this
+	; victory animation code, stolen from delta
+	; sorry man, i... wait, you already know why i was so mad,
+	; i explained this to you
 	.victory:
 		add.w	d1,y_pos(a0)
 		move.b	(Primary_Angle).w,angle(a0)
