@@ -16655,6 +16655,11 @@ DynamicLevelEventIndex: zoneOrderedOffsetTable 2,1
 ; ===========================================================================
 ; loc_E658:
 LevEvents_EHZ:
+	cmpi.w	#$EAC,(Normal_palette+$C).w	; Is the color shifting already active?
+	beq.s	.noShiftPlayer			; If so, skip.
+	ShiftPalUp1 $200				; Shift player palette up in the blue section,
+	ShiftPalDown1 $042				; and down in the red and green
+.noShiftPlayer:
 	tst.b	(Current_Act).w
 	bne.s	LevEvents_EHZ2
 	rts
@@ -30448,6 +30453,75 @@ GetCtrlHeldLogical:
 +
 	move.b	(Ctrl_2_Held_Logical).w,d2
 	rts
+
+; These subroutines add and subtract shades from the palette and cap each parameter to prevent overflow
+
+ShiftPaletteUp:
+	.loop:
+
+	.redblack:
+		move.w	(a1),d4
+		andi.w	#$E,d4
+		add.b	d0,d4
+		cmpi.b	#$E,d4
+		bls.s	.greenblack
+		moveq	#$E,d4
+
+	.greenblack:
+		move.w	(a1),d5
+		andi.w	#$E0,d5
+		add.w	d1,d5
+		cmpi.w	#$E0,d5
+		bls.s	.blueblack
+		moveq	#$E0,d5
+
+	.blueblack:
+		add.b	d5,d4
+		move.w	(a1),d5
+		andi.w	#$E00,d5
+		add.w	d2,d5
+		cmpi.w	#$E00,d5
+		bls.s	.gtfo
+		move.w	#$E00,d5
+
+	.gtfo:
+		add.w	d5,d4
+		move.w	d4,(a1)
+		adda.w	#2,a1   ; Advance in the address
+		dbf		d3,.loop ; Loop
+		rts
+
+ShiftPaletteDown:
+	.loop:
+
+	.redblack:
+		move.w	(a1),d4
+		andi.w	#$E,d4
+		sub.b	d0,d4 ; Add the desired color shift to the palette
+		bcc.s	.greenblack
+		moveq	#0,d4
+
+	.greenblack:
+		move.w	(a1),d5
+		andi.w	#$E0,d5
+		sub.w	d1,d5 ; Add the desired color shift to the palette
+		bcc.s	.blueblack
+		moveq	#0,d5
+
+	.blueblack:
+		add.b	d5,d4
+		move.w	(a1),d5
+		andi.w	#$E00,d5
+		sub.w	d2,d5 ; Add the desired color shift to the palette
+		bcc.s	.gtfo
+		moveq	#0,d5
+
+	.gtfo:
+		add.w	d5,d4
+		move.w	d4,(a1)
+		adda.w	#2,a1   ; Advance in the address
+		dbf		d3,.loop ; Loop
+		rts
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -54992,8 +55066,8 @@ loc_2F4A6:	; routine to handle hits
 
 loc_2F4D0:
 	lea	(Normal_palette_line2+2).w,a1
-	moveq	#0,d0	; black
-	tst.w	(a1)
+	move.w	#$200,d0	; black
+	cmpi.w	#$200,(a1)
 	bne.s	loc_2F4DE	; already not black (i.e. white)?
 	move.w	#$EEE,d0	; white
 

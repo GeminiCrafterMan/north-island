@@ -327,3 +327,113 @@ jmi:		macro loc
 		jmp	loc
 	.nojump:
 		endm
+
+
+; Palette shifting.
+ShiftPalUpAll		macro color
+		moveq	#(color&$E),d0
+		moveq	#(color&$E0),d1
+		move.w	#(color&$E00),d2
+		lea	(Normal_palette+2).w,a1
+		moveq	#$40,d3
+		jsr		ShiftPaletteUp	; Adds shade to palette and caps at max value for each parameter
+	endm
+
+ShiftPalDownAll		macro color
+		moveq	#(color&$E),d0
+		moveq	#(color&$E0),d1
+		move.w	#(color&$E00),d2
+		lea	(Normal_palette+2).w,a1
+		moveq	#$40,d3
+		jsr		ShiftPaletteDown	; Subtracts shade from palette and caps at min value for each parameter
+	endm
+
+ShiftPalUp1		macro color
+		moveq	#(color&$E),d0
+		moveq	#(color&$E0),d1
+		move.w	#(color&$E00),d2
+		lea	(Normal_palette+2).w,a1
+		moveq	#$E,d3
+		jsr		ShiftPaletteUp	; Adds shade to palette and caps at max value for each parameter
+	endm
+
+ShiftPalDown1		macro color
+		moveq	#(color&$E),d0
+		moveq	#(color&$E0),d1
+		move.w	#(color&$E00),d2
+		lea	(Normal_palette+2).w,a1
+		moveq	#$E,d3
+		jsr		ShiftPaletteDown	; Subtracts shade from palette and caps at min value for each parameter
+	endm
+
+ShiftPalUpLevel		macro color
+		moveq	#(color&$E),d0
+		moveq	#(color&$E0),d1
+		move.w	#(color&$E00),d2
+		lea	(Normal_palette_line2+2).w,a1
+		moveq	#$2D,d3
+		jsr		ShiftPaletteUp	; Adds shade to palette and caps at max value for each parameter
+	endm
+
+ShiftPalDownLevel		macro color
+		moveq	#(color&$E),d0
+		moveq	#(color&$E0),d1
+		move.w	#(color&$E00),d2
+		lea	(Normal_palette_line2+2).w,a1
+		moveq	#$2D,d3
+		jsr		ShiftPaletteDown	; Subtracts shade from palette and caps at min value for each parameter
+	endm
+
+ShiftPalUp2		macro color
+		moveq	#(color&$E),d0
+		moveq	#(color&$E0),d1
+		move.w	#(color&$E00),d2
+		lea	(Normal_palette_line2+2).w,a1
+		moveq	#$E,d3
+		jsr		ShiftPaletteUp	; Adds shade to palette and caps at max value for each parameter
+	endm
+
+ShiftPalDown2		macro color
+		moveq	#(color&$E),d0
+		moveq	#(color&$E0),d1
+		move.w	#(color&$E00),d2
+		lea	(Normal_palette_line2+2).w,a1
+		moveq	#$E,d3
+		jsr		ShiftPaletteDown	; Subtracts shade from palette and caps at min value for each parameter
+	endm
+
+ShiftPalUp3		macro color
+		moveq	#(color&$E),d0
+		moveq	#(color&$E0),d1
+		move.w	#(color&$E00),d2
+		lea	(Normal_palette_line3+2).w,a1
+		moveq	#$E,d3
+		jsr		ShiftPaletteUp	; Adds shade to palette and caps at max value for each parameter
+	endm
+
+ShiftPalDown3		macro color
+		moveq	#(color&$E),d0
+		moveq	#(color&$E0),d1
+		move.w	#(color&$E00),d2
+		lea	(Normal_palette_line3+2).w,a1
+		moveq	#$E,d3
+		jsr		ShiftPaletteDown	; Subtracts shade from palette and caps at min value for each parameter
+	endm
+
+ShiftPalUp4		macro color
+		moveq	#(color&$E),d0
+		moveq	#(color&$E0),d1
+		move.w	#(color&$E00),d2
+		lea	(Normal_palette_line4+2).w,a1
+		moveq	#$E,d3
+		jsr		ShiftPaletteUp	; Adds shade to palette and caps at max value for each parameter
+	endm
+
+ShiftPalDown4		macro color
+		moveq	#(color&$E),d0
+		moveq	#(color&$E0),d1
+		move.w	#(color&$E00),d2
+		lea	(Normal_palette_line4+2).w,a1
+		moveq	#$E,d3
+		jsr		ShiftPaletteDown	; Subtracts shade from palette and caps at min value for each parameter
+	endm
