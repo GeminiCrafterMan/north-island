@@ -76567,8 +76567,8 @@ AniArt_Load:
 ; with anything except Dynamic_Null, or bad things will happen (for example, a bus error exception).
 ; ---------------------------------------------------------------------------
 PLC_DYNANM: zoneOrderedOffsetTable 2,2		; Zone ID
-	zoneOffsetTableEntry.w Dynamic_Normal	; $00
-	zoneOffsetTableEntry.w Animated_EHZ
+	zoneOffsetTableEntry.w Dynamic_Null	; $00
+	zoneOffsetTableEntry.w Animated_Null
 
 	zoneOffsetTableEntry.w Dynamic_Null	; $01
 	zoneOffsetTableEntry.w Animated_Null
@@ -76843,56 +76843,6 @@ loc_3FF30:
 ;    dc.b   0,$7F		; Start of the script proper
 ;	0			Tile ID of first tile in ArtUnc_Flowers1 to transfer
 ;	$7F			Frame duration. Only here if global duration is -1
-
-; loc_3FF94:
-Animated_EHZ:	zoneanimstart
-	; Flowers
-	zoneanimdecl -1, ArtUnc_Flowers1, ArtTile_ArtUnc_Flowers1, 6, 2
-	dc.b   0,$7F		; Start of the script proper
-	dc.b   2,$13
-	dc.b   0,  7
-	dc.b   2,  7
-	dc.b   0,  7
-	dc.b   2,  7
-	even
-	; Flowers
-	zoneanimdecl -1, ArtUnc_Flowers2, ArtTile_ArtUnc_Flowers2, 8, 2
-	dc.b   2,$7F
-	dc.b   0, $B
-	dc.b   2, $B
-	dc.b   0, $B
-	dc.b   2,  5
-	dc.b   0,  5
-	dc.b   2,  5
-	dc.b   0,  5
-	even
-	; Flowers
-	zoneanimdecl 7, ArtUnc_Flowers3, ArtTile_ArtUnc_Flowers3, 2, 2
-	dc.b   0
-	dc.b   2
-	even
-	; Flowers
-	zoneanimdecl -1, ArtUnc_Flowers4, ArtTile_ArtUnc_Flowers4, 8, 2
-	dc.b   0,$7F
-	dc.b   2,  7
-	dc.b   0,  7
-	dc.b   2,  7
-	dc.b   0,  7
-	dc.b   2, $B
-	dc.b   0, $B
-	dc.b   2, $B
-	even
-	; Pulsing thing against checkered background
-	zoneanimdecl -1, ArtUnc_EHZPulseBall, ArtTile_ArtUnc_EHZPulseBall, 6, 2
-	dc.b   0,$17
-	dc.b   2,  9
-	dc.b   4, $B
-	dc.b   6,$17
-	dc.b   4, $B
-	dc.b   2,  9
-	even
-
-	zoneanimend
 
 Animated_MTZ:	zoneanimstart
 	; Spinning metal cylinder
@@ -77197,59 +77147,6 @@ Animated_ARZ:	zoneanimstart
 	zoneanimend
 
 Animated_Null:
-	; invalid
-; ===========================================================================
-
-; ---------------------------------------------------------------------------
-; Unused mystery function
-; In CPZ, within a certain range of camera X coordinates spanning
-; exactly 2 screens (a boss fight or cutscene?),
-; once every 8 frames, make the entire screen refresh and do... SOMETHING...
-; (in 2 separate 512-byte blocks of memory, move around a bunch of bytes)
-; Maybe some abandoned scrolling effect?
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; sub_40200:
-	cmpi.b	#chemical_plant_zone,(Current_Zone).w
-	beq.s	+
--	rts
-; ===========================================================================
-; this shifts all blocks of the chunks $EA-$ED and $FA-$FD one block to the
-; left and the last block in each row (chunk $ED/$FD) to the beginning
-; i.e. rotates the blocks to the left by one
-+
-	move.w	(Camera_X_pos).w,d0
-	cmpi.w	#$1940,d0
-	blo.s	-	; rts
-	cmpi.w	#$1F80,d0
-	bhs.s	-	; rts
-	subq.b	#1,(CPZ_UnkScroll_Timer).w
-	bpl.s	-	; rts	; do it every 8th frame
-	move.b	#7,(CPZ_UnkScroll_Timer).w
-	move.b	#1,(Screen_redraw_flag).w
-	lea	(Chunk_Table+$7500).l,a1 ; chunks $EA-$ED, $FFFF7500 - $FFFF7700
-	bsr.s	+
-	lea	(Chunk_Table+$7D00).l,a1 ; chunks $FA-$FD, $FFFF7D00 - $FFFF7F00
-+
-	move.w	#7,d1
-
--	move.w	(a1),d0
-    rept 3			; do this for 3 chunks
-      rept 7
-	move.w	2(a1),(a1)+	; shift 1st line of chunk by 1 block to the left (+3*14 bytes)
-      endm
-	move.w	$72(a1),(a1)+	; first block of next chunk to the left into previous chunk (+3*2 bytes)
-	adda.w	#$70,a1		; go to next chunk (+336 bytes)
-    endm
-      rept 7			; now do it for the 4th chunk
-	move.w	2(a1),(a1)+	; shift 1st line of chunk by 1 block to the left (+14 bytes)
-      endm
-	move.w	d0,(a1)+ 	; move 1st block of 1st chunk to last block of last chunk (+2 bytes, subsubtotal = 400 bytes)
-	suba.w	#$180,a1 	; go to the next row in the first chunk (-384 bytes, subtotal = -16 bytes)
-	dbf	d1,- 		; now do this again for rows 2-8 in these chunks
-				; 400 + 7 * (-16) = 512 byte range was affected
 	rts
 ; ===========================================================================
 

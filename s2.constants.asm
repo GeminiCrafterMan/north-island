@@ -1797,7 +1797,7 @@ ArtTile_ArtNem_Balkrie                = $0565
 ; EHZ
 ArtTile_ArtUnc_EHZPulseBall           = $039C
 ArtTile_ArtNem_Waterfall              = $039E
-ArtTile_ArtNem_EHZ_Bridge             = $03B6
+ArtTile_ArtNem_EHZ_Bridge             = $0500
 ArtTile_ArtNem_Buzzer_Fireball        = $03BE	; Actually unused
 ArtTile_ArtNem_Coconuts               = $03EE
 ArtTile_ArtNem_Masher                 = $0414
