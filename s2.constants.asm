@@ -1783,7 +1783,6 @@ ArtTile_ArtUnc_Flowers1               = $0394
 ArtTile_ArtUnc_Flowers2               = $0396
 ArtTile_ArtUnc_Flowers3               = $0398
 ArtTile_ArtUnc_Flowers4               = $039A
-ArtTile_ArtNem_Buzzer                 = $03D2
 
 ; WFZ, SCZ
 ArtTile_ArtNem_WfzHrzntlPrpllr        = $03CD
@@ -1798,10 +1797,12 @@ ArtTile_ArtNem_Balkrie                = $0565
 ArtTile_ArtUnc_EHZPulseBall           = $039C
 ArtTile_ArtNem_Waterfall              = $039E
 ArtTile_ArtNem_EHZ_Bridge             = $0500
-ArtTile_ArtNem_Buzzer_Fireball        = $03BE	; Actually unused
-ArtTile_ArtNem_Coconuts               = $03EE
-ArtTile_ArtNem_Masher                 = $0414
 ArtTile_ArtUnc_EHZMountains           = $0500
+; These three are loaded in that funny little junk area of VRAM.
+; No clue why that exists, but it looks like EHZ doesn't use it.
+ArtTile_ArtNem_Coconuts               = $0508
+ArtTile_ArtNem_Masher                 = $052A
+ArtTile_ArtNem_Buzzer                 = $0540
 
 ; MTZ
 ArtTile_ArtNem_Shellcracker           = $031C

@@ -299,5 +299,8 @@ frK_AirRol2 ds.b 1
 frK_AirRol3 ds.b 1
 ; The idle climb frame
 frK_ClimbA3 ds.b 1
+; tumble roll
+frK_TumbleRoll1	ds.b 1
+frK_TumbleRollX	ds.b 11
 	even
 	dephase

@@ -1508,42 +1508,52 @@ loc_3170DA:
 return_3170E4:
 		rts
 ; ---------------------------------------------------------------------------
-
+; loc_1B520:
 KAnim_Tumble:
 		move.b	flip_angle(a0),d0
 		moveq	#0,d1
 		move.b	status(a0),d2
-		and.b	#1,d2
-		bne.s	KAnim_Tumble_Left
-
-		and.b	#$FC,render_flags(a0)
-		add.b	#$B,d0
-		divu.w	#$16,d0
-		add.b	#frK_Tumble1,d0
-		move.b	d0,mapping_frame(a0)
-		move.b	#0,anim_frame_duration(a0)
+		andi.b	#1,d2						; Get the player's direction
+		bne.s	KAnim_Tumble_Left			; If they're facing left, go that way
+KAnim_Tumble_Right:
+		andi.b	#$FC,render_flags(a0)		; Mask out horizontal and vertical flip render flags
+		addi.b	#$B,d0						; Add 12 to player's angle
+		divu.w	#$16,d0						; Divide by 22 (Makes it round to nearest tumble frame)
+		btst	#2,status(a0)				; Is the player rolling?
+		bne.s	.rolling					; If so, play the rolling variant
+		addi.b	#frK_Tumble1,d0				; Add the first tumble frame to the result
+		bra.s	.next						; Skip to the next part.
+	.rolling:
+		addi.b	#frK_TumbleRoll1,d0			; Add the first tumble rolling frame to the result
+	.next:
+		move.b	d0,mapping_frame(a0)		; Display the result
+		move.b	#0,anim_frame_duration(a0)	; Dunno why they do this, they modify the frame directly, not via animations
 		rts
-; ---------------------------------------------------------------------------
-
+; ===========================================================================
+; loc_1B54E:
 KAnim_Tumble_Left:
-		and.b	#$FC,render_flags(a0)
-		tst.b	flip_turned(a0)
-		beq.s	loc_31712C
-		or.b	#1,render_flags(a0)
-		add.b	#$B,d0
-		bra.s	loc_317138
-; ---------------------------------------------------------------------------
-
-loc_31712C:
-		or.b	#3,render_flags(a0)
-		neg.b	d0
-		add.b	#-$71,d0
-
-loc_317138:
-		divu.w	#$16,d0
-		add.b	#frK_Tumble1,d0
-		move.b	d0,mapping_frame(a0)
-		move.b	#0,anim_frame_duration(a0)
+		andi.b	#$FC,render_flags(a0)		; Mask out HV flags (same as )
+		tst.b	flip_turned(a0)				; Check if you've turned while tumbling
+		beq.s	+							; loc_1B566
+		ori.b	#1,render_flags(a0)			; Make the player face left
+		addi.b	#$B,d0						; Do the same rounding math
+		bra.s	++							; loc_1B572
+; ===========================================================================
+; loc_1B566
++		ori.b	#3,render_flags(a0)			; Set both HV flags
+		neg.b	d0							; Invert... *something*.
+		addi.b	#$8F,d0						; Play the animation in reverse
+; loc_1B572
++		divu.w	#$16,d0						; Divide by 22 (Makes it round to nearest tumble frame)
+		btst	#2,status(a0)				; Is the player rolling?
+		bne.s	.rolling					; If so, play the rolling variant
+		addi.b	#frK_Tumble1,d0				; Add the first tumble frame to the result
+		bra.s	.next						; Skip to the next part.
+	.rolling:
+		addi.b	#frK_TumbleRoll1,d0			; Add the first tumble rolling frame to the result
+	.next:
+		move.b	d0,mapping_frame(a0)		; Display the result
+		move.b	#0,anim_frame_duration(a0)	; Dunno why they do this, they modify the frame directly, not via animations
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -1552,23 +1562,19 @@ KAnim_Roll:
 		bpl.w	KAnim_Delay
 		addq.b	#1,d0
 		bne.s	KAnim_Push
-		move.w	inertia(a0),d2
-		bpl.s	loc_317160
-		neg.w	d2
-
-loc_317160:
+		move.b	flip_angle(a0),d0	; is the player tumbling?
+		bne.w	KAnim_Tumble	; if so, get over there
+		mvabs.w	inertia(a0),d2
 		lea	(KnucklesAni_Roll2).l,a1
-		cmp.w	#$600,d2
-		bcc.s	loc_317172
+		cmpi.w	#$600,d2
+		bhs.s	+
 		lea	(KnucklesAni_Roll).l,a1
-
-loc_317172:
++
 		neg.w	d2
-		add.w	#$400,d2
-		bpl.s	loc_31717C
+		addi.w	#$400,d2
+		bpl.s	+
 		moveq	#0,d2
-
-loc_31717C:
++
 		lsr.w	#8,d2
 		move.b	d2,anim_frame_duration(a0)
 		move.b	status(a0),d1

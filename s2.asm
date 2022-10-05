@@ -32956,37 +32956,47 @@ SAnim_Tumble:
 	move.b	flip_angle(a0),d0
 	moveq	#0,d1
 	move.b	status(a0),d2
-	andi.b	#1,d2
-	bne.s	SAnim_Tumble_Left
-
-	andi.b	#$FC,render_flags(a0)
-	addi.b	#$B,d0
-	divu.w	#$16,d0
-	addi.b	#frS_Tumble1,d0
-	move.b	d0,mapping_frame(a0)
-	move.b	#0,anim_frame_duration(a0)
+	andi.b	#1,d2						; Get the player's direction
+	bne.s	SAnim_Tumble_Left			; If they're facing left, go that way
+SAnim_Tumble_Right:
+	andi.b	#$FC,render_flags(a0)		; Mask out horizontal and vertical flip render flags
+	addi.b	#$B,d0						; Add 12 to player's angle
+	divu.w	#$16,d0						; Divide by 22 (Makes it round to nearest tumble frame)
+	btst	#2,status(a0)				; Is the player rolling?
+	bne.s	.rolling					; If so, play the rolling variant
+	addi.b	#frS_Tumble1,d0				; Add the first tumble frame to the result
+	bra.s	.next						; Skip to the next part.
+.rolling:
+	addi.b	#frS_TumbleRoll1,d0			; Add the first tumble rolling frame to the result
+.next:
+	move.b	d0,mapping_frame(a0)		; Display the result
+	move.b	#0,anim_frame_duration(a0)	; Dunno why they do this, they modify the frame directly, not via animations
 	rts
 ; ===========================================================================
 ; loc_1B54E:
 SAnim_Tumble_Left:
-	andi.b	#$FC,render_flags(a0)
-	tst.b	flip_turned(a0)
-	beq.s	loc_1B566
-	ori.b	#1,render_flags(a0)
-	addi.b	#$B,d0
-	bra.s	loc_1B572
+	andi.b	#$FC,render_flags(a0)		; Mask out HV flags (same as )
+	tst.b	flip_turned(a0)				; Check if you've turned while tumbling
+	beq.s	+							; loc_1B566
+	ori.b	#1,render_flags(a0)			; Make the player face left
+	addi.b	#$B,d0						; Do the same rounding math
+	bra.s	++							; loc_1B572
 ; ===========================================================================
-
-loc_1B566:
-	ori.b	#3,render_flags(a0)
-	neg.b	d0
-	addi.b	#$8F,d0
-
-loc_1B572:
-	divu.w	#$16,d0
-	addi.b	#frS_Tumble1,d0
-	move.b	d0,mapping_frame(a0)
-	move.b	#0,anim_frame_duration(a0)
+; loc_1B566
++	ori.b	#3,render_flags(a0)			; Set both HV flags
+	neg.b	d0							; Invert... *something*.
+	addi.b	#$8F,d0						; Play the animation in reverse
+; loc_1B572
++	divu.w	#$16,d0						; Divide by 22 (Makes it round to nearest tumble frame)
+	btst	#2,status(a0)				; Is the player rolling?
+	bne.s	.rolling					; If so, play the rolling variant
+	addi.b	#frS_Tumble1,d0				; Add the first tumble frame to the result
+	bra.s	.next						; Skip to the next part.
+.rolling:
+	addi.b	#frS_TumbleRoll1,d0			; Add the first tumble rolling frame to the result
+.next:
+	move.b	d0,mapping_frame(a0)		; Display the result
+	move.b	#0,anim_frame_duration(a0)	; Dunno why they do this, they modify the frame directly, not via animations
 	rts
 ; ===========================================================================
 ; loc_1B586:
@@ -32995,6 +33005,8 @@ SAnim_Roll:
 	bpl.w	SAnim_Delay			; if time remains, branch
 	addq.b	#1,d0		; is the start flag = $FE ?
 	bne.s	SAnim_Push	; if not, branch
+	move.b	flip_angle(a0),d0	; is the player tumbling?
+	bne.w	SAnim_Tumble	; if so, get over there
 	mvabs.w	inertia(a0),d2
 	lea	(SonAni_Roll2).l,a1
 	cmpi.w	#$600,d2
@@ -70201,30 +70213,30 @@ Sonic_pilot_frames_end:
 
 ; byte_3AFA0:
 Tails_pilot_frames: ; spunch here later
-	dc.b $10
-	dc.b $10	; 1
-	dc.b $10	; 2
-	dc.b $10	; 3
-	dc.b   1	; 4
-	dc.b   2	; 5
-	dc.b   3	; 6
-	dc.b   2	; 7
-	dc.b   1	; 8
-	dc.b   1	; 9
-	dc.b $10	; 10
-	dc.b $10	; 11
-	dc.b $10	; 12
-	dc.b $10	; 13
-	dc.b   1	; 14
-	dc.b   2	; 15
-	dc.b   3	; 16
-	dc.b   2	; 17
-	dc.b   1	; 18
-	dc.b   1	; 19
-	dc.b   4	; 20
-	dc.b   4	; 21
-	dc.b   1	; 22
-	dc.b   1	; 23
+	dc.b frT_LookUp1; 0
+	dc.b frT_LookUp2; 1
+	dc.b frT_LookUp2; 2
+	dc.b frT_LookUp1; 3
+	dc.b frT_Idle1	; 4
+	dc.b frT_Idle2	; 5
+	dc.b frT_Idle3	; 6
+	dc.b frT_Idle2	; 7
+	dc.b frT_Idle1	; 8
+	dc.b frT_Idle1	; 9
+	dc.b frT_LookUp1; 10
+	dc.b frT_LookUp2; 11
+	dc.b frT_LookUp2; 12
+	dc.b frT_LookUp1; 13
+	dc.b frT_Idle1	; 14
+	dc.b frT_Idle2	; 15
+	dc.b frT_Idle3	; 16
+	dc.b frT_Idle2	; 17
+	dc.b frT_Idle1	; 18
+	dc.b frT_Idle1	; 19
+	dc.b frT_Idle4	; 20
+	dc.b frT_Idle4	; 21
+	dc.b frT_Idle1	; 22
+	dc.b frT_Idle1	; 23
 Tails_pilot_frames_end:
 
 word_3AFB8:
@@ -79504,20 +79516,20 @@ PlrList_GameOver_End
 PlrList_Ehz1: plrlistheader
 	plreq ArtTile_ArtNem_Waterfall, ArtNem_Waterfall
 	plreq ArtTile_ArtNem_EHZ_Bridge, ArtNem_EHZ_Bridge
-	plreq ArtTile_ArtNem_Buzzer_Fireball, ArtNem_HtzFireball1
-	plreq ArtTile_ArtNem_Buzzer, ArtNem_Buzzer
-	plreq ArtTile_ArtNem_Coconuts, ArtNem_Coconuts
-	plreq ArtTile_ArtNem_Masher, ArtNem_Masher
 PlrList_Ehz1_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
 ; Emerald Hill Zone secondary
 ;---------------------------------------------------------------------------------------
 PlrList_Ehz2: plrlistheader
+	plreq ArtTile_ArtNem_HorizSpike, ArtNem_HorizSpike
 	plreq ArtTile_ArtNem_Spikes, ArtNem_Spikes
 	plreq ArtTile_ArtNem_DignlSprng, ArtNem_DignlSprng
 	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
 	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
+	plreq ArtTile_ArtNem_Coconuts, ArtNem_Coconuts
+	plreq ArtTile_ArtNem_Masher, ArtNem_Masher
+	plreq ArtTile_ArtNem_Buzzer, ArtNem_Buzzer
 ;	plreq ArtTile_ArtNem_WaterSurface, ArtNem_WaterSurface
 PlrList_Ehz2_End
 ;---------------------------------------------------------------------------------------

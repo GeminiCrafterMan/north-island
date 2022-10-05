@@ -32,9 +32,9 @@ SonAni_Hurt_ptr:		offsetTableEntry.w SonAni_Hurt		; 25 ; $19
 SonAni_Hurt2_ptr:		offsetTableEntry.w SonAni_Hurt		; 26 ; $1A
 SonAni_Slide_ptr:		offsetTableEntry.w SonAni_Slide		; 27 ; $1B
 SonAni_Blank_ptr:		offsetTableEntry.w SonAni_Blank		; 28 ; $1C
-SonAni_Balance3_ptr:		offsetTableEntry.w SonAni_Balance3	; 29 ; $1D
-SonAni_Balance4_ptr:		offsetTableEntry.w SonAni_Balance4	; 30 ; $1E
-SupSonAni_Transform_ptr:	offsetTableEntry.w SupSonAni_Transform	; 31 ; $1F
+SonAni_Balance3_ptr:	offsetTableEntry.w SonAni_Balance3	; 29 ; $1D
+SonAni_Balance4_ptr:	offsetTableEntry.w SonAni_Balance4	; 30 ; $1E
+SupSonAni_Transform_ptr:offsetTableEntry.w SupSonAni_Transform	; 31 ; $1F
 SonAni_Lying_ptr:		offsetTableEntry.w SonAni_Lying		; 32 ; $20
 SonAni_LieDown_ptr:		offsetTableEntry.w SonAni_LieDown	; 33 ; $21
 						offsetTableEntry.w SonAni_Dummy
@@ -322,5 +322,8 @@ frS_Win1	ds.b 1
 frS_Win2	ds.b 1
 frS_Win3	ds.b 1
 frS_Win4	ds.b 1
+; tumble roll
+frS_TumbleRoll1	ds.b 1
+frS_TumbleRollX	ds.b 11
 	even
 	dephase
