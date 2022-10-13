@@ -28056,7 +28056,7 @@ ObjPtr_Nebula:		dc.l Obj_Nebula			; $99 ; Nebula (bomber badnik) from SCZ
 ObjPtr_Turtloid:	dc.l Obj_TurtLoid		; $9A ; Turtloid (turtle badnik) from Sky Chase Zone
 ObjPtr_TurtloidRider:	dc.l Obj_TurtLoidRider		; $9B ; Turtloid rider from Sky Chase Zone
 ObjPtr_BalkiryJet:	dc.l Obj_BalkiryJet		; $9C ; Balkiry's jet from Sky Chase Zone
-ObjPtr_Coconuts:	dc.l Obj_Coconuts		; $9D ; Coconuts (monkey badnik) from EHZ
+ObjPtr_Crab:		dc.l Obj_Crab		; $9D ; Crab badnik from Seaside Land
 ObjPtr_Crawlton:	dc.l Obj_CrawlTon		; $9E ; Crawlton (snake badnik) from MCZ
 ObjPtr_Shellcracker:	dc.l Obj_Shellcracker		; $9F ; Shellcraker (crab badnik) from MTZ
 ObjPtr_ShellcrackerClaw:dc.l Obj_ShellcrackerClaw	; $A0 ; Shellcracker's claw from MTZ
@@ -35289,7 +35289,7 @@ loc_1ECD4:
 ; ===========================================================================
 
 	; a bit of unused/dead code here
-;CheckFloorDist:
+CheckFloorDist:
 	move.w	y_pos(a0),d2 ; a0=character
 	move.w	x_pos(a0),d3
 
@@ -63382,8 +63382,8 @@ SubObjData_Index: offsetTable
 	offsetTableEntry.w Obj_TurtLoidRider_SubObjData	; $18
 	offsetTableEntry.w Obj_BalkiryJet_SubObjData	; $1A
 	offsetTableEntry.w Obj_TurtLoid_SubObjData2	; $1C
-	offsetTableEntry.w Obj_Coconuts_SubObjData	; $1E
-	offsetTableEntry.w Obj_Coconuts_SubObjData2	; $20
+	offsetTableEntry.w Invalid_SubObjData2	; $1E	; these two used to be Coconuts
+	offsetTableEntry.w Invalid_SubObjData2	; $20
 	offsetTableEntry.w Obj_CrawlTon_SubObjData	; $22
 	offsetTableEntry.w Obj_Shellcracker_SubObjData	; $24
 	offsetTableEntry.w Obj_ShellcrackerClaw_SubObjData	; $26
@@ -65298,14 +65298,6 @@ Obj_Projectile_TurtloidShotMove:
 	jmpto	(AnimateSprite).l, JmpTo25_AnimateSprite
 
 ; ===========================================================================
-; for Obj_Coconuts
-; loc_37728:
-Obj_Projectile_CoconutFall:
-	addi.w	#$20,y_vel(a0) ; apply gravity (less than normal)
-	jsrto	(ObjectMove).l, JmpTo26_ObjectMove
-	rts
-
-; ===========================================================================
 ; for Obj_Clucker
 ; loc_37734:
 Obj_Projectile_CluckerShotMove:
@@ -65340,9 +65332,6 @@ Obj_Nebula_SubObjData:
 ; off_37778:
 Obj_TurtLoid_SubObjData2:
 	SubObjData Obj_TurtLoid_Obj_Projectile_MapUnc_37B62,make_art_tile(ArtTile_ArtNem_Turtloid,0,0),$84,4,4,$98
-; off_37782:
-Obj_Coconuts_SubObjData2:
-	SubObjData Obj_Coconuts_Obj_Projectile_MapUnc_37D96,make_art_tile(ArtTile_ArtNem_Coconuts,0,0),$84,4,8,$8B
 ; off_3778C:
 Obj_Asteron_SubObjData2:
 	SubObjData Obj_Asteron_Obj_Projectile_MapUnc_38A96,make_art_tile(ArtTile_ArtNem_MtzSupernova,0,1),$84,5,4,$98
@@ -65711,190 +65700,12 @@ Obj_TurtLoid_Obj_Projectile_MapUnc_37B62:	BINCLUDE "mappings/sprite/Obj_BalkiryJ
 
 
 ; ===========================================================================
-; ----------------------------------------------------------------------------
-; Object 9D - Coconuts (monkey badnik) from EHZ
-; ----------------------------------------------------------------------------
-; OST Variables:
-Obj_Coconuts_timer		= objoff_2A	; byte
-Obj_Coconuts_climb_table_index	= objoff_2C	; word
-Obj_Coconuts_attack_timer	= objoff_2E	; byte	; time player needs to spend close to object before it attacks
-; Sprite_37BFA:
-Obj_Coconuts:
-	moveq	#0,d0
-	move.b	routine(a0),d0
-	move.w	Obj_Coconuts_Index(pc,d0.w),d1
-	jmp	Obj_Coconuts_Index(pc,d1.w)
-; ===========================================================================
-; off_37C08:
-Obj_Coconuts_Index:	offsetTable
-		offsetTableEntry.w Obj_Coconuts_Init		; 0
-		offsetTableEntry.w Obj_Coconuts_Idle		; 2
-		offsetTableEntry.w Obj_Coconuts_Climbing	; 4
-		offsetTableEntry.w Obj_Coconuts_Throwing	; 6
-; ===========================================================================
-; loc_37C10:
-Obj_Coconuts_Init:
-	bsr.w	LoadSubObject
-	move.b	#$10,Obj_Coconuts_timer(a0)
-	rts
-; ===========================================================================
-; loc_37C1C: Obj_Coconuts_Main:
-Obj_Coconuts_Idle:
-	bsr.w	Obj_GetOrientationToPlayer
-	bclr	#0,render_flags(a0)	; face right
-	bclr	#0,status(a0)
-	tst.w	d0		; is player to object's left?
-	beq.s	+		; if not, branch
-	bset	#0,render_flags(a0)	; face left
-	bset	#0,status(a0)
-+
-	addi.w	#$60,d2
-	cmpi.w	#$C0,d2
-	bcc.s	+	; branch, if distance to player is greater than 60 in either direction
-	tst.b	Obj_Coconuts_attack_timer(a0)	; wait for a bit before attacking
-	beq.s	Obj_Coconuts_StartThrowing	; branch, when done waiting
-	subq.b	#1,Obj_Coconuts_attack_timer(a0)
-+
-	subq.b	#1,Obj_Coconuts_timer(a0)	; wait for a bit...
-	bmi.s	Obj_Coconuts_StartClimbing	; branch, when done waiting
-	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
 ; ---------------------------------------------------------------------------
-
-Obj_Coconuts_StartClimbing:
-	addq.b	#2,routine(a0)	; => Obj_Coconuts_Climbing
-	bsr.w	Obj_Coconuts_SetClimbingDirection
-	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
+; Object 9D - Crab enemy from Seaside Land Zone
 ; ---------------------------------------------------------------------------
-; loc_37C66:
-Obj_Coconuts_StartThrowing:
-	move.b	#6,routine(a0)	; => Obj_Coconuts_Throwing
-	move.b	#1,mapping_frame(a0)	; display first throwing frame
-	move.b	#8,Obj_Coconuts_timer(a0)	; set time to display frame
-	move.b	#$20,Obj_Coconuts_attack_timer(a0)	; reset timer
-	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
-; ---------------------------------------------------------------------------
-; loc_37C82:
-Obj_Coconuts_SetClimbingDirection:
-	move.w	Obj_Coconuts_climb_table_index(a0),d0
-	cmpi.w	#$C,d0
-	blo.s	+	; branch, if index is less than $C
-	moveq	#0,d0	; otherwise, reset to 0
-+
-	lea	Obj_Coconuts_ClimbData(pc,d0.w),a1
-	addq.w	#2,d0
-	move.w	d0,Obj_Coconuts_climb_table_index(a0)
-	move.b	(a1)+,y_vel(a0)	; climbing speed
-	move.b	(a1)+,Obj_Coconuts_timer(a0) ; time to spend moving at this speed
-	rts
-; ===========================================================================
-; byte_37CA2:
-Obj_Coconuts_ClimbData:
-	dc.b  -1,$20
-	dc.b   1,$18	; 2
-	dc.b  -1,$10	; 4
-	dc.b   1,$28	; 6
-	dc.b  -1,$20	; 8
-	dc.b   1,$10	; 10
-; ===========================================================================
-; loc_37CAE: Obj_SonicSS_Climbing:
-Obj_Coconuts_Climbing:
-	subq.b	#1,Obj_Coconuts_timer(a0)
-	beq.s	Obj_Coconuts_StopClimbing	; branch, if done moving
-	jsrto	(ObjectMove).l, JmpTo26_ObjectMove	; else, keep moving
-	lea	(Ani_Obj_Coconuts).l,a1
-	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
-	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
-; ===========================================================================
-; loc_37CC6:
-Obj_Coconuts_StopClimbing:
-	subq.b	#2,routine(a0)	; => Obj_Coconuts_Idle
-	move.b	#$10,Obj_Coconuts_timer(a0)	; time to remain idle
-	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
-; ===========================================================================
-; loc_37CD4: Obj_SonicSS_Throwing:
-Obj_Coconuts_Throwing:
-	moveq	#0,d0
-	move.b	routine_secondary(a0),d0
-	move.w	Obj_Coconuts_ThrowingStates(pc,d0.w),d1
-	jsr	Obj_Coconuts_ThrowingStates(pc,d1.w)
-	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
-; ===========================================================================
-; off_37CE6:
-Obj_Coconuts_ThrowingStates:	offsetTable
-		offsetTableEntry.w Obj_Coconuts_ThrowingHandRaised	; 0
-		offsetTableEntry.w Obj_Coconuts_ThrowingHandLowered	; 2
-; ===========================================================================
-; loc_37CEA:
-Obj_Coconuts_ThrowingHandRaised:
-	subq.b	#1,Obj_Coconuts_timer(a0)	; wait for a bit...
-	bmi.s	+
-	rts
-; ---------------------------------------------------------------------------
-+	addq.b	#2,routine_secondary(a0)	; => Obj_Coconuts_ThrowingHandLowered
-	move.b	#8,Obj_Coconuts_timer(a0)
-	move.b	#2,mapping_frame(a0)	; display second throwing frame
-	bra.w	Obj_Coconuts_CreateCoconut
-; ===========================================================================
-; loc_37D06:
-Obj_Coconuts_ThrowingHandLowered:
-	subq.b	#1,Obj_Coconuts_timer(a0)	; wait for a bit...
-	bmi.s	+
-	rts
-; ---------------------------------------------------------------------------
-+	clr.b	routine_secondary(a0)	; reset routine counter for next time
-	move.b	#4,routine(a0) ; => Obj_Coconuts_Climbing
-	move.b	#8,Obj_Coconuts_timer(a0)	; this gets overwrittten by the next subroutine...
-	bra.w	Obj_Coconuts_SetClimbingDirection
-; ===========================================================================
-; loc_37D22:
-Obj_Coconuts_CreateCoconut:
-	jsrto	(SingleObjLoad).l, JmpTo19_SingleObjLoad
-	bne.s	return_37D74		; branch, if no free slots
-	_move.l	#Obj_Projectile,id(a1) ; load Obj_Projectile
-	move.b	#3,mapping_frame(a1)
-	move.b	#$20,subtype(a1) ; <== Obj_Coconuts_SubObjData2
-	move.w	x_pos(a0),x_pos(a1)	; align with parent object
-	move.w	y_pos(a0),y_pos(a1)
-	addi.w	#-$D,y_pos(a1)		; offset slightly upward
-	moveq	#0,d0		; use rightfacing data
-	btst	#0,render_flags(a0)	; is object facing left?
-	bne.s	+		; if yes, branch
-	moveq	#4,d0		; use leftfacing data
-+
-	lea	Obj_Coconuts_ThrowData(pc,d0.w),a2
-	move.w	(a2)+,d0
-	add.w	d0,x_pos(a1)	; offset slightly left or right depending on object's direction
-	move.w	(a2)+,x_vel(a1)	; set projectile speed
-	move.w	#-$100,y_vel(a1)
-	lea_	Obj_Projectile_CoconutFall,a2 ; set the routine used to move the projectile
-	move.l	a2,objoff_2A(a1)
-
-return_37D74:
-	rts
-; ===========================================================================
-; word_37D76:
-Obj_Coconuts_ThrowData:
-	dc.w   -$B,  $100	; 0
-	dc.w	$B, -$100	; 4
-; off_37D7E:
-Obj_Coconuts_SubObjData:
-	SubObjData Obj_Coconuts_Obj_Projectile_MapUnc_37D96,make_art_tile(ArtTile_ArtNem_Coconuts,0,0),4,5,$C,9
-
-; animation script
-; off_37D88:
-Ani_Obj_Coconuts:	offsetTable
-		offsetTableEntry.w byte_37D8C	; 0
-		offsetTableEntry.w byte_37D90	; 1
-byte_37D8C:	dc.b   5,  0,  1,$FF
-byte_37D90:	dc.b   9,  1,  2,  1,$FF
-		even
-; ------------------------------------------------------------------------
-; sprite mappings
-; ------------------------------------------------------------------------
-Obj_Coconuts_Obj_Projectile_MapUnc_37D96:	BINCLUDE "mappings/sprite/Obj_Coconuts.bin"
-	even
-
-
+; This is heavily based on Snowrex, but it's fine
+; because I wrote that code myself anyway.
+	include	"objects/Enemies/Crab.asm"
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -78927,7 +78738,7 @@ DbgObjList_EHZ: dbglistheader
 	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $40,  $A, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
 	dbglistobj Obj_Buzzer,		Obj_Buzzer_MapUnc_2D2EA,   0,   0, make_art_tile(ArtTile_ArtNem_Buzzer,0,0)
 	dbglistobj Obj_Masher,		Obj_Masher_MapUnc_2D442,   0,   0, make_art_tile(ArtTile_ArtNem_Masher,0,0)
-	dbglistobj Obj_Coconuts,	Obj_Coconuts_Obj_Projectile_MapUnc_37D96, $1E,   0, make_art_tile(ArtTile_ArtNem_Coconuts,0,0)
+	dbglistobj Obj_Crab,		Obj_Crab_MapUnc, 0,   0, make_art_tile(ArtTile_ArtNem_Crab,0,0)
 	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
 DbgObjList_EHZ_End
 
@@ -79527,9 +79338,7 @@ PlrList_Ehz2: plrlistheader
 	plreq ArtTile_ArtNem_DignlSprng, ArtNem_DignlSprng
 	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
 	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
-	plreq ArtTile_ArtNem_Coconuts, ArtNem_Coconuts
-	plreq ArtTile_ArtNem_Masher, ArtNem_Masher
-	plreq ArtTile_ArtNem_Buzzer, ArtNem_Buzzer
+	plreq ArtTile_ArtNem_Crab, ArtNem_Crab
 ;	plreq ArtTile_ArtNem_WaterSurface, ArtNem_WaterSurface
 PlrList_Ehz2_End
 ;---------------------------------------------------------------------------------------
@@ -81085,9 +80894,9 @@ ArtNem_Nebula:	BINCLUDE	"art/nemesis/Bomber badnik from SCZ.bin"
 ArtNem_Turtloid:	BINCLUDE	"art/nemesis/Turtle badnik from SCZ.bin"
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (38 blocks)
-; Coconuts monkey badnik from EHZ
+; Crab monkey badnik from Seaside Land
 	even
-ArtNem_Coconuts:	BINCLUDE	"art/nemesis/Coconuts badnik from EHZ.bin"
+ArtNem_Crab:	BINCLUDE	"art/nemesis/Crab badnik from Seaside Land.bin"
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (10 blocks)
 ; Snake badnik from MCZ		; ArtNem_8AB36:

@@ -1,7 +1,7 @@
 {
     "Flex": 2,
     "name": "Sonic 2",
-    "node": "234c3be7-65fc-4f12-8588-5a7437aa14c6",
+    "node": "490307db-1c9b-4c7d-b180-e3f8c8e6949b",
     "objects": [
         {
             "uuid": "fa665537-a8f6-4d0d-a1b5-2c3190bf034d",
@@ -658,7 +658,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "a898dad6-e825-4660-9429-93f6dd09b880"
         },
         {
@@ -752,6 +752,35 @@
                     "uuid": "a6927449-0307-4b1c-9b9c-7d7180e3f8c8"
                 },
                 {
+                    "name": "Crab",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/EHZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Crab badnik from Seaside Land.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_Crab.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "490307db-1c9b-4c7d-b180-e3f8c8e6949b"
+                },
+                {
                     "name": "Buzzer",
                     "palettes": [
                         {
@@ -808,35 +837,6 @@
                         "label": ""
                     },
                     "uuid": "74490307-db1c-4b9c-bd71-80e3f8c8e694"
-                },
-                {
-                    "name": "Coconuts",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/EHZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/nemesis/Coconuts badnik from EHZ.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Coconuts.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "490307db-1c9b-4c7d-b180-e3f8c8e6949b"
                 }
             ],
             "isDirectory": true,
@@ -1225,7 +1225,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "91f0d4fc-0ab4-4256-95b9-ebb70958c194"
         },
         {
@@ -1697,7 +1697,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "dd09b880-aa01-40b5-b556-b686f98e2742"
         },
         {
@@ -2024,7 +2024,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "28fa7148-5e9b-4fd4-84f5-4e810f67fd89"
         },
         {
@@ -2090,7 +2090,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "92c297f2-124d-4d3d-ba79-169a63351830"
         },
         {
@@ -2446,7 +2446,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "d8f766c5-d0d8-4c24-9628-32b57c402228"
         },
         {
@@ -2802,7 +2802,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "948cfc3e-7e62-41a9-bae0-5095157bb940"
         },
         {
@@ -3332,7 +3332,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "0f67fd89-e390-4762-9990-3de83e73254b"
         },
         {
@@ -3543,7 +3543,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "1ee0bb7f-2620-4b0b-a97e-22b0afa69274"
         },
         {
@@ -4073,7 +4073,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "0307db1c-9b9c-4d71-80e3-f8c8e6949b36"
         },
         {
@@ -4168,7 +4168,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "7bb9408e-1ee0-4b7f-a620-5b0b697e22b0"
         }
     ]
