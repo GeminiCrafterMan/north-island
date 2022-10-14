@@ -8,8 +8,8 @@ MM9Title_Header:
 	sHeaderFM	MM9Title_FM2, $00, $11
 	sHeaderFM	MM9Title_FM3, $00, $11
 	sHeaderFM	MM9Title_FM4, $00, $11
-	sHeaderPSG	MM9Title_PSG1and2, $00-$03, $18, $00, vNone
-	sHeaderPSG	MM9Title_PSG1and2, $00-$0C, $20, $00, vNone
+	sHeaderPSG	MM9Title_PSG1and2, $00-$0C, $28, $00, vNone
+	sHeaderPSG	MM9Title_PSG1and2, $00-$0C-$0C, $28, $00, vNone
 
 	; Patch $00
 	; $3A
@@ -120,7 +120,7 @@ MM9Title_Header:
 	spTotalLv	$7F, $14, $06, $00
 
 MM9Title_DAC1:
-	dc.b dCrashCymbal, $03, $0C
+	dc.b dFloorTom, $03, $0C
 
 MM9Title_Loop4:
 	dc.b dKick, dSnare
