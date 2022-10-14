@@ -9,7 +9,7 @@ MM9Title_Header:
 	sHeaderFM	MM9Title_FM3, $00, $11
 	sHeaderFM	MM9Title_FM4, $00, $11
 	sHeaderPSG	MM9Title_PSG1and2, $00-$03, $18, $00, vNone
-	sHeaderPSG	MM9Title_PSG1and2, $00-$03, $20, $00, vNone
+	sHeaderPSG	MM9Title_PSG1and2, $00-$0C, $20, $00, vNone
 
 	; Patch $00
 	; $3A
