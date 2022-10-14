@@ -65,7 +65,7 @@ MusicIndex:
 	ptrMusic EHZ2P, $20, CNZ2P, $20, MCZ2P, $14
 	ptrMusic SS, $00, Options, $00, Results2P, $00, Invincibility, $18
 	ptrMusic SuperSonic, $06, Boss, $1D, FinalBoss, $20, Drowning, $00
-	ptrMusic Title, $00, GotThroughAct, $00, Emerald, $00, ExtraLife, $00
+	ptrMusic MM9Title, $00, GotThroughAct, $00, Emerald, $00, ExtraLife, $00
 	ptrMusic GameOver, $00, Continue, $00, Ending, $00, Credits, $00
 	ptrMusic SEGA, $00
 
@@ -131,6 +131,7 @@ SampleList:
 	sample $0100, SnareS3, Stop			; 92 - Snare
 	sample $0100, KickS3, Stop			; 97 - Kick
 	sample $0100, CrashCymbal, Stop			; 99 - Crash Cymbal
+	sample $0100, HiHat, Stop		; Hi Hat
 	sample $0100, ComeOn, Stop			; B5 - Come On
 
 	sample $0100, SEGA, Stop		; 92 - SEGA, but it's the John Tay "short" WAV version of the Mobile intro
@@ -262,8 +263,8 @@ SWF_Stop:	asdata $8000-(2*Z80E_Read*(MaxPitch/$100)), $80
 SWFR_Stop:	asdata Z80E_Read*(MaxPitch/$100), $00
 ; ---------------------------------------------------------------------------
 
-	incSWF	Kick, Snare, Clap, Tom, Timpani, Bongo
-	incSWF	Scratch, SnareS3, KickS3, CrashCymbal, ComeOn, SEGA
+	incSWF	Kick, Snare, Clap, Tom, Timpani, Bongo, Scratch
+	incSWF	SnareS3, KickS3, CrashCymbal, ComeOn, HiHat, SEGA
 	even
 
 	listing on			; continue source listing

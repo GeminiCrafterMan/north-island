@@ -3610,7 +3610,7 @@ TitleScreen:
 	moveq	#PalID_Title,d0
 	bsr.w	PalLoad_ForFade
 	move.b	#0,(Debug_mode_flag).w
-	move.w	#$280,(Demo_Time_left).w
+	move.w	#23*60,(Demo_Time_left).w	; title screen timer
 	clr.w	(Ctrl_1).w
 	move.l	#Obj_IntroStars,(IntroSonic+id).w	; load Obj_IntroStars (flashing intro star)
 	move.b	#2,(IntroSonic+subtype).w				; Sonic
@@ -21977,7 +21977,7 @@ loc_12EC2:
 	move.l	#Obj_TitleScreenPalChanger,id(a1)	; load Obj_TitleScreenPalChanger (palette change)
 	move.b	#0,subtype(a1)
 	st.b	objoff_30(a0)
-	music	mus_Title			 ; title music
+	music	mus_MM9Title			 ; title music
 	rts
 ; ===========================================================================
 
@@ -22799,7 +22799,7 @@ TitleScreen_SetFinalState:
 
 	tst.b	objoff_30(a0)
 	bne.s	+			; rts
-	music	mus_Title		; title music
+	music	mus_MM9Title		; title music
 +
 	rts
 ; End of function sub_134BC
