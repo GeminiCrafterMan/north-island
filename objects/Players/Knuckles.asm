@@ -1020,17 +1020,30 @@ Knuckles_BeginGlide:
 		bpl.s	loc_31659E
 		move.w	#0,y_vel(a0)
 
-loc_31659E:
+loc_31659E: ; Momentum glide by ProjectFM for SHIMA
 		moveq	#0,d1
-		move.w	#$400,d0
-		move.w	d0,inertia(a0)
+		move.w	x_vel(a0),d0
+		move.w	d0,d2
+		add.w	#$100,d2
+		cmpi.w	#$200,d2
+		bls.s	.nomomentum
+		move.w	d0,d2
+		tst.w	d0
+		bpl.s	loc_3165B4
+		moveq	#-$80,d1
+		neg.w	d0
+		bra.s	loc_3165B4
+
+.nomomentum:
+		move.w	#$100,d0
 		btst	#0,status(a0)
 		beq.s	loc_3165B4
-		neg.w	d0
+		neg.w	d2
 		moveq	#-$80,d1
 
 loc_3165B4:
-		move.w	d0,x_vel(a0)
+		move.w	d0,inertia(a0)
+		move.w	d2,x_vel(a0)
 		move.b	d1,double_jump_property(a0)
 		move.w	#0,angle(a0)
 		move.b	#0,(Gliding_collision_flags).w

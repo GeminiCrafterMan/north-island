@@ -13414,7 +13414,7 @@ DeformBgLayerAfterScrollVert:
 ; water ripple effects in EHZ, and moving the clouds in HTZ and the stars in DEZ.
 ; ---------------------------------------------------------------------------
 SwScrl_Index: zoneOrderedOffsetTable 2,1	; JmpTbl_SwScrlMgr
-	zoneOffsetTableEntry.w SwScrl_EHZ	; $00
+	zoneOffsetTableEntry.w SwScrl_SSLZ	; $00
 	zoneOffsetTableEntry.w SwScrl_Minimal	; $01
 	zoneOffsetTableEntry.w SwScrl_Lev2	; $02
 	zoneOffsetTableEntry.w SwScrl_Minimal	; $03
@@ -13473,9 +13473,7 @@ SwScrl_Title:
 
 	rts
 ; ===========================================================================
-SwScrl_EHZ:
-	tst.w	(Two_player_mode).w
-	bne.w	SwScrl_EHZ_2P
+SwScrl_SSLZ:
 	lea		.ParallaxScriptSSLZ,a1
 	jmp		ExecuteParallaxScript
 
@@ -13488,137 +13486,15 @@ _moving = $0200
 _linear = $0400
 
 ;			Mode			Speed/dist		Number of lines		What's moving?
-	dc.w	_normal,		$0000,			8					; nothing
-	dc.w	_moving,		$0008,			40					; clouds 7
-	dc.w	_normal,		$0000,			16					; nothing
-	dc.w	_moving+2,		$0008,			24					; clouds 6
-	dc.w	_moving+4,		$0008,			24					; clouds 5
+	dc.w	_moving,		$0004,			16					; clouds 7
+	dc.w	_moving+2,		$0004,			32					; clouds 5
 ;							bottom half of clouds
-	dc.w	_moving+6,		$0008,			16					; clouds 4
-	dc.w	_moving+8,		$0008,			16					; clouds 3
-	dc.w	_normal,		$0000,			8					; nothing
-	dc.w	_moving+10,		$0008,			8					; clouds 2
-	dc.w	_moving+12,		$0008,			8					; clouds 1
+	dc.w	_moving+4,		$0004,			56					; clouds 3
+	dc.w	_normal,		$0000,			64					; nothing
 	dc.w	_normal,		$0001,			8					; mountains
 	dc.w	_linear+2,		$0001,			80					; ocean
 	dc.w	-1
-; End of function Deform_BGZ
-; ===========================================================================
-; loc_C57E:
-; SwScrl_EHZ
-SwScrl_EHZ_2P:
-	move.w	(Camera_BG_Y_pos).w,(Vscroll_Factor_BG).w
-	lea	(Horiz_Scroll_Buf).w,a1
-	move.w	(Camera_X_pos).w,d0
-	neg.w	d0
-	move.w	d0,d2
-	swap	d0
-	clr.w	d0
-
-	moveq	#22-1,d1			; NAT: Num of scanlines, instead of bytes
--	move.l	d0,(a1)+			; whoever thought using bytes was a bright idea?
-	dbf	d1,-
-
-	move.w	d2,d0
-	asr.w	#6,d0
-
-	moveq	#58-1,d1			; NAT: Num of scanlines, instead of bytes
--	move.l	d0,(a1)+
-	dbf	d1,-
-
-	move.w	d0,d3
-	move.b	(Vint_runcount+3).w,d1
-	andi.w	#7,d1
-	bne.s	+
-	subq.w	#1,(TempArray_LayerDef).w
-
-+
-	move.w	(TempArray_LayerDef).w,d1
-	andi.w	#$1F,d1
-	lea	(SwScrl_RippleData).l,a2
-	lea	(a2,d1.w),a2
-
-	moveq	#21-1,d1			; NAT: Num of scanlines, instead of bytes
--	move.b	(a2)+,d0
-	ext.w	d0
-	add.w	d3,d0
-	move.l	d0,(a1)+
-	dbf	d1,-
-
-	clr.w	d0
-	moveq	#11-1,d1			; NAT: Num of scanlines, instead of bytes
--	move.l	d0,(a1)+
-	dbf	d1,-
-
-	move.w	d2,d0
-	asr.w	#4,d0
-
-	moveq	#16-1,d1			; NAT: Num of scanlines, instead of bytes
--	move.l	d0,(a1)+
-	dbf	d1,-
-
-	move.w	d2,d0
-	asr.w	#4,d0
-	move.w	d0,d1
-	asr.w	#1,d1
-	add.w	d1,d0
-
-	moveq	#16-1,d1			; NAT: Num of scanlines, instead of bytes
--	move.l	d0,(a1)+
-	dbf	d1,-
-
-	move.l	d0,d4
-	swap	d4
-	move.w	d2,d0
-	asr.w	#1,d0
-	move.w	d2,d1
-	asr.w	#3,d1
-	sub.w	d1,d0
-	ext.l	d0
-	asl.l	#8,d0
-	divs.w	#$30,d0
-	ext.l	d0
-	asl.l	#8,d0
-	moveq	#0,d3
-	move.w	d2,d3
-	asr.w	#3,d3
-
-	moveq	#15-1,d1			; NAT: Num of scanlines, instead of bytes
--	move.w	d4,(a1)+
-	move.w	d3,(a1)+
-	swap	d3
-	add.l	d0,d3
-	swap	d3
-	dbf	d1,-
-
-	moveq	#(18/2)-1,d1			; NAT: Num of scanlines, instead of bytes
--	move.w	d4,(a1)+
-	move.w	d3,(a1)+
-	move.w	d4,(a1)+
-	move.w	d3,(a1)+
-	swap	d3
-	add.l	d0,d3
-	add.l	d0,d3
-	swap	d3
-	dbf	d1,-
-
-	moveq	#53/3-1,d1			; NAT: Num of scanlines, instead of bytes
--	move.w	d4,(a1)+
-	move.w	d3,(a1)+
-	move.w	d4,(a1)+
-	move.w	d3,(a1)+
-	move.w	d4,(a1)+
-	move.w	d3,(a1)+
-	swap	d3
-	add.l	d0,d3
-	add.l	d0,d3
-	add.l	d0,d3
-	swap	d3
-	dbf	d1,-
-
-	; note there is a bug here. the bottom 8 pixels haven't had their hscroll values set. only the EHZ scrolling code has this bug.
-
-	rts
+; End of function SwScrl_SSLZ
 ; ===========================================================================
 ; horizontal offsets for the water rippling effect
 ; byte_C682:
@@ -27968,7 +27844,7 @@ ObjPtr_Button:		dc.l Obj_Button			; $47 ; Button
 ObjPtr_LauncherBall:	dc.l Obj_LauncherBall		; $48 ; Round ball thing from OOZ that fires you off in a different direction
 ObjPtr_EHZWaterfall:	dc.l Obj_EHZWaterfall		; $49 ; Waterfall from EHZ
 ObjPtr_Octus:		dc.l Obj_Octus			; $4A ; Octus (octopus badnik) from OOZ
-ObjPtr_Buzzer:		dc.l Obj_Buzzer			; $4B ; Buzzer (Buzz bomber) from EHZ
+ObjPtr_BuzzBomber:		dc.l Obj_BuzzBomber			; $4B ; Buzz Bomber from Seaside Land
 			dc.l Obj_Null			; $4C ; Obj4C
 			dc.l Obj_Null			; $4D ; Obj4D
 			dc.l Obj_Null			; $4E ; Obj4E
@@ -52359,239 +52235,9 @@ JmpTo48_DeleteObject ; JmpTo
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 4B - Buzzer (Buzz bomber) from EHZ
+; Object 4B - Buzz Bomber from Seaside Land
 ; ----------------------------------------------------------------------------
-; OST Variables:
-Obj_Buzzer_parent		= objoff_2A	; long
-Obj_Buzzer_move_timer	= objoff_2E	; word
-Obj_Buzzer_turn_delay	= objoff_30	; word
-Obj_Buzzer_shooting_flag	= objoff_32	; byte
-Obj_Buzzer_shot_timer	= objoff_34	; word
-
-; Sprite_2D068: ; Obj_Buzzer:
-Obj_Buzzer:
-	moveq	#0,d0
-	move.b	routine(a0),d0
-	move.w	Obj_Buzzer_Index(pc,d0.w),d1
-	jmp	Obj_Buzzer_Index(pc,d1.w)
-; ===========================================================================
-; off_2D076:
-Obj_Buzzer_Index:	offsetTable
-		offsetTableEntry.w Obj_Buzzer_Init	; 0
-		offsetTableEntry.w Obj_Buzzer_Main	; 2
-		offsetTableEntry.w Obj_Buzzer_Flame	; 4
-		offsetTableEntry.w Obj_Buzzer_Projectile	; 6
-; ===========================================================================
-; loc_2D07E:
-Obj_Buzzer_Projectile:
-	jsrto	(ObjectMove).l, JmpTo21_ObjectMove
-	lea	(Ani_Obj_Buzzer).l,a1
-	jsrto	(AnimateSprite).l, JmpTo15_AnimateSprite
-	jmpto	(MarkObjGone_P1).l, JmpTo_MarkObjGone_P1
-; ===========================================================================
-; loc_2D090:
-Obj_Buzzer_Flame:
-	movea.l	Obj_Buzzer_parent(a0),a1 ; a1=object
-	tst.l	id(a1)
-	beq.w	JmpTo49_DeleteObject	; branch, if object slot is empty. This check is incomplete and very unreliable; check Obj_Aquis_Wing to see how it should be done
-	tst.w	Obj_Buzzer_turn_delay(a1)
-	bmi.s	+		; branch, if parent isn't currently turning around
-	rts
-; ---------------------------------------------------------------------------
-+	; follow parent object
-	move.w	x_pos(a1),x_pos(a0)
-	move.w	y_pos(a1),y_pos(a0)
-	move.b	status(a1),status(a0)
-	move.b	render_flags(a1),render_flags(a0)
-	lea	(Ani_Obj_Buzzer).l,a1
-	jsrto	(AnimateSprite).l, JmpTo15_AnimateSprite
-	jmpto	(MarkObjGone_P1).l, JmpTo_MarkObjGone_P1
-; ===========================================================================
-; loc_2D0C8:
-Obj_Buzzer_Init:
-	move.l	#Obj_Buzzer_MapUnc_2D2EA,mappings(a0)
-	move.w	#make_art_tile(ArtTile_ArtNem_Buzzer,0,0),art_tile(a0)
-	ori.b	#4,render_flags(a0)
-	move.b	#$A,collision_flags(a0)
-	move.w	#prio(4),priority(a0)
-	move.b	#$10,width_pixels(a0)
-	move.b	#$10,y_radius(a0)
-	move.b	#$18,x_radius(a0)
-	move.w	#prio(3),priority(a0)
-	addq.b	#2,routine(a0)	; => Obj_Buzzer_Main
-
-	; load exhaust flame object
-	jsrto	(SingleObjLoad2).l, JmpTo20_SingleObjLoad2
-	bne.s	+	; rts
-
-	_move.l	#Obj_Buzzer,id(a1) ; load Obj_Buzzer
-	move.b	#4,routine(a1)	; => Obj_Buzzer_Flame
-	move.l	#Obj_Buzzer_MapUnc_2D2EA,mappings(a1)
-	move.w	#make_art_tile(ArtTile_ArtNem_Buzzer,0,0),art_tile(a1)
-	move.w	#prio(4),priority(a1)
-	move.b	#$10,width_pixels(a1)
-	move.b	status(a0),status(a1)
-	move.b	render_flags(a0),render_flags(a1)
-	move.b	#1,anim(a1)
-	move.l	a0,Obj_Buzzer_parent(a1)
-	move.w	x_pos(a0),x_pos(a1)
-	move.w	y_pos(a0),y_pos(a1)
-	move.w	#$100,Obj_Buzzer_move_timer(a0)
-	move.w	#-$100,x_vel(a0)
-	btst	#0,render_flags(a0)
-	beq.s	+	; rts
-	neg.w	x_vel(a0)
-+
-	rts
-; ===========================================================================
-; loc_2D174:
-Obj_Buzzer_Main:
-	moveq	#0,d0
-	move.b	routine_secondary(a0),d0
-	move.w	Obj_Buzzer_Buzzer_States(pc,d0.w),d1
-	jsr	Obj_Buzzer_Buzzer_States(pc,d1.w)
-	lea	(Ani_Obj_Buzzer).l,a1
-	jsrto	(AnimateSprite).l, JmpTo15_AnimateSprite
-	jmpto	(MarkObjGone_P1).l, JmpTo_MarkObjGone_P1
-; ===========================================================================
-; off_2D190:
-Obj_Buzzer_Buzzer_States:	offsetTable
-		offsetTableEntry.w Obj_Buzzer_Roaming	; 0
-		offsetTableEntry.w Obj_Buzzer_Shooting	; 2
-; ===========================================================================
-; loc_2D194:
-Obj_Buzzer_Roaming:
-	bsr.w	Obj_Buzzer_ChkPlayers
-	subq.w	#1,Obj_Buzzer_turn_delay(a0)
-	move.w	Obj_Buzzer_turn_delay(a0),d0
-	cmpi.w	#$F,d0
-	beq.s	Obj_Buzzer_TurnAround
-	tst.w	d0
-	bpl.s	return_2D1B8
-	subq.w	#1,Obj_Buzzer_move_timer(a0)
-	bgt.w	JmpTo21_ObjectMove
-	move.w	#$1E,Obj_Buzzer_turn_delay(a0)
-
-return_2D1B8:
-	rts
-; ---------------------------------------------------------------------------
-; loc_2D1BA:
-Obj_Buzzer_TurnAround:
-	sf	Obj_Buzzer_shooting_flag(a0)	; reenable shooting
-	neg.w	x_vel(a0)		; reverse movement direction
-	bchg	#0,render_flags(a0)
-	bchg	#0,status(a0)
-	move.w	#$100,Obj_Buzzer_move_timer(a0)
-	rts
-; ===========================================================================
-; Start of subroutine Obj_Buzzer_ChkPlayers
-; sub_2D1D6:
-Obj_Buzzer_ChkPlayers:
-	tst.b	Obj_Buzzer_shooting_flag(a0)
-	bne.w	return_2D232	; branch, if shooting is disabled
-	move.w	x_pos(a0),d0
-	lea	(MainCharacter).w,a1 ; a1=character
-	btst	#0,(Vint_runcount+3).w
-	beq.s	+		; target Sidekick on uneven frames
-	lea	(Sidekick).w,a1 ; a1=character
-+
-	sub.w	x_pos(a1),d0	; get object's distance to player
-	move.w	d0,d1		; save value for later
-	bpl.s	+		; branch, if it was positive
-	neg.w	d0		; get absolute value
-+
-	; test if player is inside an 8 pixel wide strip
-	cmpi.w	#$28,d0
-	blt.s	return_2D232
-	cmpi.w	#$30,d0
-	bgt.s	return_2D232
-
-	tst.w	d1			; test sign of distance
-	bpl.s	Obj_Buzzer_PlayerIsLeft	; branch, if player is left from object
-	btst	#0,render_flags(a0)
-	beq.s	return_2D232		; branch, if object is facing right
-	bra.s	Obj_Buzzer_ReadyToShoot
-; ---------------------------------------------------------------------------
-; loc_2D216:
-Obj_Buzzer_PlayerIsLeft:
-	btst	#0,render_flags(a0)
-	bne.s	return_2D232	; branch, if object is facing left
-
-; loc_2D21E:
-Obj_Buzzer_ReadyToShoot:
-	st	Obj_Buzzer_shooting_flag(a0)		; disable shooting
-	addq.b	#2,routine_secondary(a0)	; => Obj_Buzzer_Shooting
-	move.b	#3,anim(a0)		; play shooting animation
-	move.w	#$32,Obj_Buzzer_shot_timer(a0)
-
-return_2D232:
-	rts
-; End of subroutine Obj_Buzzer_ChkPlayers
-; ===========================================================================
-; loc_2D234:
-Obj_Buzzer_Shooting:
-	move.w	Obj_Buzzer_shot_timer(a0),d0	; get timer value
-	subq.w	#1,d0			; decrement
-	blt.s	Obj_Buzzer_DoneShooting	; branch, if timer has expired
-	move.w	d0,Obj_Buzzer_shot_timer(a0)	; update timer value
-	cmpi.w	#$14,d0			; has timer reached a certain value?
-	beq.s	Obj_Buzzer_ShootProjectile	; if yes, branch
-	rts
-; ---------------------------------------------------------------------------
-; loc_2D248:
-Obj_Buzzer_DoneShooting:
-	subq.b	#2,routine_secondary(a0)	; => Obj_Buzzer_Roaming
-	rts
-; ---------------------------------------------------------------------------
-; loc_2D24E
-Obj_Buzzer_ShootProjectile:
-	jsr	(SingleObjLoad2).l	; Find next open object space
-	bne.s	+
-
-	_move.l	#Obj_Buzzer,id(a1) ; load Obj_Buzzer
-	move.b	#6,routine(a1)	; => Obj_Buzzer_Projectile
-	move.l	#Obj_Buzzer_MapUnc_2D2EA,mappings(a1)
-	move.w	#make_art_tile(ArtTile_ArtNem_Buzzer,0,0),art_tile(a1)
-	move.w	#prio(4),priority(a1)
-	move.b	#$98,collision_flags(a1)
-	move.b	#$10,width_pixels(a1)
-	move.b	status(a0),status(a1)
-	move.b	render_flags(a0),render_flags(a1)
-	move.b	#2,anim(a1)
-	move.w	x_pos(a0),x_pos(a1)
-	move.w	y_pos(a0),y_pos(a1)
-	addi.w	#$18,y_pos(a1)	; align vertically with stinger
-	move.w	#$D,d0		; absolute horizontal offset for stinger
-	move.w	#$180,y_vel(a1)
-	move.w	#-$180,x_vel(a1)
-	btst	#0,render_flags(a1)	; is object facing left?
-	beq.s	+			; if not, branch
-	neg.w	x_vel(a1)	; move in other direction
-	neg.w	d0		; make offset negative
-+
-	add.w	d0,x_pos(a1)	; align horizontally with stinger
-	rts
-; ===========================================================================
-; animation script
-; off_2D2CE:
-Ani_Obj_Buzzer:	offsetTable
-		offsetTableEntry.w .idle	; 0
-		offsetTableEntry.w .jet		; 1
-		offsetTableEntry.w .fireball; 2
-		offsetTableEntry.w .firing	; 3
-.idle:		dc.b	$F, 0, afEnd
-	rev02even
-.jet:		dc.b	2, 2, 3, afEnd
-	rev02even
-.fireball:	dc.b	3, 4, 5, afEnd
-	rev02even
-.firing:	dc.b	9, 1, 1, 1, 1, 1, afChange, 0
-	even
-; ----------------------------------------------------------------------------
-; sprite mappings -- Buzz Bomber Sprite Table
-; ----------------------------------------------------------------------------
-; MapUnc_2D2EA: SprTbl_Buzzer:
-Obj_Buzzer_MapUnc_2D2EA:	BINCLUDE "mappings/sprite/Obj_Buzzer.bin"
+	include	"objects/Enemies/Buzz Bomber.asm"
 
     if ~~removeJmpTos
 	align 4
@@ -78736,7 +78382,7 @@ DbgObjList_EHZ: dbglistheader
 	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
 	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $30,   7, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
 	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $40,  $A, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
-	dbglistobj Obj_Buzzer,		Obj_Buzzer_MapUnc_2D2EA,   0,   0, make_art_tile(ArtTile_ArtNem_Buzzer,0,0)
+	dbglistobj Obj_BuzzBomber,		Obj_BuzzBomber_MapUnc,   0,   0, make_art_tile(ArtTile_ArtNem_BuzzBomber,0,0)
 	dbglistobj Obj_Masher,		Obj_Masher_MapUnc_2D442,   0,   0, make_art_tile(ArtTile_ArtNem_Masher,0,0)
 	dbglistobj Obj_Crab,		Obj_Crab_MapUnc, 0,   0, make_art_tile(ArtTile_ArtNem_Crab,0,0)
 	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
@@ -79339,6 +78985,7 @@ PlrList_Ehz2: plrlistheader
 	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
 	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
 	plreq ArtTile_ArtNem_Crab, ArtNem_Crab
+	plreq ArtTile_ArtNem_BuzzBomber, ArtNem_BuzzBomber
 ;	plreq ArtTile_ArtNem_WaterSurface, ArtNem_WaterSurface
 PlrList_Ehz2_End
 ;---------------------------------------------------------------------------------------
@@ -80771,7 +80418,7 @@ ArtNem_ARZBarrierThing:	BINCLUDE	"art/nemesis/One way barrier from ARZ.bin"
 ; Nemesis compressed art (28 blocks)
 ; Buzz bomber			; ArtNem_8316A:
 	even
-ArtNem_Buzzer:	BINCLUDE	"art/nemesis/Buzzer enemy.bin"
+ArtNem_BuzzBomber:	BINCLUDE	"art/nemesis/Buzz Bomber enemy.bin"
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (58 blocks)
 ; Octopus badnik from OOZ	; ArtNem_8336A:

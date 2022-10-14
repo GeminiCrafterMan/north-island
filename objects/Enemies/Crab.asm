@@ -196,7 +196,7 @@ Crab_BallMove:	; Routine 8
 	bset	#7,status(a0)
 ; Continue
 .nah:
-	move.w	(Camera_Max_Y_pos_now).w,d0
+	move.w	(Camera_Max_Y_pos).w,d0
 	addi.w	#$E0,d0
 	cmp.w	y_pos(a0),d0	; has object moved below the level boundary?
 	jcs		DeleteObject		; if yes, branch
