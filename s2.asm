@@ -28148,8 +28148,8 @@ Obj_Spring_Index:	offsetTable
 ; loc_188A8:
 Obj_Spring_Init:
 	addq.b	#2,routine(a0)
-	move.l	#Obj_Spring_MapUnc_1901C,mappings(a0)
-	move.w	#make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0),art_tile(a0)
+	move.l	#Obj_Spring_MapUnc,mappings(a0)
+	move.w	#make_art_tile(ArtTile_ArtNem_Spring,0,0),art_tile(a0)
 	ori.b	#4,render_flags(a0)
 	move.b	#$10,width_pixels(a0)
 	move.w	#prio(4),priority(a0)
@@ -28172,7 +28172,6 @@ Obj_Spring_Init_Horizontal:
 	move.b	#4,routine(a0)
 	move.b	#2,anim(a0)
 	move.b	#3,mapping_frame(a0)
-	move.w	#make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0),art_tile(a0)
 	move.b	#8,width_pixels(a0)
 	bra.s	Obj_Spring_Init_Common
 ; ===========================================================================
@@ -28186,16 +28185,15 @@ Obj_Spring_Init_Down:
 ; loc_1891C:
 Obj_Spring_Init_DiagonallyUp:
 	move.b	#8,routine(a0)
-	move.b	#4,anim(a0)
-	move.b	#7,mapping_frame(a0)
+	move.l	#Obj_Spring_MapUnc_Diagonal,mappings(a0)
 	move.w	#make_art_tile(ArtTile_ArtNem_DignlSprng,0,0),art_tile(a0)
 	bra.s	Obj_Spring_Init_Common
 ; ===========================================================================
 ; loc_18936:
 Obj_Spring_Init_DiagonallyDown:
 	move.b	#$A,routine(a0)
-	move.b	#4,anim(a0)
-	move.b	#$A,mapping_frame(a0)
+	move.b	#3,mapping_frame(a0)
+	move.l	#Obj_Spring_MapUnc_Diagonal,mappings(a0)
 	move.w	#make_art_tile(ArtTile_ArtNem_DignlSprng,0,0),art_tile(a0)
 	bset	#1,status(a0)
 ; loc_18954:
@@ -28208,7 +28206,6 @@ Obj_Spring_Init_Common:
 	btst	#1,d0
 	beq.s	+
 	bset	#palette_bit_0,art_tile(a0)
-	move.l	#Obj_Spring_MapUnc_19032,mappings(a0)
 +
 	rts
 ; ===========================================================================
@@ -28592,7 +28589,7 @@ loc_18DCA:
 ; ===========================================================================
 
 loc_18DD8:
-	move.w	#$500,anim(a0)
+	move.w	#$100,anim(a0)
 	move.w	objoff_30(a0),y_vel(a1)
 	move.w	objoff_30(a0),x_vel(a1)
 	addq.w	#6,y_pos(a1)
@@ -28675,7 +28672,7 @@ loc_18EDA:
 ; ===========================================================================
 
 loc_18EE6:
-	move.w	#$500,anim(a0)
+	move.w	#$100,anim(a0)
 	move.w	objoff_30(a0),y_vel(a1)
 	neg.w	y_vel(a1)
 	move.w	objoff_30(a0),x_vel(a1)
@@ -28739,18 +28736,16 @@ Obj_Spring_SlopeData_DiagDown:
 ; animation script
 ; off_18FE2:
 Ani_Obj_Spring:	offsetTable
-		offsetTableEntry.w byte_18FEE	; 0
-		offsetTableEntry.w byte_18FF1	; 1
-		offsetTableEntry.w byte_18FFD	; 2
-		offsetTableEntry.w byte_19000	; 3
-		offsetTableEntry.w byte_1900C	; 4
-		offsetTableEntry.w byte_1900F	; 5
-byte_18FEE:
+		offsetTableEntry.w .vidle	; 0
+		offsetTableEntry.w .vaction	; 1
+		offsetTableEntry.w .hidle	; 2
+		offsetTableEntry.w .haction	; 3
+.vidle:
 	dc.b  $F
 	dc.b   0	; 1
 	dc.b $FF	; 2
 	rev02even
-byte_18FF1:
+.vaction:
 	dc.b   0
 	dc.b   1	; 1
 	dc.b   0	; 2
@@ -28764,12 +28759,12 @@ byte_18FF1:
 	dc.b $FD	; 10
 	dc.b   0	; 11
 	rev02even
-byte_18FFD:
+.hidle:
 	dc.b  $F
 	dc.b   3	; 1
 	dc.b $FF	; 2
 	rev02even
-byte_19000:
+.haction:
 	dc.b   0
 	dc.b   4	; 1
 	dc.b   3	; 2
@@ -28782,130 +28777,16 @@ byte_19000:
 	dc.b   5	; 9
 	dc.b $FD	; 10
 	dc.b   2	; 11
-	rev02even
-byte_1900C:
-	dc.b  $F
-	dc.b   7	; 1
-	dc.b $FF	; 2
-	rev02even
-byte_1900F:
-	dc.b   0
-	dc.b   8	; 1
-	dc.b   7	; 2
-	dc.b   7	; 3
-	dc.b   9	; 4
-	dc.b   9	; 5
-	dc.b   9	; 6
-	dc.b   9	; 7
-	dc.b   9	; 8
-	dc.b   9	; 9
-	dc.b $FD	; 10
-	dc.b   4	; 11
 	even
 
 ; ----------------------------------------------------------------------------
 ; Primary sprite mappings for springs
 ; ----------------------------------------------------------------------------
-Obj_Spring_MapUnc_1901C: offsetTable
-	offsetTableEntry.w word_19048	;  0
-	offsetTableEntry.w word_1905A	;  1
-	offsetTableEntry.w word_19064	;  2
-	offsetTableEntry.w word_19076	;  3
-	offsetTableEntry.w word_19088	;  4
-	offsetTableEntry.w word_19092	;  5
-	offsetTableEntry.w word_190A4	;  6
-	offsetTableEntry.w word_190B6	;  7
-	offsetTableEntry.w word_190D8	;  8
-	offsetTableEntry.w word_190F2	;  9
-	offsetTableEntry.w word_19114	; $A
-; -------------------------------------------------------------------------------
+Obj_Spring_MapUnc: BINCLUDE	"mappings/sprite/Obj_Spring.bin"
+; ----------------------------------------------------------------------------
 ; Secondary sprite mappings for springs
-; merged with the above mappings; can't split to file in a useful way...
-; -------------------------------------------------------------------------------
-Obj_Spring_MapUnc_19032: offsetTable
-	offsetTableEntry.w word_19048	;  0
-	offsetTableEntry.w word_1905A	;  1
-	offsetTableEntry.w word_19064	;  2
-	offsetTableEntry.w word_19076	;  3
-	offsetTableEntry.w word_19088	;  4
-	offsetTableEntry.w word_19092	;  5
-	offsetTableEntry.w word_190A4	;  6
-	offsetTableEntry.w word_19136	;  7
-	offsetTableEntry.w word_19158	;  8
-	offsetTableEntry.w word_19172	;  9
-	offsetTableEntry.w word_19194	; $A
-word_19048:
-	dc.w 2
-	dc.w $F00D,    0,    0,$FFF0
-	dc.w	 5,    8,    4,$FFF8; 4
-word_1905A:
-	dc.w 1
-	dc.w $F80D,    0,    0,$FFF0
-word_19064:
-	dc.w 2
-	dc.w $E00D,    0,    0,$FFF0
-	dc.w $F007,   $C,    6,$FFF8; 4
-word_19076:
-	dc.w 2
-	dc.w $F003,    0,    0,	   0
-	dc.w $F801,    4,    2,$FFF8; 4
-word_19088:
-	dc.w 1
-	dc.w $F003,    0,    0,$FFF8
-word_19092:
-	dc.w 2
-	dc.w $F003,    0,    0,	 $10
-	dc.w $F809,    6,    3,$FFF8; 4
-word_190A4:
-	dc.w 2
-	dc.w	$D,$1000,$1000,$FFF0
-	dc.w $F005,$1008,$1004,$FFF8; 4
-word_190B6:
-	dc.w 4
-	dc.w $F00D,    0,    0,$FFF0
-	dc.w	 5,    8,    4,	   0; 4
-	dc.w $FB05,   $C,    6,$FFF6; 8
-	dc.w	 5,$201C,$200E,$FFF0; 12
-word_190D8:
-	dc.w 3
-	dc.w $F60D,    0,    0,$FFEA
-	dc.w  $605,    8,    4,$FFFA; 4
-	dc.w	 5,$201C,$200E,$FFF0; 8
-word_190F2:
-	dc.w 4
-	dc.w $E60D,    0,    0,$FFFB
-	dc.w $F605,    8,    4,	  $B; 4
-	dc.w $F30B,  $10,    8,$FFF6; 8
-	dc.w	 5,$201C,$200E,$FFF0; 12
-word_19114:
-	dc.w 4
-	dc.w	$D,$1000,$1000,$FFF0
-	dc.w $F005,$1008,$1004,	   0; 4
-	dc.w $F505,$100C,$1006,$FFF6; 8
-	dc.w $F005,$301C,$300E,$FFF0; 12
-word_19136:
-	dc.w 4
-	dc.w $F00D,    0,    0,$FFF0
-	dc.w	 5,    8,    4,	   0; 4
-	dc.w $FB05,   $C,    6,$FFF6; 8
-	dc.w	 5,  $1C,   $E,$FFF0; 12
-word_19158:
-	dc.w 3
-	dc.w $F60D,    0,    0,$FFEA
-	dc.w  $605,    8,    4,$FFFA; 4
-	dc.w	 5,  $1C,   $E,$FFF0; 8
-word_19172:
-	dc.w 4
-	dc.w $E60D,    0,    0,$FFFB
-	dc.w $F605,    8,    4,	  $B; 4
-	dc.w $F30B,  $10,    8,$FFF6; 8
-	dc.w	 5,  $1C,   $E,$FFF0; 12
-word_19194:
-	dc.w 4
-	dc.w	$D,$1000,$1000,$FFF0
-	dc.w $F005,$1008,$1004,	   0; 4
-	dc.w $F505,$100C,$1006,$FFF6; 8
-	dc.w $F005,$101C,$100E,$FFF0; 12
+; ----------------------------------------------------------------------------
+Obj_Spring_MapUnc_Diagonal: BINCLUDE	"mappings/sprite/Obj_Spring_Diagonal.bin"
 ; ===========================================================================
 
     if gameRevision<2
@@ -78347,11 +78228,11 @@ DbgObjList_EHZ: dbglistheader
 	dbglistobj Obj_EHZPlatform,	Obj_FloatingPlatform_MapUnc_SSLZ,   1,   0, make_art_tile(ArtTile_ArtNem_SSLZPlat,0,0)
 	dbglistobj Obj_EHZPlatform,	Obj_FloatingPlatform_MapUnc_SSLZ, $9A,   1, make_art_tile(ArtTile_ArtNem_SSLZPlat,0,0)
 	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $30,   7, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $40,  $A, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $81,   0, make_art_tile(ArtTile_ArtNem_Spring,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $90,   3, make_art_tile(ArtTile_ArtNem_Spring,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $A0,   6, make_art_tile(ArtTile_ArtNem_Spring,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_Diagonal, $30,   0, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_Diagonal, $40,   3, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
 	dbglistobj Obj_BuzzBomber,		Obj_BuzzBomber_MapUnc,   0,   0, make_art_tile(ArtTile_ArtNem_BuzzBomber,0,0)
 	dbglistobj Obj_Masher,		Obj_Masher_MapUnc_2D442,   0,   0, make_art_tile(ArtTile_ArtNem_Masher,0,0)
 	dbglistobj Obj_Crab,		Obj_Crab_MapUnc, 0,   0, make_art_tile(ArtTile_ArtNem_Crab,0,0)
@@ -78471,11 +78352,11 @@ DbgObjList_HTZ: dbglistheader
 	dbglistobj Obj_Barrier,		Obj_Barrier_MapUnc_11822,   0,   0, make_art_tile(ArtTile_ArtNem_HtzValveBarrier,1,0)
 	dbglistobj Obj_SmashableGround, Obj_SmashableGround_MapUnc_236FA,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,1)
 	dbglistobj Obj_LavaBubble,	Obj_LavaBubble_MapUnc_23254, $44,   2, make_art_tile(ArtTile_ArtNem_HtzFireball2,0,1)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $30,   7, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $40,  $A, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $81,   0, make_art_tile(ArtTile_ArtNem_Spring,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $90,   3, make_art_tile(ArtTile_ArtNem_Spring,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $A0,   6, make_art_tile(ArtTile_ArtNem_Spring,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_Diagonal, $30,   0, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_Diagonal, $40,   3, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
 	dbglistobj Obj_HTZLift,		Obj_HTZLift_MapUnc_21F14,   0,   0, make_art_tile(ArtTile_ArtNem_HtzZipline,2,0)
 	dbglistobj Obj_BridgeStake,	Obj_HTZLift_MapUnc_21F14,   4,   3, make_art_tile(ArtTile_ArtNem_HtzZipline,2,0)
 	dbglistobj Obj_BridgeStake,	Obj_HTZLift_MapUnc_21F14,   5,   4, make_art_tile(ArtTile_ArtNem_HtzZipline,2,0)
@@ -78561,8 +78442,8 @@ DbgObjList_MCZ: dbglistheader
 	dbglistobj Obj_Stomper,		Obj_Stomper_MapUnc_11666,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
 	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
 	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68, $40,   4, make_art_tile(ArtTile_ArtNem_HorizSpike,1,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $81,   0, make_art_tile(ArtTile_ArtNem_Spring,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $90,   3, make_art_tile(ArtTile_ArtNem_Spring,0,0)
 	dbglistobj Obj_Springboard,	Obj_SpringBoard_MapUnc_265F4,   1,   0, make_art_tile(ArtTile_ArtNem_LeverSpring,0,0)
 	dbglistobj Obj_InvisibleBlock,	Obj_InvisibleBlock_MapUnc_20F66, $11,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
 	dbglistobj Obj_MCZBrick,	Obj_MCZBrick_MapUnc_28D8A, $18,   2, make_art_tile(ArtTile_ArtKos_LevelArt,1,0)
@@ -78639,9 +78520,9 @@ DbgObjList_CPZ: dbglistheader
 	dbglistobj Obj_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
 	dbglistobj Obj_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,  $D,   5, make_art_tile(ArtTile_ArtNem_Ring,1,0)
 	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $81,   0, make_art_tile(ArtTile_ArtNem_Spring,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $90,   3, make_art_tile(ArtTile_ArtNem_Spring,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $A0,   6, make_art_tile(ArtTile_ArtNem_Spring,0,0)
 	dbglistobj Obj_Springboard,	Obj_SpringBoard_MapUnc_265F4,   1,   0, make_art_tile(ArtTile_ArtNem_LeverSpring,0,0)
 	dbglistobj Obj_Spiny,		Obj_Spiny_Obj_SpinyOnWall_Obj_Projectile_MapUnc_38CCA, $32,   0, make_art_tile(ArtTile_ArtNem_Spiny,1,0)
 	dbglistobj Obj_SpinyOnWall,	Obj_Spiny_Obj_SpinyOnWall_Obj_Projectile_MapUnc_38CCA, $32,   3, make_art_tile(ArtTile_ArtNem_Spiny,1,0)
@@ -78672,9 +78553,9 @@ DbgObjList_ARZ: dbglistheader
 	dbglistobj Obj_LeavesGenerator, Obj_LavaMarker_MapUnc_20E74,   1,   1, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
 	dbglistobj Obj_LeavesGenerator, Obj_LavaMarker_MapUnc_20E74,   2,   2, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
 	dbglistobj Obj_Springboard,	Obj_SpringBoard_MapUnc_265F4,   1,   0, make_art_tile(ArtTile_ArtNem_LeverSpring,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
-	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $81,   0, make_art_tile(ArtTile_ArtNem_Spring,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $90,   3, make_art_tile(ArtTile_ArtNem_Spring,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc, $A0,   6, make_art_tile(ArtTile_ArtNem_Spring,0,0)
 	dbglistobj Obj_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
 	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
 	dbglistobj Obj_Barrier,		Obj_Barrier_MapUnc_11822,   3,   3, make_art_tile(ArtTile_ArtNem_ARZBarrierThing,1,0)
@@ -78944,8 +78825,7 @@ PlrList_Ehz1: plrlistheader
 	plreq ArtTile_ArtNem_HorizSpike, ArtNem_HorizSpike
 	plreq ArtTile_ArtNem_Spikes, ArtNem_Spikes
 	plreq ArtTile_ArtNem_DignlSprng, ArtNem_DignlSprng
-	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
-	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
+	plreq ArtTile_ArtNem_Spring, ArtNem_Spring
 	plreq ArtTile_ArtNem_EHZ_Bridge, ArtNem_EHZ_Bridge
 	plreq ArtTile_ArtNem_SSLZPlat, ArtNem_SSLZPlat
 PlrList_Ehz1_End
@@ -79009,8 +78889,7 @@ PlrList_Mtz2: plrlistheader
 	plreq ArtTile_ArtNem_Button, ArtNem_Button
 	plreq ArtTile_ArtNem_Spikes, ArtNem_Spikes
 	plreq ArtTile_ArtNem_MtzMantis, ArtNem_MtzMantis
-	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
-	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
+	plreq ArtTile_ArtNem_Spring, ArtNem_Spring
 	plreq ArtTile_ArtNem_MtzAsstBlocks, ArtNem_MtzAsstBlocks
 	plreq ArtTile_ArtNem_MtzLavaBubble, ArtNem_MtzLavaBubble
 	plreq ArtTile_ArtNem_MtzCog, ArtNem_MtzCog
@@ -79063,8 +78942,7 @@ PlrList_Htz1: plrlistheader
 	plreq ArtTile_ArtNem_Spiker, ArtNem_Spiker
 	plreq ArtTile_ArtNem_Spikes, ArtNem_Spikes
 	plreq ArtTile_ArtNem_DignlSprng, ArtNem_DignlSprng
-	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
-	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
+	plreq ArtTile_ArtNem_Spring, ArtNem_Spring
 PlrList_Htz1_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
@@ -79116,8 +78994,7 @@ PlrList_Ooz2: plrlistheader
 	plreq ArtTile_ArtNem_Button, ArtNem_Button
 	plreq ArtTile_ArtNem_Spikes, ArtNem_Spikes
 	plreq ArtTile_ArtNem_DignlSprng, ArtNem_DignlSprng
-	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
-	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
+	plreq ArtTile_ArtNem_Spring, ArtNem_Spring
 	plreq ArtTile_ArtNem_Aquis, ArtNem_Aquis
 	plreq ArtTile_ArtNem_Octus, ArtNem_Octus
 PlrList_Ooz2_End
@@ -79142,8 +79019,7 @@ PlrList_Mcz2: plrlistheader
 	plreq ArtTile_ArtNem_Spikes, ArtNem_Spikes
 	plreq ArtTile_ArtNem_MCZGateLog, ArtNem_MCZGateLog
 	plreq ArtTile_ArtNem_LeverSpring, ArtNem_LeverSpring
-	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
-	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
+	plreq ArtTile_ArtNem_Spring, ArtNem_Spring
 PlrList_Mcz2_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
@@ -79170,8 +79046,7 @@ PlrList_Cnz2: plrlistheader
 	plreq ArtTile_ArtNem_CNZVertPlunger, ArtNem_CNZVertPlunger
 	plreq ArtTile_ArtNem_Spikes, ArtNem_Spikes
 	plreq ArtTile_ArtNem_DignlSprng, ArtNem_DignlSprng
-	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
-	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
+	plreq ArtTile_ArtNem_Spring, ArtNem_Spring
 PlrList_Cnz2_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
@@ -79198,8 +79073,7 @@ PlrList_Cpz2: plrlistheader
 	plreq ArtTile_ArtNem_Spikes, ArtNem_Spikes
 	plreq ArtTile_ArtNem_DignlSprng, ArtNem_CPZDroplet
 	plreq ArtTile_ArtNem_LeverSpring, ArtNem_LeverSpring
-	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
-	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
+	plreq ArtTile_ArtNem_Spring, ArtNem_Spring
 PlrList_Cpz2_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
@@ -79240,8 +79114,7 @@ PlrList_Arz2: plrlistheader
 	plreq ArtTile_ArtNem_BigBubbles, ArtNem_BigBubbles
 	plreq ArtTile_ArtNem_Spikes, ArtNem_Spikes
 	plreq ArtTile_ArtNem_LeverSpring, ArtNem_LeverSpring
-	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
-	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
+	plreq ArtTile_ArtNem_Spring, ArtNem_Spring
 PlrList_Arz2_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
@@ -79935,14 +79808,9 @@ ArtNem_MenuJunk:	BINCLUDE	"art/nemesis/A few menu blocks.bin"
 ArtNem_Button:	BINCLUDE	"art/nemesis/Button.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
-; Vertical Spring		ArtNem_78E84:
+; Vertical and Horizontal Springs		ArtNem_78E84:
 	even
-ArtNem_VrtclSprng:	BINCLUDE	"art/nemesis/Vertical spring.bin"
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (12 blocks)
-; Horizontal spring		ArtNem_78FA0:
-	even
-ArtNem_HrzntlSprng:	BINCLUDE	"art/nemesis/Horizontal spring.bin"
+ArtNem_Spring:	BINCLUDE	"art/nemesis/Spring.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Diagonal spring		ArtNem_7906A:

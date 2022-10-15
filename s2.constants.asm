@@ -1774,8 +1774,7 @@ ArtTile_ArtNem_HorizSpike             = $042C
 ArtTile_ArtNem_Spikes                 = $0434
 ArtTile_ArtNem_DignlSprng             = $043C
 ArtTile_ArtNem_LeverSpring            = $0440
-ArtTile_ArtNem_VrtclSprng             = $045C
-ArtTile_ArtNem_HrzntlSprng            = $0470
+ArtTile_ArtNem_Spring                 = $045C
 
 ; EHZ, HTZ
 ArtTile_ArtKos_Checkers               = ArtTile_ArtKos_LevelArt+$0158
