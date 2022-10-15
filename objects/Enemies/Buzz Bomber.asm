@@ -214,7 +214,7 @@ Ani_Buzz:
 	rev02even
 .fly2:		dc.b 1,	0, 1, afEnd
 	rev02even
-.turn:		dc.b 2,	2, 3, afChange, 0
+.turn:		dc.b 3,	2, 3, afChange, 0
 	rev02even
 .fires:		dc.b 3,	4, 5, afEnd
 	rev02even

@@ -10,78 +10,79 @@ MM9Title_Header:
 	sHeaderFM	MM9Title_FM4, $00, $11
 	sHeaderPSG	MM9Title_PSG1and2, $00-$0C, $28, $00, vNone
 	sHeaderPSG	MM9Title_PSG1and2, $00-$0C-$0C, $28, $00, vNone
+	
+	; Patch $00 - Patch $03 from Magnet Man's theme from WW
+	; Note: this is *that* brass instrument.
+	; $3D
+	; $01, $01, $01, $01,	$94, $19, $19, $19
+	; $0F, $0D, $0D, $0D,	$07, $04, $04, $04
+	; $25, $1A, $1A, $1A,	$15, $00, $00, $00
+	spAlgorithm	$05
+	spFeedback	$07
+	spDetune	$00, $00, $00, $00
+	spMultiple	$01, $01, $01, $01
+	spRateScale	$02, $00, $00, $00
+	spAttackRt	$14, $19, $19, $19
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0F, $0D, $0D, $0D
+	spSustainLv	$02, $01, $01, $01
+	spDecayRt	$07, $04, $04, $04
+	spReleaseRt	$05, $0A, $0A, $0A
+	spTotalLv	$15, $00, $00, $00
 
-	; Patch $00
+	; Patch $01 - Patch $00 from NQH's Maiden's Capriccio cover.
 	; $3A
-	; $01, $07, $31, $71,	$8E, $8E, $8D, $53
-	; $0E, $0E, $0E, $06,	$00, $00, $00, $00
-	; $1F, $FF, $1F, $2F,	$18, $28, $27, $00
+	; $78, $01, $00, $11,	$1F, $1F, $1F, $1F
+	; $12, $0C, $0C, $10,	$04, $04, $04, $04
+	; $85, $25, $25, $16,	$1E, $32, $14, $00
 	spAlgorithm	$02
 	spFeedback	$07
-	spDetune	$00, $03, $00, $07
-	spMultiple	$01, $01, $07, $01
-	spRateScale	$02, $02, $02, $01
-	spAttackRt	$0E, $0D, $0E, $13
-	spAmpMod	$00, $00, $00, $00
-	spSustainRt	$0E, $0E, $0E, $06
-	spSustainLv	$01, $01, $0F, $02
-	spDecayRt	$00, $00, $00, $00
-	spReleaseRt	$0F, $0F, $0F, $0F
-	spTotalLv	$18, $27, $28, $00
-
-	; Patch $01
-	; $38
-	; $72, $13, $71, $11,	$D1, $52, $14, $14
-	; $01, $07, $01, $01,	$00, $00, $00, $00
-	; $FF, $FF, $FF, $FF,	$1E, $1E, $1E, $00
-	spAlgorithm	$00
-	spFeedback	$07
-	spDetune	$07, $07, $01, $01
-	spMultiple	$02, $01, $03, $01
-	spRateScale	$03, $00, $01, $00
-	spAttackRt	$11, $14, $12, $14
-	spAmpMod	$00, $00, $00, $00
-	spSustainRt	$01, $01, $07, $01
-	spSustainLv	$0F, $0F, $0F, $0F
-	spDecayRt	$00, $00, $00, $00
-	spReleaseRt	$0F, $0F, $0F, $0F
-	spTotalLv	$1E, $1E, $1E, $00
-
-	; Patch $02
-	; $2C
-	; $70, $40, $21, $60,	$9F, $1F, $1F, $5F
-	; $0C, $09, $0C, $15,	$04, $04, $06, $06
-	; $56, $46, $46, $4F,	$0C, $00, $10, $00
-	spAlgorithm	$04
-	spFeedback	$05
-	spDetune	$07, $02, $04, $06
-	spMultiple	$00, $01, $00, $00
-	spRateScale	$02, $00, $00, $01
+	spDetune	$07, $00, $00, $01
+	spMultiple	$08, $00, $01, $01
+	spRateScale	$00, $00, $00, $00
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
-	spSustainRt	$0C, $0C, $09, $15
-	spSustainLv	$05, $04, $04, $04
-	spDecayRt	$04, $06, $04, $06
-	spReleaseRt	$06, $06, $06, $0F
-	spTotalLv	$0C, $10, $00, $00
+	spSustainRt	$12, $0C, $0C, $10
+	spSustainLv	$08, $02, $02, $01
+	spDecayRt	$04, $04, $04, $04
+	spReleaseRt	$05, $05, $05, $06
+	spTotalLv	$1E, $14, $32, $00
 
-	; Patch $03
-	; $38
-	; $75, $13, $71, $11,	$D1, $52, $14, $14
-	; $0A, $07, $01, $01,	$00, $00, $00, $00
-	; $F0, $F0, $F0, $FC,	$1E, $1E, $1E, $00
-	spAlgorithm	$00
+	; Patch $02 - Patch $02 from Magnet Man's theme from WW
+	; $3C
+	; $01, $00, $00, $00,	$1F, $1F, $15, $1F
+	; $11, $0D, $12, $05,	$07, $04, $09, $02
+	; $55, $3A, $25, $1A,	$1A, $00, $07, $00
+	spAlgorithm	$04
 	spFeedback	$07
-	spDetune	$07, $07, $01, $01
-	spMultiple	$05, $01, $03, $01
-	spRateScale	$03, $00, $01, $00
-	spAttackRt	$11, $14, $12, $14
+	spDetune	$00, $00, $00, $00
+	spMultiple	$01, $00, $00, $00
+	spRateScale	$00, $00, $00, $00
+	spAttackRt	$1F, $15, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
-	spSustainRt	$0A, $01, $07, $01
-	spSustainLv	$0F, $0F, $0F, $0F
-	spDecayRt	$00, $00, $00, $00
-	spReleaseRt	$00, $00, $00, $0C
-	spTotalLv	$1E, $1E, $1E, $00
+	spSustainRt	$11, $12, $0D, $05
+	spSustainLv	$05, $02, $03, $01
+	spDecayRt	$07, $09, $04, $02
+	spReleaseRt	$05, $05, $0A, $0A
+	spTotalLv	$1A, $07, $00, $00
+
+	; Patch $03 - Patch $00 from Magnet Man's theme from WW
+	; $10
+	; $42, $45, $77, $72,	$1F, $12, $1F, $5F
+	; $04, $01, $04, $0C,	$01, $01, $01, $02
+	; $10, $18, $19, $18,	$1B, $1E, $1E, $00
+	spAlgorithm	$00
+	spFeedback	$02
+	spDetune	$04, $07, $04, $07
+	spMultiple	$02, $07, $05, $02
+	spRateScale	$00, $00, $00, $01
+	spAttackRt	$1F, $1F, $12, $1F
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$04, $04, $01, $0C
+	spSustainLv	$01, $01, $01, $01
+	spDecayRt	$01, $01, $01, $02
+	spReleaseRt	$00, $09, $08, $08
+	spTotalLv	$1B, $1E, $1E, $00
 
 MM9Title_DAC1:
 	dc.b dFloorTom, $03, $0C

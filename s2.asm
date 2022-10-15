@@ -3804,17 +3804,17 @@ ArtNem_Player1VS2:	BINCLUDE	"art/nemesis/1Player2VS.bin"
 
 ; word_3E82:
 CopyrightText:
-	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + '@',0,0)	; (C)
+	dc.w  make_art_tile(ArtTile_VRAM_Start,0,0)	; shut up it's to offset the thing
 	dc.w  make_art_tile(ArtTile_VRAM_Start,0,0)	;
-	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + '1',0,0)	; 1
-	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + '9',0,0)	; 9
-	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + '9',0,0)	; 9
+	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + '2',0,0)	; 2
+	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + '0',0,0)	; 0
+	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + '2',0,0)	; 2
 	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + '2',0,0)	; 2
 	dc.w  make_art_tile(ArtTile_VRAM_Start,0,0)	;
-	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + 'S',0,0)	; S
-	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + 'E',0,0)	; E
-	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + 'G',0,0)	; G
-	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + 'A',0,0)	; A
+	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + 'N',0,0)	; S
+	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + 'U',0,0)	; E
+	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + 'L',0,0)	; G
+	dc.w  make_art_tile(ArtTile_ArtNem_FontStuff_TtlScr + 'L',0,0)	; A
 CopyrightText_End:
 
     charset ; Revert character set
@@ -13443,13 +13443,13 @@ SwScrl_Title:
 	lea	(Horiz_Scroll_Buf).w,a1
 	moveq	#0,d0
 
-	move.w	#bytesToLcnt($280),d1
+	move.w	#bytesToLcnt($280),d1	; presumably the top of the screen
 -	move.l	d0,(a1)+
 	dbf	d1,-
 
 	move.w	d2,d0
 
-	move.w	#bytesToLcnt($80),d1
+	move.w	#bytesToLcnt($80),d1	; the... bottom...???
 -	move.l	d0,(a1)+
 	dbf	d1,-
 
@@ -13464,7 +13464,7 @@ SwScrl_Title:
 	lea	SwScrl_RippleData(pc),a2
 	lea	(a2,d1.w),a2
 
-	move.w	#bytesToLcnt($40),d1
+	move.w	#bytesToLcnt($80),d1
 -	move.b	(a2)+,d0
 	ext.w	d0
 	add.w	d3,d0
@@ -22128,27 +22128,11 @@ loc_12FD6:
 ; ===========================================================================
 
 loc_13014:
-	move.b	(Vint_runcount+3).w,d0
-	andi.b	#7,d0
-	bne.s	++
-	move.w	objoff_2C(a0),d0
-	addq.w	#2,d0
-	cmpi.w	#CyclingPal_TitleStar_End-CyclingPal_TitleStar,d0
-	blo.s	+
-	moveq	#0,d0
-+
-	move.w	d0,objoff_2C(a0)
-	move.w	CyclingPal_TitleStar(pc,d0.w),(Normal_palette_line3+$A).w
-+
 	if customAMPS
 		bsr.w	sub_31017E
 	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
-; word_1303A:
-CyclingPal_TitleStar:
-	binclude "art/palettes/Title Star Cycle.bin"
-CyclingPal_TitleStar_End
 
 word_13046:
 	dc.w  $108, $D0
@@ -27872,7 +27856,7 @@ ObjPtr_StartBanner:
 ObjPtr_EndingController:dc.l Obj_EndingController	; $5F ; Start banner/"Ending controller" from Special Stage
 ObjPtr_SSRing:		dc.l Obj_SSRing			; $60 ; Rings from Special Stage
 ObjPtr_SSBomb:		dc.l Obj_SSBomb			; $61 ; Bombs from Special Stage
-			dc.l Obj_Null			; $62 ; Obj62
+ObjPtr_TwistedRamp:	dc.l Obj_TwistedRamp	; $62 ; Twisted ramp from S3K
 ObjPtr_SSShadow:	dc.l Obj_SSShadow		; $63 ; Character shadow from Special Stage
 ObjPtr_MTZTwinStompers:	dc.l Obj_MTZTwinStompers	; $64 ; Twin stompers from MTZ
 ObjPtr_MTZLongPlatform:	dc.l Obj_MTZLongPlatform	; $65 ; Long moving platform from MTZ
@@ -61055,6 +61039,9 @@ loc_34F90:
 
 return_34F9E:
 	rts
+
+	include	"objects/Level/Twisted Ramp.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 60 - Rings from Special Stage
