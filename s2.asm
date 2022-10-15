@@ -19224,6 +19224,12 @@ Obj_FloatingPlatform_Init:
 	lea	Obj_FloatingPlatform_InitData(pc,d0.w),a2
 	move.b	(a2)+,width_pixels(a0)
 	move.b	(a2)+,mapping_frame(a0)
+	cmpi.b	#emerald_hill_zone,(Current_Zone).w
+	bne.s	+
+	move.l	#Obj_FloatingPlatform_MapUnc_SSLZ,mappings(a0)
+	move.w	#make_art_tile(ArtTile_ArtNem_SSLZPlat,0,0),art_tile(a0)
+	bra.s	++
++
 	move.l	#Obj_FloatingPlatform_MapUnc_107F6,mappings(a0)
 	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,2,0),art_tile(a0)
 	cmpi.b	#aquatic_ruin_zone,(Current_Zone).w
@@ -19552,10 +19558,8 @@ loc_107EE:
 ; -------------------------------------------------------------------------------
 ; sprite mappings
 ; -------------------------------------------------------------------------------
+Obj_FloatingPlatform_MapUnc_SSLZ:	BINCLUDE "mappings/sprite/Obj_FloatingPlatform_sslz.bin"
 Obj_FloatingPlatform_MapUnc_107F6:	BINCLUDE "mappings/sprite/Obj_FloatingPlatform_a.bin"
-; -------------------------------------------------------------------------------
-; sprite mappings
-; -------------------------------------------------------------------------------
 Obj_FloatingPlatform_MapUnc_1084E:	BINCLUDE "mappings/sprite/Obj_FloatingPlatform_b.bin"
 ; ===========================================================================
 
@@ -78374,8 +78378,8 @@ DbgObjList_EHZ: dbglistheader
 	dbglistobj Obj_EHZWaterfall,	Obj_EHZWaterfall_MapUnc_20C50,   0,   0, make_art_tile(ArtTile_ArtNem_Waterfall,1,0)
 	dbglistobj Obj_EHZWaterfall,	Obj_EHZWaterfall_MapUnc_20C50,   2,   3, make_art_tile(ArtTile_ArtNem_Waterfall,1,0)
 	dbglistobj Obj_EHZWaterfall,	Obj_EHZWaterfall_MapUnc_20C50,   4,   5, make_art_tile(ArtTile_ArtNem_Waterfall,1,0)
-	dbglistobj Obj_EHZPlatform,	Obj_FloatingPlatform_MapUnc_107F6,   1,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
-	dbglistobj Obj_EHZPlatform,	Obj_FloatingPlatform_MapUnc_107F6, $9A,   1, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
+	dbglistobj Obj_EHZPlatform,	Obj_FloatingPlatform_MapUnc_SSLZ,   1,   0, make_art_tile(ArtTile_ArtNem_SSLZPlat,0,0)
+	dbglistobj Obj_EHZPlatform,	Obj_FloatingPlatform_MapUnc_SSLZ, $9A,   1, make_art_tile(ArtTile_ArtNem_SSLZPlat,0,0)
 	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
 	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
 	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
@@ -78973,6 +78977,7 @@ PlrList_GameOver_End
 PlrList_Ehz1: plrlistheader
 	plreq ArtTile_ArtNem_Waterfall, ArtNem_Waterfall
 	plreq ArtTile_ArtNem_EHZ_Bridge, ArtNem_EHZ_Bridge
+	plreq ArtTile_ArtNem_SSLZPlat, ArtNem_SSLZPlat
 PlrList_Ehz1_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
@@ -78986,6 +78991,7 @@ PlrList_Ehz2: plrlistheader
 	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
 	plreq ArtTile_ArtNem_Crab, ArtNem_Crab
 	plreq ArtTile_ArtNem_BuzzBomber, ArtNem_BuzzBomber
+	plreq ArtTile_ArtNem_Masher, ArtNem_Masher
 ;	plreq ArtTile_ArtNem_WaterSurface, ArtNem_WaterSurface
 PlrList_Ehz2_End
 ;---------------------------------------------------------------------------------------
@@ -81508,6 +81514,11 @@ ArtNem_HtzFireball2:	BINCLUDE	"art/nemesis/Fireball 2.bin"
 ; Bridge in EHZ
 	even
 ArtNem_EHZ_Bridge:	BINCLUDE	"art/nemesis/EHZ bridge.bin"
+; --------------------------------------------------------------------
+; Nemesis compressed art
+; SSLZ Platforms
+	even
+ArtNem_SSLZPlat:	BINCLUDE	"art/nemesis/Seaside Land Platforms.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (48 blocks)
 ; Diagonally moving lift in HTZ

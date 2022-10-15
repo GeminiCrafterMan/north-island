@@ -1798,7 +1798,8 @@ ArtTile_ArtUnc_EHZPulseBall           = $039C
 ArtTile_ArtNem_Waterfall              = $039E
 ArtTile_ArtNem_EHZ_Bridge             = $0500
 ArtTile_ArtUnc_EHZMountains           = $0500
-ArtTile_ArtNem_BuzzBomber             = $03DE ; absolute latest i can put it
+ArtTile_ArtNem_SSLZPlat               = $03C1
+ArtTile_ArtNem_BuzzBomber             = ArtTile_ArtNem_SSLZPlat+32 ; absolute latest i can put it
 ; These two are loaded in that funny little junk area of VRAM.
 ; No clue why that exists, but it looks like EHZ doesn't use it.
 ArtTile_ArtNem_Crab                   = $0508
