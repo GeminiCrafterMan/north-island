@@ -1,27 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ObjDef xmlns="http://www.sonicretro.org" Name="Waterfall" Image="img1">
+<ObjDef xmlns="http://www.sonicretro.org" Name="Waterfall" Image="mid0">
   <Images>
-    <ImageFromMappings id="img1">
-      <ArtFile filename="../art/nemesis/Waterfall tiles.bin" />
-      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="1" startpal="1" />
+    <ImageFromMappings id="mid0">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="0" startpal="0" />
     </ImageFromMappings>
-    <ImageFromMappings id="img2">
-      <ArtFile filename="../art/nemesis/Waterfall tiles.bin" />
-      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="3" startpal="1" />
+    <ImageFromMappings id="mid1">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="1" startpal="0" />
     </ImageFromMappings>
-    <ImageFromMappings id="img3">
-      <ArtFile filename="../art/nemesis/Waterfall tiles.bin" />
-      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="5" startpal="1" />
+    <ImageFromMappings id="mid2">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="2" startpal="0" />
     </ImageFromMappings>
-    <ImageFromMappings id="img4">
-      <ArtFile filename="../art/nemesis/Waterfall tiles.bin" />
-      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="6" startpal="1" />
+    <ImageFromMappings id="mid3">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="3" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="mid4">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="4" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="mid5">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="5" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="mid6">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="6" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="mid7">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="7" startpal="0" />
+    </ImageFromMappings>
+
+    <ImageFromMappings id="top0">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="8" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="top1">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="9" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="top2">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="10" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="top3">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="11" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="top4">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="12" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="top5">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="13" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="top6">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="14" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="top7">
+      <ArtFile filename="../art/uncompressed/SSLZ waterfall.bin" compression="Uncompressed" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_EHZWaterfall.bin" frame="15" startpal="0" />
     </ImageFromMappings>
   </Images>
-  <Subtypes>
-    <Subtype id="00" name="00" image="img1" />
-    <Subtype id="02" name="02" image="img2" />
-    <Subtype id="04" name="04" image="img3" />
-    <Subtype id="05" name="05" image="img4" />
-  </Subtypes>
+  <Properties>
+    <BitsProperty name="Count" displayname="Segment count" type="int" startbit="0" length="4"/>
+    <BitsProperty name="Top" displayname="Top part" type="bool" startbit="4" length="1"/>
+  </Properties>
+  <Display>
+    <DisplayOption>
+      <Condition property="Top" value="False"/>
+      <Condition property="Count" value="0"/>
+      <ImageRef image="mid0"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="False"/>
+      <Condition property="Count" value="1"/>
+      <ImageRef image="mid1"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="False"/>
+      <Condition property="Count" value="2"/>
+      <ImageRef image="mid2"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="False"/>
+      <Condition property="Count" value="3"/>
+      <ImageRef image="mid3"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="False"/>
+      <Condition property="Count" value="4"/>
+      <ImageRef image="mid4"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="False"/>
+      <Condition property="Count" value="5"/>
+      <ImageRef image="mid5"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="False"/>
+      <Condition property="Count" value="6"/>
+      <ImageRef image="mid6"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="False"/>
+      <Condition property="Count" value="7"/>
+      <ImageRef image="mid7"/>
+    </DisplayOption>
+
+    <DisplayOption>
+      <Condition property="Top" value="True"/>
+      <Condition property="Count" value="0"/>
+      <ImageRef image="top0"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="True"/>
+      <Condition property="Count" value="1"/>
+      <ImageRef image="top1"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="True"/>
+      <Condition property="Count" value="2"/>
+      <ImageRef image="top2"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="True"/>
+      <Condition property="Count" value="3"/>
+      <ImageRef image="top3"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="True"/>
+      <Condition property="Count" value="4"/>
+      <ImageRef image="top4"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="True"/>
+      <Condition property="Count" value="5"/>
+      <ImageRef image="top5"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="True"/>
+      <Condition property="Count" value="6"/>
+      <ImageRef image="top6"/>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Top" value="True"/>
+      <Condition property="Count" value="7"/>
+      <ImageRef image="top7"/>
+    </DisplayOption>
+  </Display>
 </ObjDef>

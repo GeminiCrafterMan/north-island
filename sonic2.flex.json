@@ -736,8 +736,8 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Waterfall tiles.bin",
-                        "compression": "Nemesis",
+                        "path": "art/uncompressed/SSLZ waterfall.bin",
+                        "compression": "Uncompressed",
                         "offset": 0
                     },
                     "mappings": {

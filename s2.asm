@@ -37427,61 +37427,33 @@ Obj_WaterSurface_MapUnc_20AFE:	BINCLUDE "mappings/sprite/Obj_WaterSurface_b.bin"
 ; Sprite_20B9E:
 Obj_EHZWaterfall:
 	moveq	#0,d0
-	move.b	routine(a0),d0
-	move.w	Obj_EHZWaterfall_Index(pc,d0.w),d1
-	jmp	Obj_EHZWaterfall_Index(pc,d1.w)
-; ===========================================================================
-; off_20BAC:
-Obj_EHZWaterfall_Index:	offsetTable
-		offsetTableEntry.w Obj_EHZWaterfall_Init	; 0
-		offsetTableEntry.w Obj_EHZWaterfall_ChkDel	; 2
-; ===========================================================================
-; loc_20BB0: Obj_EHZWaterfall_Main:
-Obj_EHZWaterfall_Init:
-	addq.b	#2,routine(a0)
 	move.l	#Obj_EHZWaterfall_MapUnc_20C50,mappings(a0)
-	move.w	#make_art_tile(ArtTile_ArtNem_Waterfall,1,0),art_tile(a0)
+	move.w	#make_art_tile(ArtTile_ArtUnc_SSLZWaterfall,0,0),art_tile(a0)
 	move.b	#4,render_flags(a0)
 	move.b	#$20,width_pixels(a0)
-	move.w	x_pos(a0),objoff_30(a0)
 	move.w	#prio(0),priority(a0)
 	move.b	#$80,y_radius(a0)
 	bset	#4,render_flags(a0)
-; loc_20BEA:
-Obj_EHZWaterfall_ChkDel:
-	move.w	x_pos(a0),d0
-	andi.w	#$FF80,d0
-	sub.w	(Camera_X_pos_coarse).w,d0
-	cmpi.w	#$280,d0
-	bhi.w	JmpTo18_DeleteObject
-+
-	move.w	x_pos(a0),d1
-	move.w	d1,d2
-	subi.w	#$40,d1
-	addi.w	#$40,d2
-	move.b	subtype(a0),d3
-	move.b	#0,mapping_frame(a0)
-	move.w	(MainCharacter+x_pos).w,d0
-	cmp.w	d1,d0
-	blo.s	loc_20C36
-	cmp.w	d2,d0
-	bhs.s	loc_20C36
-	move.b	#1,mapping_frame(a0)
-	add.b	d3,mapping_frame(a0)
-	jmpto	(DisplaySprite).l, JmpTo10_DisplaySprite
-; ===========================================================================
-
-loc_20C36:
-	move.w	(Sidekick+x_pos).w,d0
-	cmp.w	d1,d0
-	blo.s	Obj_EHZWaterfall_Display
-	cmp.w	d2,d0
-	bhs.s	Obj_EHZWaterfall_Display
-	move.b	#1,mapping_frame(a0)
-; loc_20C48:
-Obj_EHZWaterfall_Display:
-	add.b	d3,mapping_frame(a0)
-	jmpto	(DisplaySprite).l, JmpTo10_DisplaySprite
+; sprite change code here
+; this is basically a copy of how the swinging
+; platforms from S1 handle the ball subtype...
+; or, was, until i decided to do it myself
+	moveq	#0,d1
+	lea		subtype(a0),a2	; move subtype to a2
+	move.b	(a2),d1	; move a2 to d1
+	btst	#4,d1		; is object type $1X? (does the top part exist?)
+	beq.s	.middle	; if not, branch
+	andi.b	#$F,d1	; AND by $F, so you don't get invalid mappings
+	addi.b	#8,d1
+	bra.s	.done
+; if not...
+.middle:
+	cmpi.b	#8,d1	; 8 or above?
+	blt.s	.done	; if not, be done
+	move.b	#7,d1	; just move #7 to it, you can't make longer waterfalls with 1 object
+.done:
+	move.b	d1,mapping_frame(a0)
+	jmp		MarkObjGone
 ; ===========================================================================
 ; -------------------------------------------------------------------------------
 ; sprite mappings
@@ -76027,8 +75999,8 @@ AniArt_Load:
 ; with anything except Dynamic_Null, or bad things will happen (for example, a bus error exception).
 ; ---------------------------------------------------------------------------
 PLC_DYNANM: zoneOrderedOffsetTable 2,2		; Zone ID
-	zoneOffsetTableEntry.w Dynamic_Null	; $00
-	zoneOffsetTableEntry.w Animated_Null
+	zoneOffsetTableEntry.w Dynamic_Normal	; $00
+	zoneOffsetTableEntry.w Animated_SSLZ
 
 	zoneOffsetTableEntry.w Dynamic_Null	; $01
 	zoneOffsetTableEntry.w Animated_Null
@@ -76229,9 +76201,9 @@ Dynamic_Normal:
 loc_3FF30:
 	move.w	(a2)+,d6	; Get number of scripts in list
 	; S&K checks for empty lists, here
-;	bpl.s	.listnotempty	; If there are any, continue
-;	rts
-;.listnotempty:
+	bpl.s	.listnotempty	; If there are any, continue
+	rts
+.listnotempty:
 
 ; loc_3FF32:
 .loop:
@@ -76303,6 +76275,16 @@ loc_3FF30:
 ;    dc.b   0,$7F		; Start of the script proper
 ;	0			Tile ID of first tile in ArtUnc_Flowers1 to transfer
 ;	$7F			Frame duration. Only here if global duration is -1
+
+Animated_SSLZ:	zoneanimstart
+	; Waterfall
+	zoneanimdecl 5, ArtUnc_SSLZWaterfall, ArtTile_ArtUnc_SSLZWaterfall, 4, 24
+	dc.b  0
+	dc.b 24
+	dc.b 48
+	dc.b 72
+	even
+	zoneanimend
 
 Animated_MTZ:	zoneanimstart
 	; Spinning metal cylinder
@@ -78362,9 +78344,6 @@ DbgObjList_EHZ: dbglistheader
 	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   9,  $A, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
 	dbglistobj Obj_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
 	dbglistobj Obj_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj Obj_EHZWaterfall,	Obj_EHZWaterfall_MapUnc_20C50,   0,   0, make_art_tile(ArtTile_ArtNem_Waterfall,1,0)
-	dbglistobj Obj_EHZWaterfall,	Obj_EHZWaterfall_MapUnc_20C50,   2,   3, make_art_tile(ArtTile_ArtNem_Waterfall,1,0)
-	dbglistobj Obj_EHZWaterfall,	Obj_EHZWaterfall_MapUnc_20C50,   4,   5, make_art_tile(ArtTile_ArtNem_Waterfall,1,0)
 	dbglistobj Obj_EHZPlatform,	Obj_FloatingPlatform_MapUnc_SSLZ,   1,   0, make_art_tile(ArtTile_ArtNem_SSLZPlat,0,0)
 	dbglistobj Obj_EHZPlatform,	Obj_FloatingPlatform_MapUnc_SSLZ, $9A,   1, make_art_tile(ArtTile_ArtNem_SSLZPlat,0,0)
 	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
@@ -78962,7 +78941,11 @@ PlrList_GameOver_End
 ; Emerald Hill Zone primary
 ;---------------------------------------------------------------------------------------
 PlrList_Ehz1: plrlistheader
-	plreq ArtTile_ArtNem_Waterfall, ArtNem_Waterfall
+	plreq ArtTile_ArtNem_HorizSpike, ArtNem_HorizSpike
+	plreq ArtTile_ArtNem_Spikes, ArtNem_Spikes
+	plreq ArtTile_ArtNem_DignlSprng, ArtNem_DignlSprng
+	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
+	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
 	plreq ArtTile_ArtNem_EHZ_Bridge, ArtNem_EHZ_Bridge
 	plreq ArtTile_ArtNem_SSLZPlat, ArtNem_SSLZPlat
 PlrList_Ehz1_End
@@ -78971,15 +78954,9 @@ PlrList_Ehz1_End
 ; Emerald Hill Zone secondary
 ;---------------------------------------------------------------------------------------
 PlrList_Ehz2: plrlistheader
-	plreq ArtTile_ArtNem_HorizSpike, ArtNem_HorizSpike
-	plreq ArtTile_ArtNem_Spikes, ArtNem_Spikes
-	plreq ArtTile_ArtNem_DignlSprng, ArtNem_DignlSprng
-	plreq ArtTile_ArtNem_VrtclSprng, ArtNem_VrtclSprng
-	plreq ArtTile_ArtNem_HrzntlSprng, ArtNem_HrzntlSprng
 	plreq ArtTile_ArtNem_Crab, ArtNem_Crab
 	plreq ArtTile_ArtNem_BuzzBomber, ArtNem_BuzzBomber
 	plreq ArtTile_ArtNem_Masher, ArtNem_Masher
-;	plreq ArtTile_ArtNem_WaterSurface, ArtNem_WaterSurface
 PlrList_Ehz2_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
@@ -81487,10 +81464,10 @@ Objects_Null:
 	even
 ArtNem_HtzFireball1:	BINCLUDE	"art/nemesis/Fireball 1.bin"
 ; --------------------------------------------------------------------
-; Nemesis compressed art (24 blocks)
+; Uncompressed art (24 blocks)
 ; Waterfall tiles
 	even
-ArtNem_Waterfall:	BINCLUDE	"art/nemesis/Waterfall tiles.bin"
+ArtUnc_SSLZWaterfall:	BINCLUDE	"art/uncompressed/SSLZ waterfall.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Another fireball

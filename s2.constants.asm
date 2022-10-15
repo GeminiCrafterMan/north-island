@@ -1795,7 +1795,6 @@ ArtTile_ArtNem_Balkrie                = $0565
 
 ; EHZ
 ArtTile_ArtUnc_EHZPulseBall           = $039C
-ArtTile_ArtNem_Waterfall              = $039E
 ArtTile_ArtNem_EHZ_Bridge             = $0500
 ArtTile_ArtUnc_EHZMountains           = $0500
 ArtTile_ArtNem_SSLZPlat               = $03C1
@@ -1803,7 +1802,8 @@ ArtTile_ArtNem_BuzzBomber             = ArtTile_ArtNem_SSLZPlat+32 ; absolute la
 ; These two are loaded in that funny little junk area of VRAM.
 ; No clue why that exists, but it looks like EHZ doesn't use it.
 ArtTile_ArtNem_Crab                   = $0508
-ArtTile_ArtNem_Masher                 = ArtTile_ArtNem_Crab+69 ; this very well could be out of that small junk area
+ArtTile_ArtNem_Masher                 = ArtTile_ArtNem_Crab+68
+ArtTile_ArtUnc_SSLZWaterfall          = ArtTile_ArtNem_Masher+22
 
 ; MTZ
 ArtTile_ArtNem_Shellcracker           = $031C
