@@ -106,7 +106,7 @@ Buzz_ChkNear:
 
 .chgdirection:
 		move.b	#0,buzz_buzzstatus(a0) ; set Buzz Bomber to "normal"
-		move.b	#3,anim(a0)
+		move.b	#2,anim(a0)
 		bchg	#0,status(a0)	; change direction
 		move.w	#59,buzz_timedelay(a0)
 
@@ -214,7 +214,7 @@ Ani_Buzz:
 	rev02even
 .fly2:		dc.b 1,	0, 1, afEnd
 	rev02even
-.turn:		dc.b 5,	2, 3, afChange, 0
+.turn:		dc.b 2,	2, 3, afChange, 0
 	rev02even
 .fires:		dc.b 3,	4, 5, afEnd
 	rev02even
