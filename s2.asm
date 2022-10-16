@@ -3101,46 +3101,47 @@ palptr	macro	ptr,lineno
 	endm
 
 PalPointers:
-PalPtr_SEGA:	palptr Pal_SEGA,  0
-PalPtr_Title:	palptr Pal_Title, 1
-PalPtr_MenuB:	palptr Pal_MenuB, 0
-PalPtr_BGND:	palptr Pal_BGND,  0
-PalPtr_EHZ:		palptr Pal_EHZ,   1
-PalPtr_EHZ2:	palptr Pal_EHZ,   1
-PalPtr_WZ:		palptr Pal_WZ,    1
-PalPtr_EHZ3:	palptr Pal_EHZ,   1
-PalPtr_MTZ:		palptr Pal_MTZ,   1
-PalPtr_MTZ2:	palptr Pal_MTZ,   1
-PalPtr_WFZ:		palptr Pal_WFZ,   1
-PalPtr_HTZ:		palptr Pal_HTZ,   1
-PalPtr_HPZ:		palptr Pal_HPZ,   1
-PalPtr_EHZ4:	palptr Pal_EHZ,   1
-PalPtr_OOZ:		palptr Pal_OOZ,   1
-PalPtr_MCZ:		palptr Pal_MCZ,   1
-PalPtr_CNZ:		palptr Pal_CNZ,   1
-PalPtr_CPZ:		palptr Pal_CPZ,   1
-PalPtr_DEZ:		palptr Pal_DEZ,   1
-PalPtr_ARZ:		palptr Pal_ARZ,   1
-PalPtr_SCZ:		palptr Pal_SCZ,   1
-PalPtr_SS:		palptr Pal_SS,    0
-PalPtr_MCZ_B:	palptr Pal_MCZ_B, 1
-PalPtr_CNZ_B:	palptr Pal_CNZ_B, 1
-PalPtr_SS1:		palptr Pal_SS1,   3
-PalPtr_SS2:		palptr Pal_SS2,   3
-PalPtr_SS3:		palptr Pal_SS3,   3
-PalPtr_SS4:		palptr Pal_SS4,   3
-PalPtr_SS5:		palptr Pal_SS5,   3
-PalPtr_SS6:		palptr Pal_SS6,   3
-PalPtr_SS7:		palptr Pal_SS7,   3
-PalPtr_SS1_2p:	palptr Pal_SS1_2p,3
-PalPtr_SS2_2p:	palptr Pal_SS2_2p,3
-PalPtr_SS3_2p:	palptr Pal_SS3_2p,3
-PalPtr_OOZ_B:	palptr Pal_OOZ_B, 1
-PalPtr_Menu:	palptr Pal_Menu,  0
-PalPtr_Result:	palptr Pal_Result,0
-PalPtr_Sonic:	palptr Pal_Sonic, 0
-PalPtr_Knux:	palptr Pal_Knux,  0
-PalPtr_SSK:		palptr Pal_SSK,   0
+PalPtr_SEGA:	palptr Pal_SEGA,	0
+PalPtr_Title:	palptr Pal_Title,	1
+PalPtr_MenuB:	palptr Pal_MenuB,	0
+PalPtr_BGND:	palptr Pal_BGND,	0
+PalPtr_EHZ:		palptr Pal_EHZ,		1
+PalPtr_EHZ2:	palptr Pal_EHZ,		1
+PalPtr_WZ:		palptr Pal_WZ,		1
+PalPtr_EHZ3:	palptr Pal_EHZ,		1
+PalPtr_MTZ:		palptr Pal_MTZ,		1
+PalPtr_MTZ2:	palptr Pal_MTZ,		1
+PalPtr_WFZ:		palptr Pal_WFZ,		1
+PalPtr_HTZ:		palptr Pal_HTZ,		1
+PalPtr_HPZ:		palptr Pal_HPZ,		1
+PalPtr_EHZ4:	palptr Pal_EHZ,		1
+PalPtr_OOZ:		palptr Pal_OOZ,		1
+PalPtr_MCZ:		palptr Pal_MCZ,		1
+PalPtr_CNZ:		palptr Pal_CNZ,		1
+PalPtr_CPZ:		palptr Pal_CPZ,		1
+PalPtr_DEZ:		palptr Pal_DEZ,		1
+PalPtr_ARZ:		palptr Pal_ARZ,		1
+PalPtr_SCZ:		palptr Pal_SCZ,		1
+PalPtr_SS:		palptr Pal_SS,		0
+PalPtr_MCZ_B:	palptr Pal_MCZ_B,	1
+PalPtr_CNZ_B:	palptr Pal_CNZ_B,	1
+PalPtr_SS1:		palptr Pal_SS1,		3
+PalPtr_SS2:		palptr Pal_SS2,		3
+PalPtr_SS3:		palptr Pal_SS3,		3
+PalPtr_SS4:		palptr Pal_SS4,		3
+PalPtr_SS5:		palptr Pal_SS5,		3
+PalPtr_SS6:		palptr Pal_SS6,		3
+PalPtr_SS7:		palptr Pal_SS7,		3
+PalPtr_SS1_2p:	palptr Pal_SS1_2p,	3
+PalPtr_SS2_2p:	palptr Pal_SS2_2p,	3
+PalPtr_SS3_2p:	palptr Pal_SS3_2p,	3
+PalPtr_OOZ_B:	palptr Pal_OOZ_B,	1
+PalPtr_Menu:	palptr Pal_Menu,	0
+PalPtr_Result:	palptr Pal_Result,	0
+PalPtr_Sonic:	palptr Pal_Sonic,	0
+PalPtr_Knux:	palptr Pal_Knux,	0
+PalPtr_SSK:		palptr Pal_SSK,		0
+PalPtr_Amy:		palptr Pal_Amy,		0
 
 ; ----------------------------------------------------------------------------
 ; This macro defines Pal_ABC and Pal_ABC_End, so palptr can compute the size of
@@ -3155,42 +3156,43 @@ __LABEL__ label *
 __LABEL___End label *
 	endm
 
-Pal_SEGA:  palette Sega screen.bin ; SEGA screen palette (Sonic and initial background)
-Pal_Title: palette Title screen.bin ; Title screen Palette
-Pal_MenuB: palette S2B Level Select.bin ; Leftover S2B level select palette
-Pal_BGND:  palette SonicAndTails.bin,SonicAndTails2.bin ; "Sonic and Miles" background palette (also usually the primary palette line)
-Pal_EHZ:   palette EHZ.bin ; Emerald Hill Zone palette
-Pal_WZ:    palette Wood Zone.bin ; Wood Zone palette
-Pal_MTZ:   palette MTZ.bin ; Metropolis Zone palette
-Pal_WFZ:   palette WFZ.bin ; Wing Fortress Zone palette
-Pal_HTZ:   palette HTZ.bin ; Hill Top Zone palette
-Pal_HPZ:   palette HPZ.bin ; Hidden Palace Zone palette
-Pal_OOZ:   palette OOZ.bin ; Oil Ocean Zone palette
-Pal_MCZ:   palette MCZ.bin ; Mystic Cave Zone palette
-Pal_CNZ:   palette CNZ.bin ; Casino Night Zone palette
-Pal_CPZ:   palette CPZ.bin ; Chemical Plant Zone palette
-Pal_DEZ:   palette DEZ.bin ; Death Egg Zone palette
-Pal_ARZ:   palette ARZ.bin ; Aquatic Ruin Zone palette
-Pal_SCZ:   palette SCZ.bin ; Sky Chase Zone palette
-Pal_MCZ_B: palette MCZ Boss.bin ; Mystic Cave Zone boss palette
-Pal_CNZ_B: palette CNZ Boss.bin ; Casino Night Zone boss palette
-Pal_OOZ_B: palette OOZ Boss.bin ; Oil Ocean Zone boss palette
-Pal_Menu:  palette Menu.bin ; Menu palette
-Pal_SS:    palette Special Stage Main.bin ; Special Stage palette
-Pal_SS1:   palette Special Stage 1.bin ; Special Stage 1 palette
-Pal_SS2:   palette Special Stage 2.bin ; Special Stage 2 palette
-Pal_SS3:   palette Special Stage 3.bin ; Special Stage 3 palette
-Pal_SS4:   palette Special Stage 4.bin ; Special Stage 4 palette
-Pal_SS5:   palette Special Stage 5.bin ; Special Stage 5 palette
-Pal_SS6:   palette Special Stage 6.bin ; Special Stage 6 palette
-Pal_SS7:   palette Special Stage 7.bin ; Special Stage 7 palette
-Pal_SS1_2p:palette Special Stage 1 2p.bin ; Special Stage 1 2p palette
-Pal_SS2_2p:palette Special Stage 2 2p.bin ; Special Stage 2 2p palette
-Pal_SS3_2p:palette Special Stage 3 2p.bin ; Special Stage 3 2p palette
-Pal_Result:palette Special Stage Results Screen.bin ; Special Stage Results Screen palette
-Pal_Sonic: palette SonicAndTails.bin ; Sonic & Tails
-Pal_Knux:  palette Knuckles.bin	; Knuckles
-Pal_SSK:   palette Special Stage Knuckles.bin ; Special Stage palette for Knuckles
+Pal_SEGA:	palette	Sega screen.bin ; SEGA screen palette (Sonic and initial background)
+Pal_Title:	palette	Title screen.bin ; Title screen Palette
+Pal_MenuB:	palette	S2B Level Select.bin ; Leftover S2B level select palette
+Pal_BGND:	palette	SonicAndTails.bin,SonicAndTails2.bin ; "Sonic and Miles" background palette (also usually the primary palette line)
+Pal_EHZ:	palette	EHZ.bin ; Emerald Hill Zone palette
+Pal_WZ:		palette	Wood Zone.bin ; Wood Zone palette
+Pal_MTZ:	palette	MTZ.bin ; Metropolis Zone palette
+Pal_WFZ:	palette	WFZ.bin ; Wing Fortress Zone palette
+Pal_HTZ:	palette	HTZ.bin ; Hill Top Zone palette
+Pal_HPZ:	palette	HPZ.bin ; Hidden Palace Zone palette
+Pal_OOZ:	palette	OOZ.bin ; Oil Ocean Zone palette
+Pal_MCZ:	palette	MCZ.bin ; Mystic Cave Zone palette
+Pal_CNZ:	palette	CNZ.bin ; Casino Night Zone palette
+Pal_CPZ:	palette	CPZ.bin ; Chemical Plant Zone palette
+Pal_DEZ:	palette	DEZ.bin ; Death Egg Zone palette
+Pal_ARZ:	palette	ARZ.bin ; Aquatic Ruin Zone palette
+Pal_SCZ:	palette	SCZ.bin ; Sky Chase Zone palette
+Pal_MCZ_B:	palette	MCZ Boss.bin ; Mystic Cave Zone boss palette
+Pal_CNZ_B:	palette	CNZ Boss.bin ; Casino Night Zone boss palette
+Pal_OOZ_B:	palette	OOZ Boss.bin ; Oil Ocean Zone boss palette
+Pal_Menu:	palette	Menu.bin ; Menu palette
+Pal_SS:		palette	Special Stage Main.bin ; Special Stage palette
+Pal_SS1:	palette	Special Stage 1.bin ; Special Stage 1 palette
+Pal_SS2:	palette	Special Stage 2.bin ; Special Stage 2 palette
+Pal_SS3:	palette	Special Stage 3.bin ; Special Stage 3 palette
+Pal_SS4:	palette	Special Stage 4.bin ; Special Stage 4 palette
+Pal_SS5:	palette	Special Stage 5.bin ; Special Stage 5 palette
+Pal_SS6:	palette	Special Stage 6.bin ; Special Stage 6 palette
+Pal_SS7:	palette	Special Stage 7.bin ; Special Stage 7 palette
+Pal_SS1_2p:	palette	Special Stage 1 2p.bin ; Special Stage 1 2p palette
+Pal_SS2_2p:	palette	Special Stage 2 2p.bin ; Special Stage 2 2p palette
+Pal_SS3_2p:	palette	Special Stage 3 2p.bin ; Special Stage 3 2p palette
+Pal_Result:	palette	Special Stage Results Screen.bin ; Special Stage Results Screen palette
+Pal_Sonic:	palette	SonicAndTails.bin ; Sonic & Tails
+Pal_Knux:	palette	Knuckles.bin	; Knuckles
+Pal_SSK:	palette	Special Stage Knuckles.bin ; Special Stage palette for Knuckles
+Pal_Amy:	palette	Amy.bin
 ; ===========================================================================
 
     if gameRevision<2
@@ -3862,6 +3864,10 @@ LoadPlayerPal:
 	bne.s	+
 	moveq	#PalID_Knux,d0
 +
+	cmpi.l	#Obj_Amy,(MainCharacter+id).w
+	bne.s	+
+	moveq	#PalID_Amy,d0
++
 	rts
 
 ; ---------------------------------------------------------------------------
@@ -3905,15 +3911,20 @@ Level:
 	bsr.w	LoadPLC
 	bsr.w	Level_SetPlayerMode
 	bsr.w	InitPlayers	; called here to allow 1up shit to work
-	moveq	#PLCID_Tails1up,d0
+; ewwww.
+	moveq	#PLCID_Std2,d0	; has the capability to load this a second time, but... i don't really care? shouldn't lag too much.
 	cmpi.l	#Obj_Tails,(MainCharacter+id).w
 	bne.s	.notTails
 	moveq	#PLCID_TailsLife,d0
 	bra.s	+
 .notTails:
 	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
-	bne.s	+
+	bne.s	.notKnuckles
 	moveq	#PLCID_KnucklesLife,d0
+.notKnuckles:
+	cmpi.l	#Obj_Amy,(MainCharacter+id).w
+	bne.s	+
+	moveq	#PLCID_AmyLife,d0
 +
 	bsr.w	LoadPLC
 	bsr.w	Level_SetPlayerMode
@@ -4274,9 +4285,7 @@ InitPlayers:
 	dc.l	Obj_Tails,		Obj_Null	; TA
 	dc.l	Obj_Knuckles,	Obj_Null	; KA
 	dc.l	Obj_Knuckles,	Obj_Tails	; K&T
-	dc.l	Obj_Sonic,		Obj_Knuckles; S&K
-	dc.l	Obj_Sonic,		Obj_Sonic	; S&S
-	dc.l	Obj_Tails,		Obj_Tails	; T&T
+	dc.l	Obj_Amy,		Obj_Null	; AA
 
 .cont:
 	move.l	#Obj_SpindashDust,(Sonic_Dust+id).w ; load Obj_Splash Sonic's spindash dust/splash object at $FFFFD100
@@ -5722,9 +5731,7 @@ InitPlayersSS:
 	dc.l	Obj_TailsSS,	Obj_Null		; TA
 	dc.l	Obj_KnucklesSS,	Obj_Null		; KA
 	dc.l	Obj_KnucklesSS,	Obj_TailsSS		; K&T
-	dc.l	Obj_SonicSS,	Obj_KnucklesSS	; S&K
-	dc.l	Obj_SonicSS,	Obj_SonicSS		; S&S
-	dc.l	Obj_TailsSS,	Obj_TailsSS		; T&T
+	dc.l	Obj_SonicSS,	Obj_Null		; AA	; shut up i know it's sonic but i also don't have any special stage sprites for amy
 ; End of function InitPlayersSS
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -9142,6 +9149,7 @@ ContinueScreen:
 	lea	(ArtNem_ContinueTails).l,a0
 	bsr.w	NemDec
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_MiniContinue),VRAM,WRITE),(VDP_control_port).l
+	; ...eugh. I don't really want to try to support this... Well, maybe.
 	lea	(ArtNem_MiniSonic).l,a0
 	cmpi.w	#2,(Player_mode).w
 	blt.s	+
@@ -9149,6 +9157,9 @@ ContinueScreen:
 	cmpi.w	#3,(Player_mode).w
 	blt.s	+
 	lea	(ArtNem_MiniKnuckles).l,a0
+	cmpi.w	#5,(Player_mode).w
+	blt.s	+
+	lea	(ArtNem_MiniAmy).l,a0
 +
 	bsr.w	NemDec
 	moveq	#$A,d1
@@ -10426,7 +10437,7 @@ OptionScreen_Controls:
 ; ===========================================================================
 ; word_917A:
 OptionScreen_Choices:
-	dc.l (8-1)<<24|(Player_option&$FFFFFF)
+	dc.l (6-1)<<24|(Player_option&$FFFFFF)
 	dc.l (2-1)<<24|(Music_option&$FFFFFF)	; Used to be Two_player_items, now turns music on and off.
 	dc.l (SFXlast-1)<<24|(Sound_test_sound&$FFFFFF)
 
@@ -10565,9 +10576,7 @@ Opt_Char:
 	dc.l TextOptScr_TailsAlone
 	dc.l TextOptScr_KnuxAlone
 	dc.l TextOptScr_KnuxAndTails
-	dc.l TextOptScr_SonicAndKnux
-	dc.l TextOptScr_SonicAndSonic
-	dc.l TextOptScr_TailsAndTails
+	dc.l TextOptScr_AmyAlone
 Opt_Music:
 	dc.l TextOptScr_On
 	dc.l TextOptScr_Off
@@ -11101,9 +11110,7 @@ TextOptScr_SonicAlone:		menutxt	"SONIC ALONE    "	; byte_97FC:
 TextOptScr_TailsAlone:		menutxt	"TAILS ALONE    "	; byte_981C:
 TextOptScr_KnuxAlone:		menutxt "KNUCKLES ALONE "
 TextOptScr_KnuxAndTails:	menutxt	"KNUX AND TAILS "
-TextOptScr_SonicAndKnux:	menutxt	"SONIC AND KNUX "
-TextOptScr_SonicAndSonic:	menutxt "SONIC AND SONIC"
-TextOptScr_TailsAndTails:	menutxt "TAILS AND TAILS"
+TextOptScr_AmyAlone:		menutxt	"AMY ALONE      "
 TextOptScr_Music:			menutxt	"*    MUSIC      *"	; byte_982C:
 TextOptScr_On:				menutxt	"      ON       "	; byte_983E:
 TextOptScr_Off:				menutxt	"      OFF      "	; byte_984E:
@@ -11597,12 +11604,12 @@ off_A29C:
 	rts
 ; ===========================================================================
 Obj_CutScene_State5_States:	offsetTable
-	offsetTableEntry.w loc_A2E0	; 0
-	offsetTableEntry.w loc_A2EE	; 2
-	offsetTableEntry.w loc_A2F2	; 4
-	offsetTableEntry.w loc_A2F2	; 6
-	offsetTableEntry.w loc_A2E0K	; 8
-	offsetTableEntry.w loc_A2E0K	; A
+	offsetTableEntry.w loc_A2E0	; 0	; Sonic...?
+	offsetTableEntry.w loc_A2EE	; 2	; ???
+	offsetTableEntry.w loc_A2F2	; 4	; Tails
+	offsetTableEntry.w loc_A2F2	; 6	; Tails...?
+	offsetTableEntry.w loc_A2E0K; 8	; Knuckles
+	offsetTableEntry.w loc_A2E0K; A	; Knuckles...?
 ; ===========================================================================
 
 loc_A2E0:
@@ -27750,243 +27757,242 @@ return_17FD8:
 ; This array contains the pointers to all the objects used in the game.
 ; ---------------------------------------------------------------------------
 Obj_Index: ; ObjPtrs: ; loc_1600C:
-ObjPtr_Sonic:		dc.l Obj_Sonic			; $01 ; Sonic
-ObjPtr_Tails:		dc.l Obj_Tails			; $02 ; Tails
-ObjPtr_PlaneSwitcher:	dc.l Obj_PlaneSwitcher		; $03 ; Collision plane/layer switcher
-ObjPtr_WaterSurface:	dc.l Obj_WaterSurface		; $04 ; Surface of the water
-ObjPtr_TailsTails:	dc.l Obj_TailsTails		; $05 ; Tails' tails
-ObjPtr_Spiral:		dc.l Obj_Spiral			; $06 ; Rotating cylinder in MTZ, twisting spiral pathway in EHZ
-ObjPtr_Oil:		dc.l Obj_Oil			; $07 ; Oil in OOZ
+						dc.l Obj_Null					; $01 ; Obj01
+						dc.l Obj_Null					; $02 ; Obj02
+ObjPtr_PlaneSwitcher:	dc.l Obj_PlaneSwitcher			; $03 ; Collision plane/layer switcher
+ObjPtr_WaterSurface:	dc.l Obj_WaterSurface			; $04 ; Surface of the water
+						dc.l Obj_Null					; $05 ; Obj05
+ObjPtr_Spiral:			dc.l Obj_Spiral					; $06 ; Rotating cylinder in MTZ, twisting spiral pathway in EHZ
+ObjPtr_Oil:				dc.l Obj_Oil					; $07 ; Oil in OOZ
 ObjPtr_SpindashDust:
-ObjPtr_Splash:		dc.l Obj_Splash			; $08 ; Water splash in Aquatic Ruin Zone, Spindash dust
-ObjPtr_SonicSS:		dc.l Obj_SonicSS		; $09 ; Sonic in Special Stage
-ObjPtr_SmallBubbles:	dc.l Obj_SmallBubbles		; $0A ; Small bubbles from Sonic's face while underwater
-ObjPtr_TippingFloor:	dc.l Obj_TippingFloor		; $0B ; Section of pipe that tips you off from CPZ
-			dc.l Obj0C			; $0C ; Small floating platform (unused)
-ObjPtr_Signpost:	dc.l Obj_Signpost		; $0D ; End of level signpost
-ObjPtr_IntroStars:	dc.l Obj_IntroStars		; $0E ; Flashing stars from intro
-ObjPtr_TitleMenu:	dc.l Obj_TitleMenu		; $0F ; Title screen menu
-ObjPtr_TailsSS:		dc.l Obj_TailsSS		; $10 ; Tails in Special Stage
-ObjPtr_Bridge:		dc.l Obj_Bridge			; $11 ; Bridge in Emerald Hill Zone and Hidden Palace Zone
-ObjPtr_HPZEmerald:	dc.l Obj_HPZEmerald		; $12 ; Emerald from Hidden Palace Zone (unused)
-ObjPtr_HPZWaterfall:	dc.l Obj_HPZWaterfall		; $13 ; Waterfall in Hidden Palace Zone (unused)
-ObjPtr_Seesaw:		dc.l Obj_Seesaw			; $14 ; Seesaw from Hill Top Zone
-ObjPtr_SwingingPlatform:dc.l Obj_SwingingPlatform	; $15 ; Swinging platform from Aquatic Ruin Zone
-ObjPtr_HTZLift:		dc.l Obj_HTZLift		; $16 ; Diagonally moving lift from HTZ
-			dc.l Obj17			; $17 ; GHZ rotating log helix spikes (from Sonic 1, unused)
+ObjPtr_Splash:			dc.l Obj_Splash					; $08 ; Water splash in Aquatic Ruin Zone, Spindash dust
+ObjPtr_SonicSS:			dc.l Obj_SonicSS				; $09 ; Sonic in Special Stage
+ObjPtr_SmallBubbles:	dc.l Obj_SmallBubbles			; $0A ; Small bubbles from Sonic's face while underwater
+ObjPtr_TippingFloor:	dc.l Obj_TippingFloor			; $0B ; Section of pipe that tips you off from CPZ
+						dc.l Obj0C						; $0C ; Small floating platform (unused)
+ObjPtr_Signpost:		dc.l Obj_Signpost				; $0D ; End of level signpost
+ObjPtr_IntroStars:		dc.l Obj_IntroStars				; $0E ; Flashing stars from intro
+ObjPtr_TitleMenu:		dc.l Obj_TitleMenu				; $0F ; Title screen menu
+ObjPtr_TailsSS:			dc.l Obj_TailsSS				; $10 ; Tails in Special Stage
+ObjPtr_Bridge:			dc.l Obj_Bridge					; $11 ; Bridge in Emerald Hill Zone and Hidden Palace Zone
+ObjPtr_HPZEmerald:		dc.l Obj_HPZEmerald				; $12 ; Emerald from Hidden Palace Zone (unused)
+ObjPtr_HPZWaterfall:	dc.l Obj_HPZWaterfall			; $13 ; Waterfall in Hidden Palace Zone (unused)
+ObjPtr_Seesaw:			dc.l Obj_Seesaw					; $14 ; Seesaw from Hill Top Zone
+ObjPtr_SwingingPlatform:dc.l Obj_SwingingPlatform		; $15 ; Swinging platform from Aquatic Ruin Zone
+ObjPtr_HTZLift:			dc.l Obj_HTZLift				; $16 ; Diagonally moving lift from HTZ
+						dc.l Obj17						; $17 ; GHZ rotating log helix spikes (from Sonic 1, unused)
 ObjPtr_ARZPlatform:
-ObjPtr_EHZPlatform:	dc.l Obj_FloatingPlatform	; $18 ; Stationary floating platform from ARZ and EHZ
+ObjPtr_EHZPlatform:		dc.l Obj_FloatingPlatform		; $18 ; Stationary floating platform from ARZ and EHZ
 ObjPtr_CPZPlatform:
 ObjPtr_OOZMovingPform:
-ObjPtr_WFZPlatform:	dc.l Obj_FloatingPlatform2	; $19 ; Platform from CPZ, OOZ and WFZ
+ObjPtr_WFZPlatform:		dc.l Obj_FloatingPlatform2		; $19 ; Platform from CPZ, OOZ and WFZ
 ObjPtr_HPZCollapsPform:	dc.l Obj_HPZCollapsingPlatform	; $1A ; Collapsing platform from HPZ (and GHZ)
-ObjPtr_SpeedBooster:	dc.l Obj_SpeedBooster		; $1B ; Speed booster from from CPZ
+ObjPtr_SpeedBooster:	dc.l Obj_SpeedBooster			; $1B ; Speed booster from from CPZ
 ObjPtr_Scenery:
 ObjPtr_BridgeStake:
-ObjPtr_FallingOil:	dc.l Obj_Scenery		; $1C ; Bridge stake in Emerald Hill Zone and Hill Top Zone, falling oil in Oil Ocean Zone
-ObjPtr_BlueBalls:	dc.l Obj_BlueBalls		; $1D ; Blue balls in CPZ (jumping droplets hazard)
-ObjPtr_CPZSpinTube:	dc.l Obj_CPZSpinTube		; $1E ; Spin tube from CPZ
-ObjPtr_CollapsPform:	dc.l Obj_CollapsingPlatform	; $1F ; Collapsing platform from ARZ, MCZ and OOZ (and MZ, SLZ and SBZ)
-ObjPtr_LavaBubble:	dc.l Obj_LavaBubble		; $20 ; Lava bubble from Hill Top Zone (boss weapon)
-ObjPtr_HUD:		dc.l Obj_HUD			; $21 ; Score/Rings/Time display (HUD)
-ObjPtr_ArrowShooter:	dc.l Obj_ArrowShooter		; $22 ; Arrow shooter from ARZ
-ObjPtr_FallingPillar:	dc.l Obj_FallingPillar		; $23 ; Pillar that drops its lower part from ARZ
-ObjPtr_ARZBubbles:	dc.l Obj_ARZBubbles		; $24 ; Bubbles in Aquatic Ruin Zone
-ObjPtr_Ring:		dc.l Obj_Ring			; $25 ; A ring
-ObjPtr_Monitor:		dc.l Obj_Monitor		; $26 ; Monitor
-ObjPtr_Explosion:	dc.l Obj_Explosion		; $27 ; An explosion, giving off an animal and 100 points
-ObjPtr_Animal:		dc.l Obj_Animal			; $28 ; Animal and the 100 points from a badnik
-ObjPtr_Points:		dc.l Obj_Points			; $29 ; "100 points" text
-ObjPtr_Stomper:		dc.l Obj_Stomper		; $2A ; Stomper from MCZ
-ObjPtr_RisingPillar:	dc.l Obj_RisingPillar		; $2B ; Rising pillar from ARZ
-ObjPtr_LeavesGenerator:	dc.l Obj_LeavesGenerator	; $2C ; Sprite that makes leaves fly off when you hit it from ARZ
-ObjPtr_Barrier:		dc.l Obj_Barrier		; $2D ; One way barrier from CPZ and DEZ
-ObjPtr_MonitorContents:	dc.l Obj_MonitorContents	; $2E ; Monitor contents (code for power-up behavior and rising image)
-ObjPtr_SmashableGround:	dc.l Obj_SmashableGround	; $2F ; Smashable ground in Hill Top Zone
-ObjPtr_RisingLava:	dc.l Obj_RisingLava		; $30 ; Large rising lava during earthquake in HTZ
-ObjPtr_LavaMarker:	dc.l Obj_LavaMarker		; $31 ; Lava collision marker
+ObjPtr_FallingOil:		dc.l Obj_Scenery				; $1C ; Bridge stake in Emerald Hill Zone and Hill Top Zone, falling oil in Oil Ocean Zone
+ObjPtr_BlueBalls:		dc.l Obj_BlueBalls				; $1D ; Blue balls in CPZ (jumping droplets hazard)
+ObjPtr_CPZSpinTube:		dc.l Obj_CPZSpinTube			; $1E ; Spin tube from CPZ
+ObjPtr_CollapsPform:	dc.l Obj_CollapsingPlatform		; $1F ; Collapsing platform from ARZ, MCZ and OOZ (and MZ, SLZ and SBZ)
+ObjPtr_LavaBubble:		dc.l Obj_LavaBubble				; $20 ; Lava bubble from Hill Top Zone (boss weapon)
+						dc.l Obj_Null					; $21 ; Obj21
+ObjPtr_ArrowShooter:	dc.l Obj_ArrowShooter			; $22 ; Arrow shooter from ARZ
+ObjPtr_FallingPillar:	dc.l Obj_FallingPillar			; $23 ; Pillar that drops its lower part from ARZ
+ObjPtr_ARZBubbles:		dc.l Obj_ARZBubbles				; $24 ; Bubbles in Aquatic Ruin Zone
+ObjPtr_Ring:			dc.l Obj_Ring					; $25 ; A ring
+ObjPtr_Monitor:			dc.l Obj_Monitor				; $26 ; Monitor
+ObjPtr_Explosion:		dc.l Obj_Explosion				; $27 ; An explosion, giving off an animal and 100 points
+ObjPtr_Animal:			dc.l Obj_Animal					; $28 ; Animal and the 100 points from a badnik
+ObjPtr_Points:			dc.l Obj_Points					; $29 ; "100 points" text
+ObjPtr_Stomper:			dc.l Obj_Stomper				; $2A ; Stomper from MCZ
+ObjPtr_RisingPillar:	dc.l Obj_RisingPillar			; $2B ; Rising pillar from ARZ
+ObjPtr_LeavesGenerator:	dc.l Obj_LeavesGenerator		; $2C ; Sprite that makes leaves fly off when you hit it from ARZ
+ObjPtr_Barrier:			dc.l Obj_Barrier				; $2D ; One way barrier from CPZ and DEZ
+ObjPtr_MonitorContents:	dc.l Obj_MonitorContents		; $2E ; Monitor contents (code for power-up behavior and rising image)
+ObjPtr_SmashableGround:	dc.l Obj_SmashableGround		; $2F ; Smashable ground in Hill Top Zone
+ObjPtr_RisingLava:		dc.l Obj_RisingLava				; $30 ; Large rising lava during earthquake in HTZ
+ObjPtr_LavaMarker:		dc.l Obj_LavaMarker				; $31 ; Lava collision marker
 ObjPtr_BreakableBlock:
-ObjPtr_BreakableRock:	dc.l Obj_BreakableBlock		; $32 ; Breakable block/rock from CPZ and HTZ
-ObjPtr_OOZPoppingPform:	dc.l Obj_OOZPoppingPlatform	; $33 ; Green platform from OOZ
-ObjPtr_TitleCard:	dc.l Obj_TitleCard		; $34 ; level title card (screen with red, yellow, and blue)
-ObjPtr_InvStars:	dc.l Obj_InvincibilityStars	; $35 ; Invincibility Stars
-ObjPtr_Spikes:		dc.l Obj_Spikes			; $36 ; Vertical spikes
-ObjPtr_LostRings:	dc.l Obj_LostRings		; $37 ; Scattering rings (generated when Sonic is hurt and has rings)
-ObjPtr_Shield:		dc.l Obj_Shield			; $38 ; Shield
+ObjPtr_BreakableRock:	dc.l Obj_BreakableBlock			; $32 ; Breakable block/rock from CPZ and HTZ
+ObjPtr_OOZPoppingPform:	dc.l Obj_OOZPoppingPlatform		; $33 ; Green platform from OOZ
+ObjPtr_TitleCard:		dc.l Obj_TitleCard				; $34 ; level title card (screen with red, yellow, and blue)
+ObjPtr_InvStars:		dc.l Obj_InvincibilityStars		; $35 ; Invincibility Stars
+ObjPtr_Spikes:			dc.l Obj_Spikes					; $36 ; Vertical spikes
+ObjPtr_LostRings:		dc.l Obj_LostRings				; $37 ; Scattering rings (generated when Sonic is hurt and has rings)
+ObjPtr_Shield:			dc.l Obj_Shield					; $38 ; Shield
 ObjPtr_GameOver:
-ObjPtr_TimeOver:	dc.l Obj_GameOver		; $39 ; Game/Time Over text
-ObjPtr_Results:		dc.l Obj_Results		; $3A ; End of level results screen
-			dc.l Obj3B			; $3B ; Purple rock (from Sonic 1, unused)
-			dc.l Obj3C			; $3C ; Breakable wall (leftover from S1) (mostly unused)
-ObjPtr_OOZLauncher:	dc.l Obj_OOZLauncher		; $3D ; Block thingy in OOZ that launches you into the round ball things
-ObjPtr_EggPrison:	dc.l Obj_EggPrison		; $3E ; Egg prison
-ObjPtr_Fan:		dc.l Obj_Fan			; $3F ; Fan from OOZ
-ObjPtr_Springboard:	dc.l Obj_SpringBoard		; $40 ; Pressure spring from CPZ, ARZ, and MCZ (the red "diving board" springboard)
-ObjPtr_Spring:		dc.l Obj_Spring			; $41 ; Spring
-ObjPtr_SteamSpring:	dc.l Obj_SteamSpring		; $42 ; Steam Spring from MTZ
-ObjPtr_SlidingSpike:	dc.l Obj_SlidingSpike		; $43 ; Sliding spike obstacle thing from OOZ
-ObjPtr_RoundBumper:	dc.l Obj_RoundBumper		; $44 ; Round bumper from Casino Night Zone
-ObjPtr_OOZSpring:	dc.l Obj_OOZSpring		; $45 ; Pressure spring from OOZ
-ObjPtr_OOZBall:		dc.l Obj_OOZBall		; $46 ; Ball from OOZ (unused, beta leftover)
-ObjPtr_Button:		dc.l Obj_Button			; $47 ; Button
-ObjPtr_LauncherBall:	dc.l Obj_LauncherBall		; $48 ; Round ball thing from OOZ that fires you off in a different direction
-ObjPtr_EHZWaterfall:	dc.l Obj_EHZWaterfall		; $49 ; Waterfall from EHZ
-ObjPtr_Octus:		dc.l Obj_Octus			; $4A ; Octus (octopus badnik) from OOZ
-ObjPtr_BuzzBomber:		dc.l Obj_BuzzBomber			; $4B ; Buzz Bomber from Seaside Land
-			dc.l Obj_Null			; $4C ; Obj4C
-			dc.l Obj_Null			; $4D ; Obj4D
-			dc.l Obj_Null			; $4E ; Obj4E
-			dc.l Obj_Null			; $4F ; Obj4F
-ObjPtr_Aquis:		dc.l Obj_Aquis			; $50 ; Aquis (seahorse badnik) from OOZ
-ObjPtr_CNZBoss:		dc.l Obj_CNZBoss		; $51 ; CNZ boss
-ObjPtr_HTZBoss:		dc.l Obj_HTZBoss		; $52 ; HTZ boss
-ObjPtr_MTZBossOrb:	dc.l Obj_MTZBossOrb		; $53 ; Shield orbs that surround MTZ boss
-ObjPtr_MTZBoss:		dc.l Obj_MTZBoss		; $54 ; MTZ boss
-ObjPtr_OOZBoss:		dc.l Obj_OOZBoss		; $55 ; OOZ boss
-ObjPtr_EHZBoss:		dc.l Obj_EHZBoss		; $56 ; EHZ boss
-ObjPtr_MCZBoss:		dc.l Obj_MCZBoss		; $57 ; MCZ boss
-ObjPtr_BossExplosion:	dc.l Obj_BossExplosion		; $58 ; Boss explosion
-ObjPtr_SSEmerald:	dc.l Obj_SSEmerald		; $59 ; Emerald from Special Stage
-ObjPtr_SSMessage:	dc.l Obj_SSMessage		; $5A ; Messages/checkpoint from Special Stage
-ObjPtr_SSRingSpill:	dc.l Obj_SSRingSpill		; $5B ; Ring spray/spill in Special Stage
-ObjPtr_Masher:		dc.l Obj_Masher			; $5C ; Masher (jumping piranha fish badnik) from EHZ
-ObjPtr_CPZBoss:		dc.l Obj_CPZBoss		; $5D ; CPZ boss
-ObjPtr_SSHUD:		dc.l Obj_SSHUD			; $5E ; HUD from Special Stage
+ObjPtr_TimeOver:		dc.l Obj_GameOver				; $39 ; Game/Time Over text
+ObjPtr_Results:			dc.l Obj_Results				; $3A ; End of level results screen
+						dc.l Obj3B						; $3B ; Purple rock (from Sonic 1, unused)
+						dc.l Obj3C						; $3C ; Breakable wall (leftover from S1) (mostly unused)
+ObjPtr_OOZLauncher:		dc.l Obj_OOZLauncher			; $3D ; Block thingy in OOZ that launches you into the round ball things
+ObjPtr_EggPrison:		dc.l Obj_EggPrison				; $3E ; Egg prison
+ObjPtr_Fan:				dc.l Obj_Fan					; $3F ; Fan from OOZ
+ObjPtr_Springboard:		dc.l Obj_SpringBoard			; $40 ; Pressure spring from CPZ, ARZ, and MCZ (the red "diving board" springboard)
+ObjPtr_Spring:			dc.l Obj_Spring					; $41 ; Spring
+ObjPtr_SteamSpring:		dc.l Obj_SteamSpring			; $42 ; Steam Spring from MTZ
+ObjPtr_SlidingSpike:	dc.l Obj_SlidingSpike			; $43 ; Sliding spike obstacle thing from OOZ
+ObjPtr_RoundBumper:		dc.l Obj_RoundBumper			; $44 ; Round bumper from Casino Night Zone
+ObjPtr_OOZSpring:		dc.l Obj_OOZSpring				; $45 ; Pressure spring from OOZ
+ObjPtr_OOZBall:			dc.l Obj_OOZBall				; $46 ; Ball from OOZ (unused, beta leftover)
+ObjPtr_Button:			dc.l Obj_Button					; $47 ; Button
+ObjPtr_LauncherBall:	dc.l Obj_LauncherBall			; $48 ; Round ball thing from OOZ that fires you off in a different direction
+ObjPtr_EHZWaterfall:	dc.l Obj_EHZWaterfall			; $49 ; Waterfall from EHZ
+ObjPtr_Octus:			dc.l Obj_Octus					; $4A ; Octus (octopus badnik) from OOZ
+ObjPtr_BuzzBomber:		dc.l Obj_BuzzBomber				; $4B ; Buzz Bomber from Seaside Land
+						dc.l Obj_Null					; $4C ; Obj4C
+						dc.l Obj_Null					; $4D ; Obj4D
+						dc.l Obj_Null					; $4E ; Obj4E
+						dc.l Obj_Null					; $4F ; Obj4F
+ObjPtr_Aquis:			dc.l Obj_Aquis					; $50 ; Aquis (seahorse badnik) from OOZ
+ObjPtr_CNZBoss:			dc.l Obj_CNZBoss				; $51 ; CNZ boss
+ObjPtr_HTZBoss:			dc.l Obj_HTZBoss				; $52 ; HTZ boss
+ObjPtr_MTZBossOrb:		dc.l Obj_MTZBossOrb				; $53 ; Shield orbs that surround MTZ boss
+ObjPtr_MTZBoss:			dc.l Obj_MTZBoss				; $54 ; MTZ boss
+ObjPtr_OOZBoss:			dc.l Obj_OOZBoss				; $55 ; OOZ boss
+ObjPtr_EHZBoss:			dc.l Obj_EHZBoss				; $56 ; EHZ boss
+ObjPtr_MCZBoss:			dc.l Obj_MCZBoss				; $57 ; MCZ boss
+ObjPtr_BossExplosion:	dc.l Obj_BossExplosion			; $58 ; Boss explosion
+ObjPtr_SSEmerald:		dc.l Obj_SSEmerald				; $59 ; Emerald from Special Stage
+ObjPtr_SSMessage:		dc.l Obj_SSMessage				; $5A ; Messages/checkpoint from Special Stage
+ObjPtr_SSRingSpill:		dc.l Obj_SSRingSpill			; $5B ; Ring spray/spill in Special Stage
+ObjPtr_Masher:			dc.l Obj_Masher					; $5C ; Masher (jumping piranha fish badnik) from EHZ
+ObjPtr_CPZBoss:			dc.l Obj_CPZBoss				; $5D ; CPZ boss
+ObjPtr_SSHUD:			dc.l Obj_SSHUD					; $5E ; HUD from Special Stage
 ObjPtr_StartBanner:
-ObjPtr_EndingController:dc.l Obj_EndingController	; $5F ; Start banner/"Ending controller" from Special Stage
-ObjPtr_SSRing:		dc.l Obj_SSRing			; $60 ; Rings from Special Stage
-ObjPtr_SSBomb:		dc.l Obj_SSBomb			; $61 ; Bombs from Special Stage
-ObjPtr_TwistedRamp:	dc.l Obj_TwistedRamp	; $62 ; Twisted ramp from S3K
-ObjPtr_SSShadow:	dc.l Obj_SSShadow		; $63 ; Character shadow from Special Stage
-ObjPtr_MTZTwinStompers:	dc.l Obj_MTZTwinStompers	; $64 ; Twin stompers from MTZ
-ObjPtr_MTZLongPlatform:	dc.l Obj_MTZLongPlatform	; $65 ; Long moving platform from MTZ
-ObjPtr_MTZSpringWall:	dc.l Obj_MTZSpringWall		; $66 ; Yellow spring walls from MTZ
-ObjPtr_MTZSpinTube:	dc.l Obj_MTZSpinTube		; $67 ; Spin tube from MTZ
-ObjPtr_SpikyBlock:	dc.l Obj_SpikyBlock		; $68 ; Block with a spike that comes out of each side sequentially from MTZ
-ObjPtr_Nut:		dc.l Obj_Nut			; $69 ; Nut from MTZ
+ObjPtr_EndingController:dc.l Obj_EndingController		; $5F ; Start banner/"Ending controller" from Special Stage
+ObjPtr_SSRing:			dc.l Obj_SSRing					; $60 ; Rings from Special Stage
+ObjPtr_SSBomb:			dc.l Obj_SSBomb					; $61 ; Bombs from Special Stage
+ObjPtr_TwistedRamp:		dc.l Obj_TwistedRamp			; $62 ; Twisted ramp from S3K
+ObjPtr_SSShadow:		dc.l Obj_SSShadow				; $63 ; Character shadow from Special Stage
+ObjPtr_MTZTwinStompers:	dc.l Obj_MTZTwinStompers		; $64 ; Twin stompers from MTZ
+ObjPtr_MTZLongPlatform:	dc.l Obj_MTZLongPlatform		; $65 ; Long moving platform from MTZ
+ObjPtr_MTZSpringWall:	dc.l Obj_MTZSpringWall			; $66 ; Yellow spring walls from MTZ
+ObjPtr_MTZSpinTube:		dc.l Obj_MTZSpinTube			; $67 ; Spin tube from MTZ
+ObjPtr_SpikyBlock:		dc.l Obj_SpikyBlock				; $68 ; Block with a spike that comes out of each side sequentially from MTZ
+ObjPtr_Nut:				dc.l Obj_Nut					; $69 ; Nut from MTZ
 ObjPtr_MCZRotPforms:
-ObjPtr_MTZMovingPforms:	dc.l Obj_MTZMovingPlatforms	; $6A ; Platform that moves when you walk off of it, from MTZ
+ObjPtr_MTZMovingPforms:	dc.l Obj_MTZMovingPlatforms		; $6A ; Platform that moves when you walk off of it, from MTZ
 ObjPtr_MTZPlatform:
-ObjPtr_CPZSquarePform:	dc.l Obj_CPZSquarePlatform	; $6B ; Immobile platform from MTZ
-ObjPtr_Conveyor:	dc.l Obj_Conveyor		; $6C ; Small platform on pulleys (like at the start of MTZ2)
-ObjPtr_FloorSpike:	dc.l Obj_FloorSpike		; $6D ; Floor spike from MTZ
-ObjPtr_LargeRotPform:	dc.l Obj_LargeRotPlatform	; $6E ; Platform moving in a circle (like at the start of MTZ3)
-ObjPtr_SSResults:	dc.l Obj_SSResults		; $6F ; End of special stage results screen
-ObjPtr_Cog:		dc.l Obj_Cog			; $70 ; Giant rotating cog from MTZ
+ObjPtr_CPZSquarePform:	dc.l Obj_CPZSquarePlatform		; $6B ; Immobile platform from MTZ
+ObjPtr_Conveyor:		dc.l Obj_Conveyor				; $6C ; Small platform on pulleys (like at the start of MTZ2)
+ObjPtr_FloorSpike:		dc.l Obj_FloorSpike				; $6D ; Floor spike from MTZ
+ObjPtr_LargeRotPform:	dc.l Obj_LargeRotPlatform		; $6E ; Platform moving in a circle (like at the start of MTZ3)
+ObjPtr_SSResults:		dc.l Obj_SSResults				; $6F ; End of special stage results screen
+ObjPtr_Cog:				dc.l Obj_Cog					; $70 ; Giant rotating cog from MTZ
 ObjPtr_MTZLavaBubble:
 ObjPtr_HPZBridgeStake:
-ObjPtr_PulsingOrb:	dc.l Obj_Scenery2		; $71 ; Bridge stake and pulsing orb from Hidden Palace Zone
-ObjPtr_CNZConveyorBelt:	dc.l Obj_CNZConveyorBelt	; $72 ; Conveyor belt from CNZ
-ObjPtr_RotatingRings:	dc.l Obj_RotatingRings		; $73 ; Solid rotating ring thing from Mystic Cave Zone (mostly unused)
-ObjPtr_InvisibleBlock:	dc.l Obj_InvisibleBlock		; $74 ; Invisible solid block
-ObjPtr_MCZBrick:	dc.l Obj_MCZBrick		; $75 ; Brick from MCZ
-ObjPtr_SlidingSpikes:	dc.l Obj_MCZSlidingSpike	; $76 ; Spike block that slides out of the wall from MCZ
-ObjPtr_MCZBridge:	dc.l Obj_MCZBridge		; $77 ; Bridge from MCZ
-ObjPtr_CPZStaircase:	dc.l Obj_CPZStaircase		; $78 ; Stairs from CPZ that move down to open the way
-ObjPtr_Starpost:	dc.l Obj_Starpost		; $79 ; Star pole / starpost / checkpoint
-ObjPtr_SidewaysPform:	dc.l Obj_SidewaysPlatform	; $7A ; Platform that moves back and fourth on top of water in CPZ
-ObjPtr_PipeExitSpring:	dc.l Obj_PipeExitSpring		; $7B ; Warp pipe exit spring from CPZ
-ObjPtr_CPZPylon:	dc.l Obj_CPZPylon		; $7C ; Big pylon in foreground of CPZ
-			dc.l Obj7D			; $7D ; Points that can be gotten at the end of an act (unused leftover from S1)
-ObjPtr_SuperSonicStars:	dc.l Obj_SuperSonicStars	; $7E ; Super Sonic's stars
-ObjPtr_VineSwitch:	dc.l Obj_VineSwitch		; $7F ; Vine switch that you hang off in MCZ
-ObjPtr_MovingVine:	dc.l Obj_MovingVine		; $80 ; Vine that you hang off and it moves down from MCZ
-ObjPtr_MCZDrawbridge:	dc.l Obj_MCZDrawbridge		; $81 ; Long invisible vertical barrier
-ObjPtr_SwingingPform:	dc.l Obj_SwingingPlatforms	; $82 ; Platform that is usually swinging, from ARZ
-ObjPtr_ARZRotPforms:	dc.l Obj_ARZRotPlatforms	; $83 ; 3 adjoined platforms from ARZ that rotate in a circle
+ObjPtr_PulsingOrb:		dc.l Obj_Scenery2				; $71 ; Bridge stake and pulsing orb from Hidden Palace Zone
+ObjPtr_CNZConveyorBelt:	dc.l Obj_CNZConveyorBelt		; $72 ; Conveyor belt from CNZ
+ObjPtr_RotatingRings:	dc.l Obj_RotatingRings			; $73 ; Solid rotating ring thing from Mystic Cave Zone (mostly unused)
+ObjPtr_InvisibleBlock:	dc.l Obj_InvisibleBlock			; $74 ; Invisible solid block
+ObjPtr_MCZBrick:		dc.l Obj_MCZBrick				; $75 ; Brick from MCZ
+ObjPtr_SlidingSpikes:	dc.l Obj_MCZSlidingSpike		; $76 ; Spike block that slides out of the wall from MCZ
+ObjPtr_MCZBridge:		dc.l Obj_MCZBridge				; $77 ; Bridge from MCZ
+ObjPtr_CPZStaircase:	dc.l Obj_CPZStaircase			; $78 ; Stairs from CPZ that move down to open the way
+ObjPtr_Starpost:		dc.l Obj_Starpost				; $79 ; Star pole / starpost / checkpoint
+ObjPtr_SidewaysPform:	dc.l Obj_SidewaysPlatform		; $7A ; Platform that moves back and fourth on top of water in CPZ
+ObjPtr_PipeExitSpring:	dc.l Obj_PipeExitSpring			; $7B ; Warp pipe exit spring from CPZ
+ObjPtr_CPZPylon:		dc.l Obj_CPZPylon				; $7C ; Big pylon in foreground of CPZ
+						dc.l Obj7D						; $7D ; Points that can be gotten at the end of an act (unused leftover from S1)
+ObjPtr_SuperSonicStars:	dc.l Obj_SuperSonicStars		; $7E ; Super Sonic's stars
+ObjPtr_VineSwitch:		dc.l Obj_VineSwitch				; $7F ; Vine switch that you hang off in MCZ
+ObjPtr_MovingVine:		dc.l Obj_MovingVine				; $80 ; Vine that you hang off and it moves down from MCZ
+ObjPtr_MCZDrawbridge:	dc.l Obj_MCZDrawbridge			; $81 ; Long invisible vertical barrier
+ObjPtr_SwingingPform:	dc.l Obj_SwingingPlatforms		; $82 ; Platform that is usually swinging, from ARZ
+ObjPtr_ARZRotPforms:	dc.l Obj_ARZRotPlatforms		; $83 ; 3 adjoined platforms from ARZ that rotate in a circle
 ObjPtr_ForcedSpin:
-ObjPtr_PinballMode:	dc.l Obj_PinballMode		; $84 ; Pinball mode enable/disable (CNZ)
-ObjPtr_LauncherSpring:	dc.l Obj_LauncherSpring		; $85 ; Spring from CNZ that you hold jump on to pull back further
-ObjPtr_Flipper:		dc.l Obj_Flipper		; $86 ; Flipper from CNZ
-ObjPtr_SSNumberOfRings:	dc.l Obj_SSNumberOfRings	; $87 ; Number of rings in Special Stage
-ObjPtr_SSTailsTails:	dc.l Obj_SSTailsTails		; $88 ; Tails' tails in Special Stage
-ObjPtr_ARZBoss:		dc.l Obj_ARZBoss		; $89 ; ARZ boss
-ObjPtr_Knuckles:		dc.l Obj_Knuckles	; $8A ; Knuckles the Echidna
-ObjPtr_WFZPalSwitcher:	dc.l Obj_WFZPalSwitcher		; $8B ; Cycling palette switcher from Wing Fortress Zone
-ObjPtr_Whisp:		dc.l Obj_Whisp			; $8C ; Whisp (blowfly badnik) from ARZ
-ObjPtr_GrounderInWall:	dc.l Obj_GrounderInWall		; $8D ; Grounder in wall, from ARZ
-ObjPtr_GrounderInWall2:	dc.l Obj_GrounderInWall2	; $8E ; grounder that is not in a wall.
-ObjPtr_GrounderWall:	dc.l Obj_GrounderWall		; $8F ; Wall behind which Grounder hides, from ARZ
-ObjPtr_GrounderRocks:	dc.l Obj_GrounderRocks		; $90 ; Rocks thrown by Grounder behind wall, from ARZ
-ObjPtr_ChopChop:	dc.l Obj_ChopChop		; $91 ; Chop Chop (piranha/shark badnik) from ARZ
-ObjPtr_Spiker:		dc.l Obj_Spiker			; $92 ; Spiker (drill badnik) from HTZ
-ObjPtr_SpikerDrill:	dc.l Obj_SpikerDrill		; $93 ; Drill thrown by Spiker from HTZ
-ObjPtr_Rexon:		dc.l Obj_Rexon			; $94 ; Rexon (lava snake badnik), from HTZ
-ObjPtr_Sol:		dc.l Obj_Sol			; $95 ; Sol (fireball-throwing orbit badnik) from HTZ
-ObjPtr_Rexon2:		dc.l Obj_Rexon			; $96 ; Obj96 = Obj_Rexon
-ObjPtr_RexonHead:	dc.l Obj_RexonHead		; $97 ; Rexon's head, from HTZ
-ObjPtr_Projectile:	dc.l Obj_Projectile		; $98 ; Projectile with optional gravity (EHZ coconut, CPZ spiny, etc.)
-ObjPtr_Nebula:		dc.l Obj_Nebula			; $99 ; Nebula (bomber badnik) from SCZ
-ObjPtr_Turtloid:	dc.l Obj_TurtLoid		; $9A ; Turtloid (turtle badnik) from Sky Chase Zone
-ObjPtr_TurtloidRider:	dc.l Obj_TurtLoidRider		; $9B ; Turtloid rider from Sky Chase Zone
-ObjPtr_BalkiryJet:	dc.l Obj_BalkiryJet		; $9C ; Balkiry's jet from Sky Chase Zone
-ObjPtr_Crab:		dc.l Obj_Crab		; $9D ; Crab badnik from Seaside Land
-ObjPtr_Crawlton:	dc.l Obj_CrawlTon		; $9E ; Crawlton (snake badnik) from MCZ
-ObjPtr_Shellcracker:	dc.l Obj_Shellcracker		; $9F ; Shellcraker (crab badnik) from MTZ
-ObjPtr_ShellcrackerClaw:dc.l Obj_ShellcrackerClaw	; $A0 ; Shellcracker's claw from MTZ
-ObjPtr_Slicer:		dc.l Obj_Slicer			; $A1 ; Slicer (praying mantis dude) from MTZ
-ObjPtr_SlicerPincers:	dc.l Obj_SlicerPincers		; $A2 ; Slicer's pincers from MTZ
-ObjPtr_Flasher:		dc.l Obj_Flasher		; $A3 ; Flasher (firefly/glowbug badnik) from MCZ
-ObjPtr_Asteron:		dc.l Obj_Asteron		; $A4 ; Asteron (exploding starfish badnik) from MTZ
-ObjPtr_Spiny:		dc.l Obj_Spiny			; $A5 ; Spiny (crawling badnik) from CPZ
-ObjPtr_SpinyOnWall:	dc.l Obj_SpinyOnWall		; $A6 ; Spiny (on wall) from CPZ
-ObjPtr_Grabber:		dc.l Obj_Grabber		; $A7 ; Grabber (spider badnik) from CPZ
-ObjPtr_GrabberLegs:	dc.l Obj_GrabberLegs		; $A8 ; Grabber's legs from CPZ
-ObjPtr_GrabberBox:	dc.l Obj_GrabberBox		; $A9 ; The little hanger box thing a Grabber's string comes out of
-ObjPtr_GrabberString:	dc.l Obj_GrabberString		; $AA ; The thin white string a Grabber hangs from
-			dc.l ObjAB			; $AB ; Unknown (maybe unused?)
-ObjPtr_Balkiry:		dc.l Obj_Balkiry		; $AC ; Balkiry (jet badnik) from SCZ
-ObjPtr_CluckerBase:	dc.l Obj_CluckerBase		; $AD ; Clucker's base from WFZ
-ObjPtr_Clucker:		dc.l Obj_Clucker		; $AE ; Clucker (chicken badnik) from WFZ
-ObjPtr_MechaSonic:	dc.l Obj_MechaSonic		; $AF ; Mecha Sonic / Silver Sonic from DEZ
-ObjPtr_SonicOnSegaScr:	dc.l Obj_SonicOnSegaScreen	; $B0 ; Sonic on the Sega screen
-ObjPtr_SegaHideTM:	dc.l Obj_SegaHideTM		; $B1 ; Object that hides TM symbol on JP region
-ObjPtr_Tornado:		dc.l Obj_Tornado		; $B2 ; The Tornado (Tails' plane)
-ObjPtr_Cloud:		dc.l Obj_Cloud			; $B3 ; Clouds (placeable object) from SCZ
-ObjPtr_VPropeller:	dc.l Obj_VPropeller		; $B4 ; Vertical propeller from WFZ
-ObjPtr_HPropeller:	dc.l Obj_HPropeller		; $B5 ; Horizontal propeller from WFZ
-ObjPtr_TiltingPlatform:	dc.l Obj_TiltingPlatform	; $B6 ; Tilting platform from WFZ
-ObjPtr_VerticalLaser:	dc.l Obj_VerticalLaser		; $B7 ; Unused huge vertical laser from WFZ
-ObjPtr_WallTurret:	dc.l Obj_WallTurret		; $B8 ; Wall turret from WFZ
-ObjPtr_Laser:		dc.l Obj_Laser			; $B9 ; Laser from WFZ that shoots down the Tornado
-ObjPtr_WFZWheel:	dc.l Obj_WFZWheel		; $BA ; Wheel from WFZ
-			dc.l ObjBB			; $BB ; Unknown
-ObjPtr_WFZShipFire:	dc.l Obj_WFZShipFire		; $BC ; Fire coming out of Robotnik's ship in WFZ
-ObjPtr_SmallMetalPform:	dc.l Obj_SmallMetalPlatform	; $BD ; Ascending/descending metal platforms from WFZ
-ObjPtr_LateralCannon:	dc.l Obj_LateralCannon		; $BE ; Lateral cannon (temporary platform that pops in/out) from WFZ
-ObjPtr_WFZStick:	dc.l Obj_WFZStick		; $BF ; Rotaty-stick badnik from WFZ
-ObjPtr_SpeedLauncher:	dc.l Obj_SpeedLauncher		; $C0 ; Speed launcher from WFZ
-ObjPtr_BreakablePlating:dc.l Obj_BreakablePlating	; $C1 ; Breakable plating from WFZ / what sonic hangs onto on the back of Robotnic's getaway ship
-ObjPtr_Rivet:		dc.l Obj_Rivet			; $C2 ; Rivet thing you bust to get into ship at the end of WFZ
-ObjPtr_TornadoSmoke:	dc.l Obj_TornadoSmoke		; $C3 ; Plane's smoke from WFZ
-ObjPtr_TornadoSmoke2:	dc.l Obj_TornadoSmoke 		; $C4 ; ObjC4 = Obj_TornadoSmoke
-ObjPtr_WFZBoss:		dc.l Obj_WFZBoss		; $C5 ; WFZ boss
-ObjPtr_Eggman:		dc.l Obj_Eggman			; $C6 ; Eggman
-ObjPtr_Eggrobo:		dc.l Obj_Eggrobo		; $C7 ; Eggrobo (final boss) from Death Egg
-ObjPtr_Crawl:		dc.l Obj_Crawl			; $C8 ; Crawl (shield badnik) from CNZ
+ObjPtr_PinballMode:		dc.l Obj_PinballMode			; $84 ; Pinball mode enable/disable (CNZ)
+ObjPtr_LauncherSpring:	dc.l Obj_LauncherSpring			; $85 ; Spring from CNZ that you hold jump on to pull back further
+ObjPtr_Flipper:			dc.l Obj_Flipper				; $86 ; Flipper from CNZ
+ObjPtr_SSNumberOfRings:	dc.l Obj_SSNumberOfRings		; $87 ; Number of rings in Special Stage
+ObjPtr_SSTailsTails:	dc.l Obj_SSTailsTails			; $88 ; Tails' tails in Special Stage
+ObjPtr_ARZBoss:			dc.l Obj_ARZBoss				; $89 ; ARZ boss
+						dc.l Obj_Null					; $8A ; Obj8A
+ObjPtr_WFZPalSwitcher:	dc.l Obj_WFZPalSwitcher			; $8B ; Cycling palette switcher from Wing Fortress Zone
+ObjPtr_Whisp:			dc.l Obj_Whisp					; $8C ; Whisp (blowfly badnik) from ARZ
+ObjPtr_GrounderInWall:	dc.l Obj_GrounderInWall			; $8D ; Grounder in wall, from ARZ
+ObjPtr_GrounderInWall2:	dc.l Obj_GrounderInWall2		; $8E ; grounder that is not in a wall.
+ObjPtr_GrounderWall:	dc.l Obj_GrounderWall			; $8F ; Wall behind which Grounder hides, from ARZ
+ObjPtr_GrounderRocks:	dc.l Obj_GrounderRocks			; $90 ; Rocks thrown by Grounder behind wall, from ARZ
+ObjPtr_ChopChop:		dc.l Obj_ChopChop				; $91 ; Chop Chop (piranha/shark badnik) from ARZ
+ObjPtr_Spiker:			dc.l Obj_Spiker					; $92 ; Spiker (drill badnik) from HTZ
+ObjPtr_SpikerDrill:		dc.l Obj_SpikerDrill			; $93 ; Drill thrown by Spiker from HTZ
+ObjPtr_Rexon:			dc.l Obj_Rexon					; $94 ; Rexon (lava snake badnik), from HTZ
+ObjPtr_Sol:				dc.l Obj_Sol					; $95 ; Sol (fireball-throwing orbit badnik) from HTZ
+ObjPtr_Rexon2:			dc.l Obj_Rexon					; $96 ; Obj96 = Obj_Rexon
+ObjPtr_RexonHead:		dc.l Obj_RexonHead				; $97 ; Rexon's head, from HTZ
+ObjPtr_Projectile:		dc.l Obj_Projectile				; $98 ; Projectile with optional gravity (EHZ coconut, CPZ spiny, etc.)
+ObjPtr_Nebula:			dc.l Obj_Nebula					; $99 ; Nebula (bomber badnik) from SCZ
+ObjPtr_Turtloid:		dc.l Obj_TurtLoid				; $9A ; Turtloid (turtle badnik) from Sky Chase Zone
+ObjPtr_TurtloidRider:	dc.l Obj_TurtLoidRider			; $9B ; Turtloid rider from Sky Chase Zone
+ObjPtr_BalkiryJet:		dc.l Obj_BalkiryJet				; $9C ; Balkiry's jet from Sky Chase Zone
+ObjPtr_Crab:			dc.l Obj_Crab					; $9D ; Crab badnik from Seaside Land
+ObjPtr_Crawlton:		dc.l Obj_CrawlTon				; $9E ; Crawlton (snake badnik) from MCZ
+ObjPtr_Shellcracker:	dc.l Obj_Shellcracker			; $9F ; Shellcraker (crab badnik) from MTZ
+ObjPtr_ShellcrackerClaw:dc.l Obj_ShellcrackerClaw		; $A0 ; Shellcracker's claw from MTZ
+ObjPtr_Slicer:			dc.l Obj_Slicer					; $A1 ; Slicer (praying mantis dude) from MTZ
+ObjPtr_SlicerPincers:	dc.l Obj_SlicerPincers			; $A2 ; Slicer's pincers from MTZ
+ObjPtr_Flasher:			dc.l Obj_Flasher				; $A3 ; Flasher (firefly/glowbug badnik) from MCZ
+ObjPtr_Asteron:			dc.l Obj_Asteron				; $A4 ; Asteron (exploding starfish badnik) from MTZ
+ObjPtr_Spiny:			dc.l Obj_Spiny					; $A5 ; Spiny (crawling badnik) from CPZ
+ObjPtr_SpinyOnWall:		dc.l Obj_SpinyOnWall			; $A6 ; Spiny (on wall) from CPZ
+ObjPtr_Grabber:			dc.l Obj_Grabber				; $A7 ; Grabber (spider badnik) from CPZ
+ObjPtr_GrabberLegs:		dc.l Obj_GrabberLegs			; $A8 ; Grabber's legs from CPZ
+ObjPtr_GrabberBox:		dc.l Obj_GrabberBox				; $A9 ; The little hanger box thing a Grabber's string comes out of
+ObjPtr_GrabberString:	dc.l Obj_GrabberString			; $AA ; The thin white string a Grabber hangs from
+						dc.l ObjAB						; $AB ; Unknown (maybe unused?)
+ObjPtr_Balkiry:			dc.l Obj_Balkiry				; $AC ; Balkiry (jet badnik) from SCZ
+ObjPtr_CluckerBase:		dc.l Obj_CluckerBase			; $AD ; Clucker's base from WFZ
+ObjPtr_Clucker:			dc.l Obj_Clucker				; $AE ; Clucker (chicken badnik) from WFZ
+ObjPtr_MechaSonic:		dc.l Obj_MechaSonic				; $AF ; Mecha Sonic / Silver Sonic from DEZ
+ObjPtr_SonicOnSegaScr:	dc.l Obj_SonicOnSegaScreen		; $B0 ; Sonic on the Sega screen
+ObjPtr_SegaHideTM:		dc.l Obj_SegaHideTM				; $B1 ; Object that hides TM symbol on JP region
+ObjPtr_Tornado:			dc.l Obj_Tornado				; $B2 ; The Tornado (Tails' plane)
+ObjPtr_Cloud:			dc.l Obj_Cloud					; $B3 ; Clouds (placeable object) from SCZ
+ObjPtr_VPropeller:		dc.l Obj_VPropeller				; $B4 ; Vertical propeller from WFZ
+ObjPtr_HPropeller:		dc.l Obj_HPropeller				; $B5 ; Horizontal propeller from WFZ
+ObjPtr_TiltingPlatform:	dc.l Obj_TiltingPlatform		; $B6 ; Tilting platform from WFZ
+ObjPtr_VerticalLaser:	dc.l Obj_VerticalLaser			; $B7 ; Unused huge vertical laser from WFZ
+ObjPtr_WallTurret:		dc.l Obj_WallTurret				; $B8 ; Wall turret from WFZ
+ObjPtr_Laser:			dc.l Obj_Laser					; $B9 ; Laser from WFZ that shoots down the Tornado
+ObjPtr_WFZWheel:		dc.l Obj_WFZWheel				; $BA ; Wheel from WFZ
+						dc.l ObjBB						; $BB ; Unknown
+ObjPtr_WFZShipFire:		dc.l Obj_WFZShipFire			; $BC ; Fire coming out of Robotnik's ship in WFZ
+ObjPtr_SmallMetalPform:	dc.l Obj_SmallMetalPlatform		; $BD ; Ascending/descending metal platforms from WFZ
+ObjPtr_LateralCannon:	dc.l Obj_LateralCannon			; $BE ; Lateral cannon (temporary platform that pops in/out) from WFZ
+ObjPtr_WFZStick:		dc.l Obj_WFZStick				; $BF ; Rotaty-stick badnik from WFZ
+ObjPtr_SpeedLauncher:	dc.l Obj_SpeedLauncher			; $C0 ; Speed launcher from WFZ
+ObjPtr_BreakablePlating:dc.l Obj_BreakablePlating		; $C1 ; Breakable plating from WFZ / what sonic hangs onto on the back of Robotnic's getaway ship
+ObjPtr_Rivet:			dc.l Obj_Rivet					; $C2 ; Rivet thing you bust to get into ship at the end of WFZ
+ObjPtr_TornadoSmoke:	dc.l Obj_TornadoSmoke			; $C3 ; Plane's smoke from WFZ
+ObjPtr_TornadoSmoke2:	dc.l Obj_TornadoSmoke 			; $C4 ; ObjC4 = Obj_TornadoSmoke
+ObjPtr_WFZBoss:			dc.l Obj_WFZBoss				; $C5 ; WFZ boss
+ObjPtr_Eggman:			dc.l Obj_Eggman					; $C6 ; Eggman
+ObjPtr_Eggrobo:			dc.l Obj_Eggrobo				; $C7 ; Eggrobo (final boss) from Death Egg
+ObjPtr_Crawl:			dc.l Obj_Crawl					; $C8 ; Crawl (shield badnik) from CNZ
 ObjPtr_TtlScrPalChanger:dc.l Obj_TitleScreenPalChanger	; $C9 ; "Palette changing handler" from title screen
-ObjPtr_CutScene:	dc.l Obj_CutScene		; $CA ; Cut scene at end of game
-ObjPtr_EndingSeqClouds:	dc.l Obj_EndingClouds		; $CB ; Background clouds from ending sequence
-ObjPtr_EndingSeqTrigger:dc.l Obj_EndingTrigger		; $CC ; Trigger for rescue plane and birds from ending sequence
-ObjPtr_EndingSeqBird:	dc.l Obj_EndingBird		; $CD ; Birds from ending sequence
+ObjPtr_CutScene:		dc.l Obj_CutScene				; $CA ; Cut scene at end of game
+ObjPtr_EndingSeqClouds:	dc.l Obj_EndingClouds			; $CB ; Background clouds from ending sequence
+ObjPtr_EndingSeqTrigger:dc.l Obj_EndingTrigger			; $CC ; Trigger for rescue plane and birds from ending sequence
+ObjPtr_EndingSeqBird:	dc.l Obj_EndingBird				; $CD ; Birds from ending sequence
 ObjPtr_EndingSeqSonic:
-ObjPtr_EndingSeqTails:	dc.l Obj_EndingPlyer		; $CE ; Sonic and Tails jumping off the plane from ending sequence
-ObjPtr_TornadoHelixes:	dc.l Obj_TornadoHelixes		; $CF ;"Plane's helixes" from ending sequence
-			dc.l Obj_Null			; $D0 ; ObjD0
-			dc.l Obj_Null			; $D1 ; ObjD1
+ObjPtr_EndingSeqTails:	dc.l Obj_EndingPlyer			; $CE ; Sonic and Tails jumping off the plane from ending sequence
+ObjPtr_TornadoHelixes:	dc.l Obj_TornadoHelixes			; $CF ;"Plane's helixes" from ending sequence
+						dc.l Obj_Null					; $D0 ; ObjD0
+						dc.l Obj_Null					; $D1 ; ObjD1
 ObjPtr_CNZRectBlocks:	dc.l Obj_CNZRectangularBlocks	; $D2 ; Flashing blocks that appear and disappear in a rectangular shape that you can walk across, from CNZ
-ObjPtr_BombPrize:	dc.l Obj_BombPrize		; $D3 ; Bomb prize from CNZ
-ObjPtr_CNZBigBlock:	dc.l Obj_CNZBigBlock		; $D4 ; Big block from CNZ that moves back and fourth
-ObjPtr_Elevator:	dc.l Obj_Elevator		; $D5 ; Elevator from CNZ
-ObjPtr_PointPokey:	dc.l Obj_PointPokey		; $D6 ; Pokey that gives out points from CNZ
-ObjPtr_Bumper:		dc.l Obj_Bumper			; $D7 ; Bumper from Casino Night Zone
-ObjPtr_BonusBlock:	dc.l Obj_BonusBlock		; $D8 ; Block thingy from CNZ that disappears after 3 hits
-ObjPtr_Grab:		dc.l Obj_Grab			; $D9 ; Invisible sprite that you can hang on to, like the blocks in WFZ
+ObjPtr_BombPrize:		dc.l Obj_BombPrize				; $D3 ; Bomb prize from CNZ
+ObjPtr_CNZBigBlock:		dc.l Obj_CNZBigBlock			; $D4 ; Big block from CNZ that moves back and fourth
+ObjPtr_Elevator:		dc.l Obj_Elevator				; $D5 ; Elevator from CNZ
+ObjPtr_PointPokey:		dc.l Obj_PointPokey				; $D6 ; Pokey that gives out points from CNZ
+ObjPtr_Bumper:			dc.l Obj_Bumper					; $D7 ; Bumper from Casino Night Zone
+ObjPtr_BonusBlock:		dc.l Obj_BonusBlock				; $D8 ; Block thingy from CNZ that disappears after 3 hits
+ObjPtr_Grab:			dc.l Obj_Grab					; $D9 ; Invisible sprite that you can hang on to, like the blocks in WFZ
 ObjPtr_ContinueText:
-ObjPtr_ContinueIcons:	dc.l Obj_ContinueText		; $DA ; Continue text
-ObjPtr_ContinueChars:	dc.l Obj_ContinueChars		; $DB ; Sonic lying down or Tails nagging (continue screen)
-ObjPtr_RingPrize:	dc.l Obj_RingPrize		; $DC ; Ring prize from Casino Night Zone
-ObjPtr_KnucklesSS:		dc.l Obj_KnucklesSS	; $DD ; Knuckles in Special Stage
+ObjPtr_ContinueIcons:	dc.l Obj_ContinueText			; $DA ; Continue text
+ObjPtr_ContinueChars:	dc.l Obj_ContinueChars			; $DB ; Sonic lying down or Tails nagging (continue screen)
+ObjPtr_RingPrize:		dc.l Obj_RingPrize				; $DC ; Ring prize from Casino Night Zone
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Single object loading subroutine
@@ -28872,8 +28878,12 @@ loc_192A0:
 	move.b	#4,Obj_Signpost_finalanim(a0)
 .notTails:
 	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
-	bne.s	Sign_Part2
+	bne.s	.notKnuckles
 	move.b	#5,Obj_Signpost_finalanim(a0)
+.notKnuckles:
+	cmpi.l	#Obj_Amy,(MainCharacter+id).w
+	bne.s	Sign_Part2
+	move.b	#6,Obj_Signpost_finalanim(a0)
 
 Sign_Part2:
 	moveq	#0,d0
@@ -28967,6 +28977,10 @@ Load_EndOfAct:
 	bne.s	+
 	moveq	#PLCID_ResultsKnuckles,d0
 +
+	cmpi.l	#Obj_Amy,(MainCharacter+id).w
+	bne.s	+
+	moveq	#PLCID_ResultsAmy,d0
++
 	jsr	(LoadPLC2).l
 	move.b	#1,(Update_Bonus_score).w
 	moveq	#0,d0
@@ -29056,6 +29070,7 @@ Ani_Obj_Signpost:	offsetTable
 		offsetTableEntry.w .sonic		; 3
 		offsetTableEntry.w .tails		; 4
 		offsetTableEntry.w .knuckles	; 5
+		offsetTableEntry.w .amy
 
 .eggman:	dc.b	$F, .fr_eggman, afEnd
 	rev02even
@@ -29066,6 +29081,8 @@ Ani_Obj_Signpost:	offsetTable
 .tails:		dc.b	$F, .fr_tails, afEnd
 	rev02even
 .knuckles:	dc.b	$F, .fr_knux,  afEnd
+	rev02even
+.amy:	dc.b	$F, .fr_amy,  afEnd
 	even
 
 ; frame IDs
@@ -29077,6 +29094,7 @@ Ani_Obj_Signpost:	offsetTable
 .fr_sonic	ds.b 1
 .fr_tails	ds.b 1
 .fr_knux	ds.b 1
+.fr_amy		ds.b 1
 	even
 	dephase
 ; -------------------------------------------------------------------------------
@@ -30117,8 +30135,12 @@ UpdateEmotionWindow:
 	bra.s	.cont
 .notTails:
 	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
-	bne.s	.cont
+	bne.s	.notKnuckles
 	move.l	#ArtUnc_KnucklesEmotions,d1
+.notKnuckles:
+	cmpi.l	#Obj_Amy,(MainCharacter+id).w
+	bne.s	.cont
+	move.l	#ArtUnc_AmyEmotions,d1
 .cont:
 	move.w	#tiles_to_bytes(ArtTile_ArtNem_life_counter),d2
 	move.w	#16*6,d3	; length of one emotion's image (1 tile = 16 bytes)
@@ -30270,7 +30292,7 @@ ShiftPaletteDown:
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 01 - Sonic
+; Sonic player object
 ; ----------------------------------------------------------------------------
 ; Sprite_19F50: Object_Sonic:
 Obj_Sonic:
@@ -30301,7 +30323,7 @@ Obj_Sonic_Index:	offsetTable
 Obj_Sonic_Init:
 	addq.b	#2,routine(a0)	; => Obj_Sonic_Control
 	jsr		ResetHeight_a0
-	move.l	#Mapunc_Sonic,mappings(a0)
+	move.l	#MapUnc_Sonic,mappings(a0)
 	move.w	#prio(2),priority(a0)
 	move.b	#$18,width_pixels(a0)
 	move.b	#4,render_flags(a0)
@@ -31631,6 +31653,8 @@ DoubleJumpMoves:
 	jeq		Tails_Test_For_Flight
 	cmpi.l	#Obj_Knuckles,id(a0)
 	jeq		Knuckles_CheckGlide
+;	cmpi.l	#Obj_Amy,id(a0)
+;	jeq		Amy_
 .ret:
 	rts
 ; ---------------------------------------------------------------------------
@@ -32393,8 +32417,8 @@ Obj_Sonic_Hurt_Normal:
 	bsr.w	Sonic_HurtStop
 	bsr.w	Sonic_LevelBound
 	bsr.w	P1_RecordPos
-	bsr.w	Sonic_Animate
-	bsr.w	LoadSonicDynPLC
+	bsr.w	Player_Animate
+	bsr.w	LoadPlayerDynPLC
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 ; loc_1B184:
@@ -32427,8 +32451,8 @@ Sonic_HurtInstantRecover:
 	subq.b	#2,routine(a0)	; => Obj_Sonic_Control
 	move.b	#0,routine_secondary(a0)
 	bsr.w	P1_RecordPos
-	bsr.w	Sonic_Animate
-	bsr.w	LoadSonicDynPLC
+	bsr.w	Player_Animate
+	bsr.w	LoadPlayerDynPLC
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
@@ -32451,8 +32475,8 @@ Obj_Sonic_Dead:
 	bsr.w	CheckGameOver
 	jsr	(ObjectMoveAndFall).l
 	bsr.w	P1_RecordPos
-	bsr.w	Sonic_Animate
-	bsr.w	LoadSonicDynPLC
+	bsr.w	Player_Animate
+	bsr.w	LoadPlayerDynPLC
 	jmp	(DisplaySprite).l
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
@@ -32543,10 +32567,25 @@ Obj_Sonic_Respawning:
 	bne.s	+
 	move.b	#2,routine(a0)	; => Obj_Sonic_Control
 +
-	bsr.w	Sonic_Animate
-	bsr.w	LoadSonicDynPLC
+	bsr.w	Player_Animate
+	bsr.w	LoadPlayerDynPLC
 	jmp	(DisplaySprite).l
 ; ===========================================================================
+
+Player_Animate:
+	cmpi.l	#Obj_Tails,id(a0)
+	bne.s	+
+	jmp		Tails_Animate
++
+	cmpi.l	#Obj_Knuckles,id(a0)
+	bne.s	+
+	jmp		Knuckles_Animate
++
+	cmpi.l	#Obj_Amy,id(a0)
+	bne.s	+
+	jmp		Amy_Animate
++
+	jmp		Sonic_Animate
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to animate Sonic's sprites
@@ -32796,6 +32835,21 @@ SAnim_Push:
 
 	include	"animations/Sonic.asm"
 
+LoadPlayerDynPLC:
+	cmpi.l	#Obj_Tails,id(a0)
+	bne.s	+
+	jmp		LoadTailsDynPLC
++
+	cmpi.l	#Obj_Knuckles,id(a0)
+	bne.s	+
+	jmp		LoadKnucklesDynPLC
++
+	cmpi.l	#Obj_Amy,id(a0)
+	bne.s	+
+	jmp		LoadAmyDynPLC
++
+	jmp		LoadSonicDynPLC
+
 ; ---------------------------------------------------------------------------
 ; Sonic	graphics loading subroutine
 ; ---------------------------------------------------------------------------
@@ -32880,9 +32934,21 @@ JmpTo_KillCharacter ; JmpTo
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 02 - Tails
+; Tails player object
 ; ----------------------------------------------------------------------------
-	include		"objects/Players/Tails and his tails.asm"
+	include	"objects/Players/Tails and his tails.asm"
+
+; ===========================================================================
+; ----------------------------------------------------------------------------
+; Knuckles player object
+; ----------------------------------------------------------------------------
+	include	"objects/Players/Knuckles.asm"
+
+; ===========================================================================
+; ----------------------------------------------------------------------------
+; Amy player object
+; ----------------------------------------------------------------------------
+	include	"objects/Players/Amy.asm"
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -33774,7 +33840,7 @@ Obj_Splash_SkidDust:
 	subq.b	#1,objoff_32(a0)
 	bpl.s	loc_1DEE0
 	move.b	#3,objoff_32(a0)
-	bsr.w	SingleObjLoad
+	jsr		SingleObjLoad
 	bne.s	loc_1DEE0
 	_move.l	id(a0),id(a1) ; load Obj_Splash
 	move.w	x_pos(a2),x_pos(a1)
@@ -36831,7 +36897,7 @@ loc_2013C:
 	move.b	width_pixels(a0),d1
 	moveq	#$11,d3
 	move.w	x_pos(a0),d4
-	bsr.w	PlatformObject
+	jsr		PlatformObject
 	jmpto	(MarkObjGone).l, JmpTo3_MarkObjGone
 ; ---------------------------------------------------------------------------
 +
@@ -36964,7 +37030,7 @@ loc_202E6:
 	move.b	width_pixels(a0),d1
 	moveq	#9,d3
 	move.w	x_pos(a0),d4
-	bsr.w	PlatformObject
+	jsr		PlatformObject
 	jmpto	(MarkObjGone).l, JmpTo4_MarkObjGone
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -37019,7 +37085,7 @@ Obj_HPZEmerald_Main:
 	move.w	#$10,d2
 	move.w	#$10,d3
 	move.w	x_pos(a0),d4
-	bsr.w	SolidObject
+	jsr		SolidObject
 	move.w	x_pos(a0),d0
 	andi.w	#$FF80,d0
 	sub.w	(Camera_X_pos_coarse).w,d0
@@ -74685,12 +74751,6 @@ JmpTo26_ObjectMove ; JmpTo
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 8A - Knuckles the Echidna
-; ----------------------------------------------------------------------------
-	include	"objects/Players/Knuckles.asm"
-
-; ===========================================================================
-; ----------------------------------------------------------------------------
 ; Object 3E - Egg prison
 ; ----------------------------------------------------------------------------
 ; Sprite_3F1E4:
@@ -77394,15 +77454,9 @@ loc_40F90:
 
 loc_40FC8:
 	tst.b	(Update_HUD_lives).w
-	beq.s	loc_40FD6
+	beq.s	loc_40FE4
 	clr.b	(Update_HUD_lives).w
 	bsr.w	Hud_Lives
-
-loc_40FD6:
-	tst.b	(Update_HUD_lives_2P).w
-	beq.s	loc_40FE4
-	clr.b	(Update_HUD_lives_2P).w
-	bsr.w	Hud_Lives2
 
 loc_40FE4:
 	move.b	(Update_HUD_timer).w,d0
@@ -77515,14 +77569,6 @@ loc_410B0:
 	bra.s	loc_410AA
 ; End of function Hud_Base
 
-; ===========================================================================
-
-loc_410BC:
-	bsr.w	Hud_Lives2
-	move.l	#Art_Hud,d1 ; source addreses
-	move.w	#tiles_to_bytes(ArtTile_Art_HUD_Numbers_2P),d2 ; destination VRAM address
-	move.w	#tiles_to_bytes(22)/2,d3 ; DMA transfer length (in words)
-	jmp	(QueueDMATransfer).l
 ; ===========================================================================
 
 	charset	' ',$FF
@@ -77802,20 +77848,6 @@ Hud_ClrBonusLoop:
 	move.l	#0,(a6)
 	dbf	d5,Hud_ClrBonusLoop
 	bra.s	loc_412C0
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; ---------------------------------------------------------------------------
-; Subroutine to load uncompressed lives counter patterns (Tails)
-; ---------------------------------------------------------------------------
-
-; sub_412D4:
-Hud_Lives2:
-	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtUnc_2p_life_counter_lives),VRAM,WRITE),d0
-	moveq	#0,d1
-	move.b	(Life_count_2P).w,d1
-	bra.s	loc_412EE
-; End of function Hud_Lives2
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to load uncompressed lives counter patterns (Sonic)
@@ -78638,23 +78670,23 @@ cur_zone_str := "\{cur_zone_id}"
 ; BEGIN SArt_Ptrs Art_Ptrs_Array[17]
 ; dword_42594: MainLoadBlocks: saArtPtrs:
 LevelArtPointers:
-	levartptrs PLCID_Ehz1,     PLCID_Ehz2,      PalID_EHZ,  ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   0 ; EHZ  ; EMERALD HILL ZONE
-	levartptrs PLCID_Tails1up, PLCID_TailsLife, PalID_EHZ2, ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   1 ; LEV1 ; LEVEL 1 (UNUSED)
-	levartptrs PLCID_Tails1up, PLCID_TailsLife, PalID_WZ,   ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   2 ; WZ	 ; WOOD ZONE (UNUSED)
-	levartptrs PLCID_Unused1,  PLCID_Unused2,   PalID_EHZ3, ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   3 ; LEV3 ; LEVEL 3 (UNUSED)
-	levartptrs PLCID_Mtz1,     PLCID_Mtz2,      PalID_MTZ,  ArtKos_MTZ, BM16_MTZ, BM128_MTZ ;   4 ; MTZ  ; METROPOLIS ZONE ACTS 1 & 2
-	levartptrs PLCID_Mtz1,     PLCID_Mtz2,      PalID_MTZ,  ArtKos_MTZ, BM16_MTZ, BM128_MTZ ;   5 ; MTZ3 ; METROPOLIS ZONE ACT 3
-	levartptrs PLCID_Wfz1,     PLCID_Wfz2,      PalID_WFZ,  ArtKos_SCZ, BM16_WFZ, BM128_WFZ ;   6 ; WFZ  ; WING FORTRESS ZONE
-	levartptrs PLCID_Htz1,     PLCID_Htz2,      PalID_HTZ,  ArtKos_HTZ, BM16_HTZ, BM128_HTZ ;   7 ; HTZ  ; HILL TOP ZONE
-	levartptrs PLCID_Hpz1,     PLCID_Hpz2,      PalID_HPZ,  ArtKos_HPZ, BM16_HPZ, BM128_HPZ ;   8 ; HPZ  ; HIDDEN PALACE ZONE (UNUSED)
-	levartptrs PLCID_Unused3,  PLCID_Unused4,   PalID_EHZ4, ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   9 ; LEV9 ; LEVEL 9 (UNUSED)
-	levartptrs PLCID_Ooz1,     PLCID_Ooz2,      PalID_OOZ,  ArtKos_OOZ, BM16_OOZ, BM128_OOZ ;  $A ; OOZ  ; OIL OCEAN ZONE
-	levartptrs PLCID_Mcz1,     PLCID_Mcz2,      PalID_MCZ,  ArtKos_MCZ, BM16_MCZ, BM128_MCZ ;  $B ; MCZ  ; MYSTIC CAVE ZONE
-	levartptrs PLCID_Cnz1,     PLCID_Cnz2,      PalID_CNZ,  ArtKos_CNZ, BM16_CNZ, BM128_CNZ ;  $C ; CNZ  ; CASINO NIGHT ZONE
-	levartptrs PLCID_Cpz1,     PLCID_Cpz2,      PalID_CPZ,  ArtKos_CPZ, BM16_CPZ, BM128_CPZ ;  $D ; CPZ  ; CHEMICAL PLANT ZONE
-	levartptrs PLCID_Dez1,     PLCID_Dez2,      PalID_DEZ,  ArtKos_CPZ, BM16_CPZ, BM128_CPZ ;  $E ; DEZ  ; DEATH EGG ZONE
-	levartptrs PLCID_Arz1,     PLCID_Arz2,      PalID_ARZ,  ArtKos_ARZ, BM16_ARZ, BM128_ARZ ;  $F ; ARZ  ; AQUATIC RUIN ZONE
-	levartptrs PLCID_Scz1,     PLCID_Scz2,      PalID_SCZ,  ArtKos_SCZ, BM16_WFZ, BM128_WFZ ; $10 ; SCZ  ; SKY CHASE ZONE
+	levartptrs PLCID_Ehz1,		PLCID_Ehz2,		PalID_EHZ,	ArtKos_EHZ,	BM16_EHZ,	BM128_EHZ ;   0 ; EHZ  ; EMERALD HILL ZONE
+	levartptrs PLCID_Ehz1,		PLCID_Ehz2,		PalID_EHZ2,	ArtKos_EHZ,	BM16_EHZ,	BM128_EHZ ;   1 ; LEV1 ; LEVEL 1 (UNUSED)
+	levartptrs PLCID_Ehz1,		PLCID_Ehz2,		PalID_WZ,	ArtKos_EHZ,	BM16_EHZ,	BM128_EHZ ;   2 ; WZ	 ; WOOD ZONE (UNUSED)
+	levartptrs PLCID_Unused1,	PLCID_Unused2,	PalID_EHZ3,	ArtKos_EHZ,	BM16_EHZ,	BM128_EHZ ;   3 ; LEV3 ; LEVEL 3 (UNUSED)
+	levartptrs PLCID_Mtz1,		PLCID_Mtz2,		PalID_MTZ,	ArtKos_MTZ,	BM16_MTZ,	BM128_MTZ ;   4 ; MTZ  ; METROPOLIS ZONE ACTS 1 & 2
+	levartptrs PLCID_Mtz1,		PLCID_Mtz2,		PalID_MTZ,	ArtKos_MTZ,	BM16_MTZ,	BM128_MTZ ;   5 ; MTZ3 ; METROPOLIS ZONE ACT 3
+	levartptrs PLCID_Wfz1,		PLCID_Wfz2,		PalID_WFZ,	ArtKos_SCZ,	BM16_WFZ,	BM128_WFZ ;   6 ; WFZ  ; WING FORTRESS ZONE
+	levartptrs PLCID_Htz1,		PLCID_Htz2,		PalID_HTZ,	ArtKos_HTZ,	BM16_HTZ,	BM128_HTZ ;   7 ; HTZ  ; HILL TOP ZONE
+	levartptrs PLCID_Hpz1,		PLCID_Hpz2,		PalID_HPZ,	ArtKos_HPZ,	BM16_HPZ,	BM128_HPZ ;   8 ; HPZ  ; HIDDEN PALACE ZONE (UNUSED)
+	levartptrs PLCID_Unused3,	PLCID_Unused4,	PalID_EHZ4,	ArtKos_EHZ,	BM16_EHZ,	BM128_EHZ ;   9 ; LEV9 ; LEVEL 9 (UNUSED)
+	levartptrs PLCID_Ooz1,		PLCID_Ooz2,		PalID_OOZ,	ArtKos_OOZ,	BM16_OOZ,	BM128_OOZ ;  $A ; OOZ  ; OIL OCEAN ZONE
+	levartptrs PLCID_Mcz1,		PLCID_Mcz2,		PalID_MCZ,	ArtKos_MCZ,	BM16_MCZ,	BM128_MCZ ;  $B ; MCZ  ; MYSTIC CAVE ZONE
+	levartptrs PLCID_Cnz1,		PLCID_Cnz2,		PalID_CNZ,	ArtKos_CNZ,	BM16_CNZ,	BM128_CNZ ;  $C ; CNZ  ; CASINO NIGHT ZONE
+	levartptrs PLCID_Cpz1,		PLCID_Cpz2,		PalID_CPZ,	ArtKos_CPZ,	BM16_CPZ,	BM128_CPZ ;  $D ; CPZ  ; CHEMICAL PLANT ZONE
+	levartptrs PLCID_Dez1,		PLCID_Dez2,		PalID_DEZ,	ArtKos_CPZ,	BM16_CPZ,	BM128_CPZ ;  $E ; DEZ  ; DEATH EGG ZONE
+	levartptrs PLCID_Arz1,		PLCID_Arz2,		PalID_ARZ,	ArtKos_ARZ,	BM16_ARZ,	BM128_ARZ ;  $F ; ARZ  ; AQUATIC RUIN ZONE
+	levartptrs PLCID_Scz1,		PLCID_Scz2,		PalID_SCZ,	ArtKos_SCZ,	BM16_WFZ,	BM128_WFZ ; $10 ; SCZ  ; SKY CHASE ZONE
 
     if (cur_zone_id<>no_of_zones)&&(MOMPASS=1)
 	message "Warning: Table LevelArtPointers has \{cur_zone_id/1.0} entries, but it should have \{no_of_zones/1.0} entries"
@@ -78703,10 +78735,9 @@ PLCptr_StdWtr:		offsetTableEntry.w PlrList_StdWtr		; 2
 PLCptr_GameOver:	offsetTableEntry.w PlrList_GameOver		; 3
 PLCptr_Ehz1:		offsetTableEntry.w PlrList_Ehz1			; 4
 PLCptr_Ehz2:		offsetTableEntry.w PlrList_Ehz2			; 5
-PLCptr_Tails1up:	offsetTableEntry.w PlrList_Tails1up		; 6
 PLCptr_TailsLife:	offsetTableEntry.w PlrList_TailsLifeCounter	; 7
-PLCptr_Knuckles1up:	offsetTableEntry.w PlrList_Knuckles1up		; 8
 PLCptr_KnucklesLife:offsetTableEntry.w PlrList_KnucklesLifeCounter	; 9
+PLCptr_AmyLife:		offsetTableEntry.w PlrList_AmyLifeCounter	; 9
 PLCptr_Unused1:		offsetTableEntry.w PlrList_Mtz1			; 10
 PLCptr_Unused2:		offsetTableEntry.w PlrList_Mtz1			; 11
 PLCptr_Mtz1:		offsetTableEntry.w PlrList_Mtz1			; 12
@@ -78766,6 +78797,7 @@ PLCptr_Capsule:		offsetTableEntry.w PlrList_Capsule		; 64
 PLCptr_Explosion:	offsetTableEntry.w PlrList_Explosion		; 65
 PLCptr_ResultsTails:	offsetTableEntry.w PlrList_ResultsTails		; 66
 PLCptr_ResultsKnuckles:	offsetTableEntry.w PlrList_ResultsKnuckles
+PLCptr_ResultsAmy:	offsetTableEntry.w PlrList_ResultsAmy
 PLCptr_SpecialStageK:	offsetTableEntry.w PlrList_SpecialStageK
 
 ; macro for a pattern load request list header
@@ -78840,13 +78872,6 @@ PlrList_Ehz2: plrlistheader
 PlrList_Ehz2_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
-; Tails 1up patch
-;---------------------------------------------------------------------------------------
-PlrList_Tails1up: plrlistheader
-	plreq ArtTile_ArtUnc_2p_life_counter, ArtNem_Tails_life_counter
-PlrList_Tails1up_End
-;---------------------------------------------------------------------------------------
-; Pattern load queue
 ; Tails life counter
 ;---------------------------------------------------------------------------------------
 PlrList_TailsLifeCounter: plrlistheader
@@ -78854,18 +78879,18 @@ PlrList_TailsLifeCounter: plrlistheader
 PlrList_TailsLifeCounter_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
-; Knuckles 1up patch
-;---------------------------------------------------------------------------------------
-PlrList_Knuckles1up: plrlistheader
-	plreq ArtTile_ArtUnc_2p_life_counter, ArtNem_Knuckles_life_counter
-PlrList_Knuckles1up_End
-;---------------------------------------------------------------------------------------
-; Pattern load queue
 ; Knuckles life counter
 ;---------------------------------------------------------------------------------------
 PlrList_KnucklesLifeCounter: plrlistheader
 	plreq ArtTile_ArtNem_life_counter, ArtNem_Knuckles_life_counter
 PlrList_KnucklesLifeCounter_End
+;---------------------------------------------------------------------------------------
+; Pattern load queue
+; Amy life counter
+;---------------------------------------------------------------------------------------
+PlrList_AmyLifeCounter: plrlistheader
+	plreq ArtTile_ArtNem_life_counter, ArtNem_Amy_life_counter
+PlrList_AmyLifeCounter_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
 ; Metropolis Zone primary
@@ -79402,6 +79427,16 @@ PlrList_ResultsKnuckles: plrlistheader
 PlrList_ResultsKnuckles_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
+; Amy end of level results screen
+;---------------------------------------------------------------------------------------
+PlrList_ResultsAmy: plrlistheader
+	plreq ArtTile_ArtNem_TitleCard, ArtNem_TitleCard
+	plreq ArtTile_ArtNem_ResultsText, ArtNem_ResultsText
+	plreq ArtTile_ArtNem_MiniCharacter, ArtNem_MiniAmy
+	plreq ArtTile_ArtNem_Perfect, ArtNem_Perfect
+PlrList_ResultsAmy_End
+;---------------------------------------------------------------------------------------
+; Pattern load queue
 ; Special Stage Knuckles
 ;---------------------------------------------------------------------------------------
 PlrList_SpecialStageK: plrlistheader
@@ -79736,26 +79771,33 @@ MapRUnc_TailsTails:	BINCLUDE	"mappings/spriteDPLC/Tails's tails.bin"
 ArtUnc_Knuckles:	BINCLUDE	"art/uncompressed/Knuckles's art.bin"
 MapUnc_Knuckles:	BINCLUDE	"mappings/sprite/Knuckles.bin"
 MapRUnc_Knuckles:	BINCLUDE	"mappings/spriteDPLC/Knuckles.bin"
+;--------------------------------------------------------------------------------------
+; Amy's shit
+;--------------------------------------------------------------------------------------
 	align $20
+ArtUnc_Amy:			BINCLUDE	"art/uncompressed/Amy's art.bin"
+MapUnc_Amy:			BINCLUDE	"mappings/sprite/Amy.bin"
+MapRUnc_Amy:		BINCLUDE	"mappings/spriteDPLC/Amy.bin"
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Shield			; ArtNem_71D8E:
-ArtUnc_Shield:	BINCLUDE	"art/uncompressed/Shield.bin"
 	even
+ArtUnc_Shield:	BINCLUDE	"art/uncompressed/Shield.bin"
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (34 blocks)
 ; Invincibility stars		; ArtNem_71F14:
-ArtNem_Invincible_stars:	BINCLUDE	"art/nemesis/Invincibility stars.bin"
 	even
+ArtNem_Invincible_stars:	BINCLUDE	"art/nemesis/Invincibility stars.bin"
 ;--------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Splash in water and dust from skidding	; ArtUnc_71FFC:
+	even
 ArtUnc_SplashAndDust:	BINCLUDE	"art/uncompressed/Splash and skid dust.bin"
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (14 blocks)
 ; Supersonic stars		; ArtNem_7393C:
-ArtNem_SuperSonic_stars:	BINCLUDE	"art/nemesis/Super Sonic stars.bin"
 	even
+ArtNem_SuperSonic_stars:	BINCLUDE	"art/nemesis/Super Sonic stars.bin"
 ;-------------------------------------------------------------------------------------
 ; Nemesis compressed art (127 blocks)
 ; "SEGA" Patterns	; ArtNem_74876:
@@ -79824,17 +79866,21 @@ ArtNem_HUD:	BINCLUDE	"art/nemesis/HUD.bin"
 ;---------------------------------------------------------------------------------------
 ; life counters and emotion windows
 	even
-ArtNem_Sonic_life_counter:	BINCLUDE	"art/nemesis/HUD - Sonic Lives.bin"
+ArtNem_Sonic_life_counter:		BINCLUDE	"art/nemesis/HUD - Sonic Lives.bin"
 	even
-ArtNem_Tails_life_counter:	BINCLUDE	"art/nemesis/HUD - Tails Lives.bin"
+ArtNem_Tails_life_counter:		BINCLUDE	"art/nemesis/HUD - Tails Lives.bin"
 	even
 ArtNem_Knuckles_life_counter:	BINCLUDE	"art/nemesis/HUD - Knuckles Lives.bin"
 	even
-ArtUnc_SonicEmotions:		BINCLUDE	"art/uncompressed/HUD - Sonic Emotions.bin"
+ArtNem_Amy_life_counter:		BINCLUDE	"art/nemesis/HUD - Amy Lives.bin"
 	even
-ArtUnc_TailsEmotions:		BINCLUDE	"art/uncompressed/HUD - Tails Emotions.bin"
+ArtUnc_SonicEmotions:			BINCLUDE	"art/uncompressed/HUD - Sonic Emotions.bin"
+	even
+ArtUnc_TailsEmotions:			BINCLUDE	"art/uncompressed/HUD - Tails Emotions.bin"
 	even
 ArtUnc_KnucklesEmotions:		BINCLUDE	"art/uncompressed/HUD - Knuckles Emotions.bin"
+	even
+ArtUnc_AmyEmotions:				BINCLUDE	"art/uncompressed/HUD - Amy Emotions.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (14 blocks)
 ; Ring				ArtNem_7945C:
@@ -79925,6 +79971,11 @@ ArtNem_MiniTails:	BINCLUDE	"art/nemesis/Tails continue.bin"
 ; Knuckles extra continue icon
 	even
 ArtNem_MiniKnuckles:	BINCLUDE	"art/nemesis/Knuckles continue.bin"
+;---------------------------------------------------------------------------------------
+; Nemesis compressed art (12 blocks)
+; Knuckles extra continue icon
+	even
+ArtNem_MiniAmy:	BINCLUDE	"art/nemesis/Amy continue.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (88 blocks)
 ; Standard font		; ArtNem_7C43A:

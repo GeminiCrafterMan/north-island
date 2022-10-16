@@ -1,7 +1,7 @@
 {
     "Flex": 2,
     "name": "Sonic 2",
-    "node": "d4f520d4-bc9a-4b11-afeb-415072e5bb3c",
+    "node": "8e274255-d8f7-46c5-90d8-3c24562832b5",
     "objects": [
         {
             "uuid": "fa665537-a8f6-4d0d-a1b5-2c3190bf034d",
@@ -21,357 +21,435 @@
                 "enabled": false,
                 "path": "",
                 "label": ""
-            }
-        },
-        {
-            "uuid": "7fffcbca-c48a-45c7-a02e-83bce4dd71a2",
-            "format": "Sonic 2.js",
-            "name": "big sonk",
-            "palettes": [],
-            "art": {
-                "path": "",
-                "compression": "Uncompressed",
-                "offset": 0
             },
-            "mappings": {
-                "path": "mappings/sprite/Obj_SegaHideTM.bin",
-                "label": ""
-            },
-            "dplcs": {
-                "enabled": false,
-                "path": "",
-                "label": ""
-            }
+            "expanded": true
         },
         {
             "name": "Common",
             "children": [
                 {
-                    "name": "Sonic",
-                    "palettes": [
+                    "name": "Characters",
+                    "children": [
                         {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
+                            "uuid": "7fffcbca-c48a-45c7-a02e-83bce4dd71a2",
+                            "format": "Sonic 2.js",
+                            "name": "SEGA Screen Sonic",
+                            "palettes": [],
+                            "art": {
+                                "path": "",
+                                "compression": "Uncompressed",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Obj_SegaHideTM.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": false,
+                                "path": "",
+                                "label": ""
+                            }
                         },
                         {
-                            "path": "art/palettes/SonicAndTails2.bin",
-                            "length": 1
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/uncompressed/Sonic's art.bin",
-                        "compression": "Uncompressed",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Sonic.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": true,
-                        "path": "mappings/spriteDPLC/Sonic.bin",
-                        "label": ""
-                    },
-                    "uuid": "47147aaf-a967-4dcc-aad6-5b6cb379c2a8"
-                },
-                {
-                    "name": "Super Sonic",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
+                            "name": "Sonic",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/SonicAndTails.bin",
+                                    "length": 1
+                                },
+                                {
+                                    "path": "art/palettes/SonicAndTails2.bin",
+                                    "length": 1
+                                }
+                            ],
+                            "format": "Sonic 2.js",
+                            "art": {
+                                "path": "art/uncompressed/Sonic's art.bin",
+                                "compression": "Uncompressed",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Sonic.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": true,
+                                "path": "mappings/spriteDPLC/Sonic.bin",
+                                "label": ""
+                            },
+                            "uuid": "47147aaf-a967-4dcc-aad6-5b6cb379c2a8"
                         },
                         {
-                            "path": "art/palettes/SonicAndTails2.bin",
-                            "length": 1
-                        }
-                    ],
-                    "format": "Sonic 2.js",
-                    "art": {
-                        "path": "art/uncompressed/Super Sonic's art.bin",
-                        "compression": "Uncompressed",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Super Sonic.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": true,
-                        "path": "mappings/spriteDPLC/Super Sonic.bin",
-                        "label": ""
-                    },
-                    "uuid": "dad6e825-1660-4429-93f6-dd09b880aa01"
-                },
-                {
-                    "uuid": "3be765fc-3f12-4588-9a74-37aa14c6a925",
-                    "format": "Sonic 2.js",
-                    "name": "Sonic (special)",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/Special Stage Main.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/uncompressed/Sonic animation frames in special stage.bin",
-                        "compression": "Uncompressed",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_SonicSS.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": true,
-                        "path": "mappings/spriteDPLC/Obj_SonicSS.bin",
-                        "label": ""
-                    },
-                    "expanded": true
-                },
-                {
-                    "format": "Sonic 2.js",
-                    "name": "Tails",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        }
-                    ],
-                    "art": {
-                        "path": "art/uncompressed/Tails's art.bin",
-                        "compression": "Uncompressed",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Tails.bin",
-                        "format": "Sonic 2",
-                        "customDefinition": ""
-                    },
-                    "dplcs": {
-                        "enabled": true,
-                        "path": "mappings/spriteDPLC/Tails.bin",
-                        "format": "Sonic 2/3&K",
-                        "customDefinition": ""
-                    },
-                    "animations": {
-                        "path": "",
-                        "prefix": ""
-                    },
-                    "uuid": "f51522af-1cdb-4304-a922-65eb7b3a3211"
-                },
-                {
-                    "format": "Sonic 2.js",
-                    "name": "Tails' Tails",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        }
-                    ],
-                    "art": {
-                        "path": "art/uncompressed/Tails's tails's art.bin",
-                        "compression": "Uncompressed",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Tails's tails.bin",
-                        "format": "Sonic 2",
-                        "customDefinition": ""
-                    },
-                    "dplcs": {
-                        "enabled": true,
-                        "path": "mappings/spriteDPLC/Tails's tails.bin",
-                        "format": "Sonic 2/3&K",
-                        "customDefinition": ""
-                    },
-                    "animations": {
-                        "path": "",
-                        "prefix": ""
-                    },
-                    "uuid": "7b4b7a90-6802-40e0-b1f0-40da373a9f9b"
-                },
-                {
-                    "uuid": "4c3be765-fc3f-4245-885a-7437aa14c6a9",
-                    "format": "Sonic 2.js",
-                    "name": "Tails (special)",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/Special Stage Main.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/uncompressed/Tails animation frames in special stage.bin",
-                        "compression": "Uncompressed",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_TailsSS.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": true,
-                        "path": "mappings/spriteDPLC/Obj_TailsSS.bin",
-                        "label": ""
-                    },
-                    "expanded": true
-                },
-                {
-                    "uuid": "d4cead88-eeb9-40d2-bb1e-0dec3709e9e9",
-                    "format": "Sonic 2.js",
-                    "name": "Tails' Tails (special) (i am confused lol)",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/Special Stage Main.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/uncompressed/Tails' Tails animation frames in special stage.bin",
-                        "compression": "Uncompressed",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_SSTailsTails.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": true,
-                        "path": "mappings/spriteDPLC/Obj_SSTailsTails.bin",
-                        "label": ""
-                    },
-                    "expanded": true
-                },
-                {
-                    "uuid": "234c3be7-65fc-4f12-8588-5a7437aa14c6",
-                    "format": "Sonic 2.js",
-                    "name": "Knuckles",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/Knuckles.bin",
-                            "length": 1
-                        }
-                    ],
-                    "art": {
-                        "path": "art/uncompressed/Knuckles's art.bin",
-                        "compression": "Uncompressed",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Knuckles.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": true,
-                        "path": "mappings/spriteDPLC/Knuckles.bin",
-                        "label": ""
-                    }
-                },
-                {
-                    "uuid": "50b40ae3-a0e4-46ce-ae11-20e60062d5f8",
-                    "format": "Sonic 2.js",
-                    "name": "Knuckles (special)",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/Special Stage Knuckles.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/uncompressed/Knuckles animation frames in special stage.bin",
-                        "compression": "Uncompressed",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_KnucklesSS.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": true,
-                        "path": "mappings/spriteDPLC/Obj_KnucklesSS.bin",
-                        "label": ""
-                    },
-                    "expanded": true
-                },
-                {
-                    "uuid": "cdccaad6-5b6c-4379-82a8-c475c6adb004",
-                    "format": "Sonic 2.js",
-                    "name": "Shield",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
+                            "name": "Super Sonic",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/SonicAndTails.bin",
+                                    "length": 1
+                                },
+                                {
+                                    "path": "art/palettes/SonicAndTails2.bin",
+                                    "length": 1
+                                }
+                            ],
+                            "format": "Sonic 2.js",
+                            "art": {
+                                "path": "art/uncompressed/Super Sonic's art.bin",
+                                "compression": "Uncompressed",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Super Sonic.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": true,
+                                "path": "mappings/spriteDPLC/Super Sonic.bin",
+                                "label": ""
+                            },
+                            "uuid": "dad6e825-1660-4429-93f6-dd09b880aa01"
                         },
                         {
-                            "path": "art/palettes/SonicAndTails2.bin",
-                            "length": 1
-                        }
-                    ],
-                    "art": {
-                        "path": "art/uncompressed/Shield.bin",
-                        "compression": "Uncompressed",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Shield.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": true,
-                        "path": "mappings/spriteDPLC/Obj_Shield.bin",
-                        "label": ""
-                    }
-                },
-                {
-                    "uuid": "a967cdcc-aad6-4b6c-b379-c2a8c475c6ad",
-                    "format": "Sonic 2.js",
-                    "name": "Invincibility Stars",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
+                            "uuid": "3be765fc-3f12-4588-9a74-37aa14c6a925",
+                            "format": "Sonic 2.js",
+                            "name": "Sonic (special)",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/Special Stage Main.bin",
+                                    "length": 3
+                                }
+                            ],
+                            "art": {
+                                "path": "art/uncompressed/Sonic animation frames in special stage.bin",
+                                "compression": "Uncompressed",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Obj_SonicSS.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": true,
+                                "path": "mappings/spriteDPLC/Obj_SonicSS.bin",
+                                "label": ""
+                            },
+                            "expanded": true
                         },
                         {
-                            "path": "art/palettes/SonicAndTails2.bin",
-                            "length": 1
+                            "format": "Sonic 2.js",
+                            "name": "Tails",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/SonicAndTails.bin",
+                                    "length": 1
+                                }
+                            ],
+                            "art": {
+                                "path": "art/uncompressed/Tails's art.bin",
+                                "compression": "Uncompressed",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Tails.bin",
+                                "format": "Sonic 2",
+                                "customDefinition": ""
+                            },
+                            "dplcs": {
+                                "enabled": true,
+                                "path": "mappings/spriteDPLC/Tails.bin",
+                                "format": "Sonic 2/3&K",
+                                "customDefinition": ""
+                            },
+                            "animations": {
+                                "path": "",
+                                "prefix": ""
+                            },
+                            "uuid": "f51522af-1cdb-4304-a922-65eb7b3a3211"
+                        },
+                        {
+                            "format": "Sonic 2.js",
+                            "name": "Tails' Tails",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/SonicAndTails.bin",
+                                    "length": 1
+                                }
+                            ],
+                            "art": {
+                                "path": "art/uncompressed/Tails's tails's art.bin",
+                                "compression": "Uncompressed",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Tails's tails.bin",
+                                "format": "Sonic 2",
+                                "customDefinition": ""
+                            },
+                            "dplcs": {
+                                "enabled": true,
+                                "path": "mappings/spriteDPLC/Tails's tails.bin",
+                                "format": "Sonic 2/3&K",
+                                "customDefinition": ""
+                            },
+                            "animations": {
+                                "path": "",
+                                "prefix": ""
+                            },
+                            "uuid": "7b4b7a90-6802-40e0-b1f0-40da373a9f9b"
+                        },
+                        {
+                            "uuid": "4c3be765-fc3f-4245-885a-7437aa14c6a9",
+                            "format": "Sonic 2.js",
+                            "name": "Tails (special)",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/Special Stage Main.bin",
+                                    "length": 3
+                                }
+                            ],
+                            "art": {
+                                "path": "art/uncompressed/Tails animation frames in special stage.bin",
+                                "compression": "Uncompressed",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Obj_TailsSS.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": true,
+                                "path": "mappings/spriteDPLC/Obj_TailsSS.bin",
+                                "label": ""
+                            },
+                            "expanded": true
+                        },
+                        {
+                            "uuid": "d4cead88-eeb9-40d2-bb1e-0dec3709e9e9",
+                            "format": "Sonic 2.js",
+                            "name": "Tails' Tails (special) (i am confused lol)",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/Special Stage Main.bin",
+                                    "length": 3
+                                }
+                            ],
+                            "art": {
+                                "path": "art/uncompressed/Tails' Tails animation frames in special stage.bin",
+                                "compression": "Uncompressed",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Obj_SSTailsTails.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": true,
+                                "path": "mappings/spriteDPLC/Obj_SSTailsTails.bin",
+                                "label": ""
+                            },
+                            "expanded": true
+                        },
+                        {
+                            "uuid": "234c3be7-65fc-4f12-8588-5a7437aa14c6",
+                            "format": "Sonic 2.js",
+                            "name": "Knuckles",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/Knuckles.bin",
+                                    "length": 1
+                                }
+                            ],
+                            "art": {
+                                "path": "art/uncompressed/Knuckles's art.bin",
+                                "compression": "Uncompressed",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Knuckles.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": true,
+                                "path": "mappings/spriteDPLC/Knuckles.bin",
+                                "label": ""
+                            }
+                        },
+                        {
+                            "uuid": "50b40ae3-a0e4-46ce-ae11-20e60062d5f8",
+                            "format": "Sonic 2.js",
+                            "name": "Knuckles (special)",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/Special Stage Knuckles.bin",
+                                    "length": 3
+                                }
+                            ],
+                            "art": {
+                                "path": "art/uncompressed/Knuckles animation frames in special stage.bin",
+                                "compression": "Uncompressed",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Obj_KnucklesSS.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": true,
+                                "path": "mappings/spriteDPLC/Obj_KnucklesSS.bin",
+                                "label": ""
+                            },
+                            "expanded": true
+                        },
+                        {
+                            "name": "Amy",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/Amy.bin",
+                                    "length": 1
+                                },
+                                {
+                                    "path": "art/palettes/SonicAndTails2.bin",
+                                    "length": 1
+                                }
+                            ],
+                            "format": "Sonic 2.js",
+                            "art": {
+                                "path": "art/uncompressed/Amy's art.bin",
+                                "compression": "Uncompressed",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Amy.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": true,
+                                "path": "mappings/spriteDPLC/Amy.bin",
+                                "label": ""
+                            },
+                            "uuid": "c072f642-4b66-48f7-94e6-366a09bfb4f0"
                         }
                     ],
-                    "art": {
-                        "path": "art/nemesis/Invincibility stars.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_InvincibilityStars.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    }
+                    "isDirectory": true,
+                    "expanded": false,
+                    "uuid": "6b4206ec-e431-4fd4-8f95-c66089c86431"
                 },
                 {
-                    "uuid": "d0517e1d-217f-4ccf-9fa6-85eb294faa15",
-                    "format": "Sonic 2.js",
-                    "name": "Super Sonic Stars",
-                    "palettes": [],
-                    "art": {
-                        "path": "art/nemesis/Super Sonic stars.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_SuperSonicStars.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    }
+                    "name": "Powerups",
+                    "children": [
+                        {
+                            "uuid": "cdccaad6-5b6c-4379-82a8-c475c6adb004",
+                            "format": "Sonic 2.js",
+                            "name": "Shield",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/SonicAndTails.bin",
+                                    "length": 1
+                                },
+                                {
+                                    "path": "art/palettes/SonicAndTails2.bin",
+                                    "length": 1
+                                }
+                            ],
+                            "art": {
+                                "path": "art/uncompressed/Shield.bin",
+                                "compression": "Uncompressed",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Obj_Shield.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": true,
+                                "path": "mappings/spriteDPLC/Obj_Shield.bin",
+                                "label": ""
+                            },
+                            "expanded": true
+                        },
+                        {
+                            "uuid": "a967cdcc-aad6-4b6c-b379-c2a8c475c6ad",
+                            "format": "Sonic 2.js",
+                            "name": "Invincibility Stars",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/SonicAndTails.bin",
+                                    "length": 1
+                                },
+                                {
+                                    "path": "art/palettes/SonicAndTails2.bin",
+                                    "length": 1
+                                }
+                            ],
+                            "art": {
+                                "path": "art/nemesis/Invincibility stars.bin",
+                                "compression": "Nemesis",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Obj_InvincibilityStars.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": false,
+                                "path": "",
+                                "label": ""
+                            },
+                            "expanded": true
+                        },
+                        {
+                            "uuid": "d0517e1d-217f-4ccf-9fa6-85eb294faa15",
+                            "format": "Sonic 2.js",
+                            "name": "Super Sonic Stars",
+                            "palettes": [],
+                            "art": {
+                                "path": "art/nemesis/Super Sonic stars.bin",
+                                "compression": "Nemesis",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Obj_SuperSonicStars.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": false,
+                                "path": "",
+                                "label": ""
+                            },
+                            "expanded": true
+                        },
+                        {
+                            "name": "Monitor",
+                            "format": "Sonic 2.js",
+                            "palettes": [
+                                {
+                                    "path": "art/palettes/SonicAndTails.bin",
+                                    "length": 1
+                                },
+                                {
+                                    "path": "art/palettes/SonicAndTails2.bin",
+                                    "length": 1
+                                }
+                            ],
+                            "art": {
+                                "path": "art/nemesis/Monitor and contents.bin",
+                                "compression": "Nemesis",
+                                "offset": 0
+                            },
+                            "mappings": {
+                                "path": "mappings/sprite/Obj_Monitor.bin",
+                                "label": ""
+                            },
+                            "dplcs": {
+                                "enabled": false,
+                                "path": "",
+                                "label": ""
+                            },
+                            "uuid": "251660d4-2993-46dd-89b8-80aa01d0b5b5"
+                        }
+                    ],
+                    "isDirectory": true,
+                    "expanded": false,
+                    "uuid": "4206ece4-31af-440f-95c6-6089c86431a7"
                 },
                 {
                     "name": "Rings",
@@ -396,7 +474,8 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "98dad6e8-2516-40d4-a993-f6dd09b880aa"
+                    "uuid": "98dad6e8-2516-40d4-a993-f6dd09b880aa",
+                    "expanded": true
                 },
                 {
                     "name": "Path Swapper",
@@ -421,7 +500,8 @@
                         "path": "",
                         "label": ""
                     },
-                    "uuid": "d6e82516-60d4-4993-b6dd-09b880aa01d0"
+                    "uuid": "d6e82516-60d4-4993-b6dd-09b880aa01d0",
+                    "expanded": true
                 },
                 {
                     "name": "Signpost",
@@ -447,35 +527,6 @@
                         "label": ""
                     },
                     "uuid": "e8251660-d429-43f6-9d09-b880aa01d0b5"
-                },
-                {
-                    "name": "Monitor",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/SonicAndTails2.bin",
-                            "length": 1
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Monitor and contents.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_Monitor.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "251660d4-2993-46dd-89b8-80aa01d0b5b5"
                 },
                 {
                     "name": "Invisible Lava Marker",
@@ -636,6 +687,31 @@
                     "uuid": "11d4f520-d4bc-4aeb-916f-eb415072e5bb"
                 },
                 {
+                    "name": "Pressure Spring",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Lever spring.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_SpringBoard.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "5655b9eb-b709-48c1-948c-fc3e7e6281a9"
+                },
+                {
                     "name": "Invisible Solid Block",
                     "format": "Sonic 2.js",
                     "palettes": [
@@ -691,7 +767,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": true,
+            "expanded": false,
             "uuid": "a898dad6-e825-4660-9429-93f6dd09b880"
         },
         {
@@ -913,10 +989,6 @@
                     "format": "Sonic 2.js",
                     "palettes": [
                         {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
                             "path": "art/palettes/CPZ.bin",
                             "length": 3
                         }
@@ -941,10 +1013,6 @@
                     "name": "Platform",
                     "format": "Sonic 2.js",
                     "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
                         {
                             "path": "art/palettes/CPZ.bin",
                             "length": 3
@@ -1029,10 +1097,6 @@
                     "format": "Sonic 2.js",
                     "palettes": [
                         {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
                             "path": "art/palettes/CPZ.bin",
                             "length": 3
                         }
@@ -1057,10 +1121,6 @@
                     "name": "Tube Cap",
                     "palettes": [
                         {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
                             "path": "art/palettes/CPZ.bin",
                             "length": 3
                         }
@@ -1083,42 +1143,9 @@
                     "uuid": "925655b9-ebb7-4958-8194-8cfc3e7e6281"
                 },
                 {
-                    "name": "Pressure Spring",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/CPZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Lever spring.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_SpringBoard.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "5655b9eb-b709-48c1-948c-fc3e7e6281a9"
-                },
-                {
                     "name": "Stairs",
                     "format": "Sonic 2.js",
                     "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
                         {
                             "path": "art/palettes/CPZ.bin",
                             "length": 3
@@ -1143,10 +1170,6 @@
                 {
                     "name": "Platform That Moves Back and Forth",
                     "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
                         {
                             "path": "art/palettes/CPZ.bin",
                             "length": 3
@@ -1769,10 +1792,6 @@
                     "name": "Round Bumper",
                     "palettes": [
                         {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
                             "path": "art/palettes/CNZ.bin",
                             "length": 3
                         }
@@ -1784,7 +1803,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj44.bin",
+                        "path": "mappings/sprite/Obj_RoundBumper.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1813,7 +1832,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj03.bin",
+                        "path": "mappings/sprite/Obj_PlaneSwitcher.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1842,7 +1861,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj85_a.bin",
+                        "path": "mappings/sprite/Obj_LauncherSpring_a.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1871,7 +1890,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj86.bin",
+                        "path": "mappings/sprite/Obj_Flipper.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1929,7 +1948,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objD2.bin",
+                        "path": "mappings/sprite/Obj_CNZRectangularBlocks.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1958,7 +1977,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objD4.bin",
+                        "path": "mappings/sprite/Obj_CNZBigBlock.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -1987,7 +2006,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objD5.bin",
+                        "path": "mappings/sprite/Obj_Elevator.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2016,7 +2035,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objD6_b.bin",
+                        "path": "mappings/sprite/Obj_PointPokey_b.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2045,7 +2064,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objD7.bin",
+                        "path": "mappings/sprite/Obj_Bumper.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2074,7 +2093,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objD8.bin",
+                        "path": "mappings/sprite/Obj_BonusBlock.bin",
                         "label": ""
                     },
                     "dplcs": {

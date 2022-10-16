@@ -97,7 +97,7 @@ KnucklesAni_Float:dc.b	 7,frK_Glide1,afEnd
 	rev02even
 KnucklesAni_Float2:dc.b	  5,frK_Glide1,frK_Glide2,frK_Glide3,frK_Glide4,frK_Glide5,frK_Glide6,frK_Glide7,frK_Glide8,frK_Glide9,frK_Glide10,afEnd
 	rev02even
-KnucklesAni_Spring:dc.b	$2F,frK_Spring,afEnd
+KnucklesAni_Spring:dc.b	  3,frK_Spring1,frK_Spring2,afEnd
 	rev02even
 KnucklesAni_Hang:dc.b	1,frK_Cling1,frK_Cling2,afEnd
 	rev02even
@@ -203,7 +203,9 @@ frK_SpDsh6	ds.b 1
 frK_Hurt	ds.b 1
 frK_Slide	ds.b 1
 ; boing
-frK_Spring	ds.b 1
+frK_Spring1	ds.b 1
+frK_Spring2	ds.b 1
+; whee
 frK_Fall1	ds.b 1
 frK_Fall2	ds.b 1
 ; hang from vine/wfz thing

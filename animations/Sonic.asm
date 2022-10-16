@@ -88,7 +88,7 @@ SonAni_Float:	dc.b   7,frS_Float1,frS_FloatB,afEnd
 	rev02even
 SonAni_Float2:	dc.b   7,frS_Float1,frS_Float2,frS_Float3,frS_Float4,frS_Float5,afEnd
 	rev02even
-SonAni_Spring:	dc.b $2F,frS_Spring,afEnd	; spring > falling via code in MdNormal
+SonAni_Spring:	dc.b   3,frS_Spring1,frS_Spring2,afEnd	; spring > falling via code in MdNormal
 	rev02even
 SonAni_Hang:	dc.b   1,frS_Cling1,frS_Cling2,afEnd
 	rev02even
@@ -273,7 +273,8 @@ frS_FloatB	ds.b 1
 ; bubble bobble nes
 frS_Bubble	ds.b 1
 ; boing
-frS_Spring	ds.b 1
+frS_Spring1	ds.b 1
+frS_Spring2	ds.b 1
 ; ded
 frS_Death	ds.b 1
 frS_Drown	ds.b 1

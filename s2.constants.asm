@@ -460,6 +460,7 @@ PalID_Result =	id(PalPtr_Result) ; 27
 PalID_Sonic =	id(PalPtr_Sonic)
 PalID_Knux =	id(PalPtr_Knux)
 PalID_SSK =		id(PalPtr_SSK)
+PalID_Amy =		id(PalPtr_Amy)
 
 ; PLC IDs
 offset :=	ArtLoadCues
@@ -472,10 +473,9 @@ PLCID_StdWtr =		id(PLCptr_StdWtr) ; 2
 PLCID_GameOver =	id(PLCptr_GameOver) ; 3
 PLCID_Ehz1 =		id(PLCptr_Ehz1) ; 4
 PLCID_Ehz2 =		id(PLCptr_Ehz2) ; 5
-PLCID_Tails1up =	id(PLCptr_Tails1up) ; 6
 PLCID_TailsLife =	id(PLCptr_TailsLife) ; 7
-PLCID_Knuckles1up =	id(PLCptr_Knuckles1up) ; 8
 PLCID_KnucklesLife =	id(PLCptr_KnucklesLife) ; 9
+PLCID_AmyLife =		id(PLCptr_AmyLife)
 PLCID_Unused1 =		id(PLCptr_Unused1) ; A
 PLCID_Unused2 =		id(PLCptr_Unused2) ; B
 PLCID_Mtz1 =		id(PLCptr_Mtz1) ; C
@@ -533,6 +533,7 @@ PLCID_Capsule =		id(PLCptr_Capsule) ; 40
 PLCID_Explosion =	id(PLCptr_Explosion) ; 41
 PLCID_ResultsTails =	id(PLCptr_ResultsTails) ; 42
 PLCID_ResultsKnuckles = id(PLCptr_ResultsKnuckles)
+PLCID_ResultsAmy = id(PLCptr_ResultsAmy)
 PLCID_SpecialStageK =	id(PLCptr_SpecialStageK) ; 3C
 
 ; 2P VS results screens
@@ -1770,11 +1771,11 @@ ArtTile_ArtKos_NumTiles_DEZ           = $0326 ; Skips several CPZ tiles.
 ; they are loaded, even if not all levels load them.
 ArtTile_ArtNem_WaterSurface           = $0400
 ArtTile_ArtNem_Button                 = $0424
-ArtTile_ArtNem_HorizSpike             = $042C
-ArtTile_ArtNem_Spikes                 = $0434
-ArtTile_ArtNem_DignlSprng             = $043C
-ArtTile_ArtNem_LeverSpring            = $0440
-ArtTile_ArtNem_Spring                 = $045C
+ArtTile_ArtNem_HorizSpike             = $0434
+ArtTile_ArtNem_Spikes                 = $043C
+ArtTile_ArtNem_DignlSprng             = $044A
+ArtTile_ArtNem_LeverSpring            = $0448
+ArtTile_ArtNem_Spring                 = $0464
 
 ; EHZ, HTZ
 ArtTile_ArtKos_Checkers               = ArtTile_ArtKos_LevelArt+$0158
@@ -1796,7 +1797,7 @@ ArtTile_ArtNem_Balkrie                = $0565
 ArtTile_ArtUnc_EHZPulseBall           = $039C
 ArtTile_ArtNem_EHZ_Bridge             = $0500
 ArtTile_ArtUnc_EHZMountains           = $0500
-ArtTile_ArtNem_SSLZPlat               = $03C1
+ArtTile_ArtNem_SSLZPlat               = $03C9
 ArtTile_ArtNem_BuzzBomber             = ArtTile_ArtNem_SSLZPlat+32 ; absolute latest i can put it
 ; These two are loaded in that funny little junk area of VRAM.
 ; No clue why that exists, but it looks like EHZ doesn't use it.
