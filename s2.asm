@@ -522,7 +522,7 @@ Vint_SEGA:
 	bsr.w	Do_ControllerPal
 
 	dma68kToVDP Horiz_Scroll_Buf,VRAM_Horiz_Scroll_Table,VRAM_Horiz_Scroll_Table_Size,VRAM
-	jsrto	(SegaScr_VInt).l, JmpTo_SegaScr_VInt
+	jsr		(SegaScr_VInt).l
 	tst.w	(Demo_Time_left).w	; is there time left on the demo?
 	beq.w	+	; if not, return
 	subq.w	#1,(Demo_Time_left).w	; subtract 1 from time left in demo
@@ -631,8 +631,8 @@ loc_748:
 
 ; sub_7E6: Demo_Time:
 Do_Updates:
-	jsrto	(LoadTilesAsYouMove).l, JmpTo_LoadTilesAsYouMove
-	jsr	(HudUpdate).l
+	jsr		(LoadTilesAsYouMove).l
+	jsr		(HudUpdate).l
 	bsr.w	ProcessDPLC2
 	tst.w	(Demo_Time_left).w	; is there time left on the demo?
 	beq.w	+		; if not, branch
@@ -870,7 +870,7 @@ Vint_Ending:
 	movem.l	d0-d7,(Camera_RAM_copy).w
 	movem.l	(Scroll_flags).w,d0-d3
 	movem.l	d0-d3,(Scroll_flags_copy).w
-	jsrto	(LoadTilesAsYouMove).l, JmpTo_LoadTilesAsYouMove
+	jsr		(LoadTilesAsYouMove).l
 
 	move.w	(Ending_VInt_Subrout).w,d0
 	beq.s	+	; rts
@@ -980,16 +980,6 @@ loc_1072:
 	bsr.w	Do_Updates
 	movem.l	(sp)+,d0-a6
 	rte
-
-    if ~~removeJmpTos
-; sub_10E0:
-JmpTo_LoadTilesAsYouMove ; JmpTo
-	jmp	(LoadTilesAsYouMove).l
-JmpTo_SegaScr_VInt ; JmpTo
-	jmp	(SegaScr_VInt).l
-
-	align 4
-    endif
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to initialize joypads
@@ -2946,7 +2936,7 @@ Pal_FadeToWhite:
 	bchg	#$00,d6					; MJ: change delay counter
 	beq.s	.nextframe				; MJ: if null, delay a frame
 	bsr.s	.UpdateAllColours
-	dbf	d4,.nextframe
+	dbf		d4,.nextframe
 
 	rts
 ; End of function Pal_FadeToWhite
@@ -2958,28 +2948,28 @@ Pal_FadeToWhite:
 .UpdateAllColours:
 	; Update above-water palette
 	moveq	#0,d0
-	lea	(Normal_palette).w,a0
+	lea		(Normal_palette).w,a0
 	move.b	(Palette_fade_start).w,d0
 	adda.w	d0,a0
 
 	move.b	(Palette_fade_length).w,d0
 .nextcolour:
 	bsr.s	.UpdateColour
-	dbf	d0,.nextcolour
+	dbf		d0,.nextcolour
 
 	; Notice how this one lacks a check for
 	; if Water_flag is set, unlike Pal_FadeFromWhite?
 
 	; Update underwater palette
 	moveq	#0,d0
-	lea	(Underwater_palette).w,a0
+	lea		(Underwater_palette).w,a0
 	move.b	(Palette_fade_start).w,d0
 	adda.w	d0,a0
 
 	move.b	(Palette_fade_length).w,d0
 .nextcolour2:
 	bsr.s	.UpdateColour
-	dbf	d0,.nextcolour2
+	dbf		d0,.nextcolour2
 
 	rts
 
@@ -3017,7 +3007,7 @@ FC3_NoRed:
 
 ; sub_2712: PalLoad1:
 PalLoad_ForFade:
-	lea	(PalPointers).l,a1
+	lea		(PalPointers).l,a1
 	lsl.w	#3,d0
 	adda.w	d0,a1
 	movea.l	(a1)+,a2
@@ -3036,7 +3026,7 @@ PalLoad_ForFade:
 
 ; sub_272E: PalLoad2:
 PalLoad_Now:
-	lea	(PalPointers).l,a1
+	lea		(PalPointers).l,a1
 	lsl.w	#3,d0
 	adda.w	d0,a1
 	movea.l	(a1)+,a2
@@ -3054,7 +3044,7 @@ PalLoad_Now:
 
 ; sub_2746: PalLoad3_Water:
 PalLoad_Water_Now:
-	lea	(PalPointers).l,a1
+	lea		(PalPointers).l,a1
 	lsl.w	#3,d0
 	adda.w	d0,a1
 	movea.l	(a1)+,a2
@@ -3073,7 +3063,7 @@ PalLoad_Water_Now:
 
 ; sub_2764: PalLoad4_Water:
 PalLoad_Water_ForFade:
-	lea	(PalPointers).l,a1
+	lea		(PalPointers).l,a1
 	lsl.w	#3,d0
 	adda.w	d0,a1
 	movea.l	(a1)+,a2
@@ -3335,17 +3325,11 @@ CalcAngle_Zero:
 ; ===========================================================================
 ; byte_36B4:
 Angle_Data:	BINCLUDE	"misc/angles.bin"
-
 ; ===========================================================================
-
-    if gameRevision<2
-	nop
-    endif
-
 ; loc_37B8:
 SegaScreen:
 	command	Mus_Stop 			; stop music
-	sfx	Mus_Reset
+	sfx		Mus_Reset
 	bsr.w	ClearPLC
 	bsr.w	Pal_FadeToBlack
 
@@ -3353,7 +3337,7 @@ SegaScreen:
 	clearRAM Object_RAM,Object_RAM_End		; fill object RAM with 0
 	clearRAM Camera_RAM,Camera_RAM_End		; clear camera RAM and following variables
 
-	lea	(VDP_control_port).l,a6
+	lea		(VDP_control_port).l,a6
 	move.w	#$8004,(a6)		; H-INT disabled
 	move.w	#$8200|(VRAM_SegaScr_Plane_A_Name_Table/$400),(a6)	; PNT A base: $C000
 	move.w	#$8400|(VRAM_SegaScr_Plane_B_Name_Table/$2000),(a6)	; PNT B base: $A000
@@ -3371,19 +3355,19 @@ SegaScreen:
 	dmaFillVRAM 0,VRAM_SegaScr_Plane_A_Name_Table,VRAM_SegaScr_Plane_Table_Size ; clear Plane A pattern name table
 
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_Sega_Logo),VRAM,WRITE),(VDP_control_port).l
-	lea	(ArtNem_SEGA).l,a0
+	lea		(ArtNem_SEGA).l,a0
 	bsr.w	NemDec
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_Trails),VRAM,WRITE),(VDP_control_port).l
-	lea	(ArtNem_IntroTrails).l,a0
+	lea		(ArtNem_IntroTrails).l,a0
 	bsr.w	NemDec
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtUnc_Giant_Sonic),VRAM,WRITE),(VDP_control_port).l
-	lea	(ArtNem_SilverSonic).l,a0 ; ?? seems unused here
+	lea		(ArtNem_SilverSonic).l,a0 ; ?? seems unused here
 	bsr.w	NemDec
-	lea	(Chunk_Table).l,a1
-	lea	(MapEng_SEGA).l,a0
+	lea		(Chunk_Table).l,a1
+	lea		(MapEng_SEGA).l,a0
 	move.w	#make_art_tile(ArtTile_VRAM_Start,0,0),d0
 	bsr.w	EniDec
-	lea	(Chunk_Table).l,a1
+	lea		(Chunk_Table).l,a1
 	move.l	#vdpComm(VRAM_SegaScr_Plane_B_Name_Table,VRAM,WRITE),d0
 	moveq	#$27,d1		; 40 cells wide
 	moveq	#$1B,d2		; 28 cells tall
@@ -3391,7 +3375,7 @@ SegaScreen:
 	tst.b	(Graphics_Flags).w ; are we on a Japanese Mega Drive?
 	bmi.s	SegaScreen_Contin ; if not, branch
 	; load an extra sprite to hide the TM (trademark) symbol on the SEGA screen
-	lea	(SegaHideTM).w,a1
+	lea		(SegaHideTM).w,a1
 	move.l	#Obj_SegaHideTM,id(a1)	; load Obj_SegaHideTM at $FFFFB080
 	move.b	#$4E,subtype(a1) ; <== Obj_SegaHideTM_SubObjData
 ; loc_38CE:
@@ -3404,10 +3388,10 @@ SegaScreen_Contin:
 	move.w	#0,(PalCycle_Timer).w
 	move.w	#0,(SegaScr_VInt_Subrout).w
 	move.w	#0,(SegaScr_PalDone_Flag).w
-	lea	(SegaScreenObject).w,a1
+	lea		(SegaScreenObject).w,a1
 	move.l	#Obj_SonicOnSegaScreen,id(a1) ; load Obj_SonicOnSegaScreen (sega screen?) at $FFFFB040
 	move.b	#$4C,subtype(a1) ; <== Obj_SonicOnSegaScreen_SubObjData
-	st	(Demo_Time_left).w		; a lot
+	st		(Demo_Time_left).w		; a lot
 	move.w	(VDP_Reg1_val).w,d0
 	ori.b	#$40,d0
 	move.w	d0,(VDP_control_port).l
@@ -3417,8 +3401,8 @@ Sega_WaitPalette:
 	move.b	#VintID_SEGA,(Vint_routine).w
 	bsr.w	WaitForVint
 	bsr.w	DoChecksum
-	jsrto	(RunObjects).l, JmpTo_RunObjects
-	jsr	(BuildSprites).l
+	jsr		(RunObjects).l
+	jsr		(BuildSprites).l
 
 	move.b	(Ctrl_1_Press).w,d0	; is Start button pressed?
 	or.b	(Ctrl_2_Press).w,d0	; (either player)
@@ -3486,24 +3470,6 @@ PlaneMapToVRAM_H80_Sega:
 	dbf	d2,--
 	rts
 ; End of function PlaneMapToVRAM_H80_Sega
-
-; ===========================================================================
-
-    if gameRevision<2
-	nop
-    endif
-
-    if ~~removeJmpTos
-; sub_3990:
-JmpTo_RunObjects ; JmpTo
-	jmp	(RunObjects).l
-
-	align 4
-    endif
-
-
-
-
 ; ===========================================================================
 ; loc_3998:
 TitleScreen:
@@ -3589,19 +3555,19 @@ TitleScreen:
 	moveq	#$17,d1
 	moveq	#$1B,d2
 	jsrto	(PlaneMapToVRAM_H40).l, PlaneMapToVRAM_H40
-	lea	(Chunk_Table).l,a1
-	lea	(MapEng_TitleLogo).l,a0
+	lea		(Chunk_Table).l,a1
+	lea		(MapEng_TitleLogo).l,a0
 	move.w	#make_art_tile(ArtTile_ArtNem_Title,3,1),d0
 	bsr.w	EniDec
 
-	lea	(Chunk_Table+$858).l,a1
-	lea	(CopyrightText).l,a2
+	lea		(Chunk_Table+$858).l,a1
+	lea		(CopyrightText).l,a2
 
 	moveq	#bytesToWcnt(CopyrightText_End-CopyrightText),d6
 -	move.w	(a2)+,(a1)+	; load mappings for copyright 1992 sega message
-	dbf	d6,-
+	dbf		d6,-
 
-	lea	(Chunk_Table).l,a1
+	lea		(Chunk_Table).l,a1
 	move.l	#vdpComm(VRAM_TtlScr_Plane_A_Name_Table,VRAM,WRITE),d0
 	moveq	#$27,d1
 	moveq	#$1B,d2
@@ -3616,8 +3582,8 @@ TitleScreen:
 	clr.w	(Ctrl_1).w
 	move.l	#Obj_IntroStars,(IntroSonic+id).w	; load Obj_IntroStars (flashing intro star)
 	move.b	#2,(IntroSonic+subtype).w				; Sonic
-	jsr	(RunObjects).l
-	jsr	(BuildSprites).l
+	jsr		(RunObjects).l
+	jsr		(BuildSprites).l
 	moveq	#PLCID_Std1,d0
 	bsr.w	LoadPLC2
 	move.w	#0,(Correct_cheat_entries).w
@@ -3629,7 +3595,7 @@ TitleScreen:
 
 	moveq	#bytesToWcnt(Results_Data_2P_End-Results_Data_2P),d0
 -	move.w	#-1,(a1)+
-	dbf	d0,-
+	dbf		d0,-
 
 	move.w	#-$280,(Camera_X_pos).w
 	move.w	(VDP_Reg1_val).w,d0
@@ -3641,13 +3607,13 @@ TitleScreen:
 TitleScreen_Loop:
 	move.b	#VintID_Title,(Vint_routine).w
 	bsr.w	WaitForVint
-	jsr	(RunObjects).l
-	jsrto	(SwScrl_Title).l, JmpTo_SwScrl_Title
-	jsr	(BuildSprites).l
+	jsr		(RunObjects).l
+	jsr		(SwScrl_Title).l
+	jsr		(BuildSprites).l
 
 	; write alternating 0s and 4s, 80 times, at every 4th word,
 	; starting at Sprite_Table+6
-	lea	(Sprite_Table+4).w,a1
+	lea		(Sprite_Table+4).w,a1
 	moveq	#0,d0
 
 	moveq	#79,d6
@@ -3656,7 +3622,7 @@ TitleScreen_Loop:
 	bchg	#2,d0
 	move.w	d0,2(a1)
 +	addq.w	#8,a1
-	dbf	d6,-
+	dbf		d6,-
 
 	bsr.w	RunPLC_RAM
 	bsr.w	TailsNameCheat
@@ -3820,17 +3786,6 @@ CopyrightText:
 CopyrightText_End:
 
     charset ; Revert character set
-
-    if ~~removeJmpTos
-; sub_3E98:
-JmpTo_SwScrl_Title ; JmpTo
-	jmp	(SwScrl_Title).l
-
-	align 4
-    endif
-
-
-
 
 ;----------------------------------------------------------------------------
 ; 1P Music Playlist
@@ -4037,18 +3992,18 @@ Level_TtlCard:
 +
 	moveq	#PalID_BGND,d0
 	bsr.w	PalLoad_ForFade	; load Sonic's palette line
-	jsr	LevelSizeLoad
-	jsrto	(DeformBgLayer).l, JmpTo_DeformBgLayer
+	jsr		LevelSizeLoad
+	jsr		(DeformBgLayer).l
 	clr.w	(Vscroll_Factor_FG).w
 	move.w	#-$E0,(Vscroll_Factor_P2_FG).w
 
 	clearRAM Horiz_Scroll_Buf,Horiz_Scroll_Buf_End
 
 	bsr.w	LoadZoneTiles
-	jsrto	(loadZoneBlockMaps).l, JmpTo_loadZoneBlockMaps
-	jsr	(loc_402D4).l
-	jsrto	(DrawInitialBG).l, JmpTo_DrawInitialBG
-	jsr	(ConvertCollisionArray).l
+	jsr		(loadZoneBlockMaps).l
+	jsr		(loc_402D4).l
+	jsr		(DrawInitialBG).l
+	jsr		(ConvertCollisionArray).l
 	bsr.w	LoadCollisionIndexes
 	bsr.w	WaterEffects
 	bsr.w	InitPlayers
@@ -4112,23 +4067,23 @@ Level_FromCheckpoint:
 	move.b	#1,(Update_HUD_rings).w
 	move.b	#1,(Update_HUD_timer).w
 	move.b	#1,(Update_HUD_timer_2P).w
-	jsr	(ObjectsManager).l
-	jsr	(RingsManager).l
-	jsr	(SpecialCNZBumpers).l
-	jsr	(RunObjects).l
-	jsr	(BuildSprites).l
-	jsrto	(AniArt_Load).l, JmpTo_AniArt_Load
+	jsr		(ObjectsManager).l
+	jsr		(RingsManager).l
+	jsr		(SpecialCNZBumpers).l
+	jsr		(RunObjects).l
+	jsr		(BuildSprites).l
+	jsr		(AniArt_Load).l
 	bsr.w	SetLevelEndType
 	move.w	#0,(Demo_button_index).w
 	move.w	#0,(Demo_button_index_2P).w
-	lea	(DemoScriptPointers).l,a1
+	lea		(DemoScriptPointers).l,a1
 	moveq	#0,d0
 	move.b	(Current_Zone).w,d0	; load zone value
 	lsl.w	#2,d0
 	movea.l	(a1,d0.w),a1
 	tst.w	(Demo_mode_flag).w
 	bpl.s	+
-	lea	(EndingDemoScriptPointers).l,a1
+	lea		(EndingDemoScriptPointers).l,a1
 	move.w	(Ending_demo_number).w,d0
 	subq.w	#1,d0
 	lsl.w	#2,d0
@@ -4194,14 +4149,14 @@ Level_MainLoop:
 	jsr	(RunObjects).l
 	tst.w	(Level_Inactive_flag).w
 	bne.w	Level
-	jsrto	(DeformBgLayer).l, JmpTo_DeformBgLayer
+	jsr		(DeformBgLayer).l
 	bsr.w	UpdateWaterSurface
 	jsr	(RingsManager).l
 	cmpi.b	#casino_night_zone,(Current_Zone).w	; is it CNZ?
 	bne.s	+			; if not, branch past jsr
 	jsr	(SpecialCNZBumpers).l
 +
-	jsrto	(AniArt_Load).l, JmpTo_AniArt_Load
+	jsr		(AniArt_Load).l
 	bsr.w	PalCycle_Load
 	bsr.w	RunPLC_RAM
 	bsr.w	OscillateNumDo
@@ -5438,28 +5393,6 @@ LoadZoneTiles:
 ; End of function LoadZoneTiles
 
 ; ===========================================================================
-
-    if gameRevision<2
-	nop
-    endif
-
-    if ~~removeJmpTos
-JmpTo_loadZoneBlockMaps ; JmpTo
-	jmp	(loadZoneBlockMaps).l
-JmpTo_DeformBgLayer ; JmpTo
-	jmp	(DeformBgLayer).l
-JmpTo_AniArt_Load ; JmpTo
-	jmp	(AniArt_Load).l
-JmpTo_DrawInitialBG ; JmpTo
-	jmp	(DrawInitialBG).l
-
-	align 4
-    endif
-
-
-
-
-; ===========================================================================
 ; loc_4F64:
 SpecialStage:
 	cmpi.b	#7,(Current_Special_Stage).w
@@ -5653,7 +5586,7 @@ SpecialStage:
 	move.w	#$9001,(a6)		; Scroll table size: 64x32
 	move.w	#$8C81,(a6)		; H res 40 cells, no interlace, S/H disabled
 	bsr.w	ClearScreen
-	jsrto	(Hud_Base).l, JmpTo_Hud_Base
+	jsr		(Hud_Base).l
 	ResetDMAQueue
 	move	#$2300,sr
 	moveq	#PalID_Result,d0
@@ -5662,7 +5595,7 @@ SpecialStage:
 	bsr.w	LoadPLC2
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_VRAM_Start+2),VRAM,WRITE),d0
 	lea	SpecialStage_ResultsLetters(pc),a0
-	jsrto	(LoadTitleCardSS).l, JmpTo_LoadTitleCardSS
+	jsr		(LoadTitleCardSS).l
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_SpecialStageResults),VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_SpecialStageResults).l,a0
 	bsr.w	NemDec
@@ -8345,7 +8278,7 @@ SSTrack_ApplyVscroll:
 ; Sprite_6FC0:
 Obj_SSHUD:
 	move.b	routine(a0),d0
-	bne.w	JmpTo_DisplaySprite
+	jne		DisplaySprite
 	move.l	#Obj_SSHUD_MapUnc_7070,mappings(a0)
 	move.w	#make_art_tile(ArtTile_ArtNem_SpecialHUD,0,0),art_tile(a0)
 	move.b	#4,render_flags(a0)
@@ -8480,17 +8413,12 @@ loc_710A:
 	add.w	d1,x_pos(a0)
 	add.w	d0,y_pos(a0)
 	cmpi.w	#0,x_pos(a0)
-	blt.w	JmpTo_DeleteObject
+	jlt		DeleteObject
 	cmpi.w	#$100,x_pos(a0)
-	bgt.w	JmpTo_DeleteObject
+	jgt		DeleteObject
 	cmpi.w	#0,y_pos(a0)
-	blt.w	JmpTo_DeleteObject
-
-    if removeJmpTos
-JmpTo_DisplaySprite ; JmpTo
-    endif
-
-	jmpto	(DisplaySprite).l, JmpTo_DisplaySprite
+	jlt		DeleteObject
+	jmp		(DisplaySprite).l
 ; ===========================================================================
 
 ; loc_714A:
@@ -8498,7 +8426,7 @@ Obj_EndingController_Init:
 	tst.b	(SS_2p_Flag).w
 	beq.s	+
 	move.w	#8,d0
-	jsrto	(Obj_SSMessage_PrintPhrase).l, JmpTo_Obj_SSMessage_PrintPhrase
+	jsr		(Obj_SSMessage_PrintPhrase).l
 +	move.w	#$80,x_pos(a0)
 	move.w	#-$40,y_pos(a0)
 	move.w	#$100,y_vel(a0)
@@ -8510,23 +8438,19 @@ Obj_EndingController_Init:
 
 ; loc_718A:
 Obj_EndingController_Main:
-	jsrto	(ObjectMove).l, JmpTo_ObjectMove
+	jsr		(ObjectMove).l
 	cmpi.w	#$48,y_pos(a0)
-	blt.w	JmpTo_DisplaySprite
+	jlt		DisplaySprite
 	move.w	#0,y_vel(a0)
 	move.w	#$48,y_pos(a0)
 	move.b	#4,routine(a0)
 	move.b	#$F,objoff_2A(a0)
-	jmpto	(DisplaySprite).l, JmpTo_DisplaySprite
+	jmp		(DisplaySprite).l
 ; ===========================================================================
 
 loc_71B4:
 	subi_.b	#1,objoff_2A(a0)
-    if ~~removeJmpTos
-	bne.w	JmpTo_DisplaySprite
-    else
-	bne.s	JmpTo_DisplaySprite
-    endif
+    jne		DisplaySprite
 	moveq	#6,d6
 
 ; WARNING: the build script needs editing if you rename this label
@@ -8565,28 +8489,17 @@ word_728C_user: lea	(Obj_EndingController_MapUnc_7240+$4C).l,a2 ; word_728C
 
 loc_7218:
 	subi_.w	#1,objoff_2A(a0)
-	bpl.s	+++	; rts
+	bpl.s	return_723E	; rts
 	tst.b	(SS_2p_Flag).w
 	beq.s	+
 	move.w	#$A,d0
-	jsrto	(Obj_SSMessage_PrintPhrase).l, JmpTo_Obj_SSMessage_PrintPhrase
+	jsr		(Obj_SSMessage_PrintPhrase).l
 	bra.s	++
 ; ===========================================================================
-+	jsrto	(Obj_SSMessage_CreateRingReqMessage).l, JmpTo_Obj_SSMessage_CreateRingReqMessage
++	jsr		(Obj_SSMessage_CreateRingReqMessage).l
 
 +	st.b	(SpecialStage_Started).w
-	jmpto	(DeleteObject).l, JmpTo_DeleteObject
-; ===========================================================================
-
-+	rts
-; ===========================================================================
-
-    if removeJmpTos
-JmpTo_DeleteObject ; JmpTo
-	jmp	(DeleteObject).l
-    endif
-
-; ===========================================================================
+	jmp		(DeleteObject).l
 
 return_723E:
 	rts
@@ -8761,7 +8674,7 @@ loc_74EA:
 
 loc_7536:
 	move.b	d3,mainspr_childsprites(a0)
-	jmpto	(DisplaySprite).l, JmpTo_DisplaySprite
+	jmp		(DisplaySprite).l
 ; ===========================================================================
 
 loc_753E:
@@ -8809,19 +8722,19 @@ loc_753E:
 	move.b	d1,sub3_mapframe-sub2_x_pos(a1)	; sub3_mapframe
 	move.w	#$88,sub4_x_pos-sub2_x_pos(a1)	; sub4_x_pos
 	move.b	d0,sub4_mapframe-sub2_x_pos(a1)	; sub4_mapframe
-	jmpto	(DisplaySprite).l, JmpTo_DisplaySprite
+	jmp		(DisplaySprite).l
 ; ===========================================================================
 +
 	move.w	#$80,(a1)			; sub2_x_pos
 	move.b	d0,sub2_mapframe-sub2_x_pos(a1)	; sub2_mapframe
-	jmpto	(DisplaySprite).l, JmpTo_DisplaySprite
+	jmp		(DisplaySprite).l
 ; ===========================================================================
 +
 	move.w	#$7C,(a1)			; sub2_x_pos
 	move.b	d1,sub2_mapframe-sub2_x_pos(a1)	; sub2_mapframe
 	move.w	#$84,sub3_x_pos-sub2_x_pos(a1)	; sub3_x_pos
 	move.b	d0,sub3_mapframe-sub2_x_pos(a1)	; sub3_mapframe
-	jmpto	(DisplaySprite).l, JmpTo_DisplaySprite
+	jmp		(DisplaySprite).l
 ; ===========================================================================
 
 loc_75DE:
@@ -8866,7 +8779,7 @@ loc_75DE:
 	move.w	#$D8,(a1)	; sub?_x_pos
 +
 	move.b	d2,mainspr_childsprites(a0)
-	jmpto	(DisplaySprite).l, JmpTo_DisplaySprite
+	jmp		(DisplaySprite).l
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
@@ -9100,34 +9013,6 @@ SpecialStage_ResultsLetters:
  charset ; revert character set
 
 ; ===========================================================================
-
-    if gameRevision<2
-	nop
-    endif
-
-    if ~~removeJmpTos
-JmpTo_DisplaySprite ; JmpTo
-	jmp	(DisplaySprite).l
-JmpTo_LoadTitleCardSS ; JmpTo
-	jmp	(LoadTitleCardSS).l
-JmpTo_DeleteObject ; JmpTo
-	jmp	(DeleteObject).l
-JmpTo_Obj_SSMessage_CreateRingReqMessage ; JmpTo
-	jmp	(Obj_SSMessage_CreateRingReqMessage).l
-JmpTo_Obj_SSMessage_PrintPhrase ; JmpTo
-	jmp	(Obj_SSMessage_PrintPhrase).l
-; sub_7862:
-JmpTo_ObjectMove ; JmpTo
-	jmp	(ObjectMove).l
-JmpTo_Hud_Base ; JmpTo
-	jmp	(Hud_Base).l
-
-	align 4
-    endif
-
-
-
-
 ; ----------------------------------------------------------------------------
 ; Continue Screen
 ; ----------------------------------------------------------------------------
@@ -9295,7 +9180,7 @@ Obj_ContinueIcons:
 ; Obj_DA_subtbl:
 Obj_ContinueText_Index:	offsetTable
 		offsetTableEntry.w Obj_ContinueText_Init		; 0
-		offsetTableEntry.w JmpTo2_DisplaySprite	; 2
+		offsetTableEntry.w Obj_ContinueText_Display	; 2
 		offsetTableEntry.w loc_7AD0		; 4
 		offsetTableEntry.w loc_7B46		; 6
 ; ===========================================================================
@@ -9310,7 +9195,7 @@ Obj_ContinueText_Init:
 	move.w	#$120,x_pixel(a0)
 	move.w	#$C0,y_pixel(a0)
 
-JmpTo2_DisplaySprite ; JmpTo
+Obj_ContinueText_Display:
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 ; word_7AB2:
@@ -9366,21 +9251,16 @@ loc_7B46:
 	andi.b	#1,d0
 	bne.s	+
 	tst.w	(MainCharacter+x_vel).w
-	bne.s	JmpTo2_DeleteObject
+	jne		DeleteObject
 	rts
 ; ===========================================================================
 +
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#$F,d0
-	bne.s	JmpTo3_DisplaySprite
+	bne.s	+
 	bchg	#0,mapping_frame(a0)
-
-JmpTo3_DisplaySprite ; JmpTo
++
 	jmp	(DisplaySprite).l
-; ===========================================================================
-
-JmpTo2_DeleteObject ; JmpTo
-	jmp	(DeleteObject).l
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object DB - Sonic lying down or Tails nagging (on the continue screen)
@@ -9548,11 +9428,9 @@ Obj_HUD_Init:
 Obj_HUD_Main:
 	andi.w	#tile_mask,art_tile(a0)
 	btst	#3,(Vint_runcount+3).w
-	beq.s	JmpTo4_DisplaySprite
+	beq.s	+
 	ori.w	#palette_line_1,art_tile(a0)
-
-JmpTo4_DisplaySprite ; JmpTo
-	jmp	(DisplaySprite).l
++	jmp	(DisplaySprite).l
 ; ===========================================================================
 ; --------------------------------------------------------------------------
 ; sprite mappings
@@ -10263,7 +10141,7 @@ MenuScreen:
 	move.l	#vdpComm(VRAM_Plane_B_Name_Table,VRAM,WRITE),d0
 	moveq	#$27,d1
 	moveq	#$1B,d2
-	jsrto	(PlaneMapToVRAM_H40).l, JmpTo_PlaneMapToVRAM_H40	; fullscreen background
+	jsr		(PlaneMapToVRAM_H40).l	; fullscreen background
 
 	cmpi.b	#GameModeID_OptionsMenu,(Game_Mode).w	; options menu?
 	beq.w	MenuScreen_Options	; if yes, branch
@@ -10312,7 +10190,7 @@ MenuScreen_Options:
 	clr.b	(Level_started_flag).w
 	clr.w	(Anim_Counters).w
 	lea	(Anim_SonicMilesBG).l,a2
-	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal
+	jsr		(Dynamic_Normal).l
 	moveq	#PalID_Menu,d0
 	bsr.w	PalLoad_ForFade
 	clr.l	(Camera_X_pos).w
@@ -10337,7 +10215,7 @@ OptionScreen_Main:
 	bsr.w	OptionScreen_DrawSelected
 	move	#$2300,sr
 	lea	(Anim_SonicMilesBG).l,a2
-	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal
+	jsr		(Dynamic_Normal).l
 	move.b	(Ctrl_1_Press).w,d0
 	or.b	(Ctrl_2_Press).w,d0
 	andi.b	#button_start_mask,d0
@@ -10479,7 +10357,7 @@ OptionScreen_DrawSelected:
 	move.l	(a3)+,d0
 	moveq	#$15,d1
 	moveq	#7,d2
-	jmpto	(PlaneMapToVRAM_H40).l, JmpTo_PlaneMapToVRAM_H40
+	jmp		(PlaneMapToVRAM_H40).l
 ; ===========================================================================
 
 ;loc_91F8
@@ -10518,7 +10396,7 @@ OptionScreen_DrawUnselected:
 	move.l	(a3)+,d0
 	moveq	#$15,d1
 	moveq	#7,d2
-	jmpto	(PlaneMapToVRAM_H40).l, JmpTo_PlaneMapToVRAM_H40
+	jmp		(PlaneMapToVRAM_H40).l
 ; ===========================================================================
 
 ;loc_9268
@@ -10617,7 +10495,7 @@ MenuScreen_LevelSelect:
 
 	; Animate background (loaded back in MenuScreen)
 	lea	(Anim_SonicMilesBG).l,a2
-	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal	; background
+	jsr	(Dynamic_Normal).l	; background
 
 	moveq	#PalID_Menu,d0
 	bsr.w	PalLoad_ForFade
@@ -10665,7 +10543,7 @@ LevelSelect_Main:	; routine running during level select
 	move	#$2300,sr
 
 	lea	(Anim_SonicMilesBG).l,a2
-	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal
+	jsr	(Dynamic_Normal).l
 
 	move.b	(Ctrl_1_Press).w,d0
 	or.b	(Ctrl_2_Press).w,d0
@@ -10977,7 +10855,7 @@ LevelSelect_DrawIcon:
 	move.l	#vdpComm(VRAM_Plane_A_Name_Table+planeLocH40(27,22),VRAM,WRITE),d0
 	moveq	#3,d1
 	moveq	#2,d2
-	jsrto	(PlaneMapToVRAM_H40).l, JmpTo_PlaneMapToVRAM_H40
+	jsr	(PlaneMapToVRAM_H40).l
 	lea	(Pal_LevelIcons).l,a1
 	moveq	#0,d0
 	move.b	(a3),d0
@@ -11145,19 +11023,6 @@ MapEng_LevSel:	BINCLUDE "mappings/misc/Level Select.bin"
 MapEng_LevSelIcon:	BINCLUDE "mappings/misc/Level Select Icons.bin"
 	even
 
-    if ~~removeJmpTos
-; loc_9C70: JmpTo_PlaneMapToVRAM
-JmpTo_PlaneMapToVRAM_H40 ; JmpTo
-	jmp	(PlaneMapToVRAM_H40).l
-JmpTo2_Dynamic_Normal ; JmpTo
-	jmp	(Dynamic_Normal).l
-
-	align 4
-    endif
-
-
-
-
 ; ===========================================================================
 ; loc_9C7C:
 EndingSequence:
@@ -11225,19 +11090,19 @@ KnucklesEnd:
 	bsr.w	EndingSequence_LoadFlickyArt
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_EndingFinalTornado),VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_EndingFinalTornado).l,a0
-	jsrto	(NemDec).l, JmpTo_NemDec
+	jsr		(NemDec).l
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_EndingPics),VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_EndingPics).l,a0
-	jsrto	(NemDec).l, JmpTo_NemDec
+	jsr		(NemDec).l
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_EndingMiniTornado),VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_EndingMiniTornado).l,a0
-	jsrto	(NemDec).l, JmpTo_NemDec
+	jsr		(NemDec).l
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_Tornado),VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_Tornado).l,a0
-	jsrto	(NemDec).l, JmpTo_NemDec
+	jsr		(NemDec).l
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_Clouds),VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_Clouds).l,a0
-	jsrto	(NemDec).l, JmpTo_NemDec
+	jsr		(NemDec).l
 	move.w	#death_egg_zone_act_1,(Current_ZoneAndAct).w
 	move	#$2300,sr
 	music	mus_Ending
@@ -11307,7 +11172,7 @@ KnucklesEnd:
 	jsr	(BuildSprites).l
 	tst.b	(Ending_PalCycle_flag).w
 	beq.s	+
-	jsrto	(PalCycle_Load).l, JmpTo_PalCycle_Load
+	jsr		(PalCycle_Load).l
 +
 	bsr.w	EndgameCredits
 	tst.w	(Level_Inactive_flag).w
@@ -11332,7 +11197,7 @@ EndgameCredits:
 	move.w	#$8700,(a6)		; Background palette/color: 0/0
 	clr.b	(Water_fullscreen_flag).w
 	move.w	#$8C81,(a6)		; H res 40 cells, no interlace, S/H disabled
-	jsrto	(ClearScreen).l, JmpTo_ClearScreen
+	jsr		(ClearScreen).l
 
 	clearRAM Sprite_Table_Input,Sprite_Table_Input_End
 	clearRAM Object_RAM,Object_RAM_End
@@ -11364,10 +11229,10 @@ EndgameCredits:
 	move.w	#$EE,(Target_palette_line2+$C).w
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_CreditText_CredScr),VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_CreditText).l,a0
-	jsrto	(NemDec).l, JmpTo_NemDec
+	jsr	(NemDec).l
 	clr.w	(CreditsScreenIndex).w
 -
-	jsrto	(ClearScreen).l, JmpTo_ClearScreen
+	jsr		(ClearScreen).l
 	bsr.w	ShowCreditsScreen
 	jsr	Pal_FadeFromBlack
 
@@ -11399,19 +11264,19 @@ EndgameCredits:
 	move.l	(a1,d0.w),d0
 	bpl.s	--
 	bsr.w	Pal_FadeToBlack
-	jsrto	(ClearScreen).l, JmpTo_ClearScreen
+	jsr	(ClearScreen).l
 	move.l	#vdpComm($0000,VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_EndingTitle).l,a0
-	jsrto	(NemDec).l, JmpTo_NemDec
+	jsr	(NemDec).l
 	lea	(MapEng_EndGameLogo).l,a0
 	lea	(Chunk_Table).l,a1
 	move.w	#0,d0
-	jsrto	(EniDec).l, JmpTo_EniDec
+	jsr	(EniDec).l
 	lea	(Chunk_Table).l,a1
 	move.l	#vdpComm(VRAM_Plane_A_Name_Table+planeLocH40(12,11),VRAM,WRITE),d0
 	moveq	#$F,d1
 	moveq	#5,d2
-	jsrto	(PlaneMapToVRAM_H40).l, JmpTo2_PlaneMapToVRAM_H40
+	jsr	(PlaneMapToVRAM_H40).l
 	clr.w	(CreditsScreenIndex).w
 	bsr.w	EndgameLogoFlash
 
@@ -11574,13 +11439,13 @@ loc_A256:
 	movea.l	off_A29C(pc,d0.w),a0
 	lea	(Chunk_Table).l,a1
 	move.w	#make_art_tile(ArtTile_ArtNem_EndingPics,0,0),d0
-	jsrto	(EniDec).l, JmpTo_EniDec
+	jsr	(EniDec).l
 	move	#$2700,sr
 	lea	(Chunk_Table).l,a1
 	move.l	#vdpComm(VRAM_Plane_A_Name_Table + planeLocH40(14,8),VRAM,WRITE),d0
 	moveq	#$B,d1
 	moveq	#8,d2
-	jsrto	(PlaneMapToVRAM_H40).l, JmpTo2_PlaneMapToVRAM_H40
+	jsr	(PlaneMapToVRAM_H40).l
 	move	#$2300,sr
 	movea.l	(sp)+,a0 ; load 0bj address
 	rts
@@ -11715,7 +11580,7 @@ loc_A38E:
 	subq.w	#1,objoff_3C(a0)
 	bne.s	+
 	lea	(word_AD62).l,a2
-	jsrto	(LoadChildObject).l, JmpTo_LoadChildObject
+	jsr	(LoadChildObject).l
 +
 	bra.w	loc_AB9C
 ; ===========================================================================
@@ -11729,7 +11594,7 @@ loc_A3BE:
 ; Object CC - Trigger for rescue plane and birds from ending sequence
 ; ----------------------------------------------------------------------------
 ; Sprite_A3C8:
-Obj_EndingTrigger:
+Obj_EndingTrigger:	; stopped here for the night
 	jsrto	(Obj_Tornado_Animate_Pilot).l, JmpTo_Obj_Tornado_Animate_Pilot
 	moveq	#0,d0
 	move.b	routine(a0),d0
