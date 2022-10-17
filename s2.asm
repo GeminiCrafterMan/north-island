@@ -3912,21 +3912,22 @@ Level:
 	bsr.w	Level_SetPlayerMode
 	bsr.w	InitPlayers	; called here to allow 1up shit to work
 ; ewwww.
-	moveq	#PLCID_Std2,d0	; has the capability to load this a second time, but... i don't really care? shouldn't lag too much.
 	cmpi.l	#Obj_Tails,(MainCharacter+id).w
 	bne.s	.notTails
 	moveq	#PLCID_TailsLife,d0
-	bra.s	+
+	bra.s	.loadPLC
 .notTails:
 	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
 	bne.s	.notKnuckles
 	moveq	#PLCID_KnucklesLife,d0
+	bra.s	.loadPLC
 .notKnuckles:
 	cmpi.l	#Obj_Amy,(MainCharacter+id).w
-	bne.s	+
+	bne.s	.cont
 	moveq	#PLCID_AmyLife,d0
-+
+.loadPLC:
 	bsr.w	LoadPLC
+.cont:
 	bsr.w	Level_SetPlayerMode
 
 ; loc_3F48:
@@ -25763,15 +25764,25 @@ BuildSprites:
 	lea	(Sprite_Table).w,a2
 	moveq	#0,d5
 	moveq	#0,d4
+
 	tst.b	(Level_started_flag).w
 	beq.s	+
 	jsrto	(BuildHUD).l, JmpTo_BuildHUD
-	bsr.w	BuildRings
 +
 	lea	(Sprite_Table_Input).w,a4
 	moveq	#7,d7	; 8 priority levels
+
 ; loc_16628:
-BuildSprites_LevelLoop:
+BuildSprites_LevelLoop:	; loc_D66A
+	cmpi.w	#$07-$02,d7	; ???
+	bne.s	+
+	tst.b	(Level_started_flag).w
+	beq.s	+	; BuildSpritesCont
+	movem.l	d7/a4,-(sp)
+	bsr.w	BuildRings
+	movem.l	(sp)+,d7/a4
+
++	; BuildSpritesCont
 	tst.w	(a4)	; does this level have any objects?
 	beq.w	BuildSprites_NextLevel	; if not, check the next one
 	moveq	#2,d6
@@ -27761,7 +27772,7 @@ Obj_Index: ; ObjPtrs: ; loc_1600C:
 						dc.l Obj_Null					; $02 ; Obj02
 ObjPtr_PlaneSwitcher:	dc.l Obj_PlaneSwitcher			; $03 ; Collision plane/layer switcher
 ObjPtr_WaterSurface:	dc.l Obj_WaterSurface			; $04 ; Surface of the water
-						dc.l Obj_Null					; $05 ; Obj05
+						dc.l Obj_FGObject				; $05 ; Foreground objects from free assets thread (S1D)
 ObjPtr_Spiral:			dc.l Obj_Spiral					; $06 ; Rotating cylinder in MTZ, twisting spiral pathway in EHZ
 ObjPtr_Oil:				dc.l Obj_Oil					; $07 ; Oil in OOZ
 ObjPtr_SpindashDust:
@@ -50885,8 +50896,7 @@ SlotMachine_GetPixelRow:
 	andi.w	#7,d0					; Limit each sequence to 8 pictures
 	move.b	(a3,d0.w),d0			; Get slot pic id
 	andi.w	#7,d0					; Get only lower 3 bits; leaves space for 2 more images
-	beq.s	.charSlot
-.sonicSlot:
+	beq.s	.charSlot				; if 0, character slot
 	ror.w	#7,d0					; Equal to shifting left 9 places, or multiplying by 4*4 tiles, in bytes
 	lea	(ArtUnc_CNZSlotPics).l,a2	; Load slot pictures
 	adda.w	d0,a2					; a2 = pointer to first tile of slot picture
@@ -50903,11 +50913,18 @@ SlotMachine_GetPixelRow:
 	bne.s	.chkKnux
 	lea		(ArtUnc_MTPSlotPic).l,a2
 	bra.s	.loadSlotPic
-
 .chkKnux:
 	cmpi.l	#Obj_Knuckles,(MainCharacter+id).w
-	bne.s	.sonicSlot
+	bne.s	.chkAmy
 	lea		(ArtUnc_KTESlotPic).l,a2
+	bra.s	.loadSlotPic
+.chkAmy:
+	cmpi.l	#Obj_Amy,(MainCharacter+id).w
+	bne.s	.noneOfTheAbove
+	lea		(ArtUnc_RTRSlotPic).l,a2
+	bra.s	.loadSlotPic
+.noneOfTheAbove:	; it doesn't crash here...
+	lea		(ArtUnc_STHSlotPic).l,a2
 	bra.s	.loadSlotPic
 ; ==========================================================================
 ; loc_2C2DE:
@@ -65262,6 +65279,11 @@ Obj_TurtLoid_Obj_Projectile_MapUnc_37B62:	BINCLUDE "mappings/sprite/Obj_BalkiryJ
 ; This is heavily based on Snowrex, but it's fine
 ; because I wrote that code myself anyway.
 	include	"objects/Enemies/Crab.asm"
+
+; ---------------------------------------------------------------------------
+; Object ?? - Foreground objects
+; ---------------------------------------------------------------------------
+	include	"objects/Level/Foreground Object.asm"
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -79730,8 +79752,10 @@ ArtUnc_CNZFlipTiles:	BINCLUDE	"art/uncompressed/Flipping foreground section (CNZ
 ; Uncompressed art
 ; Bonus pictures for slots in CNZ ; ArtUnc_4EEFE:
 ArtUnc_CNZSlotPics:	BINCLUDE	"art/uncompressed/Slot pictures.bin"
+ArtUnc_STHSlotPic:	BINCLUDE	"art/uncompressed/Sonic Slot picture.bin"
 ArtUnc_MTPSlotPic:	BINCLUDE	"art/uncompressed/Tails Slot picture.bin"
 ArtUnc_KTESlotPic:	BINCLUDE	"art/uncompressed/Knuckles Slot picture.bin"
+ArtUnc_RTRSlotPic:	BINCLUDE	"art/uncompressed/Amy Slot picture.bin"
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Animated background section in CPZ and DEZ ; ArtUnc_4FAFE:

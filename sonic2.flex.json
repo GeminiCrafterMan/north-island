@@ -1,7 +1,7 @@
 {
     "Flex": 2,
     "name": "Sonic 2",
-    "node": "8e274255-d8f7-46c5-90d8-3c24562832b5",
+    "node": "dad6e825-1660-4429-93f6-dd09b880aa01",
     "objects": [
         {
             "uuid": "fa665537-a8f6-4d0d-a1b5-2c3190bf034d",
@@ -330,7 +330,7 @@
                         }
                     ],
                     "isDirectory": true,
-                    "expanded": false,
+                    "expanded": true,
                     "uuid": "6b4206ec-e431-4fd4-8f95-c66089c86431"
                 },
                 {
@@ -508,6 +508,18 @@
                     "palettes": [
                         {
                             "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/SonicAndTails2.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/Knuckles.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/Amy.bin",
                             "length": 1
                         }
                     ],
@@ -767,7 +779,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": false,
+            "expanded": true,
             "uuid": "a898dad6-e825-4660-9429-93f6dd09b880"
         },
         {
@@ -946,35 +958,6 @@
                         "label": ""
                     },
                     "uuid": "74490307-db1c-4b9c-bd71-80e3f8c8e694"
-                },
-                {
-                    "uuid": "bfa68f3c-4efb-464d-b722-8ca8da9a6fa0",
-                    "format": "Sonic 2.js",
-                    "name": "Drill Crab",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/EHZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Drill crab badnik from Seaside Land.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_DrillCrab.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    }
                 }
             ],
             "isDirectory": true,
@@ -1038,10 +1021,6 @@
                     "name": "Speed Booster",
                     "format": "Sonic 2.js",
                     "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
                         {
                             "path": "art/palettes/CPZ.bin",
                             "length": 3
@@ -1578,35 +1557,6 @@
                     "uuid": "56b686f9-8e27-4255-98f7-66c5d0d83c24"
                 },
                 {
-                    "name": "Pressure Spring",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/ARZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Lever spring.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/Obj_SpringBoard.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "b686f98e-2742-45d8-b766-c5d0d83c2456"
-                },
-                {
                     "name": "Falling Pillar",
                     "format": "Sonic 2.js",
                     "palettes": [
@@ -1778,11 +1728,40 @@
                         "path": "",
                         "label": ""
                     },
+                    "uuid": "26d776ae-8204-4883-9371-6026bafdf3d4"
+                },
+                {
+                    "name": "Water surface",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/ARZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "format": "Sonic 2.js",
+                    "art": {
+                        "path": "art/nemesis/Top of water in ARZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_WaterSurface_b.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
                     "uuid": "55d8f766-c5d0-483c-a456-2832b57c4022"
                 }
             ],
             "isDirectory": true,
-            "expanded": false,
+            "expanded": true,
             "uuid": "dd09b880-aa01-40b5-b556-b686f98e2742"
         },
         {
@@ -1843,7 +1822,7 @@
                     "uuid": "71485e9b-5fd4-44f5-8e81-0f67fd89e390"
                 },
                 {
-                    "name": "Pressure Spring",
+                    "name": "Vertical plunger Spring",
                     "format": "Sonic 2.js",
                     "palettes": [
                         {
@@ -1862,6 +1841,35 @@
                     },
                     "mappings": {
                         "path": "mappings/sprite/Obj_LauncherSpring_a.bin",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": false,
+                        "path": "",
+                        "label": ""
+                    },
+                    "uuid": "9126d776-ae82-4498-8393-716026bafdf3"
+                },
+                {
+                    "name": "Diagonal plunger Spring",
+                    "format": "Sonic 2.js",
+                    "palettes": [
+                        {
+                            "path": "art/palettes/SonicAndTails.bin",
+                            "length": 1
+                        },
+                        {
+                            "path": "art/palettes/CNZ.bin",
+                            "length": 3
+                        }
+                    ],
+                    "art": {
+                        "path": "art/nemesis/Diagonal impulse spring from CNZ.bin",
+                        "compression": "Nemesis",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "mappings/sprite/Obj_LauncherSpring_b.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -2200,7 +2208,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": false,
+            "expanded": true,
             "uuid": "92c297f2-124d-4d3d-ba79-169a63351830"
         },
         {
@@ -2263,35 +2271,6 @@
                         "label": ""
                     },
                     "uuid": "c5d0d83c-2456-4832-b57c-402228fa7148"
-                },
-                {
-                    "name": "Pressure Spring",
-                    "format": "Sonic 2.js",
-                    "palettes": [
-                        {
-                            "path": "art/palettes/SonicAndTails.bin",
-                            "length": 1
-                        },
-                        {
-                            "path": "art/palettes/MCZ.bin",
-                            "length": 3
-                        }
-                    ],
-                    "art": {
-                        "path": "art/nemesis/Lever spring.bin",
-                        "compression": "Nemesis",
-                        "offset": 0
-                    },
-                    "mappings": {
-                        "path": "mappings/sprite/obj40.bin",
-                        "label": ""
-                    },
-                    "dplcs": {
-                        "enabled": false,
-                        "path": "",
-                        "label": ""
-                    },
-                    "uuid": "d0d83c24-5628-42b5-bc40-2228fa71485e"
                 },
                 {
                     "name": "Wooden Blocks",
@@ -3467,7 +3446,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj99.bin",
+                        "path": "mappings/sprite/Obj_Nebula.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -3496,7 +3475,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/obj9C.bin",
+                        "path": "mappings/sprite/Obj_BalkiryJet.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -3525,7 +3504,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objAC.bin",
+                        "path": "mappings/sprite/Obj_Balkiry.bin",
                         "label": ""
                     },
                     "dplcs": {
@@ -3653,7 +3632,7 @@
                 }
             ],
             "isDirectory": true,
-            "expanded": false,
+            "expanded": true,
             "uuid": "1ee0bb7f-2620-4b0b-a97e-22b0afa69274"
         },
         {
