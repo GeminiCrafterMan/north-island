@@ -5618,7 +5618,7 @@ SpecialStage:
 +
 	move.b	#1,(Update_HUD_score).w
 	move.b	#1,(Update_Bonus_score).w
-	sfx	mus_GotThroughAct
+	sfx	mus_WilyTowerClear
 
 	clearRAM SS_Sprite_Table_Input,SS_Sprite_Table_Input_End
 	clearRAM SS_Object_RAM,SS_Object_RAM_End
@@ -28886,7 +28886,7 @@ Load_EndOfAct:
 	bne.s	+
 	move.w	#5000,(Bonus_Countdown_3).w
 +
-	music	mus_GotThroughAct
+	music	mus_WilyTowerClear
 	jsr		ResetEmotion.cont
 
 return_194D0:

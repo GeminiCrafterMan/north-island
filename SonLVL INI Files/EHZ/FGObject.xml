@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ObjDef xmlns="http://www.sonicretro.org" Name="Foreground Object" Image="xl">
+  <Images>
+    <ImageFromMappings id="xl">
+      <ArtFile filename="LevelArt" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_FGObject_a.bin" frame="0" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="l">
+      <ArtFile filename="LevelArt" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_FGObject_a.bin" frame="1" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="m">
+      <ArtFile filename="LevelArt" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_FGObject_a.bin" frame="2" startpal="0" />
+    </ImageFromMappings>
+    <ImageFromMappings id="s">
+      <ArtFile filename="LevelArt" />
+      <MapFile type="Binary" filename="../mappings/sprite/Obj_FGObject_a.bin" frame="3" startpal="0" />
+    </ImageFromMappings>
+  </Images>
+  <Subtypes>
+    <Subtype id="00" name="XL" image="xl" />
+    <Subtype id="01" name="L" image="l" />
+    <Subtype id="02" name="M" image="m" />
+    <Subtype id="03" name="S" image="s" />
+  </Subtypes>
+</ObjDef>

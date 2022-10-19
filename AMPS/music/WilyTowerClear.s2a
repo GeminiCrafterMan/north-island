@@ -1,112 +1,16 @@
-WilyTower_Clear_Header:
+WilyTower_Clear_Header:	; Sounds wrong, but I can fix it later...
 	sHeaderInit
-	sHeaderPatch	WilyTower_Clear_Patches
-	sHeaderCh	$06, $03
 	sHeaderTempo	$01, $30
+	sHeaderCh	$05, $02
 	sHeaderDAC	WilyTower_Clear_DAC1
+	sHeaderDAC	WilyTower_Clear_DAC2
 	sHeaderFM	WilyTower_Clear_FM1, $00, $12
 	sHeaderFM	WilyTower_Clear_FM2, $00, $08
 	sHeaderFM	WilyTower_Clear_FM3, $00, $12
 	sHeaderFM	WilyTower_Clear_FM4, $00, $12
 	sHeaderFM	WilyTower_Clear_FM5, $0C, $15
-	sHeaderPSG	WilyTower_Clear_PSG1, $00, $01, m00, v0C
-	sHeaderPSG	WilyTower_Clear_PSG2, $00, $03, m00, v0C
-	sHeaderPSG	WilyTower_Clear_PSG3, $00, $01, m00, v02
-
-WilyTower_Clear_FM1:
-	sPatFM		$04
-	ssModZ80	$14, $01, $05, $05
-
-WilyTower_Clear_Jump1:
-	dc.b nRst, $30, nE4, $06, $0C, nEb4, $06, nRst
-	dc.b $06, nE4, $12, nA4, $12, nD5, nFs5, $0C
-	dc.b nAb5, $60
-	sStop
-
-WilyTower_Clear_FM2:
-	sPatFM		$08
-	dc.b nRst, $30, nB2, $06, $0C, $06, nRst, $06
-	dc.b nB2, $0C, nBb2, $06, nA2, $12, $12, $0C
-	dc.b nE2, $60
-	sStop
-
-WilyTower_Clear_FM3:
-	sPatFM		$04
-	ssModZ80	$14, $01, $05, $05
-	dc.b nRst, $30, nB3, $06, $0C, $06, nRst, $06
-	dc.b nB3, $12, nE4, $12, nA4, nD5, $0C, nE5
-	dc.b $60
-	sStop
-
-WilyTower_Clear_FM4:
-	ssModZ80	$14, $01, $05, $05
-	sPatFM		$04
-	dc.b nRst, $30, nAb3, $06, $0C, nFs3, $06, nRst
-	dc.b $06, nAb3, $12, nCs3, $12, nFs3, nA3, $0C
-	dc.b nB3, $60
-	sStop
-
-WilyTower_Clear_FM5:
-	sPatFM		$07
-	ssModZ80	$14, $01, $05, $05
-	ssDetune	$01
-	sJump		WilyTower_Clear_Jump1
-
-WilyTower_Clear_DAC1:
-	dc.b $86, $06, $81, $06, $06, $06, $06, $06
-	dc.b $06, $06, $87, $06, $0C, $0C, $0C, $86
-	dc.b $06, $81, $12, $12, $06, $06, $18
-	sStop
-
-WilyTower_Clear_PSG1:
-	sVolEnvPSG	v0A
-	saVolPSG	$FF
-	ssModZ80	$01, $01, $13, $46
-	dc.b nRst, $06, nC3, $06, $06, $06, nA2, nA2
-	dc.b nF2, nD2
-	saVolPSG	$01
-	sModEnv		m00
-
-WilyTower_Clear_Jump2:
-	dc.b nE2, $06, $0C, nEb2, $06, nRst, $06, nE2
-	dc.b $12, nA2, $12, nD3, nFs3, $0C
-
-WilyTower_Clear_Loop1:
-	dc.b nAb3, $04, nE3, nB2
-	sLoop		$00, $04, WilyTower_Clear_Loop1
-	saVolPSG	$01
-	dc.b nAb3, $04, nE3, nB2
-	saVolPSG	$01
-	dc.b nAb3, $04, nE3, nB2
-	saVolPSG	$01
-	dc.b nAb3, $04, nE3, nB2
-	saVolPSG	$02
-	dc.b nAb3, $04, nE3, nB2
-	sStop
-
-WilyTower_Clear_PSG2:
-	sVolEnvPSG	v0A
-	dc.b nRst, $30, $06
-	ssDetune	$01
-	sJump		WilyTower_Clear_Jump2
-
-WilyTower_Clear_PSG3:
-	sNoisePSG	$E7
-	dc.b nRst, $30
-	sVolEnvPSG	v02
-	dc.b nB6, $06, $0C, $0C, $0C
-	sVolEnvPSG	v01
-	dc.b $06
-	sVolEnvPSG	v02
-	dc.b $12, $12, $06, $06
-	sVolEnvPSG	$0E
-
-WilyTower_Clear_Loop2:
-	dc.b $03, $03, $03, $03
-	sLoop		$00, $08, WilyTower_Clear_Loop2
-	sStop
-
-WilyTower_Clear_Patches:
+	sHeaderPSG	WilyTower_Clear_PSG1, $00, $08, $00, v0C
+	sHeaderPSG	WilyTower_Clear_PSG2, $00, $18, $00, v0C
 
 	; Patch $00
 	; $03
@@ -341,3 +245,95 @@ WilyTower_Clear_Patches:
 	spDecayRt	$06, $0F, $0A, $04
 	spReleaseRt	$06, $05, $04, $0D
 	spTotalLv	$1E, $2A, $16, $80
+
+WilyTower_Clear_FM1:
+	sVoice		$04
+	sModAMPS	$14, $01, $05, $05
+
+WilyTower_Clear_Jump1:
+	dc.b nRst, $30, nE4, $06, $0C, nEb4, $06, nRst
+	dc.b $06, nE4, $12, nA4, $12, nD5, nFs5, $0C
+	dc.b nAb5, $60
+	sStop
+
+WilyTower_Clear_FM2:
+	sVoice		$08
+	dc.b nRst, $30, nB2, $06, $0C, $06, nRst, $06
+	dc.b nB2, $0C, nBb2, $06, nA2, $12, $12, $0C
+	dc.b nE2, $60
+	sStop
+
+WilyTower_Clear_FM3:
+	sVoice		$04
+	sModAMPS	$14, $01, $05, $05
+	dc.b nRst, $30, nB3, $06, $0C, $06, nRst, $06
+	dc.b nB3, $12, nE4, $12, nA4, nD5, $0C, nE5
+	dc.b $60
+	sStop
+
+WilyTower_Clear_FM4:
+	sModAMPS	$14, $01, $05, $05
+	sVoice		$04
+	dc.b nRst, $30, nAb3, $06, $0C, nFs3, $06, nRst
+	dc.b $06, nAb3, $12, nCs3, $12, nFs3, nA3, $0C
+	dc.b nB3, $60
+	sStop
+
+WilyTower_Clear_FM5:
+	sVoice		$07
+	sModAMPS	$14, $01, $05, $05
+	ssDetune	$01
+	sJump		WilyTower_Clear_Jump1
+
+WilyTower_Clear_DAC1:
+	dc.b $86, $06, $81, $06, $06, $06, $06, $06
+	dc.b $06, $06, $87, $06, $0C, $0C, $0C, $86
+	dc.b $06, $81, $12, $12, $06, $06, $18
+	sStop
+
+WilyTower_Clear_DAC2:
+;	sNoisePSG	$E7
+	dc.b nRst, $30
+;	sVolEnv	v02
+	dc.b dHiHat, $06, $0C, $0C, $0C
+;	sVolEnv	v01
+	dc.b $06
+;	sVolEnv	v02
+	dc.b $12, $12, $06, $06
+;	sVolEnv	$0E
+
+WilyTower_Clear_Loop2:
+	dc.b $03, $03, $03, $03
+	sLoop		$00, $08, WilyTower_Clear_Loop2
+	sStop
+
+WilyTower_Clear_PSG1:
+	sVolEnv	v0A
+	saVol	-$08
+	sModAMPS	$01, $01, $13, $46
+	dc.b nRst, $06, nC3, $06, $06, $06, nA2, nA2
+	dc.b nF2, nD2
+	saVol	$08
+
+WilyTower_Clear_Jump2:
+	dc.b nE2, $06, $0C, nEb2, $06, nRst, $06, nE2
+	dc.b $12, nA2, $12, nD3, nFs3, $0C
+
+WilyTower_Clear_Loop1:
+	dc.b nAb3, $04, nE3, nB2
+	sLoop		$00, $04, WilyTower_Clear_Loop1
+	saVol	$08
+	dc.b nAb3, $04, nE3, nB2
+	saVol	$08
+	dc.b nAb3, $04, nE3, nB2
+	saVol	$08
+	dc.b nAb3, $04, nE3, nB2
+	saVol	$10
+	dc.b nAb3, $04, nE3, nB2
+	sStop
+
+WilyTower_Clear_PSG2:
+	sVolEnv	v0A
+	dc.b nRst, $30, $06
+	ssDetune	$01
+	sJump		WilyTower_Clear_Jump2

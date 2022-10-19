@@ -15,6 +15,7 @@ Obj_FGObject_Main:
 		addq.b	#2,routine(a0)
 		move.l	#MapUnc_FGTree,mappings(a0) ; Add mappings here!
 		move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,0,0),art_tile(a0) ; Tweak this to change VRAM location tied to object!
+		move.b	subtype(a0),mapping_frame(a0)
 		move.b	#$14,render_flags(a0) ; This must always be at least $10! The $10 in this ensures it displays in front of all level art.
 		move.b	#32,width_pixels(a0)
 		move.b	#$40,y_radius(a0)

@@ -65,7 +65,7 @@ MusicIndex:
 	ptrMusic EHZ2P, $20, CNZ2P, $20, MCZ2P, $14
 	ptrMusic SS, $00, Options, $00, Results2P, $00, Invincibility, $18
 	ptrMusic SuperSonic, $06, Boss, $1D, FinalBoss, $20, Drowning, $00
-	ptrMusic MM9Title, $00, GotThroughAct, $00, Emerald, $00, ExtraLife, $00
+	ptrMusic MM9Title, $00, WilyTowerClear, $00, Emerald, $00, ExtraLife, $00
 	ptrMusic GameOver, $00, Continue, $00, Ending, $00, Credits, $00
 	ptrMusic SEGA, $00
 

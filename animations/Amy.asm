@@ -57,18 +57,14 @@ AmyAni_Roll2:	dc.b $FE,frA_Roll1,frA_Roll5,frA_Roll2,frA_Roll5,frA_Roll3,frA_Rol
 AmyAni_Push:	dc.b $FD,frA_Push1,frA_Push2,frA_Push3,frA_Push4,afEnd,afEnd,afEnd,afEnd,afEnd
 	rev02even
 AmyAni_Wait:
-	dc.b   5,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1
+	dc.b   11,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1
 	dc.b   frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle1,  frA_Idle2
-	dc.b   frA_Idle3,  frA_Idle3,  frA_Idle3,  frA_Idle3,  frA_Idle3,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5
-	dc.b   frA_Idle5,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle6,  frA_Idle6,  frA_Idle6
-	dc.b   frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle4,  frA_Idle4,  frA_Idle4
-	dc.b   frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle6
-	dc.b   frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle4
-	dc.b   frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5
-	dc.b   frA_Idle5,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5
-	dc.b   frA_Idle5,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle4,  frA_Idle4,  frA_Idle4,  frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle4,  frA_Idle4,  frA_Idle4
-	dc.b   frA_Idle5,  frA_Idle5,  frA_Idle5,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle6,  frA_Idle7,  frA_Idle8,  frA_Idle8
-	dc.b   frA_Idle8,  frA_Idle9,  frA_Idle9,  frA_Idle9,afBack,  6
+	dc.b   frA_Idle3,  frA_Idle3,  frA_Idle3,  frA_Idle3,  frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5,  frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5,  frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5
+	dc.b   frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5,  frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5,  frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5,  frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5
+	dc.b   frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5,  frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5,  frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5,  frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5
+	dc.b   frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5,  frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5,  frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5,  frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5
+	dc.b   frA_Idle3,  frA_Idle4,  frA_Idle3,  frA_Idle5,  frA_Idle3,  frA_Idle6,  frA_Idle8,  frA_Idle8,  frA_Idle9,  frA_Idle8,  frA_Idle8,  frA_Idle8,  frA_Idle9,  frA_Idle7,  frA_Idle7,  frA_Idle7
+	dc.b   frA_Idle8,  frA_Idle8,  frA_Idle8,  frA_Idle9,  frA_Idle6,  afEnd
 	rev02even
 AmyAni_Balance:	dc.b   9,frA_BalanceA1,frA_BalanceA2,frA_BalanceA3,frA_BalanceA2,afEnd
 	rev02even
