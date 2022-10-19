@@ -32,12 +32,18 @@ Obj_Tails_Init:
 	move.w	#prio(2),priority(a0)
 	move.b	#$18,width_pixels(a0)
 	move.b	#$84,render_flags(a0) ; render_flags(Tails) = $80 | initial render_flags(Sonic)
+	jsr		ResetArtTile_a0
+	cmpa.w	#MainCharacter,a0
+	bne.s	.p2
+	move.w	#$600,(Sonic_top_speed).w	; set Tails' top speed
+	move.w	#$C,(Sonic_acceleration).w	; set Tails' acceleration
+	move.w	#$80,(Sonic_deceleration).w	; set Tails' deceleration
+	bra.s	.cont
+.p2:
 	move.w	#$600,(Tails_top_speed).w	; set Tails' top speed
 	move.w	#$C,(Tails_acceleration).w	; set Tails' acceleration
 	move.w	#$80,(Tails_deceleration).w	; set Tails' deceleration
-	jsr		ResetArtTile_a0
-	cmpa.w	#MainCharacter,a0
-	bne.s	Obj_Tails_Init_2Pmode
+.cont:
 	tst.b	(Last_star_pole_hit).w
 	bne.s	Obj_Tails_Init_Continued
 	; only happens when not starting at a checkpoint:
@@ -47,14 +53,7 @@ Obj_Tails_Init:
 	move.w	y_pos(a0),(Saved_y_pos).w
 	move.w	art_tile(a0),(Saved_art_tile).w
 	move.w	top_solid_bit(a0),(Saved_Solid_bits).w
-	bra.s	Obj_Tails_Init_Continued
 ; ===========================================================================
-; loc_1B952:
-Obj_Tails_Init_2Pmode:
-	move.w	(MainCharacter+top_solid_bit).w,top_solid_bit(a0)
-	tst.w	(MainCharacter+art_tile).w
-	bpl.s	Obj_Tails_Init_Continued
-	ori.w	#high_priority,art_tile(a0)
 ; loc_1B96E:
 Obj_Tails_Init_Continued:
 	move.w	x_pos(a0),(Saved_x_pos_2P).w
@@ -1398,9 +1397,17 @@ loc_149BA:
 
 ; loc_1C0AC:
 Tails_Move:
+	cmpa.w	#MainCharacter,a0
+	bne.s	.sidekick
+	move.w	(Sonic_top_speed).w,d6
+	move.w	(Sonic_acceleration).w,d5
+	move.w	(Sonic_deceleration).w,d4
+	bra.s	.cont
+.sidekick:
 	move.w	(Tails_top_speed).w,d6
 	move.w	(Tails_acceleration).w,d5
 	move.w	(Tails_deceleration).w,d4
+.cont:
     if status_sec_isSliding = 7
 	tst.b	status_secondary(a0)
 	bmi.w	Obj_Tails_Traction
@@ -1734,13 +1741,20 @@ return_1C3A8:
 
 ; loc_1C3AA:
 Tails_RollSpeed:
+	cmpa.w	#MainCharacter,a0
+	bne.s	.sidekick
+	move.w	(Sonic_top_speed).w,d6
+	move.w	(Sonic_acceleration).w,d5
+	move.w	(Sonic_deceleration).w,d4
+	bra.s	.cont
+.sidekick:
 	move.w	(Tails_top_speed).w,d6
-	asl.w	#1,d6
 	move.w	(Tails_acceleration).w,d5
-	asr.w	#1,d5	; natural roll deceleration = 1/2 normal acceleration
 	move.w	(Tails_deceleration).w,d4
+.cont:
+	asl.w	#1,d6
+	asr.w	#1,d5	; natural roll deceleration = 1/2 normal acceleration
 	asr.w	#2,d4	; controlled roll deceleration...
-			; interestingly, Tails is much worse at this than Sonic when underwater
     if status_sec_isSliding = 7
 	tst.b	status_secondary(a0)
 	bmi.w	Obj_Tails_Roll_ResetScr
@@ -1890,8 +1904,15 @@ Tails_BrakeRollingLeft:
 
 ; loc_1C4CE:
 Tails_ChgJumpDir:   ; I don't think this'll really ever be combined, but oh well.
+	cmpa.w	#MainCharacter,a0
+	bne.s	.sidekick
+	move.w	(Sonic_top_speed).w,d6
+	move.w	(Sonic_acceleration).w,d5
+	bra.s	.cont
+.sidekick:
 	move.w	(Tails_top_speed).w,d6
 	move.w	(Tails_acceleration).w,d5
+.cont:
 	asl.w	#1,d5
 	btst	#4,status(a0)		; did Tails jump from rolling?
 	bne.s	Obj_Tails_Jump_ResetScr	; if yes, branch to skip midair control

@@ -1,7 +1,7 @@
 {
     "Flex": 2,
     "name": "Sonic 2",
-    "node": "c072f642-4b66-48f7-94e6-366a09bfb4f0",
+    "node": "7d7180e3-f8c8-4694-9b36-cb064b32f0c5",
     "objects": [
         {
             "uuid": "fa665537-a8f6-4d0d-a1b5-2c3190bf034d",
@@ -3773,7 +3773,7 @@
                         "offset": 0
                     },
                     "mappings": {
-                        "path": "mappings/sprite/objB2_a.bin",
+                        "path": "mappings/sprite/Obj_Tornado_a.bin",
                         "label": ""
                     },
                     "dplcs": {

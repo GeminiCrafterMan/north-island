@@ -1247,213 +1247,14 @@ PlaneMapToVRAM_H80_SpecialStage:
 
 ; For format explanation see http://info.sonicretro.org/Nemesis_compression
 ; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; Nemesis decompression to VRAM
-; sub_14DE: NemDecA:
-NemDec:
-	movem.l	d0-a1/a3-a5,-(sp)
-	lea	(NemDec_WriteAndStay).l,a3 ; write all data to the same location
-	lea	(VDP_data_port).l,a4	   ; specifically, to the VDP data port
-	bra.s	NemDecMain
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; Nemesis decompression to RAM
-; input: a4 = starting address of destination
-; sub_14F0: NemDecB:
-NemDecToRAM:
-	movem.l	d0-a1/a3-a5,-(sp)
-	lea	(NemDec_WriteAndAdvance).l,a3 ; advance to the next location after each write
-
-
-; sub_14FA:
-NemDecMain:
-	lea	(Decomp_Buffer).w,a1
-	move.w	(a0)+,d2
-	lsl.w	#1,d2
-	bcc.s	+
-	adda.w	#NemDec_WriteAndStay_XOR-NemDec_WriteAndStay,a3
-+	lsl.w	#2,d2
-	movea.w	d2,a5
-	moveq	#8,d3
-	moveq	#0,d2
-	moveq	#0,d4
-	bsr.w	NemDecPrepare
-	move.b	(a0)+,d5
-	asl.w	#8,d5
-	move.b	(a0)+,d5
-	move.w	#$10,d6
-	bsr.s	NemDecRun
-	movem.l	(sp)+,d0-a1/a3-a5
-	rts
-; End of function NemDec
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; part of the Nemesis decompressor
-; sub_1528:
-NemDecRun:
-	move.w	d6,d7
-	subq.w	#8,d7
-	move.w	d5,d1
-	lsr.w	d7,d1
-	cmpi.b	#-4,d1
-	bhs.s	loc_1574
-	andi.w	#$FF,d1
-	add.w	d1,d1
-	move.b	(a1,d1.w),d0
-	ext.w	d0
-	sub.w	d0,d6
-	cmpi.w	#9,d6
-	bhs.s	+
-	addq.w	#8,d6
-	asl.w	#8,d5
-	move.b	(a0)+,d5
-+	move.b	1(a1,d1.w),d1
-	move.w	d1,d0
-	andi.w	#$F,d1
-	andi.w	#$F0,d0
-
-loc_155E:
-	lsr.w	#4,d0
-
-loc_1560:
-	lsl.l	#4,d4
-	or.b	d1,d4
-	subq.w	#1,d3
-	bne.s	NemDec_WriteIter_Part2
-	jmp	(a3) ; dynamic jump! to NemDec_WriteAndStay, NemDec_WriteAndAdvance, NemDec_WriteAndStay_XOR, or NemDec_WriteAndAdvance_XOR
-; ===========================================================================
-; loc_156A:
-NemDec_WriteIter:
-	moveq	#0,d4
-	moveq	#8,d3
-; loc_156E:
-NemDec_WriteIter_Part2:
-	dbf	d0,loc_1560
-	bra.s	NemDecRun
-; ===========================================================================
-
-loc_1574:
-	subq.w	#6,d6
-	cmpi.w	#9,d6
-	bhs.s	+
-	addq.w	#8,d6
-	asl.w	#8,d5
-	move.b	(a0)+,d5
-+
-	subq.w	#7,d6
-	move.w	d5,d1
-	lsr.w	d6,d1
-	move.w	d1,d0
-	andi.w	#$F,d1
-	andi.w	#$70,d0
-	cmpi.w	#9,d6
-	bhs.s	loc_155E
-	addq.w	#8,d6
-	asl.w	#8,d5
-	move.b	(a0)+,d5
-	bra.s	loc_155E
-; End of function NemDecRun
-
-; ===========================================================================
-; loc_15A0:
-NemDec_WriteAndStay:
-	move.l	d4,(a4)
-	subq.w	#1,a5
-	move.w	a5,d4
-	bne.s	NemDec_WriteIter
-	rts
-; ---------------------------------------------------------------------------
-; loc_15AA:
-NemDec_WriteAndStay_XOR:
-	eor.l	d4,d2
-	move.l	d2,(a4)
-	subq.w	#1,a5
-	move.w	a5,d4
-	bne.s	NemDec_WriteIter
-	rts
-; ===========================================================================
-; loc_15B6:
-NemDec_WriteAndAdvance:
-	move.l	d4,(a4)+
-	subq.w	#1,a5
-	move.w	a5,d4
-	bne.s	NemDec_WriteIter
-	rts
-
-    if *-NemDec_WriteAndAdvance > NemDec_WriteAndStay_XOR-NemDec_WriteAndStay
-	fatal "the code in NemDec_WriteAndAdvance must not be larger than the code in NemDec_WriteAndStay"
-    endif
-    org NemDec_WriteAndAdvance+NemDec_WriteAndStay_XOR-NemDec_WriteAndStay
-
-; ---------------------------------------------------------------------------
-; loc_15C0:
-NemDec_WriteAndAdvance_XOR:
-	eor.l	d4,d2
-	move.l	d2,(a4)+
-	subq.w	#1,a5
-	move.w	a5,d4
-	bne.s	NemDec_WriteIter
-	rts
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-; Part of the Nemesis decompressor
-
-; sub_15CC:
-NemDecPrepare:
-	move.b	(a0)+,d0
-
--	cmpi.b	#$FF,d0
-	bne.s	+
-	rts
-; ---------------------------------------------------------------------------
-+	move.w	d0,d7
-
-loc_15D8:
-	move.b	(a0)+,d0
-	cmpi.b	#$80,d0
-	bhs.s	-
-
-	move.b	d0,d1
-	andi.w	#$F,d7
-	andi.w	#$70,d1
-	or.w	d1,d7
-	andi.w	#$F,d0
-	move.b	d0,d1
-	lsl.w	#8,d1
-	or.w	d1,d7
-	moveq	#8,d1
-	sub.w	d0,d1
-	bne.s	loc_1606
-	move.b	(a0)+,d0
-	add.w	d0,d0
-	move.w	d7,(a1,d0.w)
-	bra.s	loc_15D8
-; ---------------------------------------------------------------------------
-loc_1606:
-	move.b	(a0)+,d0
-	lsl.w	d1,d0
-	add.w	d0,d0
-	moveq	#1,d5
-	lsl.w	d1,d5
-	subq.w	#1,d5
-
--	move.w	d7,(a1,d0.w)
-	addq.w	#2,d0
-	dbf	d5,-
-
-	bra.s	loc_15D8
-; End of function NemDecPrepare
-
+; Nemesis decompression routine
+; ------------------------------------------------------------------------------
+; Optimized by vladikcomper, further optimizations & comments by carljr17
+; ------------------------------------------------------------------------------
+	include	"misc/NemDec.asm"
 ; ---------------------------------------------------------------------------
 ; END OF NEMESIS DECOMPRESSOR
 ; ---------------------------------------------------------------------------
-
-
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 ; ---------------------------------------------------------------------------
@@ -1916,105 +1717,22 @@ EniDec_ChkGetNextByte:
 ; ---------------------------------------------------------------------------
 ; KOSINSKI DECOMPRESSION PROCEDURE
 ; (sometimes called KOZINSKI decompression)
-
+;
 ; This is the only procedure in the game that stores variables on the stack.
-
+;
 ; ARGUMENTS:
 ; a0 = source address
 ; a1 = destination address
-
+;
 ; For format explanation see http://info.sonicretro.org/Kosinski_compression
 ; ---------------------------------------------------------------------------
-; KozDec_193A:
-KosDec:
-	subq.l	#2,sp
-	move.b	(a0)+,1(sp)
-	move.b	(a0)+,(sp)
-	move.w	(sp),d5
-	moveq	#$F,d4
-
--
-	lsr.w	#1,d5
-	move	sr,d6
-	dbf	d4,+
-	move.b	(a0)+,1(sp)
-	move.b	(a0)+,(sp)
-	move.w	(sp),d5
-	moveq	#$F,d4
-+
-	move	d6,ccr
-	bcc.s	+
-	move.b	(a0)+,(a1)+
-	bra.s	-
+; Kosinski decompression routine
+;
+; Created by vladikcomper
+; Further optimizations and comments by carljr
+; Special thanks to flamewing and MarkeyJester
 ; ---------------------------------------------------------------------------
-+
-	moveq	#0,d3
-	lsr.w	#1,d5
-	move	sr,d6
-	dbf	d4,+
-	move.b	(a0)+,1(sp)
-	move.b	(a0)+,(sp)
-	move.w	(sp),d5
-	moveq	#$F,d4
-+
-	move	d6,ccr
-	bcs.s	+++
-	lsr.w	#1,d5
-	dbf	d4,+
-	move.b	(a0)+,1(sp)
-	move.b	(a0)+,(sp)
-	move.w	(sp),d5
-	moveq	#$F,d4
-+
-	roxl.w	#1,d3
-	lsr.w	#1,d5
-	dbf	d4,+
-	move.b	(a0)+,1(sp)
-	move.b	(a0)+,(sp)
-	move.w	(sp),d5
-	moveq	#$F,d4
-+
-	roxl.w	#1,d3
-	addq.w	#1,d3
-	moveq	#-1,d2
-	move.b	(a0)+,d2
-	bra.s	++
-; ---------------------------------------------------------------------------
-+
-	move.b	(a0)+,d0
-	move.b	(a0)+,d1
-	moveq	#-1,d2
-	move.b	d1,d2
-	lsl.w	#5,d2
-	move.b	d0,d2
-	andi.w	#7,d1
-	beq.s	++
-	move.b	d1,d3
-	addq.w	#1,d3
-/
-	move.b	(a1,d2.w),d0
-	move.b	d0,(a1)+
-	dbf	d3,-
-	bra.s	--
-; ---------------------------------------------------------------------------
-+
-	move.b	(a0)+,d1
-	beq.s	+
-	cmpi.b	#1,d1
-	beq.w	--
-	move.b	d1,d3
-	bra.s	-
-; ---------------------------------------------------------------------------
-+
-	addq.l	#2,sp
-	rts
-; End of function KosDec
-
-; ===========================================================================
-
-    if gameRevision<2
-	nop
-    endif
+	include	"misc/KosDec.asm"
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
@@ -21603,21 +21321,13 @@ super_shoes:
 	addq.w	#1,(a2)
 	tst.b	(Super_Sonic_flag).w	; is Sonic super?
 	jne		super_ring.giveRings
+	tst.b	(Super_Tails_flag).w	; is Tails super?
+	jne		super_ring.giveRings
 	bset	#status_sec_hasSpeedShoes,status_secondary(a1)	; give super sneakers status
 	move.w	#$4B0,speedshoes_time(a1)
-	cmpi.l	#Obj_Tails,id(a1)
-	beq.s	super_shoes_Tails
 	move.w	#$C00,(Sonic_top_speed).w	; set stats
 	move.w	#$18,(Sonic_acceleration).w
 	move.w	#$80,(Sonic_deceleration).w
-	bra.s	+
-; ---------------------------------------------------------------------------
-;loc_12A10:
-super_shoes_Tails:
-	move.w	#$C00,(Tails_top_speed).w
-	move.w	#$18,(Tails_acceleration).w
-	move.w	#$80,(Tails_deceleration).w
-+
 	command	mus_ShoesOn
 	move.b	#emotion_happy,(Current_emotion).w
 	jsr		UpdateEmotionWindow
@@ -30203,10 +29913,18 @@ Obj_Sonic_Init:
 	move.w	#prio(2),priority(a0)
 	move.b	#$18,width_pixels(a0)
 	move.b	#4,render_flags(a0)
-	move.w	#$600,(Sonic_top_speed).w	; set Sonic's top speed
-	move.w	#$C,(Sonic_acceleration).w	; set Sonic's acceleration
-	move.w	#$80,(Sonic_deceleration).w	; set Sonic's deceleration
 	jsr		ResetArtTile_a0
+	cmpa.w	#MainCharacter,a0
+	bne.s	.p2
+	move.w	#$600,(Sonic_top_speed).w	; set Tails' top speed
+	move.w	#$C,(Sonic_acceleration).w	; set Tails' acceleration
+	move.w	#$80,(Sonic_deceleration).w	; set Tails' deceleration
+	bra.s	.cont
+.p2:
+	move.w	#$600,(Tails_top_speed).w	; set Tails' top speed
+	move.w	#$C,(Tails_acceleration).w	; set Tails' acceleration
+	move.w	#$80,(Tails_deceleration).w	; set Tails' deceleration
+.cont:
 	tst.b	(Last_star_pole_hit).w
 	bne.s	Obj_Sonic_Init_Continued
 	; only happens when not starting at a checkpoint:
@@ -30344,28 +30062,42 @@ Obj_Sonic_RmvInvin:
 ; loc_1A10C:
 Obj_Sonic_ChkShoes:		; Checks if Speed Shoes have expired and disables them if they have.
 	btst	#status_sec_hasSpeedShoes,status_secondary(a0)
-	beq.s	Obj_Sonic_ExitChk
+	beq.w	Obj_Sonic_ExitChk
 	tst.w	speedshoes_time(a0)
-	beq.s	Obj_Sonic_ExitChk
+	beq.w	Obj_Sonic_ExitChk
 	subq.w	#1,speedshoes_time(a0)
-	bne.s	Obj_Sonic_ExitChk
-	cmpi.l	#Obj_Tails,id(a0)
-	beq.s	.Tails
+	bne.w	Obj_Sonic_ExitChk
+	cmpa.w	#MainCharacter,a0
+	beq.s	.P2
 	move.w	#$600,(Sonic_top_speed).w
 	move.w	#$C,(Sonic_acceleration).w
 	move.w	#$80,(Sonic_deceleration).w
+	cmpi.l	#Obj_Tails,id(a0)
+	beq.s	.TailsP1
 	tst.b	(Super_Sonic_flag).w
 	beq.s	Obj_Sonic_RmvSpeed
+	bra.s	.contP1
+.tailsP1:
+	tst.b	(Super_Tails_flag).w
+	beq.s	Obj_Sonic_RmvSpeed
+.contP1:
 	move.w	#$A00,(Sonic_top_speed).w
 	move.w	#$30,(Sonic_acceleration).w
 	move.w	#$100,(Sonic_deceleration).w
 	bra.s	Obj_Sonic_RmvSpeed
-.Tails:
+.P2:
 	move.w	#$600,(Tails_top_speed).w
 	move.w	#$C,(Tails_acceleration).w
 	move.w	#$80,(Tails_deceleration).w
+	cmpi.l	#Obj_Tails,id(a0)
+	beq.s	.TailsP2
 	tst.b	(Super_Sonic_flag).w
 	beq.s	Obj_Sonic_RmvSpeed
+	bra.s	.contP2
+.tailsP2:
+	tst.b	(Super_Tails_flag).w
+	beq.s	Obj_Sonic_RmvSpeed
+.contP2:
 	move.w	#$A00,(Tails_top_speed).w
 	move.w	#$30,(Tails_acceleration).w
 	move.w	#$100,(Tails_deceleration).w
@@ -30644,9 +30376,17 @@ Obj_Sonic_MdJump:
 
 ; loc_1A35A:
 Sonic_Move:
+	cmpa.w	#MainCharacter,a0
+	bne.s	.sidekick
 	move.w	(Sonic_top_speed).w,d6
 	move.w	(Sonic_acceleration).w,d5
 	move.w	(Sonic_deceleration).w,d4
+	bra.s	.cont
+.sidekick:
+	move.w	(Tails_top_speed).w,d6
+	move.w	(Tails_acceleration).w,d5
+	move.w	(Tails_deceleration).w,d4
+.cont:
     if status_sec_isSliding = 7
 	tst.b	status_secondary(a0)
 	bmi.w	Obj_Sonic_Traction
@@ -31078,13 +30818,20 @@ return_1A7C4:
 
 ; loc_1A7C6:
 Sonic_RollSpeed:
+	cmpa.w	#MainCharacter,a0
+	bne.s	.sidekick
 	move.w	(Sonic_top_speed).w,d6
-	asl.w	#1,d6
 	move.w	(Sonic_acceleration).w,d5
+	move.w	(Sonic_deceleration).w,d4
+	bra.s	.cont
+.sidekick:
+	move.w	(Tails_top_speed).w,d6
+	move.w	(Tails_acceleration).w,d5
+	move.w	(Tails_deceleration).w,d4
+.cont:
+	asl.w	#1,d6
 	asr.w	#1,d5	; natural roll deceleration = 1/2 normal acceleration
-	move.w	#$20,d4	; controlled roll deceleration... interestingly,
-			; this should be Sonic_deceleration/4 according to Tails_RollSpeed,
-			; which means Sonic is much better than Tails at slowing down his rolling when he's underwater
+	asr.w	#2,d4	; controlled roll deceleration...
     if status_sec_isSliding = 7
 	tst.b	status_secondary(a0)
 	bmi.w	Obj_Sonic_Roll_ResetScr
@@ -31232,8 +30979,15 @@ Sonic_BrakeRollingLeft:
 
 ; loc_1A8E8:
 Sonic_ChgJumpDir:
+	cmpa.w	#MainCharacter,a0
+	bne.s	.sidekick
 	move.w	(Sonic_top_speed).w,d6
 	move.w	(Sonic_acceleration).w,d5
+	bra.s	.cont
+.sidekick:
+	move.w	(Tails_top_speed).w,d6
+	move.w	(Tails_acceleration).w,d5
+.cont:
 	asl.w	#1,d5
 	btst	#4,status(a0)		; did Sonic jump from rolling?
 	bne.s	Obj_Sonic_Jump_ResetScr	; if yes, branch to skip midair control
@@ -78814,8 +78568,6 @@ PlrList_Mtz2_End
 PlrList_Wfz1: plrlistheader
 	plreq ArtTile_ArtNem_Tornado, ArtNem_Tornado
 	plreq ArtTile_ArtNem_Clouds, ArtNem_Clouds
-	plreq ArtTile_ArtNem_WfzVrtclPrpllr, ArtNem_WfzVrtclPrpllr
-	plreq ArtTile_ArtNem_WfzHrzntlPrpllr, ArtNem_WfzHrzntlPrpllr
 	plreq ArtTile_ArtNem_Balkrie, ArtNem_Balkrie
 	plreq ArtTile_ArtNem_BreakPanels, ArtNem_BreakPanels
 	plreq ArtTile_ArtNem_WfzScratch, ArtNem_WfzScratch
@@ -78869,15 +78621,15 @@ PlrList_Htz2_End
 ; Pattern load queue
 ; HPZ Primary
 ;---------------------------------------------------------------------------------------
-PlrList_Hpz1: ;plrlistheader
-;	plreq ArtTile_ArtNem_WaterSurface, ArtNem_WaterSurface
-;PlrList_Hpz1_End
+PlrList_Hpz1: plrlistheader
+	plreq ArtTile_ArtNem_WaterSurface, ArtNem_WaterSurface
+PlrList_Hpz1_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; HPZ Secondary
 ;---------------------------------------------------------------------------------------
-PlrList_Hpz2: ;plrlistheader
-;PlrList_Hpz2_End
+PlrList_Hpz2: plrlistheader
+PlrList_Hpz2_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; OOZ Primary
@@ -79020,13 +78772,13 @@ PlrList_Arz1_End
 ; ARZ Secondary
 ;---------------------------------------------------------------------------------------
 PlrList_Arz2: plrlistheader
-	plreq ArtTile_ArtNem_ChopChop, ArtNem_ChopChop
-	plreq ArtTile_ArtNem_Whisp, ArtNem_Whisp
+	plreq ArtTile_ArtNem_Whisp, ArtNem_Whisp	; ... moving Chop-Chop to the bottom of this list fixed its art?
 	plreq ArtTile_ArtNem_Grounder, ArtNem_Grounder
 	plreq ArtTile_ArtNem_BigBubbles, ArtNem_BigBubbles
 	plreq ArtTile_ArtNem_Spikes, ArtNem_Spikes
 	plreq ArtTile_ArtNem_LeverSpring, ArtNem_LeverSpring
 	plreq ArtTile_ArtNem_Spring, ArtNem_Spring
+	plreq ArtTile_ArtNem_ChopChop, ArtNem_ChopChop
 PlrList_Arz2_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
@@ -80522,60 +80274,6 @@ MapEng_EndingTailsPlane:	BINCLUDE	"mappings/misc/Closeup of Tails flying plane i
 ; Closeup of Sonic flying plane in ending sequence	; MapEng_907C0:
 	even
 MapEng_EndingSonicPlane:	BINCLUDE	"mappings/misc/Closeup of Sonic flying plane in ending sequence.bin"
-;--------------------------------------------------------------------------------------
-; Enigma compressed sprite mappings
-; Strange unused mappings (duplicate of MapEng_EndGameLogo)
-	even
-; MapEng_9082A:
-	BINCLUDE	"mappings/misc/Strange unused mappings 1 - 1.bin"
-;--------------------------------------------------------------------------------------
-; Enigma compressed sprite mappings
-; Strange unused mappings (same as above)
-	even
-; MapEng_90852:
-	BINCLUDE	"mappings/misc/Strange unused mappings 1 - 2.bin"
-;--------------------------------------------------------------------------------------
-; Enigma compressed sprite mappings
-; Strange unused mappings (same as above)
-	even
-; MapEng_9087A:
-	BINCLUDE	"mappings/misc/Strange unused mappings 1 - 3.bin"
-;--------------------------------------------------------------------------------------
-; Enigma compressed sprite mappings
-; Strange unused mappings (same as above)
-	even
-; MapEng_908A2:
-	BINCLUDE	"mappings/misc/Strange unused mappings 1 - 4.bin"
-;--------------------------------------------------------------------------------------
-; Enigma compressed sprite mappings
-; Strange unused mappings (same as above)
-	even
-; MapEng_908CA:
-	BINCLUDE	"mappings/misc/Strange unused mappings 1 - 5.bin"
-;--------------------------------------------------------------------------------------
-; Enigma compressed sprite mappings
-; Strange unused mappings (same as above)
-	even
-; MapEng_908F2:
-	BINCLUDE	"mappings/misc/Strange unused mappings 1 - 6.bin"
-;--------------------------------------------------------------------------------------
-; Enigma compressed sprite mappings
-; Strange unused mappings (same as above)
-	even
-; MapEng_9091A:
-	BINCLUDE	"mappings/misc/Strange unused mappings 1 - 7.bin"
-;--------------------------------------------------------------------------------------
-; Enigma compressed sprite mappings
-; Strange unused mappings (same as above)
-	even
-; MapEng_90942:
-	BINCLUDE	"mappings/misc/Strange unused mappings 1 - 8.bin"
-;--------------------------------------------------------------------------------------
-; Enigma compressed sprite mappings
-; Strange unused mappings (same as above)
-	even
-; MapEng_9096A:
-	BINCLUDE	"mappings/misc/Strange unused mappings 2.bin"
 ;--------------------------------------------------------------------------------------
 ; Nemesis compressed art (363 blocks)
 ; Movie sequence at end of game		; ArtNem_90992:

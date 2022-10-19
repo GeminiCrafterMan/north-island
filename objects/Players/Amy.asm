@@ -30,10 +30,18 @@ Obj_Amy_Init:
 	move.w	#prio(2),priority(a0)
 	move.b	#$18,width_pixels(a0)
 	move.b	#4,render_flags(a0)
-	move.w	#$600,(Sonic_top_speed).w	; set Amy's top speed
-	move.w	#$C,(Sonic_acceleration).w	; set Amy's acceleration
-	move.w	#$80,(Sonic_deceleration).w	; set Amy's deceleration
 	jsr		ResetArtTile_a0
+	cmpa.w	#MainCharacter,a0
+	bne.s	.p2
+	move.w	#$600,(Sonic_top_speed).w	; set Tails' top speed
+	move.w	#$C,(Sonic_acceleration).w	; set Tails' acceleration
+	move.w	#$80,(Sonic_deceleration).w	; set Tails' deceleration
+	bra.s	.cont
+.p2:
+	move.w	#$600,(Tails_top_speed).w	; set Tails' top speed
+	move.w	#$C,(Tails_acceleration).w	; set Tails' acceleration
+	move.w	#$80,(Tails_deceleration).w	; set Tails' deceleration
+.cont:
 	tst.b	(Last_star_pole_hit).w
 	bne.s	Obj_Amy_Init_Continued
 	; only happens when not starting at a checkpoint:
