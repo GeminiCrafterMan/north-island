@@ -30068,7 +30068,7 @@ Obj_Sonic_ChkShoes:		; Checks if Speed Shoes have expired and disables them if t
 	subq.w	#1,speedshoes_time(a0)
 	bne.w	Obj_Sonic_ExitChk
 	cmpa.w	#MainCharacter,a0
-	beq.s	.P2
+	bne.s	.P2
 	move.w	#$600,(Sonic_top_speed).w
 	move.w	#$C,(Sonic_acceleration).w
 	move.w	#$80,(Sonic_deceleration).w
