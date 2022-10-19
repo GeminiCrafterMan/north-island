@@ -28,17 +28,18 @@ Obj_FGObject_Display:
 		move.w	d1,d2 ; ... and make sure to allow us to readd it in d2 so we don't assume we are at X = 0.
 		subi.w	#$A0,d1 ; Subtract A0 from d1.
 		sub.w	(Camera_X_pos).w,d1 ; Subtract the current screen position from d1.
-		asr.w	#1,d1 ; Divide d1 by 2. (Tweak this to get different scroll rates!)
+		asr.w	#2,d1 ; Divide d1 by 4. (Tweak this to get different scroll rates!)
 		add.w	d2,d1 ; Add the base X position to our offset.
 		move.w	d1,x_pos(a0) ; Here's our new X position!
 	; y pos stuff i think
 		move.w	objoff_2C(a0), d1 ; Store the original X position in d1....
 		move.w	d1,d2 ; ... and make sure to allow us to readd it in d2 so we don't assume we are at X = 0.
-		subi.w	#$A0,d1 ; Subtract A0 from d1.
+		subi.w	#$60,d1 ; Subtract A0 from d1.
 		sub.w	(Camera_Y_pos).w,d1 ; Subtract the current screen position from d1.
 		asr.w	#1,d1 ; Divide d1 by 2. (Tweak this to get different scroll rates!)
 		add.w	d2,d1 ; Add the base X position to our offset.
 		move.w	d1,y_pos(a0) ; Here's our new X position!
+
 ; sonic 2 can suck my fuckin balls bro
 		move.w	objoff_2A(a0),d0
 		andi.w	#-$80,d0
